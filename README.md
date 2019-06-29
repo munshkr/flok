@@ -1,9 +1,9 @@
-# muse 👋
+# flok 👋
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000)
 [![Twitter: munshkr](https://img.shields.io/twitter/follow/munshkr.svg?style=social)](https://twitter.com/munshkr)
 
-> Collaborative editor for live coding music and graphics
+> Web-based collaborative editor for live coding music and graphics
 
 ## Install
 
@@ -34,7 +34,7 @@ yarn test
 
 Contributions, issues and feature requests are welcome!
 
-Feel free to check [issues page](https://github.com/munshkr/muse/issues).
+Feel free to check [issues page](https://github.com/munshkr/flok/issues).
 
 ## Show your support
 
