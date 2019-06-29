@@ -1,8 +1,9 @@
+import dynamic from "next/dynamic";
 import React from "react";
-import TextEditor from "../components/TextEditor";
 
-import "codemirror/lib/codemirror.css";
-import "codemirror/theme/material.css";
+const TextEditor = dynamic(() => import("../components/TextEditor"), {
+  ssr: false
+});
 
 class Home extends React.Component {
   constructor(props) {
@@ -19,7 +20,7 @@ class Home extends React.Component {
   render() {
     const { content } = this.state;
     const options = {
-      mode: "xml",
+      mode: "haskell",
       theme: "material",
       lineNumbers: true
     };

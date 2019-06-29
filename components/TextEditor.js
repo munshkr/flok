@@ -1,6 +1,11 @@
 import React from "react";
 import { Controlled as CodeMirror } from "react-codemirror2";
 
+import "codemirror/lib/codemirror.css";
+import "codemirror/theme/material.css";
+import "codemirror/mode/javascript/javascript";
+import "codemirror/mode/haskell/haskell";
+
 const TextEditor = props => (
   <React.Fragment>
     <CodeMirror {...props} />
