@@ -13,8 +13,12 @@ class Home extends React.Component {
     };
   }
 
-  handleTextEditorBeforeChange = (editor, data, value) => {
-    this.setState({ content: value });
+  handleTextEditorBeforeChange = (_editor, _data, content) => {
+    this.setState({ content });
+  };
+
+  handleFetch = content => {
+    this.setState({ content });
   };
 
   render() {
@@ -30,6 +34,7 @@ class Home extends React.Component {
         <TextEditor
           options={options}
           value={content}
+          onFetch={this.handleFetch}
           onBeforeChange={this.handleTextEditorBeforeChange}
         />
       </div>
