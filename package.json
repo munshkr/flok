@@ -12,6 +12,7 @@
   "dependencies": {
     "next": "^8.1.0",
     "react": "^16.8.6",
+    "react-ace": "^7.0.2",
     "react-dom": "^16.8.6"
   },
   "devDependencies": {
