@@ -1,8 +1,8 @@
-import PropTypes from "prop-types";
 import React from "react";
-import { Controlled as CodeMirror } from "react-codemirror2";
+import { UnControlled as CodeMirror } from "react-codemirror2";
 import WebSocket from "reconnecting-websocket";
 import ShareDB from "sharedb/lib/client";
+import ShareDBCodeMirror from "../lib/sharedb-codemirror";
 
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/haskell/haskell";
@@ -18,48 +18,29 @@ class TextEditor extends React.Component {
   }
 
   componentDidMount() {
-    const socket = new WebSocket(`ws://localhost:8080`);
-    this.socket = socket;
-    const connection = new ShareDB.Connection(socket);
-    this.connection = connection;
+    this.socket = new WebSocket(`ws://localhost:8080`);
+    this.connection = new ShareDB.Connection(this.socket);
+    this.shareDBCodeMirror = new ShareDBCodeMirror(this.editor.editor, {
+      verbose: true,
+      key: "content"
+    });
 
-    socket.onopen = () => {
+    this.socket.onopen = () => {
       this.setState({ status: "Connected" });
-
-      const doc = connection.get("flok", "foo");
-      this.doc = doc;
-
-      doc.fetch(err => {
-        if (err) throw err;
-
-        const { onFetch } = this.props;
-        onFetch(doc.data.content);
-      });
-
-      doc.subscribe(err => {
-        if (err) throw err;
-
-        doc.on("op", (op, source) => {
-          console.log(`[op] op=${op}, source=${source}`);
-        });
-
-        doc.on("del", (data, source) => {
-          console.log(`[del] data=${data}, source=${source}`);
-        });
-
-        doc.on("error", error => {
-          console.error(error);
-        });
-      });
     };
 
-    socket.onclose = () => {
+    this.socket.onclose = () => {
       this.setState({ status: "Closed" });
     };
 
-    socket.onerror = () => {
+    this.socket.onerror = () => {
       this.setState({ status: "Error" });
     };
+
+    this.doc = this.connection.get("flok", "foo");
+    this.shareDBCodeMirror.attachDoc(this.doc, err => {
+      if (err) throw err;
+    });
   }
 
   render() {
@@ -67,7 +48,12 @@ class TextEditor extends React.Component {
     return (
       <React.Fragment>
         <span className="status">{status}</span>
-        <CodeMirror {...this.props} />
+        <CodeMirror
+          ref={c => {
+            this.editor = c;
+          }}
+          {...this.props}
+        />
         <style jsx global>
           {`
             .status {
@@ -87,9 +73,5 @@ class TextEditor extends React.Component {
     );
   }
 }
-
-TextEditor.propTypes = {
-  onFetch: PropTypes.func.isRequired
-};
 
 export default TextEditor;
