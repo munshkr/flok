@@ -18,9 +18,9 @@ yarn start
 
 ## Acknowledgments
 
-* Etherpad
-* Troop
-* TidalBridge
+* [Etherpad](https://github.com/ether/etherpad-lite)
+* [Troop](https://github.com/Qirky/Troop)
+* [TidalBridge](https://gitlab.com/colectivo-de-livecoders/tidal-bridge)
 
 ## Contributing
 
