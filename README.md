@@ -1,7 +1,6 @@
 # flok
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000)
-[![Twitter: munshkr](https://img.shields.io/twitter/follow/munshkr.svg?style=social)](https://twitter.com/munshkr)
+![Version](https://img.shields.io/badge/version-0.1.0-blue.svg?cacheSeconds=2592000)
 
 > Web-based collaborative editor for live coding music and graphics
 
