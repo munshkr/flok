@@ -1,4 +1,4 @@
-# flok 👋
+# flok
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000)
 [![Twitter: munshkr](https://img.shields.io/twitter/follow/munshkr.svg?style=social)](https://twitter.com/munshkr)
@@ -17,29 +17,23 @@ yarn
 yarn start
 ```
 
-## Run tests
+## Acknowledgments
 
-```sh
-yarn test
-```
-
-## Author
-
-👤 **Damián Silvani &lt;munshkr@gmail.com&gt;**
-
-* Twitter: [@munshkr](https://twitter.com/munshkr)
-* Github: [@munshkr](https://github.com/munshkr)
+* Etherpad
+* Troop
+* TidalBridge
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!
-
-Feel free to check [issues page](https://github.com/munshkr/flok/issues).
+Bug reports and pull requests are welcome on GitHub at the [issues
+page](https://github.com/munshkr/flok). This project is intended to be a safe,
+welcoming space for collaboration, and contributors are expected to adhere to
+the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## Show your support
 
 Give a ⭐️ if this project helped you!
 
+## License
 
-***
-_This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
+GPL 3+. Refer to [LICENSE.txt](LICENSE.txt)
