@@ -23,17 +23,13 @@ yarn start
 * Troop
 * TidalBridge
 
-## 🤝 Contributing
+## Contributing
 
 Bug reports and pull requests are welcome on GitHub at the [issues
 page](https://github.com/munshkr/flok). This project is intended to be a safe,
 welcoming space for collaboration, and contributors are expected to adhere to
 the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
-## Show your support
-
-Give a ⭐️ if this project helped you!
-
 ## License
 
-GPL 3+. Refer to [LICENSE.txt](LICENSE.txt)
+This project is licensed under GPL 3+. Refer to [LICENSE.txt](LICENSE.txt)
