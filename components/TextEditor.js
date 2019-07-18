@@ -18,11 +18,17 @@ class TextEditor extends React.Component {
   }
 
   componentDidMount() {
+    // const userId = Math.floor(Math.random() * Math.floor(99999));
+    const userName = window.location.hash
+      ? window.location.hash.substring(1)
+      : "anonymous";
+
     this.socket = new WebSocket(`ws://localhost:8080`);
     this.connection = new ShareDB.Connection(this.socket);
     this.shareDBCodeMirror = new ShareDBCodeMirror(this.editor.editor, {
       verbose: true,
-      key: "content"
+      key: "content",
+      user: { id: userName, name: userName }
     });
 
     this.socket.onopen = () => {
@@ -41,6 +47,11 @@ class TextEditor extends React.Component {
     this.shareDBCodeMirror.attachDoc(this.doc, err => {
       if (err) throw err;
     });
+  }
+
+  componentWillUnmount() {
+    console.log("detach doc");
+    this.shareDBCodeMirrordetachDoc();
   }
 
   render() {

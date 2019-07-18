@@ -12,11 +12,6 @@ function createDoc(callback) {
   const doc = connection.get("flok", "foo");
   doc.fetch(err => {
     if (err) throw err;
-    if (doc.type === null) {
-      console.log("Document created");
-      doc.create({ content: "hi!" }, callback);
-      return;
-    }
     callback();
   });
 }
