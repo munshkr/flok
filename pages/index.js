@@ -11,7 +11,8 @@ const Home = () => (
       options={{
         mode: "haskell",
         theme: "material",
-        lineNumbers: true
+        lineNumbers: true,
+        scrollbarStyle: "simple"
       }}
     />
   </div>

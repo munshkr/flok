@@ -8,6 +8,29 @@ import "codemirror/lib/codemirror.css";
 import "codemirror/mode/haskell/haskell";
 import "codemirror/mode/javascript/javascript";
 import "codemirror/theme/material.css";
+import "codemirror/addon/scroll/simplescrollbars";
+import "codemirror/addon/scroll/simplescrollbars.css";
+
+const Status = ({ children }) => (
+  <div>
+    {children}
+    <style jsx>
+      {`
+        div {
+          position: absolute;
+          background: transparent;
+          bottom: 0.75em;
+          right: 1.25em;
+          text-align: right;
+          color: #fefefe;
+          z-index: 1000;
+          font-family: monospace;
+          font-weight: bold;
+        }
+      `}
+    </style>
+  </div>
+);
 
 class TextEditor extends React.Component {
   constructor(props) {
@@ -58,7 +81,7 @@ class TextEditor extends React.Component {
     const { status } = this.state;
     return (
       <React.Fragment>
-        <span className="status">{status}</span>
+        <Status>{status}</Status>
         <CodeMirror
           ref={c => {
             this.editor = c;
@@ -67,16 +90,13 @@ class TextEditor extends React.Component {
         />
         <style jsx global>
           {`
-            .status {
-              z-index: 1;
-            }
             .CodeMirror {
               position: absolute;
-              top: 10;
+              top: 0;
               bottom: 0;
               left: 0;
               right: 0;
-              height: 90%;
+              height: 100%;
             }
           `}
         </style>
