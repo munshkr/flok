@@ -10,6 +10,7 @@ import "codemirror/mode/javascript/javascript";
 import "codemirror/theme/material.css";
 import "codemirror/addon/scroll/simplescrollbars";
 import "codemirror/addon/scroll/simplescrollbars.css";
+import "codemirror/addon/selection/mark-selection";
 
 const Status = ({ children }) => (
   <div>
@@ -97,6 +98,10 @@ class TextEditor extends React.Component {
               left: 0;
               right: 0;
               height: 100%;
+            }
+            .flash-selection {
+              background-color: #ff7;
+              color: #000;
             }
           `}
         </style>
