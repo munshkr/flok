@@ -4,6 +4,9 @@ import WebSocket from "reconnecting-websocket";
 import ShareDB from "sharedb/lib/client";
 import ShareDBCodeMirror from "../lib/sharedb-codemirror";
 
+import Status from "./Status";
+import UserList from "./UserList";
+
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/haskell/haskell";
 import "codemirror/mode/javascript/javascript";
@@ -12,32 +15,12 @@ import "codemirror/addon/scroll/simplescrollbars";
 import "codemirror/addon/scroll/simplescrollbars.css";
 import "codemirror/addon/selection/mark-selection";
 
-const Status = ({ children }) => (
-  <div>
-    {children}
-    <style jsx>
-      {`
-        div {
-          position: absolute;
-          background: transparent;
-          bottom: 0.75em;
-          right: 1.25em;
-          text-align: right;
-          color: #fefefe;
-          z-index: 1000;
-          font-family: monospace;
-          font-weight: bold;
-        }
-      `}
-    </style>
-  </div>
-);
-
 class TextEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: "Not connected"
+      status: "Not connected",
+      users: []
     };
   }
 
@@ -52,7 +35,8 @@ class TextEditor extends React.Component {
     this.shareDBCodeMirror = new ShareDBCodeMirror(this.editor.editor, {
       verbose: true,
       key: "content",
-      user: { id: userName, name: userName }
+      user: { id: userName, name: userName },
+      onUsersChange: this.handleUsersChange
     });
 
     this.socket.onopen = () => {
@@ -78,8 +62,14 @@ class TextEditor extends React.Component {
     this.shareDBCodeMirrordetachDoc();
   }
 
+  handleUsersChange = users => {
+    console.log(users);
+    this.setState({ users });
+  };
+
   render() {
-    const { status } = this.state;
+    const { status, users } = this.state;
+
     return (
       <React.Fragment>
         <Status>{status}</Status>
@@ -89,6 +79,7 @@ class TextEditor extends React.Component {
           }}
           {...this.props}
         />
+        <UserList users={users} />
         <style jsx global>
           {`
             .CodeMirror {
