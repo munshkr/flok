@@ -1,7 +1,5 @@
 import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
-import ReconnectingWebSocket from "reconnecting-websocket";
-import ShareDB from "sharedb/lib/client";
 import LiveCodeMirror from "../lib/livecodemirror";
 
 import Status from "./Status";
@@ -15,6 +13,8 @@ import "codemirror/addon/scroll/simplescrollbars";
 import "codemirror/addon/scroll/simplescrollbars.css";
 import "codemirror/addon/selection/mark-selection";
 
+const WEBSOCKETS_URL = `ws://localhost:8080`;
+
 class TextEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -25,43 +25,46 @@ class TextEditor extends React.Component {
   }
 
   componentDidMount() {
-    // const userId = Math.floor(Math.random() * Math.floor(99999));
     const userName = window.location.hash
       ? window.location.hash.substring(1)
       : "anonymous";
 
-    this.socket = new ReconnectingWebSocket(`ws://localhost:8080`);
+    // const userId = Math.floor(Math.random() * Math.floor(99999));
+    this.liveCodeMirror = new LiveCodeMirror(
+      this.editor.editor,
+      WEBSOCKETS_URL,
+      {
+        userId: userName,
+        onConnectionOpen: this.handleConnectionOpen,
+        onConnectionClose: this.handleConnectionClose,
+        onConnectionError: this.handleConnectionError,
+        onUsersChange: this.handleUsersChange,
+        verbose: true
+      }
+    );
 
-    this.connection = new ShareDB.Connection(this.socket);
-    this.shareDBCodeMirror = new LiveCodeMirror(this.editor.editor, {
-      verbose: true,
-      key: "content",
-      user: { id: userName, name: userName },
-      onUsersChange: this.handleUsersChange
-    });
+    this.liveCodeMirror.setUsername(userName);
 
-    this.socket.onopen = () => {
-      this.setState({ status: "Connected" });
-    };
-
-    this.socket.onclose = () => {
-      this.setState({ status: "Closed" });
-    };
-
-    this.socket.onerror = () => {
-      this.setState({ status: "Error" });
-    };
-
-    this.doc = this.connection.get("flok", "foo");
-    this.shareDBCodeMirror.attachDoc(this.doc, err => {
-      if (err) throw err;
-    });
+    // FIXME Use path for different documents
+    this.liveCodeMirror.attachDocument("flok", "foo");
   }
 
   componentWillUnmount() {
-    console.log("detach doc");
-    this.shareDBCodeMirrordetachDoc();
+    // console.log("detach doc");
+    this.liveCodeMirror.detachDocument();
   }
+
+  handleConnectionOpen = () => {
+    this.setState({ status: "Connected" });
+  };
+
+  handleConnectionClose = () => {
+    this.setState({ status: "Disconnected" });
+  };
+
+  handleConnectionError = () => {
+    this.setState({ status: "Error" });
+  };
 
   handleUsersChange = users => {
     console.log(users);

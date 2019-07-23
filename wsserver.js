@@ -23,10 +23,29 @@ function startServer() {
 
   // Connect any incoming WebSocket connection to ShareDB
   const wss = new WebSocket.Server({ server });
+
+  function noop() {}
+  function heartbeat() {
+    this.isAlive = true;
+  }
+
   wss.on("connection", (ws, _req) => {
+    // eslint-disable-next-line no-param-reassign
+    ws.isAlive = true;
+    ws.on("pong", heartbeat);
+
     const stream = new WebSocketJSONStream(ws);
     backend.listen(stream);
   });
+
+  setInterval(function ping() {
+    wss.clients.forEach(ws => {
+      if (ws.isAlive === false) return ws.terminate();
+      // eslint-disable-next-line no-param-reassign
+      ws.isAlive = false;
+      ws.ping(noop);
+    });
+  }, 30000);
 
   server.listen(8080);
   // eslint-disable-next-line no-console
