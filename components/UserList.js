@@ -33,7 +33,7 @@ const UserList = ({ users }) => (
 );
 
 UserList.propTypes = {
-  users: PropTypes.arrayOf(PropTypes.string)
+  users: PropTypes.arrayOf(PropTypes.object)
 };
 
 UserList.defaultProps = {

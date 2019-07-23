@@ -1,6 +1,6 @@
 import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
-import WebSocket from "reconnecting-websocket";
+import ReconnectingWebSocket from "reconnecting-websocket";
 import ShareDB from "sharedb/lib/client";
 import LiveCodeMirror from "../lib/livecodemirror";
 
@@ -30,7 +30,8 @@ class TextEditor extends React.Component {
       ? window.location.hash.substring(1)
       : "anonymous";
 
-    this.socket = new WebSocket(`ws://localhost:8080`);
+    this.socket = new ReconnectingWebSocket(`ws://localhost:8080`);
+
     this.connection = new ShareDB.Connection(this.socket);
     this.shareDBCodeMirror = new LiveCodeMirror(this.editor.editor, {
       verbose: true,
