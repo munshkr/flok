@@ -2,7 +2,7 @@ import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import WebSocket from "reconnecting-websocket";
 import ShareDB from "sharedb/lib/client";
-import ShareDBCodeMirror from "../lib/sharedb-codemirror";
+import LiveCodeMirror from "../lib/livecodemirror";
 
 import Status from "./Status";
 import UserList from "./UserList";
@@ -32,7 +32,7 @@ class TextEditor extends React.Component {
 
     this.socket = new WebSocket(`ws://localhost:8080`);
     this.connection = new ShareDB.Connection(this.socket);
-    this.shareDBCodeMirror = new ShareDBCodeMirror(this.editor.editor, {
+    this.shareDBCodeMirror = new LiveCodeMirror(this.editor.editor, {
       verbose: true,
       key: "content",
       user: { id: userName, name: userName },
