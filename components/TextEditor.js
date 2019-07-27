@@ -13,7 +13,7 @@ import "codemirror/addon/scroll/simplescrollbars";
 import "codemirror/addon/scroll/simplescrollbars.css";
 import "codemirror/addon/selection/mark-selection";
 
-const WEBSOCKETS_URL = `ws://localhost:8080`;
+const WEBSOCKETS_URL = `ws://localhost:3000/`;
 
 class TextEditor extends React.Component {
   constructor(props) {

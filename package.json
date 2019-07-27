@@ -5,10 +5,9 @@
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "next",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start",
-    "ws": "node wsserver"
+    "start": "NODE_ENV=production node server.js"
   },
   "dependencies": {
     "@teamwork/websocket-json-stream": "^2.0.0",
