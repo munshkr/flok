@@ -20,6 +20,7 @@ class TextEditor extends React.Component {
     super(props);
     this.state = {
       status: "Not connected",
+      showUserList: true,
       users: []
     };
   }
@@ -35,6 +36,9 @@ class TextEditor extends React.Component {
       WEBSOCKETS_URL,
       {
         userId: userName,
+        extraKeys: {
+          "Ctrl-Alt-U": this.toggleUserList
+        },
         onConnectionOpen: this.handleConnectionOpen,
         onConnectionClose: this.handleConnectionClose,
         onConnectionError: this.handleConnectionError,
@@ -71,8 +75,14 @@ class TextEditor extends React.Component {
     this.setState({ users });
   };
 
+  toggleUserList = e => {
+    this.setState((prevState, _) => ({
+      showUserList: !prevState.showUserList
+    }));
+  };
+
   render() {
-    const { status, users } = this.state;
+    const { status, users, showUserList } = this.state;
 
     return (
       <React.Fragment>
@@ -83,7 +93,7 @@ class TextEditor extends React.Component {
           }}
           {...this.props}
         />
-        <UserList users={users} />
+        {showUserList && <UserList users={users} />}
         <style jsx global>
           {`
             .CodeMirror {
