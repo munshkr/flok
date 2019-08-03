@@ -1,6 +1,7 @@
 import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import LiveCodeMirror from "../lib/livecodemirror";
+import PubSubClient from "../lib/pubsub-client";
 
 import Status from "./Status";
 import UserList from "./UserList";
@@ -14,6 +15,7 @@ import "codemirror/addon/scroll/simplescrollbars.css";
 import "codemirror/addon/selection/mark-selection";
 
 const WEBSOCKETS_URL = `ws://localhost:3000/`;
+const EVAL_WEBSOCKETS_URL = `ws://localhost:3001/`;
 
 class TextEditor extends React.Component {
   constructor(props) {
@@ -43,6 +45,7 @@ class TextEditor extends React.Component {
         onConnectionClose: this.handleConnectionClose,
         onConnectionError: this.handleConnectionError,
         onUsersChange: this.handleUsersChange,
+        onEvaluateCode: this.handleEvaluateCode,
         verbose: true
       }
     );
@@ -51,6 +54,11 @@ class TextEditor extends React.Component {
 
     // FIXME Use path for different documents
     this.liveCodeMirror.attachDocument("flok", "foo");
+
+    this.pubsubClient = new PubSubClient(EVAL_WEBSOCKETS_URL, {
+      connect: true,
+      reconnect: true
+    });
   }
 
   componentWillUnmount() {
@@ -75,11 +83,21 @@ class TextEditor extends React.Component {
     this.setState({ users });
   };
 
+  handleEvaluateCode = text => {
+    this.evaluateCode(text);
+  };
+
   toggleUserList = e => {
     this.setState((prevState, _) => ({
       showUserList: !prevState.showUserList
     }));
   };
+
+  evaluateCode(code) {
+    console.log(`evaluate code: ${code}`);
+    // FIXME topic should be "target" (default or custom)
+    this.pubsubClient.publish("tidal", { body: code });
+  }
 
   render() {
     const { status, users, showUserList } = this.state;
