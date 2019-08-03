@@ -5,15 +5,18 @@
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "babel-node server.js --presets @babel/preset-env",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "start": "NODE_ENV=production babel-node server.js --presets @babel/preset-env"
   },
   "dependencies": {
     "@teamwork/websocket-json-stream": "^2.0.0",
     "@zeit/next-css": "^1.0.1",
     "codemirror": "^5.48.0",
     "express": "^4.17.1",
+    "fbemitter": "^2.1.1",
+    "immutable": "^4.0.0-rc.12",
+    "lodash": "^4.17.15",
     "next": "^8.1.0",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
@@ -21,9 +24,13 @@
     "react-dom": "^16.8.6",
     "reconnecting-websocket": "^4.1.10",
     "sharedb": "^1.0.0-beta.23",
+    "uuid": "^3.3.2",
     "ws": "^7.0.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
     "babel-eslint": "^10.0.2",
     "eslint": "^6.0.1",
     "eslint-config-airbnb": "^17.1.0",

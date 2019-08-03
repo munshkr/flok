@@ -1,11 +1,14 @@
-const express = require("express");
-const next = require("next");
-const http = require("http");
-const ShareDB = require("sharedb");
-const WebSocket = require("ws");
-const WebSocketJSONStream = require("@teamwork/websocket-json-stream");
+import express from "express";
+import next from "next";
+import http from "http";
+import ShareDB from "sharedb";
+import WebSocket from "ws";
+import WebSocketJSONStream from "@teamwork/websocket-json-stream";
+import PubSub from "./lib/pubsub"
 
 const port = parseInt(process.env.PORT, 10) || 3000;
+const evalPort = parseInt(process.env.EVAL_PORT, 10) || 3001;
+
 const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
@@ -23,7 +26,21 @@ function createDoc(callback) {
   });
 }
 
-function startServer() {
+function startEvalServer(app) {
+  const server = http.createServer(app);
+  const wss = new WebSocket.Server({ server });
+
+  const pubSubServer = new PubSub({ wss });
+  app.pubsub = pubSubServer;
+
+  server.listen(evalPort, err => {
+    if (err) throw err;
+    // eslint-disable-next-line no-console
+    console.log(`> Evaluation WS server ready on ws://localhost:${evalPort}`);
+  });
+}
+
+function startServers() {
   nextApp.prepare().then(() => {
     const app = express();
     const server = http.createServer(app);
@@ -45,7 +62,9 @@ function startServer() {
       // eslint-disable-next-line no-console
       console.log(`> Ready on http://localhost:${port}`);
     });
+
+    startEvalServer(app);
   });
 }
 
-createDoc(startServer);
+createDoc(startServers);
