@@ -4,7 +4,7 @@ import http from "http";
 import ShareDB from "sharedb";
 import WebSocket from "ws";
 import WebSocketJSONStream from "@teamwork/websocket-json-stream";
-import PubSub from "./lib/pubsub"
+import PubSub from "./lib/pubsub";
 
 const port = parseInt(process.env.PORT, 10) || 3000;
 const evalPort = parseInt(process.env.EVAL_PORT, 10) || 3001;
@@ -13,7 +13,10 @@ const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
-const backend = new ShareDB();
+const backend = new ShareDB({
+  disableDocAction: true,
+  disableSpaceDelimitedActions: true
+});
 
 // Create initial document then fire callback
 function createDoc(callback) {
@@ -31,6 +34,7 @@ function startEvalServer(app) {
   const wss = new WebSocket.Server({ server });
 
   const pubSubServer = new PubSub({ wss });
+  // eslint-disable-next-line no-param-reassign
   app.pubsub = pubSubServer;
 
   server.listen(evalPort, err => {
