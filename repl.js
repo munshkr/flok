@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// TODO
 const program = require("commander");
 const { spawn } = require("child_process");
 const PubSubClient = require("./lib/pubsub-client");
@@ -23,26 +22,43 @@ const pubSub = new PubSubClient("ws://localhost:3001", {
   reconnect: true
 });
 
-const topicName = program.target;
+const { target } = program;
 
+let lastUserName = null;
+
+const publishMessage = (body, type) => {
+  pubSub.publish(`${target}:out`, { target, type, body });
+
+  if (lastUserName) {
+    pubSub.publish(lastUserName, { target, type, body });
+  }
+};
+
+// Spawn process
 const repl = spawn(cmd, cmdArgs);
 
+// Handle stdout and stderr
 repl.stdout.on("data", data => {
-  process.stdout.write(data.toString());
-  // Publish to another topic stdout
+  // process.stdout.write(data.toString());
+  publishMessage(data.toString(), "stdout");
 });
 
 repl.stderr.on("data", data => {
-  process.stderr.write(data.toString());
-  // Publish to another topic stderr
+  // process.stderr.write(data.toString());
+  publishMessage(data.toString(), "stderr");
 });
 
 repl.on("close", code => {
   console.log(`child process exited with code ${code}`);
 });
 
-pubSub.subscribe(topicName, message => {
-  const text = `${message.body.trim()}\n`;
+// Subscribe to pub sub
+pubSub.subscribe(`${target}:in`, message => {
+  const { body, userName } = message;
+  const text = `${body.trim()}\n`;
+
   repl.stdin.write(text);
-  process.stdout.write(text);
+  // process.stdout.write(text);
+
+  lastUserName = userName;
 });

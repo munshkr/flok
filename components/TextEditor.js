@@ -17,10 +17,16 @@ import "codemirror/addon/selection/mark-selection";
 const WEBSOCKETS_URL = `ws://localhost:3000/`;
 const EVAL_WEBSOCKETS_URL = `ws://localhost:3001/`;
 
+// FIXME Should be a prop
+const documentId = `foo`;
+// FIXME Should be a state var
+const target = `tidal`;
+
 class TextEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      userName: "anonymous",
       status: "Not connected",
       showUserList: true,
       users: []
@@ -28,9 +34,11 @@ class TextEditor extends React.Component {
   }
 
   componentDidMount() {
+    // FIXME Should be a state var
     const userName = window.location.hash
       ? window.location.hash.substring(1)
       : "anonymous";
+    this.state.userName = userName;
 
     // const userId = Math.floor(Math.random() * Math.floor(99999));
     this.liveCodeMirror = new LiveCodeMirror(
@@ -46,19 +54,25 @@ class TextEditor extends React.Component {
         onConnectionError: this.handleConnectionError,
         onUsersChange: this.handleUsersChange,
         onEvaluateCode: this.handleEvaluateCode,
+        onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
         verbose: true
       }
     );
 
     this.liveCodeMirror.setUsername(userName);
 
-    // FIXME Use path for different documents
-    this.liveCodeMirror.attachDocument("flok", "foo");
+    this.liveCodeMirror.attachDocument("flok", documentId);
 
     this.pubsubClient = new PubSubClient(EVAL_WEBSOCKETS_URL, {
       connect: true,
       reconnect: true
     });
+
+    // Subscribes to messages from targets (e.g. stdout and stderr REPLs)
+    this.pubsubClient.subscribe(`${target}:out`, this.handleMessageTarget);
+
+    // Subscribes to messages directed to ourselves
+    this.pubsubClient.subscribe(userName, this.handleMessageUser);
   }
 
   componentWillUnmount() {
@@ -83,8 +97,21 @@ class TextEditor extends React.Component {
     this.setState({ users });
   };
 
-  handleEvaluateCode = text => {
-    this.evaluateCode(text);
+  handleEvaluateCode = body => {
+    const { userName } = this.state;
+    this.pubsubClient.publish(`${target}:in`, { userName, body });
+  };
+
+  handleEvaluateRemoteCode = (body, userName) => {
+    this.pubsubClient.publish(`${target}:in`, { userName, body });
+  };
+
+  handleMessageTarget = message => {
+    console.log(`[message] target: ${JSON.stringify(message)}`);
+  };
+
+  handleMessageUser = message => {
+    console.log(`[message] user: ${JSON.stringify(message)}`);
   };
 
   toggleUserList = e => {
@@ -92,12 +119,6 @@ class TextEditor extends React.Component {
       showUserList: !prevState.showUserList
     }));
   };
-
-  evaluateCode(code) {
-    console.log(`evaluate code: ${code}`);
-    // FIXME topic should be "target" (default or custom)
-    this.pubsubClient.publish("tidal", { body: code });
-  }
 
   render() {
     const { status, users, showUserList } = this.state;
