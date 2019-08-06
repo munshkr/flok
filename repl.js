@@ -24,13 +24,24 @@ const pubSub = new PubSubClient("ws://localhost:3001", {
 
 const { target } = program;
 
+const buffers = { stdout: "", stderr: "" };
 let lastUserName = null;
+// let outBuffer = "";
+// let errBuffer = "";
 
-const publishMessage = (body, type) => {
-  pubSub.publish(`${target}:out`, { target, type, body });
+const handleData = (data, type) => {
+  // process.stderr.write(data.toString());
 
-  if (lastUserName) {
-    pubSub.publish(lastUserName, { target, type, body });
+  const newBuffer = buffers[type].concat(data.toString());
+  const lines = newBuffer.split("\n");
+
+  buffers[type] = lines.pop();
+
+  if (lines.length > 0) {
+    pubSub.publish(`${target}:out`, { target, type, body: lines });
+    if (lastUserName) {
+      pubSub.publish(lastUserName, { target, type, body: lines });
+    }
   }
 };
 
@@ -39,13 +50,11 @@ const repl = spawn(cmd, cmdArgs);
 
 // Handle stdout and stderr
 repl.stdout.on("data", data => {
-  // process.stdout.write(data.toString());
-  publishMessage(data.toString(), "stdout");
+  handleData(data, "stdout");
 });
 
 repl.stderr.on("data", data => {
-  // process.stderr.write(data.toString());
-  publishMessage(data.toString(), "stderr");
+  handleData(data, "stderr");
 });
 
 repl.on("close", code => {
