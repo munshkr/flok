@@ -5,6 +5,7 @@ import PubSubClient from "../lib/pubsub-client";
 
 import Status from "./Status";
 import UserList from "./UserList";
+import TargetMessagesPane from "./TargetMessagesPane";
 
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/haskell/haskell";
@@ -29,6 +30,8 @@ class TextEditor extends React.Component {
       userName: "anonymous",
       status: "Not connected",
       showUserList: true,
+      showTargetMessagesPane: true,
+      messages: [],
       users: []
     };
   }
@@ -103,11 +106,14 @@ class TextEditor extends React.Component {
   };
 
   handleEvaluateRemoteCode = (body, userName) => {
-    this.pubsubClient.publish(`${target}:in`, { userName, body });
+    // this.pubsubClient.publish(`${target}:in`, { userName, body });
   };
 
   handleMessageTarget = message => {
     console.log(`[message] target: ${JSON.stringify(message)}`);
+    this.setState(prevState => ({
+      messages: [message, ...prevState.messages]
+    }));
   };
 
   handleMessageUser = message => {
@@ -121,7 +127,13 @@ class TextEditor extends React.Component {
   };
 
   render() {
-    const { status, users, showUserList } = this.state;
+    const {
+      status,
+      users,
+      messages,
+      showUserList,
+      showTargetMessagesPane
+    } = this.state;
 
     return (
       <React.Fragment>
@@ -133,6 +145,9 @@ class TextEditor extends React.Component {
           {...this.props}
         />
         {showUserList && <UserList users={users} />}
+        {showTargetMessagesPane && messages && (
+          <TargetMessagesPane messages={messages} />
+        )}
         <style jsx global>
           {`
             .CodeMirror {
