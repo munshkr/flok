@@ -1,21 +1,28 @@
-import dynamic from "next/dynamic";
 import React from "react";
+import Head from "next/head";
+import FlockScene from "../components/FlockScene";
 
-const TextEditor = dynamic(() => import("../components/TextEditor"), {
-  ssr: false
-});
-
-const Home = () => (
+const IndexPage = () => (
   <div>
-    <TextEditor
-      options={{
-        mode: "haskell",
-        theme: "material",
-        lineNumbers: true,
-        scrollbarStyle: "simple"
-      }}
-    />
+    <Head>
+      <title>flok</title>
+    </Head>
+    <h1>flok</h1>
+    <FlockScene />
+    <style jsx>
+      {`
+        body {
+          overflow: hidden;
+        }
+
+        h1 {
+          color: #eee;
+          width: 100%;
+          text-align: center;
+        }
+      `}
+    </style>
   </div>
 );
 
-export default Home;
+export default IndexPage;
