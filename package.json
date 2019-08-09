@@ -19,7 +19,7 @@
     "immutable": "^4.0.0-rc.12",
     "isomorphic-ws": "^4.0.1",
     "lodash": "^4.17.15",
-    "next": "^8.1.0",
+    "next": "^9.0.3",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-codemirror2": "^6.0.0",
