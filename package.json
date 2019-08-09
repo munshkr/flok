@@ -12,6 +12,7 @@
   "dependencies": {
     "@teamwork/websocket-json-stream": "^2.0.0",
     "@zeit/next-css": "^1.0.1",
+    "babel-cli": "^6.26.0",
     "codemirror": "^5.48.0",
     "commander": "^2.20.0",
     "express": "^4.17.1",
