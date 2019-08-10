@@ -17,27 +17,21 @@ import "codemirror/addon/scroll/simplescrollbars";
 import "codemirror/addon/scroll/simplescrollbars.css";
 import "codemirror/addon/selection/mark-selection";
 
-const WEBSOCKETS_URL = `ws://localhost:3000/db`;
-const EVAL_WEBSOCKETS_URL = `ws://localhost:3000/eval`;
-
 // FIXME Should be a state var
 const target = `tidal`;
 
 class TextEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      userName: "anonymous",
-      status: "Not connected",
-      showUserList: true,
-      showTargetMessagesPane: true,
-      messages: [],
-      users: []
-    };
-  }
+  state = {
+    userName: "anonymous",
+    status: "Not connected",
+    showUserList: true,
+    showTargetMessagesPane: true,
+    messages: [],
+    users: []
+  };
 
   componentDidMount() {
-    const { sessionName } = this.props;
+    const { websocketsHost, sessionName } = this.props;
 
     // FIXME Should be a state var
     const userName = window.location.hash
@@ -48,7 +42,7 @@ class TextEditor extends React.Component {
     // const userId = Math.floor(Math.random() * Math.floor(99999));
     this.liveCodeMirror = new LiveCodeMirror(
       this.editor.editor,
-      WEBSOCKETS_URL,
+      `ws://${websocketsHost}/db`,
       {
         userId: userName,
         extraKeys: {
@@ -66,10 +60,9 @@ class TextEditor extends React.Component {
     );
 
     this.liveCodeMirror.setUsername(userName);
-
     this.liveCodeMirror.attachDocument("flok", sessionName);
 
-    this.pubsubClient = new PubSubClient(EVAL_WEBSOCKETS_URL, {
+    this.pubsubClient = new PubSubClient(`ws://${websocketsHost}/eval`, {
       connect: true,
       reconnect: true
     });
@@ -169,6 +162,7 @@ class TextEditor extends React.Component {
 }
 
 TextEditor.propTypes = {
+  websocketsHost: PropTypes.string.isRequired,
   sessionName: PropTypes.string.isRequired
 };
 
