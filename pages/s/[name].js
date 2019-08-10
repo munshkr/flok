@@ -11,14 +11,7 @@ const SessionPage = ({ name }) => (
     <Head>
       <title>{`flok ~ ${name}`}</title>
     </Head>
-    <TextEditor
-      options={{
-        mode: "haskell",
-        theme: "material",
-        lineNumbers: true,
-        scrollbarStyle: "simple"
-      }}
-    />
+    <TextEditor sessionName={name} />
   </div>
 );
 

@@ -18,8 +18,6 @@ import "codemirror/addon/selection/mark-selection";
 const WEBSOCKETS_URL = `ws://localhost:3000/`;
 const EVAL_WEBSOCKETS_URL = `ws://localhost:3001/`;
 
-// FIXME Should be a prop
-const documentId = `foo`;
 // FIXME Should be a state var
 const target = `tidal`;
 
@@ -37,6 +35,8 @@ class TextEditor extends React.Component {
   }
 
   componentDidMount() {
+    const { sessionName } = this.props;
+
     // FIXME Should be a state var
     const userName = window.location.hash
       ? window.location.hash.substring(1)
@@ -64,7 +64,7 @@ class TextEditor extends React.Component {
 
     this.liveCodeMirror.setUsername(userName);
 
-    this.liveCodeMirror.attachDocument("flok", documentId);
+    this.liveCodeMirror.attachDocument("flok", sessionName);
 
     this.pubsubClient = new PubSubClient(EVAL_WEBSOCKETS_URL, {
       connect: true,
@@ -142,7 +142,12 @@ class TextEditor extends React.Component {
           ref={c => {
             this.editor = c;
           }}
-          {...this.props}
+          options={{
+            mode: "haskell",
+            theme: "material",
+            lineNumbers: true,
+            scrollbarStyle: "simple"
+          }}
         />
         {showUserList && <UserList users={users} />}
         {showTargetMessagesPane && messages && (
