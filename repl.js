@@ -7,17 +7,19 @@ program
   .version("0.1.0")
   .option("-t, --target [NAME]", "Use the specified name as target")
   .option("-H, --host [HOST]", "Evaluation WebSockets server host", "localhost")
-  .option("-P, --port [PORT]", "Evaluation WebSockets server port", 3001)
+  .option("-P, --port [PORT]", "Evaluation WebSockets server port", 3000)
+  .option("--path [PATH]", "Evaluation WebSockets server path", "/eval")
   .parse(process.argv);
-
-console.log(`Target: ${program.target}`);
-console.log(`PubSub server: ws://${program.host}:${program.port}`);
-console.log(`Spawn: ${JSON.stringify(program.args)}`);
 
 const cmd = program.args[0];
 const cmdArgs = program.args.slice(1);
+const wsUrl = `ws://${program.host}:${program.port}${program.path}`
 
-const pubSub = new PubSubClient("ws://localhost:3001", {
+console.log(`Target: ${program.target}`);
+console.log(`PubSub server: ${wsUrl}`);
+console.log(`Spawn: ${JSON.stringify(program.args)}`);
+
+const pubSub = new PubSubClient(wsUrl, {
   connect: true,
   reconnect: true
 });
@@ -26,8 +28,6 @@ const { target } = program;
 
 const buffers = { stdout: "", stderr: "" };
 let lastUserName = null;
-// let outBuffer = "";
-// let errBuffer = "";
 
 const handleData = (data, type) => {
   // process.stderr.write(data.toString());

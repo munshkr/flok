@@ -17,8 +17,8 @@ import "codemirror/addon/scroll/simplescrollbars";
 import "codemirror/addon/scroll/simplescrollbars.css";
 import "codemirror/addon/selection/mark-selection";
 
-const WEBSOCKETS_URL = `ws://localhost:3000/`;
-const EVAL_WEBSOCKETS_URL = `ws://localhost:3001/`;
+const WEBSOCKETS_URL = `ws://localhost:3000/db`;
+const EVAL_WEBSOCKETS_URL = `ws://localhost:3000/eval`;
 
 // FIXME Should be a state var
 const target = `tidal`;
