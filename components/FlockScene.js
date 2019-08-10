@@ -283,7 +283,8 @@ const BirdGeometry = function() {
 
   function vertsPush(...args) {
     for (let i = 0; i < args.length; i += 1) {
-      vertices.array[v++] = args[i];
+      vertices.array[v] = args[i];
+      v += 1;
     }
   }
 
@@ -455,6 +456,7 @@ class FlockScene extends React.Component {
 
     const error = this.gpuCompute.init();
     if (error !== null) {
+      // eslint-disable-next-line no-console
       console.error(error);
     }
   }
