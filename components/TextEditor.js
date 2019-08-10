@@ -52,7 +52,8 @@ class TextEditor extends React.Component {
       {
         userId: userName,
         extraKeys: {
-          "Ctrl-Alt-U": this.toggleUserList
+          "Ctrl-Alt-U": this.toggleUserList,
+          "Ctrl-Alt-M": this.toggleTargetMessagesPane
         },
         onConnectionOpen: this.handleConnectionOpen,
         onConnectionClose: this.handleConnectionClose,
@@ -125,6 +126,12 @@ class TextEditor extends React.Component {
   toggleUserList = e => {
     this.setState((prevState, _) => ({
       showUserList: !prevState.showUserList
+    }));
+  };
+
+  toggleTargetMessagesPane = e => {
+    this.setState((prevState, _) => ({
+      showTargetMessagesPane: !prevState.showTargetMessagesPane
     }));
   };
 
