@@ -6,6 +6,7 @@ const PubSubClient = require("./lib/pubsub-client");
 program
   .version("0.1.0")
   .option("-t, --target [NAME]", "Use the specified name as target")
+  .option("--secure", "Use secure connection (wss://)", false)
   .option("-H, --host [HOST]", "Evaluation WebSockets server host", "localhost")
   .option("-P, --port [PORT]", "Evaluation WebSockets server port", 3000)
   .option("--path [PATH]", "Evaluation WebSockets server path", "/eval")
@@ -13,7 +14,9 @@ program
 
 const cmd = program.args[0];
 const cmdArgs = program.args.slice(1);
-const wsUrl = `ws://${program.host}:${program.port}${program.path}`
+
+const wsProtocol = program.secure ? "wss" : "ws";
+const wsUrl = `${wsProtocol}://${program.host}:${program.port}${program.path}`;
 
 console.log(`Target: ${program.target}`);
 console.log(`PubSub server: ${wsUrl}`);
