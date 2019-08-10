@@ -10,8 +10,10 @@
     "start": "NODE_ENV=production babel-node server.js --presets @babel/preset-env"
   },
   "dependencies": {
+    "@babel/core": "^7.5.5",
     "@babel/cli": "^7.5.5",
     "@babel/node": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
     "@teamwork/websocket-json-stream": "^2.0.0",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-sass": "^1.0.1",
@@ -37,8 +39,6 @@
     "ws": "^7.0.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
     "babel-eslint": "^10.0.2",
     "eslint": "^6.0.1",
     "eslint-config-airbnb": "^17.1.0",
