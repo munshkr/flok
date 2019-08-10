@@ -16,6 +16,15 @@ yarn
 yarn start
 ```
 
+### Start REPL for some remote hub
+
+For example, to start a `tidal` target (using the `tidal` command), and connect
+to the main flok hub, run:
+
+```
+./repl.js -t tidal -H flok-hub.herokuapp.com -P 443 --secure -- tidal
+```
+
 ## Acknowledgments
 
 * [Etherpad](https://github.com/ether/etherpad-lite)
