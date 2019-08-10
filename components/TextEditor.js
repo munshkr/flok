@@ -1,6 +1,7 @@
 import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import PropTypes from "prop-types";
+import getConfig from "next/config";
 
 import LiveCodeMirror from "../lib/livecodemirror";
 import PubSubClient from "../lib/pubsub-client";
@@ -16,6 +17,11 @@ import "codemirror/theme/material.css";
 import "codemirror/addon/scroll/simplescrollbars";
 import "codemirror/addon/scroll/simplescrollbars.css";
 import "codemirror/addon/selection/mark-selection";
+
+const { publicRuntimeConfig } = getConfig();
+const { NODE_ENV } = publicRuntimeConfig;
+
+const WS_PROTOCOL = NODE_ENV === "production" ? "wss" : "ws";
 
 // FIXME Should be a state var
 const target = `tidal`;
@@ -40,29 +46,31 @@ class TextEditor extends React.Component {
     this.state.userName = userName;
 
     // const userId = Math.floor(Math.random() * Math.floor(99999));
-    this.liveCodeMirror = new LiveCodeMirror(
-      this.editor.editor,
-      `ws://${websocketsHost}/db`,
-      {
-        userId: userName,
-        extraKeys: {
-          "Ctrl-Alt-U": this.toggleUserList,
-          "Ctrl-Alt-M": this.toggleTargetMessagesPane
-        },
-        onConnectionOpen: this.handleConnectionOpen,
-        onConnectionClose: this.handleConnectionClose,
-        onConnectionError: this.handleConnectionError,
-        onUsersChange: this.handleUsersChange,
-        onEvaluateCode: this.handleEvaluateCode,
-        // onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
-        verbose: true
-      }
-    );
+    const wsDbUrl = `${WS_PROTOCOL}://${websocketsHost}/db`;
+    console.log(`Database WebSocket URL: ${wsDbUrl}`);
+
+    this.liveCodeMirror = new LiveCodeMirror(this.editor.editor, wsDbUrl, {
+      userId: userName,
+      extraKeys: {
+        "Ctrl-Alt-U": this.toggleUserList,
+        "Ctrl-Alt-M": this.toggleTargetMessagesPane
+      },
+      onConnectionOpen: this.handleConnectionOpen,
+      onConnectionClose: this.handleConnectionClose,
+      onConnectionError: this.handleConnectionError,
+      onUsersChange: this.handleUsersChange,
+      onEvaluateCode: this.handleEvaluateCode,
+      // onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
+      verbose: true
+    });
 
     this.liveCodeMirror.setUsername(userName);
     this.liveCodeMirror.attachDocument("flok", sessionName);
 
-    this.pubsubClient = new PubSubClient(`ws://${websocketsHost}/eval`, {
+    const evalWsUrl = `${WS_PROTOCOL}://${websocketsHost}/eval`;
+    console.log(`Evaluation WebSocket URL: ${evalWsUrl}`);
+
+    this.pubsubClient = new PubSubClient(evalWsUrl, {
       connect: true,
       reconnect: true
     });
