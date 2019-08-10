@@ -1,5 +1,23 @@
+@charset "utf-8";
+
+$body-background-color: #101010;
+$body-color: #bbbbbb;
+$strong-color: #cccccc;
+
 @import "../node_modules/bulma/bulma.sass";
+
+html {
+  background-color: $body-background-color;
+}
 
 body {
   overflow: hidden;
+}
+
+.title {
+  color: $strong-color;
+}
+
+.subtitle {
+  color: $body-color;
 }
