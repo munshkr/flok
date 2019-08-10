@@ -8,6 +8,7 @@ $strong-color: #cccccc;
 
 html {
   background-color: $body-background-color;
+  overflow: hidden;
 }
 
 body {
@@ -77,10 +78,20 @@ body {
   font-size: 0.8em;
   height: 50%;
   width: 100%;
-  overflow: hidden;
 
   ol {
     list-style: none;
     padding: 0;
+
+    li {
+      pre {
+        padding: 0;
+        background-color: transparent;
+        color: $body-color;
+      }
+      pre.error {
+        color: $red;
+      }
+    }
   }
 }

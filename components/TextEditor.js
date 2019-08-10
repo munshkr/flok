@@ -1,5 +1,7 @@
 import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
+import PropTypes from "prop-types";
+
 import LiveCodeMirror from "../lib/livecodemirror";
 import PubSubClient from "../lib/pubsub-client";
 
@@ -57,7 +59,7 @@ class TextEditor extends React.Component {
         onConnectionError: this.handleConnectionError,
         onUsersChange: this.handleUsersChange,
         onEvaluateCode: this.handleEvaluateCode,
-        onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
+        // onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
         verbose: true
       }
     );
@@ -105,9 +107,9 @@ class TextEditor extends React.Component {
     this.pubsubClient.publish(`${target}:in`, { userName, body });
   };
 
-  handleEvaluateRemoteCode = (body, userName) => {
-    // this.pubsubClient.publish(`${target}:in`, { userName, body });
-  };
+  // handleEvaluateRemoteCode = (body, userName) => {
+  //   this.pubsubClient.publish(`${target}:in`, { userName, body });
+  // };
 
   handleMessageTarget = message => {
     console.log(`[message] target: ${JSON.stringify(message)}`);
@@ -158,5 +160,9 @@ class TextEditor extends React.Component {
     );
   }
 }
+
+TextEditor.propTypes = {
+  sessionName: PropTypes.string.isRequired
+};
 
 export default TextEditor;

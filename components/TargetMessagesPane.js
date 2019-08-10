@@ -4,9 +4,11 @@ import PropTypes from "prop-types";
 const TargetMessagesPane = ({ messages }) => (
   <div className="target-messages-pane">
     <ol>
-      {messages.map(message => (
-        <li>
-          <pre>{message.body.join("\n").trim()}</pre>
+      {messages.map((message, i) => (
+        <li key={i}>
+          <pre className={message.type === "stderr" ? "error" : ""}>
+            {message.body.join("\n").trim()}
+          </pre>
         </li>
       ))}
     </ol>
