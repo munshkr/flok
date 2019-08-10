@@ -21,3 +21,66 @@ body {
 .subtitle {
   color: $body-color;
 }
+
+.editor .CodeMirror {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+}
+
+.flash-selection {
+  background-color: #ff7;
+  color: #000;
+}
+
+.status {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: transparent;
+  text-align: right;
+  color: #fefefe;
+  z-index: 1000;
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.users-list {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: transparent;
+  font-size: 0.9em;
+  text-align: right;
+  color: #fefefe;
+  z-index: 1000;
+  font-family: monospace;
+  font-style: italic;
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+  }
+}
+
+.target-messages-pane {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: transparent;
+  color: #888;
+  z-index: 1000;
+  font-family: monospace;
+  font-size: 0.8em;
+  height: 50%;
+  width: 100%;
+  overflow: hidden;
+
+  ol {
+    list-style: none;
+    padding: 0;
+  }
+}

@@ -139,6 +139,7 @@ class TextEditor extends React.Component {
       <React.Fragment>
         <Status>{status}</Status>
         <CodeMirror
+          className="editor"
           ref={c => {
             this.editor = c;
           }}
@@ -153,22 +154,6 @@ class TextEditor extends React.Component {
         {showTargetMessagesPane && messages && (
           <TargetMessagesPane messages={messages} />
         )}
-        <style jsx global>
-          {`
-            .CodeMirror {
-              position: absolute;
-              top: 0;
-              bottom: 0;
-              left: 0;
-              right: 0;
-              height: 100%;
-            }
-            .flash-selection {
-              background-color: #ff7;
-              color: #000;
-            }
-          `}
-        </style>
       </React.Fragment>
     );
   }

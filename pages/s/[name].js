@@ -1,18 +1,19 @@
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import React from "react";
+import Layout from "../../components/Layout";
 
 const TextEditor = dynamic(() => import("../../components/TextEditor"), {
   ssr: false
 });
 
 const SessionPage = ({ name }) => (
-  <div>
+  <Layout>
     <Head>
       <title>{`flok ~ ${name}`}</title>
     </Head>
     <TextEditor sessionName={name} />
-  </div>
+  </Layout>
 );
 
 SessionPage.getInitialProps = async ({ query }) => {
