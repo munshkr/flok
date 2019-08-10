@@ -1,28 +1,17 @@
 import React from "react";
-import Head from "next/head";
 import FlockScene from "../components/FlockScene";
+import Layout from "../components/Layout";
 
 const IndexPage = () => (
-  <div>
-    <Head>
-      <title>flok</title>
-    </Head>
-    <h1>flok</h1>
+  <Layout>
+    <section className="section">
+      <div className="container">
+        <h1 className="title">flok</h1>
+        <h3 className="subtitle">collaborative live coding editor</h3>
+      </div>
+    </section>
     <FlockScene />
-    <style jsx>
-      {`
-        body {
-          overflow: hidden;
-        }
-
-        h1 {
-          color: #eee;
-          width: 100%;
-          text-align: center;
-        }
-      `}
-    </style>
-  </div>
+  </Layout>
 );
 
 export default IndexPage;
