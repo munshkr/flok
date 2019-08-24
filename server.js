@@ -36,6 +36,14 @@ function createDoc(callback) {
   fetchOrCreate(connection, "users", {}, callback);
 }
 
+function addClient(uuid) {
+  console.log("Add client", uuid);
+}
+
+function removeClient(uuid) {
+  console.log("Remove client", uuid);
+}
+
 function startServer() {
   nextApp.prepare().then(() => {
     const app = express();
@@ -66,7 +74,11 @@ function startServer() {
     });
 
     // Prepare PubSub WebScoket server (pubsub)
-    const pubSubServer = new PubSub({ wss: pubsubWss });
+    const pubSubServer = new PubSub({
+      wss: pubsubWss,
+      onConnection: addClient,
+      onDisconnection: removeClient
+    });
     // eslint-disable-next-line no-param-reassign
     app.pubsub = pubSubServer;
 
