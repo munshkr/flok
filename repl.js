@@ -41,9 +41,9 @@ const handleData = (data, type) => {
   buffers[type] = lines.pop();
 
   if (lines.length > 0) {
-    pubSub.publish(`${target}:out`, { target, type, body: lines });
+    pubSub.publish(`target:${target}:out`, { target, type, body: lines });
     if (lastUserName) {
-      pubSub.publish(lastUserName, { target, type, body: lines });
+      pubSub.publish(`user:${lastUserName}`, { target, type, body: lines });
     }
   }
 };

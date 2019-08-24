@@ -76,10 +76,13 @@ class TextEditor extends React.Component {
     });
 
     // Subscribes to messages from targets (e.g. stdout and stderr REPLs)
-    this.pubsubClient.subscribe(`${target}:out`, this.handleMessageTarget);
+    this.pubsubClient.subscribe(
+      `target:${target}:out`,
+      this.handleMessageTarget
+    );
 
     // Subscribes to messages directed to ourselves
-    this.pubsubClient.subscribe(userName, this.handleMessageUser);
+    this.pubsubClient.subscribe(`user:${userName}`, this.handleMessageUser);
   }
 
   componentWillUnmount() {
@@ -106,11 +109,11 @@ class TextEditor extends React.Component {
 
   handleEvaluateCode = body => {
     const { userName } = this.state;
-    this.pubsubClient.publish(`${target}:in`, { userName, body });
+    this.pubsubClient.publish(`target:${target}:in`, { userName, body });
   };
 
   // handleEvaluateRemoteCode = (body, userName) => {
-  //   this.pubsubClient.publish(`${target}:in`, { userName, body });
+  //   this.pubsubClient.publish(`target:${target}:in`, { userName, body });
   // };
 
   handleMessageTarget = message => {
