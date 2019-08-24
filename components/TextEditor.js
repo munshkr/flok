@@ -67,10 +67,10 @@ class TextEditor extends React.Component {
     this.liveCodeMirror.setUsername(userName);
     this.liveCodeMirror.attachDocument("flok", sessionName);
 
-    const evalWsUrl = `${WS_PROTOCOL}://${websocketsHost}/eval`;
-    console.log(`Evaluation WebSocket URL: ${evalWsUrl}`);
+    const pubsubWsUrl = `${WS_PROTOCOL}://${websocketsHost}/pubsub`;
+    console.log(`Pub/Sub WebSocket URL: ${pubsubWsUrl}`);
 
-    this.pubsubClient = new PubSubClient(evalWsUrl, {
+    this.pubsubClient = new PubSubClient(pubsubWsUrl, {
       connect: true,
       reconnect: true
     });

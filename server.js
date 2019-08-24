@@ -18,22 +18,29 @@ const backend = new ShareDB({
   disableSpaceDelimitedActions: true
 });
 
-// Create initial document then fire callback
-function createDoc(callback) {
-  const connection = backend.connect();
-  const doc = connection.get("flok", "foo");
-
+function fetchOrCreate(connection, documentId, defaultValue, callback) {
+  const doc = connection.get("flok", documentId);
   doc.fetch(err => {
     if (err) throw err;
+    if (doc.type === null) {
+      doc.create(defaultValue, callback);
+      return;
+    }
     callback();
   });
+}
+
+// Create initial documents
+function createDoc(callback) {
+  const connection = backend.connect();
+  fetchOrCreate(connection, "users", {}, callback);
 }
 
 function startServer() {
   nextApp.prepare().then(() => {
     const app = express();
     const wss = new WebSocket.Server({ noServer: true });
-    const evalWss = new WebSocket.Server({ noServer: true });
+    const pubsubWss = new WebSocket.Server({ noServer: true });
     const server = http.createServer(app);
 
     server.on("upgrade", (request, socket, head) => {
@@ -43,9 +50,9 @@ function startServer() {
         wss.handleUpgrade(request, socket, head, ws => {
           wss.emit("connection", ws);
         });
-      } else if (pathname === "/eval") {
-        evalWss.handleUpgrade(request, socket, head, ws => {
-          evalWss.emit("connection", ws);
+      } else if (pathname === "/pubsub") {
+        pubsubWss.handleUpgrade(request, socket, head, ws => {
+          pubsubWss.emit("connection", ws);
         });
       } else {
         socket.destroy();
@@ -58,8 +65,8 @@ function startServer() {
       backend.listen(stream);
     });
 
-    // Prepare evaluation WebScoket server (pubsub)
-    const pubSubServer = new PubSub({ wss: evalWss });
+    // Prepare PubSub WebScoket server (pubsub)
+    const pubSubServer = new PubSub({ wss: pubsubWss });
     // eslint-disable-next-line no-param-reassign
     app.pubsub = pubSubServer;
 
