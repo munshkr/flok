@@ -72,7 +72,10 @@ class TextEditor extends React.Component {
 
     this.pubsubClient = new PubSubClient(pubsubWsUrl, {
       connect: true,
-      reconnect: true
+      reconnect: true,
+      onIdMessage: id => {
+        console.log(`My id is ${id}`);
+      }
     });
 
     // Subscribes to messages from targets (e.g. stdout and stderr REPLs)
