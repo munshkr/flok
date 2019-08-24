@@ -38,34 +38,10 @@ class TextEditor extends React.Component {
 
   componentDidMount() {
     const { websocketsHost, sessionName } = this.props;
+    const { userName } = this.state;
 
-    // FIXME Should be a state var
-    const userName = window.location.hash
-      ? window.location.hash.substring(1)
-      : "anonymous";
-    this.state.userName = userName;
-
-    // const userId = Math.floor(Math.random() * Math.floor(99999));
     const wsDbUrl = `${WS_PROTOCOL}://${websocketsHost}/db`;
     console.log(`Database WebSocket URL: ${wsDbUrl}`);
-
-    this.liveCodeMirror = new LiveCodeMirror(this.editor.editor, wsDbUrl, {
-      userId: userName,
-      extraKeys: {
-        "Ctrl-Alt-U": this.toggleUserList,
-        "Ctrl-Alt-M": this.toggleTargetMessagesPane
-      },
-      onConnectionOpen: this.handleConnectionOpen,
-      onConnectionClose: this.handleConnectionClose,
-      onConnectionError: this.handleConnectionError,
-      onUsersChange: this.handleUsersChange,
-      onEvaluateCode: this.handleEvaluateCode,
-      // onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
-      verbose: true
-    });
-
-    this.liveCodeMirror.setUsername(userName);
-    this.liveCodeMirror.attachDocument("flok", sessionName);
 
     const pubsubWsUrl = `${WS_PROTOCOL}://${websocketsHost}/pubsub`;
     console.log(`Pub/Sub WebSocket URL: ${pubsubWsUrl}`);
@@ -73,8 +49,31 @@ class TextEditor extends React.Component {
     this.pubsubClient = new PubSubClient(pubsubWsUrl, {
       connect: true,
       reconnect: true,
-      onIdMessage: id => {
-        console.log(`My id is ${id}`);
+      onMeMessage: clientId => {
+        this.liveCodeMirror = new LiveCodeMirror(this.editor.editor, wsDbUrl, {
+          userId: clientId,
+          extraKeys: {
+            "Ctrl-Alt-U": this.toggleUserList,
+            "Ctrl-Alt-M": this.toggleTargetMessagesPane
+          },
+          onConnectionOpen: this.handleConnectionOpen,
+          onConnectionClose: this.handleConnectionClose,
+          onConnectionError: this.handleConnectionError,
+          onUsersChange: this.handleUsersChange,
+          onEvaluateCode: this.handleEvaluateCode,
+          // onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
+          verbose: true
+        });
+
+        this.liveCodeMirror.attachDocument("flok", sessionName);
+        this.liveCodeMirror.setUsername(userName);
+
+        // Subscribes to messages directed to ourselves
+        this.pubsubClient.subscribe(`user:${clientId}`, this.handleMessageUser);
+      },
+      onClose: () => {
+        this.liveCodeMirror.detachDocument();
+        this.liveCodeMirror = null;
       }
     });
 
@@ -83,9 +82,16 @@ class TextEditor extends React.Component {
       `target:${target}:out`,
       this.handleMessageTarget
     );
+  }
 
-    // Subscribes to messages directed to ourselves
-    this.pubsubClient.subscribe(`user:${userName}`, this.handleMessageUser);
+  componentDidUpdate(_prevProps, prevState, _snapshot) {
+    if (this.liveCodeMirror) {
+      const { userName } = this.state;
+      if (prevState.userName !== userName) {
+        console.log(`Change username to '${userName}'`);
+        this.liveCodeMirror.setUsername(userName);
+      }
+    }
   }
 
   componentWillUnmount() {
