@@ -10,8 +10,8 @@
     "start": "NODE_ENV=production babel-node server.js --presets @babel/preset-env"
   },
   "dependencies": {
-    "@babel/core": "^7.5.5",
     "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
     "@babel/node": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "@teamwork/websocket-json-stream": "^2.0.0",
