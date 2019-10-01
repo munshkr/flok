@@ -5,7 +5,7 @@ const PubSubClient = require("./lib/pubsub-client");
 
 program
   .version("0.1.0")
-  .option("-t, --target [NAME]", "Use the specified name as target")
+  .option("-t, --target [NAME]", "Use the specified name as target", "default")
   .option("--secure", "Use secure connection (wss://)", false)
   .option("-H, --host [HOST]", "Evaluation WebSockets server host", "localhost")
   .option("-P, --port [PORT]", "Evaluation WebSockets server port", 3000)

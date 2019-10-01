@@ -24,7 +24,7 @@ const { NODE_ENV } = publicRuntimeConfig;
 const WS_PROTOCOL = NODE_ENV === "production" ? "wss" : "ws";
 
 // FIXME Should be a state var
-const target = `tidal`;
+const target = `default`;
 
 class TextEditor extends React.Component {
   state = {
