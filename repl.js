@@ -9,7 +9,7 @@ program
   .option("--secure", "Use secure connection (wss://)", false)
   .option("-H, --host [HOST]", "Evaluation WebSockets server host", "localhost")
   .option("-P, --port [PORT]", "Evaluation WebSockets server port", 3000)
-  .option("--path [PATH]", "Evaluation WebSockets server path", "/eval")
+  .option("--path [PATH]", "Evaluation WebSockets server path", "/pubsub")
   .parse(process.argv);
 
 const cmd = program.args[0];
