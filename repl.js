@@ -65,7 +65,7 @@ repl.on("close", code => {
 });
 
 // Subscribe to pub sub
-pubSub.subscribe(`${target}:in`, message => {
+pubSub.subscribe(`target:${target}:in`, message => {
   const { body, userName } = message;
   const text = `${body.trim()}\n`;
 
