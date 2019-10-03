@@ -7,6 +7,7 @@ import WebSocket from "ws";
 import WebSocketJSONStream from "@teamwork/websocket-json-stream";
 import PubSub from "./lib/pubsub";
 
+const host = process.env.HOST || '127.0.0.1';
 const port = parseInt(process.env.PORT, 10) || 3000;
 
 const dev = process.env.NODE_ENV !== "production";
@@ -71,6 +72,6 @@ nextApp.prepare().then(() => {
   server.listen(port, err => {
     if (err) throw err;
     // eslint-disable-next-line no-console
-    console.log(`> Ready on http://localhost:${port}`);
+    console.log(`> Ready on http://${host}:${port}`);
   });
 });
