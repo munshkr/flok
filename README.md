@@ -70,6 +70,12 @@ that hub, you should run repl.js with SSL enabled.  For example, to start a
 ./repl.js -H flok-hub.herokuapp.com -P 443 --secure -- tidal
 ```
 
+**Note**: Usually to start the TidalCycles interpreter, you have to run GHCI with
+some options and a bootstrap script, but you can use this [wrapper
+script](https://gist.github.com/munshkr/4cf8745a4983f3cd361826978481bd74) to
+simplify this process and use it with flok (Linux and macOS only, for now).
+Follow the instructions there.
+
 
 ## Acknowledgments
 
