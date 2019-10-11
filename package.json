@@ -8,7 +8,7 @@
     "dev": "babel-node server.js --presets @babel/preset-env",
     "build": "next build",
     "start": "NODE_ENV=production babel-node server.js --presets @babel/preset-env",
-    "heroku-prebuild": "npm install sharedb-mongo"
+    "heroku-prebuild": "yarn add sharedb-mongo"
   },
   "dependencies": {
     "@babel/cli": "^7.5.5",
