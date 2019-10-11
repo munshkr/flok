@@ -5863,6 +5863,11 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.10.2.tgz#984120fd4d16800e9a738208ab1fba422d23b5ab"
   integrity sha512-INBT1QEgtcCCgvccr5/86CfD71fw9EPmDxgiJX4I2Ddr6ZsV6iFXsuby+qWJPtmNuMY0zByTsG4468P7nHuNWA==
 
+react-router-static@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-router-static/-/react-router-static-1.0.0.tgz#ec1ba3d31d88f6a975441412c20167c3007174f6"
+  integrity sha512-6VPHFny/2AlYRFeDQOxlmk296MKyFEgOp7ExQxAuD/EzTAnHL4hzVKpOAfswWeE6txuuvcNo4BVi3av9s0YIPA==
+
 react@^16.10.2:
   version "16.10.2"
   resolved "https://registry.yarnpkg.com/react/-/react-16.10.2.tgz#a5ede5cdd5c536f745173c8da47bda64797a4cf0"
