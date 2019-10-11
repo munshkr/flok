@@ -10,7 +10,12 @@ const DEFAULT_HOST = "flok-hub.herokuapp.com";
 const DEFAULT_PORT = 443;
 const DEFAULT_REPL = "tidal";
 
-const KNOWN_REPLS = ["tidal", "sclang", "foxdot"];
+const KNOWN_REPLS = [
+  // "tidal",
+  "sclang"
+  // "foxdot"
+];
+
 const REPLS = {
   tidal: { name: "TidalCycles" },
   sclang: { name: "SuperCollider" },
