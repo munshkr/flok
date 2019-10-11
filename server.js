@@ -14,10 +14,17 @@ const dev = process.env.NODE_ENV !== "production";
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
-const backend = new ShareDB({
+let backendOptions = {
   disableDocAction: true,
   disableSpaceDelimitedActions: true
-});
+};
+
+if (process.env.MONGODB_URI) {
+  const db = require('sharedb-mongo')(process.env.MONGODB_URI);
+  backendOptions = { ...backendOptions, db };
+}
+
+const backend = new ShareDB(backendOptions);
 
 function addClient(uuid) {
   console.log("[pubsub] Add client", uuid);
