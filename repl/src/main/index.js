@@ -6,6 +6,7 @@
 import { app, ipcMain, BrowserWindow } from "electron";
 import * as path from "path";
 import { format as formatUrl } from "url";
+import { createREPLFor } from "./repl";
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -16,7 +17,7 @@ function createMainWindow() {
   const window = new BrowserWindow({
     webPreferences: { nodeIntegration: true },
     width: 400,
-    height: 285,
+    height: 310,
     frame: false,
     resizable: true
   });
@@ -73,6 +74,19 @@ app.on("ready", () => {
   mainWindow = createMainWindow();
 });
 
-ipcMain.on("start-repl", (_evt, msg) =>
-  console.log(`Start REPL: ${JSON.stringify(msg)}`)
-);
+ipcMain.on("start-repl", (event, msg) => {
+  console.log(`Start REPL: ${JSON.stringify(msg)}`);
+
+  const { host, port, secure } = msg;
+  const repl = createREPLFor(msg.repl, {
+    target: "default",
+    host,
+    port,
+    secure
+  });
+  repl.start();
+
+  repl.emitter.on("data", (type, data) => {
+    event.reply("data", { type, data });
+  });
+});

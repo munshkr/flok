@@ -9,12 +9,9 @@ const { BrowserWindow } = remote;
 const DEFAULT_HOST = "flok-hub.herokuapp.com";
 const DEFAULT_PORT = 443;
 const DEFAULT_REPL = "tidal";
+const DEFAULT_SECURE = true;
 
-const KNOWN_REPLS = [
-  // "tidal",
-  "sclang"
-  // "foxdot"
-];
+const KNOWN_REPLS = ["tidal", "sclang", "foxdot"];
 
 const REPLS = {
   tidal: { name: "TidalCycles" },
@@ -29,20 +26,27 @@ class App extends React.Component {
     this.state = {
       host: DEFAULT_HOST,
       port: DEFAULT_PORT,
+      secure: DEFAULT_SECURE,
       repl: DEFAULT_REPL,
       starting: false
     };
 
     this.replWindows = {};
 
-    this.onChange = this.onChange.bind(this);
+    this.onTextChange = this.onTextChange.bind(this);
+    this.onCheckboxChange = this.onCheckboxChange.bind(this);
     this.onClose = this.onClose.bind(this);
     this.onStart = this.onStart.bind(this);
   }
 
-  onChange(e) {
+  onTextChange(e) {
     const { id, value } = e.target;
     this.setState({ [id]: value });
+  }
+
+  onCheckboxChange(e) {
+    const { id, checked } = e.target;
+    this.setState({ [id]: checked });
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -84,10 +88,13 @@ class App extends React.Component {
     });
 
     ipcRenderer.send("start-repl", this.state);
+    ipcRenderer.on("data", (_event, arg) => {
+      console.log("data", arg);
+    });
   }
 
   render() {
-    const { host, port, repl, starting } = this.state;
+    const { host, port, secure, repl, starting } = this.state;
 
     return (
       <div>
@@ -99,7 +106,7 @@ class App extends React.Component {
               id="host"
               type="text"
               value={host}
-              onChange={this.onChange}
+              onChange={this.onTextChange}
             />
           </label>
 
@@ -109,13 +116,23 @@ class App extends React.Component {
               id="port"
               type="text"
               value={port}
-              onChange={this.onChange}
+              onChange={this.onTextChange}
+            />
+          </label>
+
+          <label htmlFor="secure">
+            Secure?
+            <input
+              id="secure"
+              type="checkbox"
+              checked={secure}
+              onChange={this.onCheckboxChange}
             />
           </label>
 
           <label htmlFor="repl">
             REPL
-            <select id="repl" defaultValue={repl} onChange={this.onChange}>
+            <select id="repl" defaultValue={repl} onChange={this.onTextChange}>
               {KNOWN_REPLS.map(key => (
                 <option key={key} value={key}>
                   {REPLS[key].name}
