@@ -4,9 +4,22 @@
 "use strict";
 
 import { app, ipcMain, BrowserWindow } from "electron";
+import process from "process";
+import shellPath from "shell-path";
 import * as path from "path";
 import { format as formatUrl } from "url";
 import { createREPLFor } from "./repl";
+
+if (process.platform === "darwin") {
+  process.env.PATH =
+    shellPath.sync() ||
+    [
+      "./node_modules/.bin",
+      "/.nodebrew/current/bin",
+      "/usr/local/bin",
+      process.env.PATH
+    ].join(":");
+}
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -16,9 +29,10 @@ let mainWindow;
 function createMainWindow() {
   const window = new BrowserWindow({
     webPreferences: { nodeIntegration: true },
+    title: "flok REPL",
     width: 800,
     height: 600,
-    frame: false,
+    frame: true,
     resizable: true
   });
 

@@ -23,7 +23,7 @@ class REPL {
 
   start() {
     // Spawn process
-    this.repl = spawn(this.command, this.args);
+    this.repl = spawn(this.command, this.args, { shell: true });
 
     // Handle stdout and stderr
     this.repl.stdout.on("data", data => {
@@ -100,13 +100,17 @@ class REPL {
 
 class TidalREPL extends REPL {
   constructor(ctx) {
-    super({ ...ctx, command: "tidal" });
+    super({ ...ctx, command: TidalREPL.getCommand() });
   }
 
   prepare(body) {
     let newBody = super.prepare(body);
     newBody = `:{${newBody}:}`;
     return newBody;
+  }
+
+  static getCommand() {
+    return "tidal";
   }
 }
 
