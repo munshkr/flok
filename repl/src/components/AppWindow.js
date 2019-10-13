@@ -2,14 +2,11 @@
 import React from "react";
 import { remote, ipcRenderer } from "electron";
 
-const isDevelopment = process.env.NODE_ENV !== "production";
-
-const { BrowserWindow } = remote;
-
-const DEFAULT_HOST = "flok-hub.herokuapp.com";
-const DEFAULT_PORT = 443;
-const DEFAULT_REPL = "tidal";
-const DEFAULT_SECURE = true;
+const KNOWN_HUBS = [
+  "wss://flok-hub.herokuapp.com",
+  "wss://flok.rlab.be",
+  "ws://localhost:3000"
+];
 
 const KNOWN_REPLS = ["tidal", "sclang", "foxdot"];
 
@@ -19,34 +16,32 @@ const REPLS = {
   foxdot: { name: "FoxDot" }
 };
 
-class App extends React.Component {
+const DEFAULT_HUB = KNOWN_HUBS[0];
+const DEFAULT_REPL = "tidal";
+
+// const Log = ({ log }) => <pre>{log}</pre>;
+
+class AppWindow extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      host: DEFAULT_HOST,
-      port: DEFAULT_PORT,
-      secure: DEFAULT_SECURE,
+      hub: DEFAULT_HUB,
       repl: DEFAULT_REPL,
-      starting: false
+      replData: {}
     };
 
     this.replWindows = {};
 
     this.onTextChange = this.onTextChange.bind(this);
-    this.onCheckboxChange = this.onCheckboxChange.bind(this);
-    this.onClose = this.onClose.bind(this);
     this.onStart = this.onStart.bind(this);
+
+    this._setDataHandler();
   }
 
   onTextChange(e) {
     const { id, value } = e.target;
     this.setState({ [id]: value });
-  }
-
-  onCheckboxChange(e) {
-    const { id, checked } = e.target;
-    this.setState({ [id]: checked });
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -56,104 +51,77 @@ class App extends React.Component {
   }
 
   onStart() {
-    this.setState({ starting: true });
+    const { hub, repl } = this.state;
 
-    const replWindow = new BrowserWindow({
-      webPreferences: { nodeIntegration: true },
-      parent: remote.getCurrentWindow(),
-      width: 640,
-      height: 480,
-      frame: false,
-      show: false
-    });
+    // For now we'll use the repl id as target id
+    const target = repl;
 
-    const id = this.replWindows.length;
-    this.replWindows[id] = replWindow;
+    ipcRenderer.send("start-repl", { hub, repl, target });
+  }
 
-    if (isDevelopment) {
-      replWindow.loadURL(
-        `http://localhost:${process.env.ELECTRON_WEBPACK_WDS_PORT}?route=repl`
-      );
-    } else {
-      replWindow.loadURL(`file://${__dirname}/index.html?route=repl`);
-    }
+  _setDataHandler() {
+    ipcRenderer.on("data", (_event, data) => {
+      console.log("data", data);
+      const { target, _type, lines } = data;
 
-    replWindow.once("ready-to-show", () => {
-      replWindow.show();
-      this.setState({ starting: false });
-    });
+      this.setState((prevState, _props) => {
+        const { replData } = prevState;
 
-    replWindow.on("closed", () => {
-      delete this.replWindows[id];
-    });
+        if (!replData[target]) {
+          replData[target] = [];
+        }
 
-    ipcRenderer.send("start-repl", this.state);
-    ipcRenderer.on("data", (_event, arg) => {
-      console.log("data", arg);
+        replData[target] = [...replData[target], ...lines];
+
+        return { replData };
+      });
     });
   }
 
   render() {
-    const { host, port, secure, repl, starting } = this.state;
+    const { hub, repl, replData } = this.state;
 
     return (
       <div>
         <h1>flok REPL</h1>
-        <form>
-          <label htmlFor="host">
-            Host
-            <input
-              id="host"
-              type="text"
-              value={host}
-              onChange={this.onTextChange}
-            />
-          </label>
+        <div className="toolbar">
+          <form>
+            <label htmlFor="hub">
+              Hub
+              <select id="hub" defaultValue={hub} onChange={this.onTextChange}>
+                {KNOWN_HUBS.map(url => (
+                  <option key={url} value={url}>
+                    {url}
+                  </option>
+                ))}
+                {/* <option>Custom...</option> */}
+              </select>
+            </label>
 
-          <label htmlFor="port">
-            Port
-            <input
-              id="port"
-              type="text"
-              value={port}
-              onChange={this.onTextChange}
-            />
-          </label>
+            <label htmlFor="repl">
+              REPL
+              <select
+                id="repl"
+                defaultValue={repl}
+                onChange={this.onTextChange}
+              >
+                {KNOWN_REPLS.map(key => (
+                  <option key={key} value={key}>
+                    {REPLS[key].name}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-          <label htmlFor="secure">
-            Secure?
-            <input
-              id="secure"
-              type="checkbox"
-              checked={secure}
-              onChange={this.onCheckboxChange}
-            />
-          </label>
-
-          <label htmlFor="repl">
-            REPL
-            <select id="repl" defaultValue={repl} onChange={this.onTextChange}>
-              {KNOWN_REPLS.map(key => (
-                <option key={key} value={key}>
-                  {REPLS[key].name}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <div className="buttons">
-            <input
-              type="button"
-              value="Start"
-              onClick={this.onStart}
-              disabled={starting}
-            />
-            <input type="button" value="Close" onClick={this.onClose} />
-          </div>
-        </form>
+            <input type="button" value="Start" onClick={this.onStart} />
+          </form>
+        </div>
+        <div className="log">
+          <pre>{JSON.stringify(replData, null, " ")}</pre>
+        </div>
       </div>
     );
   }
 }
 
-export default App;
+export default AppWindow;

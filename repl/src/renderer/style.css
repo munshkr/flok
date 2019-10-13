@@ -1,12 +1,14 @@
-body {
+* {
   font-family: "input_mono_regular", courier, monospace;
+}
+
+body {
   font-size: 16px;
   transition: background 500ms;
   overflow: hidden;
   background-color: #111;
   color: #eee;
   margin: 16px;
-  width: 400px;
 }
 
 *:focus {
@@ -15,10 +17,10 @@ body {
 
 input,
 select {
+  font-size: 16px;
   background-color: #222;
   color: #ddd;
   border: 0;
-  font-size: 20px;
   margin: 6px;
   padding: 6px;
 }
@@ -41,5 +43,11 @@ input[type="button"]:active {
 }
 
 .buttons input {
-  width: 172px;
+  width: 120px;
+}
+
+.log {
+  height: auto;
+  overflow: scroll;
+  /*overflow-y: none;*/
 }

@@ -4,16 +4,15 @@ const PubSubClient = require("../../../lib/pubsub-client");
 
 class REPL {
   constructor(ctx) {
-    const { command, args, target, wsHost, wsPort, secure, pubSubPath } = ctx;
+    const { command, args, target, hub, pubSubPath } = ctx;
 
     this.command = command;
     this.args = args;
-    this.target = target || "default";
 
-    this.wsHost = wsHost || "localhost";
-    this.wsPort = wsPort || 3000;
-    this.secure = secure || false;
+    this.target = target || "default";
+    this.hub = hub || "ws://localhost:3000";
     this.pubSubPath = pubSubPath || "/pubsub";
+
     this.emitter = new EventEmitter();
 
     this._connectToPubSubServer();
@@ -63,8 +62,7 @@ class REPL {
   }
 
   _connectToPubSubServer() {
-    const wsProtocol = this.secure ? "wss" : "ws";
-    const wsUrl = `${wsProtocol}://${this.wsHost}:${this.wsPort}${this.pubSubPath}`;
+    const wsUrl = `${this.hub}${this.pubSubPath}`;
 
     console.log(wsUrl);
     this.pubSub = new PubSubClient(wsUrl, {
@@ -118,25 +116,12 @@ const replClasses = {
 };
 
 export function createREPLFor(repl, ctx) {
-  const { target, host, port, secure } = ctx;
-
   if (replClasses[repl]) {
-    return new replClasses[repl]({
-      target,
-      wsHost: host,
-      wsPort: port,
-      secure
-    });
+    return new replClasses[repl](ctx);
   }
 
   const replClass = replClasses.default;
-  return new replClass({
-    target,
-    command: repl,
-    wsHost: host,
-    wsPort: port,
-    secure
-  });
+  return new replClass({ ...ctx, command: repl });
 }
 
 export default REPL;

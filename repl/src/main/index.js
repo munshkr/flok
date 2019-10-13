@@ -16,8 +16,8 @@ let mainWindow;
 function createMainWindow() {
   const window = new BrowserWindow({
     webPreferences: { nodeIntegration: true },
-    width: 400,
-    height: 310,
+    width: 800,
+    height: 600,
     frame: false,
     resizable: true
   });
@@ -77,16 +77,11 @@ app.on("ready", () => {
 ipcMain.on("start-repl", (event, msg) => {
   console.log(`Start REPL: ${JSON.stringify(msg)}`);
 
-  const { host, port, secure } = msg;
-  const repl = createREPLFor(msg.repl, {
-    target: "default",
-    host,
-    port,
-    secure
-  });
-  repl.start();
+  const { hub, repl, target } = msg;
+  const replClient = createREPLFor(repl, { target, hub });
+  replClient.start();
 
-  repl.emitter.on("data", (type, data) => {
-    event.reply("data", { type, data });
+  replClient.emitter.on("data", data => {
+    event.reply("data", { target, ...data });
   });
 });
