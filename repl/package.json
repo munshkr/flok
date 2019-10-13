@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
+  "productName": "flok-repl",
   "repository": {
     "type": "git",
     "url": "git@github.com:munshkr/flok.git"
