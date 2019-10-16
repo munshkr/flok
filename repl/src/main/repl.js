@@ -100,17 +100,13 @@ class REPL {
 
 class TidalREPL extends REPL {
   constructor(ctx) {
-    super({ ...ctx, command: TidalREPL.getCommand() });
+    super({ ...ctx, command: "tidal" });
   }
 
   prepare(body) {
     let newBody = super.prepare(body);
-    newBody = `:{${newBody}:}`;
+    newBody = `:{ ${newBody} :}`;
     return newBody;
-  }
-
-  static getCommand() {
-    return "tidal";
   }
 }
 
