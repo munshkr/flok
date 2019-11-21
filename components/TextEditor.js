@@ -9,6 +9,7 @@ import PubSubClient from "../lib/pubsub-client";
 import Status from "./Status";
 import UserList from "./UserList";
 import TargetMessagesPane from "./TargetMessagesPane";
+import TargetSelect from "./TargetSelect";
 
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/haskell/haskell";
@@ -23,8 +24,7 @@ const { NODE_ENV } = publicRuntimeConfig;
 
 const WS_PROTOCOL = NODE_ENV === "production" ? "wss" : "ws";
 
-// FIXME Should be a state var
-const target = `default`;
+const TARGETS = ["default", "tidal", "sclang", "foxdot"];
 
 class TextEditor extends React.Component {
   state = {
@@ -33,12 +33,13 @@ class TextEditor extends React.Component {
     showUserList: true,
     showTargetMessagesPane: true,
     messages: [],
-    users: []
+    users: [],
+    target: "default"
   };
 
   componentDidMount() {
     const { websocketsHost, sessionName } = this.props;
-    const { userName } = this.state;
+    const { userName, target } = this.state;
 
     const wsDbUrl = `${WS_PROTOCOL}://${websocketsHost}/db`;
     console.log(`Database WebSocket URL: ${wsDbUrl}`);
@@ -117,7 +118,7 @@ class TextEditor extends React.Component {
   };
 
   handleEvaluateCode = body => {
-    const { userName } = this.state;
+    const { userName, target } = this.state;
     this.pubsubClient.publish(`target:${target}:in`, { userName, body });
   };
 
@@ -134,6 +135,10 @@ class TextEditor extends React.Component {
 
   handleMessageUser = message => {
     console.log(`[message] user: ${JSON.stringify(message)}`);
+  };
+
+  handleTargetSelectChange = e => {
+    this.setState({ target: e.target.value });
   };
 
   toggleUserList = e => {
@@ -153,6 +158,7 @@ class TextEditor extends React.Component {
       status,
       users,
       messages,
+      target,
       showUserList,
       showTargetMessagesPane
     } = this.state;
@@ -173,6 +179,11 @@ class TextEditor extends React.Component {
           }}
         />
         {showUserList && <UserList users={users} />}
+        <TargetSelect
+          value={target}
+          options={TARGETS}
+          onChange={this.handleTargetSelectChange}
+        />
         {showTargetMessagesPane && messages && (
           <TargetMessagesPane messages={messages} />
         )}

@@ -67,6 +67,13 @@ body {
   }
 }
 
+.target-select {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 1001;
+}
+
 .target-messages-pane {
   position: absolute;
   bottom: 0;
