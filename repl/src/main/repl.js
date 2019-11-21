@@ -1,13 +1,13 @@
-const { spawn } = require("child_process");
+const { spawn, execSync } = require("child_process");
 const EventEmitter = require("events");
+const path = require("path");
 const PubSubClient = require("../../../lib/pubsub-client");
 
 class REPL {
   constructor(ctx) {
-    const { command, args, target, hub, pubSubPath } = ctx;
+    const { command, target, hub, pubSubPath } = ctx;
 
     this.command = command;
-    this.args = args;
 
     this.target = target || "default";
     this.hub = hub || "ws://localhost:3000";
@@ -21,9 +21,15 @@ class REPL {
     this._lastUserName = null;
   }
 
+  // eslint-disable-next-line class-methods-use-this
   start() {
     // Spawn process
-    this.repl = spawn(this.command, this.args, { shell: true });
+    const parts = this.command.split(" ");
+
+    const cmd = parts[0];
+    const args = parts.slice(1);
+    console.log(`Spawn ${cmd} with args ${args}`);
+    this.repl = spawn(cmd, args, { shell: true });
 
     // Handle stdout and stderr
     this.repl.stdout.on("data", data => {
@@ -100,13 +106,42 @@ class REPL {
 
 class TidalREPL extends REPL {
   constructor(ctx) {
-    super({ ...ctx, command: "tidal" });
+    super({
+      ...ctx,
+      command: `${TidalREPL.commandPath(
+        "ghci"
+      )} -ghci-script ${TidalREPL.defaultBootScript()}`
+    });
   }
 
   prepare(body) {
     let newBody = super.prepare(body);
-    newBody = `:{ ${newBody} :}`;
+    newBody = `:{\n${newBody}\n:}`;
     return newBody;
+  }
+
+  static defaultBootScript() {
+    return path.join(TidalREPL.dataDir(), "BootTidal.hs");
+  }
+
+  static dataDir() {
+    try {
+      const dataDir = execSync(
+        `${TidalREPL.commandPath("ghc-pkg")} field tidal data-dir`
+      )
+        .toString()
+        .trim();
+
+      return dataDir.substring(dataDir.indexOf(" ") + 1);
+    } catch (err) {
+      console.error(`Error get tidal data-dir: ${err}`);
+      return "";
+    }
+  }
+
+  static commandPath(cmd) {
+    // TODO Make it work without stack (configuration setting)
+    return `stack exec -- ${cmd}`;
   }
 }
 
