@@ -18,6 +18,7 @@
   "dependencies": {
     "@babel/preset-react": "^7.6.3",
     "bufferutil": "^4.0.1",
+    "command-exists": "^1.2.8",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-router-static": "^1.0.0",
