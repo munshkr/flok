@@ -2,6 +2,7 @@ const { spawn, execSync } = require("child_process");
 const EventEmitter = require("events");
 const path = require("path");
 const PubSubClient = require("../../../lib/pubsub-client");
+const commandExistsSync = require("command-exists").sync;
 
 class REPL {
   constructor(ctx) {
@@ -140,8 +141,10 @@ class TidalREPL extends REPL {
   }
 
   static commandPath(cmd) {
-    // TODO Make it work without stack (configuration setting)
-    return `stack exec -- ${cmd}`;
+    if (commandExistsSync("stack")) {
+      return `stack exec -- ${cmd}`;
+    }
+    return cmd;
   }
 }
 
