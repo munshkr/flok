@@ -4,7 +4,6 @@
 "use strict";
 
 import { app, ipcMain, BrowserWindow } from "electron";
-import process from "process";
 import shellPath from "shell-path";
 import * as path from "path";
 import { format as formatUrl } from "url";
