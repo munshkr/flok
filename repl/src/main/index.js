@@ -31,7 +31,7 @@ function createMainWindow() {
     title: "flok REPL",
     width: 800,
     height: 600,
-    frame: true,
+    frame: false,
     resizable: true
   });
 
