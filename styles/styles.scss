@@ -78,7 +78,7 @@ body {
   position: absolute;
   bottom: 0;
   left: 0;
-  background: #00000020;
+  background: #00000090;
   color: #888;
   z-index: 1000;
   font-family: monospace;
@@ -95,6 +95,11 @@ body {
         padding: 0;
         background-color: transparent;
         color: $body-color;
+        white-space: pre-wrap;       /* css-3 */
+        white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+        white-space: -pre-wrap;      /* Opera 4-6 */
+        white-space: -o-pre-wrap;    /* Opera 7 */
+        word-wrap: break-word;       /* Internet Explorer 5.5+ */
       }
       pre.error {
         color: $red;
