@@ -67,7 +67,10 @@ repl.on("close", code => {
 // Subscribe to pub sub
 pubSub.subscribe(`target:${target}:in`, message => {
   const { body, userName } = message;
+
   const text = `${body.trim()}\n`;
+  // FIXME: For sclang do this:
+  //const text = `${body.replace(/(\n)/gm, " ").trim()}\n`;
 
   repl.stdin.write(text);
   // process.stdout.write(text);
