@@ -2,11 +2,7 @@
 import React from "react";
 import { remote, ipcRenderer } from "electron";
 
-const KNOWN_HUBS = [
-  "wss://flok-hub.herokuapp.com",
-  "wss://flok.rlab.be",
-  "ws://localhost:3000"
-];
+const KNOWN_HUBS = ["ws://localhost:3000", "wss://flok-hub.herokuapp.com"];
 
 const KNOWN_REPLS = ["tidal", "sclang", "foxdot"];
 
