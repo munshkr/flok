@@ -1,10 +1,13 @@
 #!/usr/bin/env node
+
 const program = require("commander");
-const { spawn } = require("child_process");
-const PubSubClient = require("../lib/pubsub-client");
+// const { spawn } = require("child_process");
+const packageInfo = require("../package.json");
+// const PubSubClient = require("../lib/pubsub-client");
+const { REPL } = require("../lib/repl");
 
 program
-  .version("0.1.0")
+  .version(packageInfo.version)
   .option("-t, --target [NAME]", "Use the specified name as target", "default")
   .option("--secure", "Use secure connection (wss://)", false)
   .option("-H, --host [HOST]", "Evaluation WebSockets server host", "localhost")
@@ -16,72 +19,41 @@ const cmd = program.args[0];
 const cmdArgs = program.args.slice(1);
 
 if (!cmd) {
-  console.error("missing REPL command");
-  console.error("Usage: flok COMMAND\n" +
-                "       flok -- COMMAND [ARG ...]");
-  console.error("e.g.: flok sclang");
+  console.error("Missing REPL command (e.g.: flok -- sclang)");
+  program.outputHelp();
   process.exit(1);
 }
 
 const wsProtocol = program.secure ? "wss" : "ws";
-const wsUrl = `${wsProtocol}://${program.host}:${program.port}${program.path}`;
+const wsUrl = `${wsProtocol}://${program.host}:${program.port}`;
 
 console.log(`Target: ${program.target}`);
 console.log(`PubSub server: ${wsUrl}`);
 console.log(`Spawn: ${JSON.stringify(program.args)}`);
 
-const pubSub = new PubSubClient(wsUrl, {
-  connect: true,
-  reconnect: true
+const replClient = new REPL({
+  command: program.args.join(" "),
+  target: program.target,
+  hub: wsUrl,
+  pubSubPath: program.path
 });
+replClient.start();
 
-const { target } = program;
-
-const buffers = { stdout: "", stderr: "" };
-let lastUserName = null;
-
-const handleData = (data, type) => {
-  // process.stderr.write(data.toString());
-
-  const newBuffer = buffers[type].concat(data.toString());
-  const lines = newBuffer.split("\n");
-
-  buffers[type] = lines.pop();
-
-  if (lines.length > 0) {
-    pubSub.publish(`target:${target}:out`, { target, type, body: lines });
-    if (lastUserName) {
-      pubSub.publish(`user:${lastUserName}`, { target, type, body: lines });
+replClient.emitter.on("data", data => {
+  const line = data.lines.join("\n> ");
+  if (line) {
+    if (data.type === "stderr") {
+      process.stderr.write(`> ${line}\n`);
+    } else if (data.type === "stdout") {
+      process.stdout.write(`> ${line}\n`);
+    } else if (data.type === "stdin") {
+      process.stdout.write(`< ${line}\n`);
+    } else {
+      process.stdout.write(`[data] ${JSON.stringify(data)}\n`);
     }
   }
-};
-
-// Spawn process
-const repl = spawn(cmd, cmdArgs);
-
-// Handle stdout and stderr
-repl.stdout.on("data", data => {
-  handleData(data, "stdout");
 });
 
-repl.stderr.on("data", data => {
-  handleData(data, "stderr");
-});
-
-repl.on("close", code => {
-  console.log(`child process exited with code ${code}`);
-});
-
-// Subscribe to pub sub
-pubSub.subscribe(`target:${target}:in`, message => {
-  const { body, userName } = message;
-
-  const text = `${body.trim()}\n`;
-  // FIXME: For sclang do this:
-  //const text = `${body.replace(/(\n)/gm, " ").trim()}\n`;
-
-  repl.stdin.write(text);
-  // process.stdout.write(text);
-
-  lastUserName = userName;
+replClient.emitter.on("close", ({ code }) => {
+  process.exit(code);
 });
