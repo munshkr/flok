@@ -1,5 +1,5 @@
 {
-  "name": "flok-gui",
+  "name": "@flok/gui",
   "description": "Cross-platform GUI application for using Flok for collaborative live coding",
   "version": "0.1.0",
   "author": "Damián Silvani <munshkr@gmail.com>",
