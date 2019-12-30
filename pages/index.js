@@ -1,6 +1,5 @@
 import Router from "next/router";
 import React from "react";
-import FlockScene from "../components/FlockScene";
 import Layout from "../components/Layout";
 
 class NewSessionForm extends React.Component {
@@ -51,8 +50,6 @@ const IndexPage = () => (
         <NewSessionForm />
       </div>
     </section>
-
-    <FlockScene />
   </Layout>
 );
 

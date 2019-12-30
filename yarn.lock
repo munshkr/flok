@@ -3444,11 +3444,6 @@ globule@^1.0.0:
     lodash "~4.17.10"
     minimatch "~3.0.2"
 
-gpucomputationrender-three@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/gpucomputationrender-three/-/gpucomputationrender-three-2.0.0.tgz#73e4f7b4329def9b74e4703a63a29abc65b197a2"
-  integrity sha512-GK+0QfBl3Qu/7pscQnQugvGprpeZ9n1PsHZBMTcIXKK5graazfHPInKnODiD3dY0+8ahNHV0PksEjbTm+0fHkQ==
-
 graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.3.tgz#4a12ff1b60376ef09862c2093edd908328be8423"
@@ -7035,11 +7030,6 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
-
-three@^0.101.0:
-  version "0.101.1"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.101.1.tgz#e7681ef52f4e572cb84f307f16f540c457030ec6"
-  integrity sha512-8ufimUVmRLtH+BTpEIbDjdGEKQOVWLMLgGynaKin1KbYTE136ZNOepJ8EgByi0tN43dQ7B1YrKLCJgXGy4bLmw==
 
 through2@^2.0.0:
   version "2.0.5"
