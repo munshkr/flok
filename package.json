@@ -5,19 +5,15 @@
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "babel-node server.js --presets @babel/preset-env",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "NODE_ENV=production babel-node server.js --presets @babel/preset-env",
+    "start": "NODE_ENV=production node server.js",
     "heroku-prebuild": "yarn add sharedb-mongo"
   },
   "bin": {
     "flok": "./bin/flok.js"
   },
   "dependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.5",
-    "@babel/node": "^7.5.5",
-    "@babel/preset-env": "^7.5.5",
     "@teamwork/websocket-json-stream": "^2.0.0",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-sass": "^1.0.1",

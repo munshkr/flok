@@ -1,5 +1,3 @@
-const PubSubClient = require('./lib/pubsub-client')
+const PubSubClient = require("./lib/pubsub-client");
 
-module.exports = {
-  PubSubClient: PubSubClient,
-}
+module.exports = { PubSubClient };

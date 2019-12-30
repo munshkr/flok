@@ -1,13 +1,13 @@
-import express from "express";
-import next from "next";
-import http from "http";
-import url from "url";
-import ShareDB from "sharedb";
-import WebSocket from "ws";
-import WebSocketJSONStream from "@teamwork/websocket-json-stream";
-import PubSub from "./lib/pubsub";
+const express = require("express");
+const next = require("next");
+const http = require("http");
+const url = require("url");
+const ShareDB = require("sharedb");
+const WebSocket = require("ws");
+const WebSocketJSONStream = require("@teamwork/websocket-json-stream");
+const PubSub = require("./lib/pubsub");
 
-const host = process.env.HOST || '127.0.0.1';
+const host = process.env.HOST || "127.0.0.1";
 const port = parseInt(process.env.PORT, 10) || 3000;
 
 const dev = process.env.NODE_ENV !== "production";
@@ -20,7 +20,7 @@ let backendOptions = {
 };
 
 if (process.env.MONGODB_URI) {
-  const db = require('sharedb-mongo')(process.env.MONGODB_URI);
+  const db = require("sharedb-mongo")(process.env.MONGODB_URI);
   backendOptions = { ...backendOptions, db };
 }
 
