@@ -1,13 +1,13 @@
 {
-  "name": "flok-repl",
-  "description": "REPL client for Flok",
-  "version": "1.0.0",
+  "name": "flok-gui",
+  "description": "Cross-platform GUI application for using Flok for collaborative live coding",
+  "version": "0.1.0",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
-  "productName": "flok-repl",
+  "productName": "flok-gui",
   "repository": {
     "type": "git",
-    "url": "git@github.com:munshkr/flok.git"
+    "url": "git@github.com:munshkr/flok-gui.git"
   },
   "scripts": {
     "dev": "electron-webpack dev",
@@ -23,6 +23,7 @@
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-router-static": "^1.0.0",
+    "sass-loader": "^8.0.0",
     "shell-path": "^2.1.0",
     "source-map-support": "^0.5.12",
     "utf-8-validate": "^5.0.2"

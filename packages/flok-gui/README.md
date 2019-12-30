@@ -2,7 +2,7 @@
 
 ![Version](https://img.shields.io/badge/version-0.1.0-blue.svg?cacheSeconds=2592000)
 
-> A graphical user interface for using Flok to live code collaboratively.
+> A cross-platform GUI application for using Flok for collaborative live coding.
 
 See [flok](https://github.com/munshkr/flok) for more.
 
