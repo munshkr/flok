@@ -10,6 +10,9 @@
     "start": "NODE_ENV=production babel-node server.js --presets @babel/preset-env",
     "heroku-prebuild": "yarn add sharedb-mongo"
   },
+  "bin": {
+    "flok": "./bin/flok.js"
+  },
   "dependencies": {
     "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.5",

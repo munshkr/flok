@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const program = require("commander");
 const { spawn } = require("child_process");
-const PubSubClient = require("./lib/pubsub-client");
+const PubSubClient = require("../lib/pubsub-client");
 
 program
   .version("0.1.0")
