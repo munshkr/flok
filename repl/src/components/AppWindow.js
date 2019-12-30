@@ -1,5 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
+import PropTypes from "prop-types";
 import { remote, ipcRenderer } from "electron";
 
 const KNOWN_HUBS = ["ws://localhost:3000", "wss://flok-hub.herokuapp.com"];
@@ -15,7 +16,34 @@ const REPLS = {
 const DEFAULT_HUB = KNOWN_HUBS[0];
 const DEFAULT_REPL = "tidal";
 
-// const Log = ({ log }) => <pre>{log}</pre>;
+const LogTabs = ({ items, active, onClick }) => (
+  <div className="tabs is-small">
+    <ul>
+      {items.map(item => (
+        <li
+          key={item}
+          name={item}
+          className={active === item ? "is-active" : ""}
+          onClick={onClick}
+        >
+          <a>{REPLS[item].name}</a>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+LogTabs.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.string),
+  active: PropTypes.string,
+  onClick: PropTypes.func
+};
+
+LogTabs.defaultProps = {
+  items: [],
+  active: null,
+  onClick: null
+};
 
 class AppWindow extends React.Component {
   constructor(props) {
@@ -24,13 +52,15 @@ class AppWindow extends React.Component {
     this.state = {
       hub: DEFAULT_HUB,
       repl: DEFAULT_REPL,
-      replData: {}
+      replData: {},
+      activeTab: null
     };
 
     this.replWindows = {};
 
     this.onTextChange = this.onTextChange.bind(this);
     this.onStart = this.onStart.bind(this);
+    this.onTabClick = this.onTabClick.bind(this);
 
     this._setDataHandler();
   }
@@ -55,6 +85,11 @@ class AppWindow extends React.Component {
     ipcRenderer.send("start-repl", { hub, repl, target });
   }
 
+  onTabClick(e) {
+    const replName = e.target.parentElement.getAttribute("name");
+    this.setState({ activeTab: replName });
+  }
+
   _setDataHandler() {
     ipcRenderer.on("data", (_event, data) => {
       console.log("data", data);
@@ -69,18 +104,18 @@ class AppWindow extends React.Component {
 
         replData[target] = [...replData[target], ...lines];
 
-        return { replData };
+        return { replData, activeTab: target };
       });
     });
   }
 
   render() {
-    const { hub, repl, replData } = this.state;
+    const { hub, repl, replData, activeTab } = this.state;
 
     return (
-      <div>
-        <h1>flok REPL</h1>
-        <div className="toolbar">
+      <div className="container">
+        <h1 className="title">flok REPL</h1>
+        <section className="section toolbar">
           <form>
             <label htmlFor="hub">
               Hub
@@ -111,10 +146,18 @@ class AppWindow extends React.Component {
 
             <input type="button" value="Start" onClick={this.onStart} />
           </form>
-        </div>
-        <div className="log">
-          <pre>{JSON.stringify(replData, null, " ")}</pre>
-        </div>
+        </section>
+
+        <LogTabs
+          items={Object.keys(replData)}
+          active={activeTab}
+          onClick={this.onTabClick}
+        />
+        {activeTab && (
+          <div className="log">
+            <pre>{replData[activeTab].join("\n")}</pre>
+          </div>
+        )}
       </div>
     );
   }

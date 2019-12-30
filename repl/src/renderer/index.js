@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import "./style.css";
+// import "./style.css";
+import "./styles.scss";
 
 import AppWindow from "../components/AppWindow";
 
