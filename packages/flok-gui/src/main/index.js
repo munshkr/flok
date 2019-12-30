@@ -7,7 +7,7 @@ import { app, ipcMain, BrowserWindow } from "electron";
 import shellPath from "shell-path";
 import * as path from "path";
 import { format as formatUrl } from "url";
-import { createREPLFor } from "./repl";
+import { createREPLFor } from "flok/lib/repl";
 
 if (process.platform === "darwin") {
   process.env.PATH =
