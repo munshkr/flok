@@ -53,7 +53,8 @@ class AppWindow extends React.Component {
       hub: DEFAULT_HUB,
       repl: DEFAULT_REPL,
       replData: {},
-      activeTab: null
+      activeTab: null,
+      windowInnerHeight: null
     };
 
     this.replWindows = {};
@@ -63,11 +64,24 @@ class AppWindow extends React.Component {
     this.onTabClick = this.onTabClick.bind(this);
 
     this._setDataHandler();
+
+    window.addEventListener("resize", () => this.onWindowResize());
+  }
+
+  componentDidMount() {
+    this.setState({ windowInnerHeight: window.innerHeight });
   }
 
   onTextChange(e) {
     const { id, value } = e.target;
     this.setState({ [id]: value });
+  }
+
+  onWindowResize() {
+    this.setState(() => {
+      this.log.scrollTop = this.log.scrollHeight;
+      return { windowInnerHeight: window.innerHeight };
+    });
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -91,6 +105,8 @@ class AppWindow extends React.Component {
   }
 
   _setDataHandler() {
+    const that = this;
+
     ipcRenderer.on("data", (_event, data) => {
       console.log("data", data);
       const { target, _type, lines } = data;
@@ -104,17 +120,21 @@ class AppWindow extends React.Component {
 
         replData[target] = [...replData[target], ...lines];
 
+        // Scroll to bottom
+        if (that.log) {
+          that.log.scrollTop = that.log.scrollHeight;
+        }
+
         return { replData, activeTab: target };
       });
     });
   }
 
   render() {
-    const { hub, repl, replData, activeTab } = this.state;
+    const { hub, repl, replData, activeTab, windowInnerHeight } = this.state;
 
     return (
       <div className="container">
-        <h1 className="title">flok REPL</h1>
         <section className="section toolbar">
           <form>
             <label htmlFor="hub">
@@ -154,7 +174,13 @@ class AppWindow extends React.Component {
           onClick={this.onTabClick}
         />
         {activeTab && (
-          <div className="log">
+          <div
+            ref={e => {
+              this.log = e;
+            }}
+            className="log"
+            style={{ maxHeight: windowInnerHeight - 200 }}
+          >
             <pre>{replData[activeTab].join("\n")}</pre>
           </div>
         )}
