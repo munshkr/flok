@@ -1,8 +1,9 @@
 const { spawn, execSync } = require("child_process");
 const EventEmitter = require("events");
 const path = require("path");
-const PubSubClient = require("../../../lib/pubsub-client");
 const commandExistsSync = require("command-exists").sync;
+const os = require("os");
+const PubSubClient = require("../../../lib/pubsub-client");
 
 class REPL {
   constructor(ctx) {
@@ -105,6 +106,33 @@ class REPL {
   }
 }
 
+class SuperColliderREPL extends REPL {
+  constructor(ctx) {
+    super({
+      ...ctx,
+      command: SuperColliderREPL.commandPath()
+    });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  prepare(body) {
+    return `${body.replace(/(\n)/gm, " ").trim()}\n`;
+  }
+
+  static commandPath() {
+    // FIXME: On Linux and Darwin, it should try to run `which`, and if it
+    // fails, use default paths like these.
+    switch (os.platform()) {
+      case "darwin":
+        return "/Applications/SuperCollider.app/Contents/MacOS/sclang";
+      case "linux":
+        return "/usr/local/bin/sclang";
+      default:
+        throw Error("Unsupported platform");
+    }
+  }
+}
+
 class TidalREPL extends REPL {
   constructor(ctx) {
     super({
@@ -150,7 +178,8 @@ class TidalREPL extends REPL {
 
 const replClasses = {
   default: REPL,
-  tidal: TidalREPL
+  tidal: TidalREPL,
+  sclang: SuperColliderREPL
 };
 
 export function createREPLFor(repl, ctx) {
