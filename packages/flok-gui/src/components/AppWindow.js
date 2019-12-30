@@ -79,7 +79,9 @@ class AppWindow extends React.Component {
 
   onWindowResize() {
     this.setState(() => {
-      this.log.scrollTop = this.log.scrollHeight;
+      if (this.log) {
+        this.log.scrollTop = this.log.scrollHeight;
+      }
       return { windowInnerHeight: window.innerHeight };
     });
   }
