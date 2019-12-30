@@ -15,6 +15,14 @@ program
 const cmd = program.args[0];
 const cmdArgs = program.args.slice(1);
 
+if (!cmd) {
+  console.error("missing REPL command");
+  console.error("Usage: flok COMMAND\n" +
+                "       flok -- COMMAND [ARG ...]");
+  console.error("e.g.: flok sclang");
+  process.exit(1);
+}
+
 const wsProtocol = program.secure ? "wss" : "ws";
 const wsUrl = `${wsProtocol}://${program.host}:${program.port}${program.path}`;
 
