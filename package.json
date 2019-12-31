@@ -7,10 +7,22 @@
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
   "private": true,
+  "scripts": {
+    "test": "yarn workspaces run test",
+    "lerna:version": "lerna version prerelease --preid beta",
+    "prepublish": "lerna run prepublish",
+    "lerna:publish": "lerna publish from-git --yes --npm-client yarn --npm-tag beta"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn test"
+    }
+  },
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
+    "husky": "^3.1.0",
     "lerna": "^3.20.1"
   }
 }

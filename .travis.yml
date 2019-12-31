@@ -11,12 +11,12 @@ before_install:
 before_script:
   - yarn lerna run prepublish
 script:
-  - yarn workspaces run test --ci
+  - yarn test
 before_deploy:
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
 deploy:
   provider: script
-  script: yarn lerna publish
+  script: yarn lerna:publish
   skip_cleanup: true
   on:
     node: "12"
