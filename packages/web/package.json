@@ -1,6 +1,6 @@
 {
   "name": "@flok/web",
-  "description": "Web server and REPL client for Flok",
+  "description": "Web server and REPL client for Flok.",
   "version": "0.1.4-alpha.0",
   "main": "index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
