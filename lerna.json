@@ -7,8 +7,9 @@
   "useWorkspaces": true,
   "command": {
     "publish": {
+      "npmClient": "npm",
       "allowBranch": "master",
-      "message": "Release: %s"
+      "registry": "https://registry.npmjs.org/"
     }
   }
 }

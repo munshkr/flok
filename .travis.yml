@@ -9,9 +9,12 @@ cache:
 before_install:
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s
   - export PATH="$HOME/.yarn/bin:$PATH"
+install:
+  - git clone https://github.com/$TRAVIS_REPO_SLUG.git $TRAVIS_REPO_SLUG
+  - cd $TRAVIS_REPO_SLUG
+  - git checkout -qf $TRAVIS_COMMIT
 before_script:
   - yarn prepublish
-  - export TRAVIS_TAG="$(git describe --tags --exact-match 2> /dev/null)"
 script:
   - yarn test
 before_deploy:
