@@ -8,8 +8,8 @@
   "license": "GPL-3.0+",
   "private": true,
   "scripts": {
-    "test": "lerna run test",
-    "prepublish": "lerna run prepublish"
+    "test": "yarn lerna run test",
+    "prepublish": "yarn lerna run prepublish"
   },
   "husky": {
     "hooks": {
