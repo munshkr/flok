@@ -1107,7 +1107,7 @@
     which "^1.3.1"
 
 "@flok/web@file:packages/web":
-  version "0.1.3"
+  version "0.1.4-alpha.0"
   dependencies:
     "@teamwork/websocket-json-stream" "^2.0.0"
     "@zeit/next-css" "^1.0.1"
