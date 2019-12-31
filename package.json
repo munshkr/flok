@@ -6,7 +6,10 @@
   "repository": "git@github.com:munshkr/flok.git",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
-  "private": false,
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "devDependencies": {
     "lerna": "^3.20.1"
   }
