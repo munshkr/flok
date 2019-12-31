@@ -8,7 +8,8 @@
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
     "dist": "yarn compile && electron-builder",
-    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null"
+    "dist:dir": "yarn dist --dir -c.compression=store -c.mac.identity=null",
+    "test": "mocha"
   },
   "dependencies": {
     "@babel/preset-react": "^7.6.3",
@@ -27,9 +28,12 @@
     "utf-8-validate": "^5.0.2"
   },
   "devDependencies": {
+    "chai": "^4.2.0",
     "electron": "^7.1.2",
     "electron-builder": "^21.2.0",
     "electron-webpack": "^2.7.4",
+    "mocha": "^6.2.2",
+    "spectron": "^9.0.0",
     "webpack": "^4.41.2"
   }
 }
