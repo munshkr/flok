@@ -8,10 +8,8 @@
   "license": "GPL-3.0+",
   "private": true,
   "scripts": {
-    "test": "yarn workspaces run test",
-    "lerna:version": "lerna version prerelease --preid beta",
-    "prepublish": "lerna run prepublish",
-    "lerna:publish": "lerna publish from-git --yes --npm-client yarn --npm-tag beta"
+    "test": "lerna run test",
+    "prepublish": "lerna run prepublish"
   },
   "husky": {
     "hooks": {
