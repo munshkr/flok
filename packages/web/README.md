@@ -1,6 +1,6 @@
 # @flok/web
 
-Web server and REPL client.
+Web server and REPL client for Flok.
 
 See [flok](https://github.com/munshkr/flok) for more.
 
