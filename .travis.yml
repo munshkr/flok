@@ -1,0 +1,25 @@
+language: node_js
+node_js:
+  - "12"
+cache:
+  yarn: true
+  directories:
+    - node_modules
+before_install:
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s
+  - export PATH="$HOME/.yarn/bin:$PATH"
+before_script:
+  - yarn run lerna run prepublish
+script:
+  - yarn test
+before_deploy:
+  - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
+deploy:
+  provider: script
+  script: yarn run lerna:publish
+  skip_cleanup: true
+  on:
+    node: "12"
+    tags: true
+  api_key:
+    secure: hRpP7MGwhsCAXtKDS2KowriWu2ADLvW+/Jb/qSdBzR6v4UQ6WxYEiopHwuApk/m9iPLW0QmD14n//kU4ADTm84v4XqY5OoUZxkcQWi5wyY3EbFnOVT3Fr2cr/xNtjXP8so/5hKAHHxccx8ZeGd/pGEkolBhmKMpdmwzcCXTE1jN1xsgHduPPLg3/ob5ORGXvrTm2pF6aqWyaMS7eLydfJ8Dm1FLmLFGy9mUQXSF3RFuhIZeBy5I3emMOn+CgJv1XtTjf9YexD3e79LK/WzCVSxGB8Uhh0jcKDnHCY3wsRMB7R+0RLMB8mi6dYLl24DcQ6AwGrTj4gL7uWWfkVVF2pldTfz+NvfJ2tEszjTZ4Q0Z6pMc/g2YbP0Kam63Rv0FG9ZyW6HPUTnHiA86skpzwfW1TA+O5FgvdzsXAtwrmuxCx/I4a4C2pE9ldc3SkgKz9XJ60hZCilz3r8qknPJaGnkAEZBBOu+u3cEBJtQZESyZylENwdioyxSWXIHxbi9pjdupdGkjZ34QVX1lohTmxmALAB4X3REEm0jYY/OnvkhnWJ0tjaPQCmDp+ONOyyFvVtCMzFUZ+lyXv6xcyVththZMIirX8SnwKXDAsOFXuqXsIq7feRMiz6Nq3Q6IadKGC7LlMcIJgXVh8lypw6sAUnJUq362oyD4SmRE56sfsHs0=
