@@ -4,11 +4,6 @@
   "version": "0.1.0",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
-  "productName": "flok-gui",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:munshkr/flok-gui.git"
-  },
   "scripts": {
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
@@ -17,10 +12,11 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.6.3",
+    "@flok/web": "file:../web",
+    "babel-loader": "^8.0.6",
     "bufferutil": "^4.0.1",
     "bulma": "^0.8.0",
     "command-exists": "^1.2.8",
-    "@flok/web": "file:../web",
     "node-sass": "^4.13.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
