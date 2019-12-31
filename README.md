@@ -1,8 +1,6 @@
 # flok
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue.svg?cacheSeconds=2592000)
-
-> Web-based collaborative editor for live coding music and graphics
+Web-based collaborative editor for live coding music and graphics
 
 *Work in progress*
 

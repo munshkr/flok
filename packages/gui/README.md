@@ -1,8 +1,6 @@
-# flok-gui
+# @flok/gui
 
-![Version](https://img.shields.io/badge/version-0.1.0-blue.svg?cacheSeconds=2592000)
-
-> A cross-platform GUI application for using Flok for collaborative live coding.
+A cross-platform GUI application for using Flok for collaborative live coding.
 
 See [flok](https://github.com/munshkr/flok) for more.
 
@@ -47,7 +45,7 @@ yarn dist:dir
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at the [issues
-page](https://github.com/munshkr/flok-gui). This project is intended to be a
+page](https://github.com/munshkr/flok). This project is intended to be a
 safe, welcoming space for collaboration, and contributors are expected to
 adhere to the [Contributor Covenant](http://contributor-covenant.org) code of
 conduct.
@@ -55,4 +53,4 @@ conduct.
 
 ## License
 
-This project is licensed under GPL 3+. Refer to [LICENSE.txt](LICENSE.txt)
+This project is licensed under GPL 3+.
