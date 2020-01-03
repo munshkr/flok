@@ -1,7 +1,7 @@
 {
   "name": "@flok/gui",
   "description": "Cross-platform GUI application for using Flok for collaborative live coding",
-  "version": "0.1.4-alpha.1",
+  "version": "0.1.4-alpha.2",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
