@@ -6,12 +6,15 @@
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "flok-web --dev",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js",
+    "start": "flok-web",
     "test": "mocha",
     "prepublish": "yarn test && yarn build",
     "heroku-prebuild": "yarn add sharedb-mongo"
+  },
+  "bin": {
+    "flok-web": "./bin/flok-web.js"
   },
   "dependencies": {
     "flok-core": "0.1.4",
