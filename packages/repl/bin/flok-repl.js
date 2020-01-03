@@ -1,9 +1,7 @@
 #!/usr/bin/env node
 
 const program = require("commander");
-// const { spawn } = require("child_process");
 const packageInfo = require("../package.json");
-// const PubSubClient = require("../lib/pubsub-client");
 const { REPL } = require("../lib/repl");
 
 program
@@ -16,10 +14,9 @@ program
   .parse(process.argv);
 
 const cmd = program.args[0];
-const cmdArgs = program.args.slice(1);
 
 if (!cmd) {
-  console.error("Missing REPL command (e.g.: flok -- sclang)");
+  console.error("Missing REPL command (e.g.: flok-repl -- sclang)");
   program.outputHelp();
   process.exit(1);
 }
