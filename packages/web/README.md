@@ -1,4 +1,4 @@
-# @flok/web
+# flok-web
 
 Web server and REPL client for Flok.
 
@@ -10,7 +10,7 @@ See [flok](https://github.com/munshkr/flok) for more.
 ## Install
 
 ```
-npm install -g @flok/web
+npm install -g flok-web
 ```
 
 

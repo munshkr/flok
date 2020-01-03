@@ -1,5 +1,5 @@
 {
-  "name": "@flok/gui",
+  "name": "flok-gui",
   "description": "Cross-platform GUI application for using Flok for collaborative live coding",
   "version": "0.1.4-alpha.3",
   "author": "Damián Silvani <munshkr@gmail.com>",
@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.6.3",
-    "@flok/web": "file:../web",
+    "flok-web": "^0.1.4-alpha.3",
     "babel-loader": "^8.0.6",
     "bufferutil": "^4.0.1",
     "bulma": "^0.8.0",
@@ -35,5 +35,6 @@
     "mocha": "^6.2.2",
     "spectron": "^9.0.0",
     "webpack": "^4.41.2"
-  }
+  },
+  "gitHead": "57bfa3603c4f006345cb565cf441708789664608"
 }

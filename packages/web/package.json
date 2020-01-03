@@ -1,5 +1,5 @@
 {
-  "name": "@flok/web",
+  "name": "flok-web",
   "description": "Web server and REPL client for Flok.",
   "version": "0.1.4-alpha.3",
   "main": "index.js",
@@ -51,5 +51,6 @@
     "eslint-plugin-react": "^7.14.2",
     "mocha": "^6.2.2",
     "prettier": "^1.18.2"
-  }
+  },
+  "gitHead": "57bfa3603c4f006345cb565cf441708789664608"
 }

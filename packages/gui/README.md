@@ -1,4 +1,4 @@
-# @flok/gui
+# flok-gui
 
 A cross-platform GUI application for using Flok for collaborative live coding.
 
