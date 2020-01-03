@@ -1,7 +1,7 @@
 {
   "name": "flok-gui",
   "description": "Cross-platform GUI application for using Flok for collaborative live coding",
-  "version": "0.1.4-alpha.3",
+  "version": "0.1.4",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
@@ -13,11 +13,11 @@
   },
   "dependencies": {
     "@babel/preset-react": "^7.6.3",
-    "flok-web": "^0.1.4-alpha.3",
     "babel-loader": "^8.0.6",
     "bufferutil": "^4.0.1",
     "bulma": "^0.8.0",
     "command-exists": "^1.2.8",
+    "flok-web": "^0.1.4",
     "node-sass": "^4.13.0",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",

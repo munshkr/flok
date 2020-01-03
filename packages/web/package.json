@@ -1,7 +1,7 @@
 {
   "name": "flok-web",
   "description": "Web server and REPL client for Flok.",
-  "version": "0.1.4-alpha.3",
+  "version": "0.1.4",
   "main": "index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
