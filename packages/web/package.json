@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "flok-web",
     "test": "mocha",
-    "prepublish": "yarn test && yarn build",
+    "prepublish": "yarn test",
     "heroku-prebuild": "yarn add sharedb-mongo"
   },
   "bin": {

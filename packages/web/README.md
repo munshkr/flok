@@ -1,6 +1,6 @@
 # flok-web
 
-Web server and REPL client for Flok.
+Web server for Flok.
 
 See [flok](https://github.com/munshkr/flok) for more.
 
@@ -16,25 +16,13 @@ npm install -g flok-web
 
 ## Usage
 
-### REPL
-
-To start a REPL connected to some hub:
+To start a local server/hub, just run on your terminal:
 
 ```
-flok repl -- CMD [ARGS...]
+flok-web
 ```
 
-Run `flok repl --help` to see all available options.
-
-### Local server
-
-To start a local server/hub:
-
-```
-flok hub start
-```
-
-Run `flok hub --help` to see all available options.
+Run `flok-web --help` to see all available options.
 
 
 ## Contributing
