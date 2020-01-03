@@ -20,9 +20,9 @@ import "codemirror/addon/scroll/simplescrollbars.css";
 import "codemirror/addon/selection/mark-selection";
 
 const { publicRuntimeConfig } = getConfig();
-const { NODE_ENV } = publicRuntimeConfig;
+const { USE_WSS } = publicRuntimeConfig;
 
-const WS_PROTOCOL = NODE_ENV === "production" ? "wss" : "ws";
+const WS_PROTOCOL = USE_WSS ? "wss" : "ws";
 
 const TARGETS = ["default", "tidal", "sclang", "foxdot"];
 
@@ -40,6 +40,8 @@ class TextEditor extends React.Component {
   componentDidMount() {
     const { websocketsHost, sessionName } = this.props;
     const { userName, target } = this.state;
+
+    console.log(`USE_WSS === ${JSON.stringify(USE_WSS)}`);
 
     const wsDbUrl = `${WS_PROTOCOL}://${websocketsHost}/db`;
     console.log(`Database WebSocket URL: ${wsDbUrl}`);

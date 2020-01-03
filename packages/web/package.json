@@ -10,10 +10,11 @@
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "test": "mocha",
+    "prepublish": "yarn test && yarn build",
     "heroku-prebuild": "yarn add sharedb-mongo"
   },
   "dependencies": {
-    "flok-core": "file:../core",
+    "flok-core": "0.1.4",
     "@teamwork/websocket-json-stream": "^2.0.0",
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-sass": "^1.0.1",

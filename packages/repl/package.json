@@ -12,7 +12,7 @@
     "flok-repl": "./bin/flok-repl.js"
   },
   "dependencies": {
-    "flok-core": "file:../core",
+    "flok-core": "0.1.4",
     "command-exists": "^1.2.8",
     "commander": "^2.20.0"
   },

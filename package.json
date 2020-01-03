@@ -1,6 +1,6 @@
 {
   "name": "flok",
-  "version": "0.2.0",
+  "version": "0.1.4",
   "description": "Web-based collaborative editor for live coding music and graphics",
   "main": "index.js",
   "repository": "git@github.com:munshkr/flok.git",

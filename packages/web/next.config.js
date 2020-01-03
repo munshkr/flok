@@ -7,7 +7,7 @@ const process = require("process");
 module.exports = withCSS(
   withSass({
     publicRuntimeConfig: {
-      NODE_ENV: process.env.NODE_ENV
+      USE_WSS: process.env.USE_WSS
     },
 
     webpack(config) {
