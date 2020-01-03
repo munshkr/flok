@@ -5,7 +5,7 @@ const url = require("url");
 const ShareDB = require("sharedb");
 const WebSocket = require("ws");
 const WebSocketJSONStream = require("@teamwork/websocket-json-stream");
-const PubSub = require("./lib/pubsub");
+const { PubSub } = require("flok-core");
 
 const host = process.env.HOST || "127.0.0.1";
 const port = parseInt(process.env.PORT, 10) || 3000;

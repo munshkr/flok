@@ -2,9 +2,9 @@ import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import PropTypes from "prop-types";
 import getConfig from "next/config";
+import { PubSubClient } from "flok-core";
 
 import LiveCodeMirror from "../lib/livecodemirror";
-import PubSubClient from "../lib/pubsub-client";
 
 import Status from "./Status";
 import UserList from "./UserList";

@@ -3,7 +3,7 @@ const EventEmitter = require("events");
 const path = require("path");
 const commandExistsSync = require("command-exists").sync;
 const os = require("os");
-const PubSubClient = require("./pubsub-client");
+const { PubSubClient } = require("flok-core");
 
 class REPL {
   constructor(ctx) {

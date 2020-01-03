@@ -1,0 +1,32 @@
+{
+  "name": "flok-repl",
+  "description": "REPL client for Flok",
+  "version": "0.1.4",
+  "main": "index.js",
+  "author": "Damián Silvani <munshkr@gmail.com>",
+  "license": "GPL-3.0",
+  "scripts": {
+    "test": "mocha"
+  },
+  "bin": {
+    "flok-repl": "./bin/flok-repl.js"
+  },
+  "dependencies": {
+    "flok-core": "file:../core",
+    "command-exists": "^1.2.8",
+    "commander": "^2.20.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.0.2",
+    "chai": "^4.2.0",
+    "eslint": "^6.0.1",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-config-prettier": "^6.0.0",
+    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.2",
+    "mocha": "^6.2.2",
+    "prettier": "^1.18.2"
+  }
+}
