@@ -17,7 +17,7 @@ before_deploy:
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" >> $HOME/.npmrc 2> /dev/null
 deploy:
   provider: script
-  script: yarn lerna publish from-git
+  script: yarn lerna publish from-git --no-git-reset
   skip_cleanup: true
   on:
     node: "12"
