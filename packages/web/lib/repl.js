@@ -127,6 +127,7 @@ class SuperColliderREPL extends REPL {
       case "darwin":
         return "/Applications/SuperCollider.app/Contents/MacOS/sclang";
       case "linux":
+        // FIXME Fallback paths (/usr/local/bin/ -> /usr/bin)
         return "/usr/local/bin/sclang";
       default:
         throw Error("Unsupported platform");
