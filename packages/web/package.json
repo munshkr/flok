@@ -1,7 +1,7 @@
 {
   "name": "flok-web",
   "description": "Web server for Flok",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "main": "index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
@@ -22,7 +22,7 @@
     "commander": "^2.20.0",
     "core-js": "^2.6.11",
     "express": "^4.17.1",
-    "flok-core": "^0.2.0",
+    "flok-core": "^0.2.3",
     "next": "^9.0.3",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
