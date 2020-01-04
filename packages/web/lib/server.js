@@ -4,6 +4,7 @@ const express = require("express");
 const next = require("next");
 const http = require("http");
 const url = require("url");
+const path = require("path");
 const ShareDB = require("sharedb");
 const WebSocket = require("ws");
 const WebSocketJSONStream = require("@teamwork/websocket-json-stream");
@@ -30,7 +31,10 @@ class Server {
   start() {
     if (this.started) return this;
 
-    const nextApp = next({ dev: this.isDevelopment });
+    const nextApp = next({
+      dev: this.isDevelopment,
+      dir: path.join(__dirname, "..")
+    });
     const handle = nextApp.getRequestHandler();
 
     let backendOptions = {

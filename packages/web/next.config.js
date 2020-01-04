@@ -3,16 +3,9 @@
 const withCSS = require("@zeit/next-css");
 const withSass = require("@zeit/next-sass");
 const process = require("process");
-const path = require("path");
-
-// distDir does not currently work with absolute paths, so we use a relative
-// path to the current working directory as a workaround.
-const distDir = path.relative(process.cwd(), path.join(__dirname, ".next"));
 
 module.exports = withCSS(
   withSass({
-    distDir,
-
     publicRuntimeConfig: {
       USE_WSS: process.env.USE_WSS
     },
