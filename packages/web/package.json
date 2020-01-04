@@ -20,6 +20,7 @@
     "@zeit/next-css": "^1.0.1",
     "@zeit/next-sass": "^1.0.1",
     "commander": "^2.20.0",
+    "core-js": "^2.6.11",
     "express": "^4.17.1",
     "flok-core": "^0.2.0",
     "next": "^9.0.3",
