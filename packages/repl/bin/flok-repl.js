@@ -6,10 +6,8 @@ const { REPL } = require("../lib/repl");
 
 program
   .version(packageInfo.version)
+  .option("-H, --hub [HUB]", "Hub address", "ws://localhost:3000")
   .option("-t, --target [NAME]", "Use the specified name as target", "default")
-  .option("--secure", "Use secure connection (wss://)", false)
-  .option("-H, --host [HOST]", "Evaluation WebSockets server host", "localhost")
-  .option("-P, --port [PORT]", "Evaluation WebSockets server port", 3000)
   .option("--path [PATH]", "Evaluation WebSockets server path", "/pubsub")
   .parse(process.argv);
 
@@ -21,17 +19,14 @@ if (!cmd) {
   process.exit(1);
 }
 
-const wsProtocol = program.secure ? "wss" : "ws";
-const wsUrl = `${wsProtocol}://${program.host}:${program.port}`;
-
+console.log(`Hub address: ${program.hub}`);
 console.log(`Target: ${program.target}`);
-console.log(`PubSub server: ${wsUrl}`);
 console.log(`Spawn: ${JSON.stringify(program.args)}`);
 
 const replClient = new REPL({
   command: program.args.join(" "),
   target: program.target,
-  hub: wsUrl,
+  hub: program.hub,
   pubSubPath: program.path
 });
 replClient.start();
