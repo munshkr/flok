@@ -9,7 +9,8 @@
   "private": true,
   "scripts": {
     "test": "lerna run test",
-    "prepublish": "lerna run prepublish"
+    "prepublish": "lerna run prepublish",
+    "start": "cd packages/web/ && yarn start"
   },
   "husky": {
     "hooks": {
