@@ -29,12 +29,11 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
-    "electron": "^7.1.2",
+    "electron": "7.1.2",
     "electron-builder": "^21.2.0",
     "electron-webpack": "^2.7.4",
     "mocha": "^6.2.2",
     "spectron": "^9.0.0",
     "webpack": "^4.41.2"
-  },
-  "gitHead": "694c1d7cb00fe527212ebecba95549e1d852f9da"
+  }
 }

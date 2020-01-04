@@ -31,6 +31,5 @@
     "eslint-plugin-react": "^7.14.2",
     "mocha": "^6.2.2",
     "prettier": "^1.18.2"
-  },
-  "gitHead": "694c1d7cb00fe527212ebecba95549e1d852f9da"
+  }
 }
