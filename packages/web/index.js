@@ -9,6 +9,8 @@ if (require.main === module) {
   const process = require("process");
   const isDevelopment = process.env.NODE_ENV !== "production";
 
-  const server = new Server({ isDevelopment });
+  const mongoDbUri = process.env.MONGODB_URI;
+
+  const server = new Server({ isDevelopment, mongoDbUri });
   server.start();
 }
