@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "NODE_ENV=production node index.js",
     "test": "mocha",
-    "prepublish": "yarn test",
+    "prepublish": "yarn test && yarn build",
     "heroku-prebuild": "yarn add sharedb-mongo"
   },
   "bin": {
