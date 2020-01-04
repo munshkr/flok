@@ -6,9 +6,9 @@
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "node lib/server.js",
+    "dev": "node index.js",
     "build": "next build",
-    "start": "NODE_ENV=production node lib/server.js",
+    "start": "NODE_ENV=production node index.js",
     "test": "mocha",
     "prepublish": "yarn test",
     "heroku-prebuild": "yarn add sharedb-mongo"
