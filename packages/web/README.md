@@ -4,7 +4,7 @@ Web server for Flok.
 
 See [flok](https://github.com/munshkr/flok) for more.
 
-*Work in progress*
+*Work in progress*.
 
 
 ## Install
