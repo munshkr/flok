@@ -10,7 +10,8 @@
   "scripts": {
     "test": "lerna run test",
     "prepublish": "lerna run prepublish",
-    "start": "cd packages/web/ && yarn start"
+    "start": "cd packages/web/ && yarn start",
+    "heroku-prebuild": "yarn add sharedb-mongo"
   },
   "husky": {
     "hooks": {

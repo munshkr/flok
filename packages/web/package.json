@@ -10,8 +10,7 @@
     "build": "next build",
     "start": "NODE_ENV=production node index.js",
     "test": "mocha",
-    "prepublish": "yarn test && yarn build",
-    "heroku-prebuild": "yarn add sharedb-mongo"
+    "prepublish": "yarn test && yarn build"
   },
   "bin": {
     "flok-web": "./bin/flok-web.js"
