@@ -11,7 +11,7 @@
     "test": "lerna run test",
     "prepublish": "lerna run prepublish",
     "start": "cd packages/web/ && yarn start",
-    "heroku-prebuild": "cd packages/web && yarn add sharedb-mongo"
+    "heroku-prebuild": "yarn add -W sharedb-mongo"
   },
   "husky": {
     "hooks": {
