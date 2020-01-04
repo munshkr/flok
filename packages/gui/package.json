@@ -4,6 +4,7 @@
   "version": "0.2.3",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
+  "private": true,
   "scripts": {
     "dev": "electron-webpack dev",
     "compile": "electron-webpack",
