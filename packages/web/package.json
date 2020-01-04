@@ -6,9 +6,9 @@
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "flok-web --dev",
+    "dev": "node lib/server.js",
     "build": "next build",
-    "start": "flok-web",
+    "start": "NODE_ENV=production node lib/server.js",
     "test": "mocha",
     "prepublish": "yarn test",
     "heroku-prebuild": "yarn add sharedb-mongo"

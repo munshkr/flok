@@ -17,11 +17,10 @@ try {
 
 class Server {
   constructor(ctx) {
-    const { host, port, isSecure, isDevelopment, mongoDbUri } = ctx;
+    const { host, port, isDevelopment, mongoDbUri } = ctx;
 
     this.host = host || "127.0.0.1";
     this.port = port || 3000;
-    this.isSecure = isSecure || false;
     this.isDevelopment = isDevelopment || false;
     this.mongoDbUri = mongoDbUri;
 
@@ -101,7 +100,7 @@ class Server {
         return handle(req, res);
       });
 
-      server.listen(this.port, err => {
+      server.listen(this.port, this.host, err => {
         if (err) throw err;
         // eslint-disable-next-line no-console
         console.log(`> Ready on http://${this.host}:${this.port}`);

@@ -8,16 +8,12 @@ program
   .version(packageInfo.version)
   .option("-H, --host [HOST]", "Server host", "localhost")
   .option("-P, --port [PORT]", "Server port", 3000)
-  .option("--secure", "Use secure connection (wss://)", false)
-  .option("-d, --dev", "Enable development mode", false)
   .option("--mongodb [URI]", "Use MongoDB at URI as document database")
   .parse(process.argv);
 
 const server = new Server({
   host: program.host,
   port: program.port,
-  isSecure: program.secure,
-  isDevelopment: program.dev,
   mongoDbUri: program.mongodb
 });
 
