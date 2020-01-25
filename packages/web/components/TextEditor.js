@@ -2,13 +2,7 @@ import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import PropTypes from "prop-types";
 import { PubSubClient } from "flok-core";
-
 import LiveCodeMirror from "../lib/livecodemirror";
-
-import Status from "./Status";
-import UserList from "./UserList";
-import TargetMessagesPane from "./TargetMessagesPane";
-import TargetSelect from "./TargetSelect";
 
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/haskell/haskell";
@@ -18,21 +12,18 @@ import "codemirror/addon/scroll/simplescrollbars";
 import "codemirror/addon/scroll/simplescrollbars.css";
 import "codemirror/addon/selection/mark-selection";
 
-const TARGETS = ["default", "tidal", "sclang", "foxdot"];
-
 class TextEditor extends React.Component {
-  state = {
-    status: "Not connected",
-    showUserList: true,
-    showTargetMessagesPane: true,
-    messages: [],
-    users: [],
-    target: "default"
-  };
-
   componentDidMount() {
-    const { websocketsHost, sessionName, userName } = this.props;
-    const { target } = this.state;
+    const {
+      websocketsHost,
+      sessionName,
+      userName,
+      target,
+      onConnectionOpen,
+      onConnectionClose,
+      onConnectionError,
+      onUsersChange
+    } = this.props;
 
     const wsProtocol = location.protocol === "https:" ? "wss:" : "ws:";
     const wsDbUrl = `${wsProtocol}//${websocketsHost}/db`;
@@ -47,14 +38,14 @@ class TextEditor extends React.Component {
       onMeMessage: clientId => {
         this.liveCodeMirror = new LiveCodeMirror(this.editor.editor, wsDbUrl, {
           userId: clientId,
-          extraKeys: {
-            "Ctrl-Alt-U": this.toggleUserList,
-            "Ctrl-Alt-M": this.toggleTargetMessagesPane
-          },
-          onConnectionOpen: this.handleConnectionOpen,
-          onConnectionClose: this.handleConnectionClose,
-          onConnectionError: this.handleConnectionError,
-          onUsersChange: this.handleUsersChange,
+          // extraKeys: {
+          //   "Ctrl-Alt-U": this.toggleUserList,
+          //   "Ctrl-Alt-M": this.toggleTargetMessagesPane
+          // },
+          onConnectionOpen,
+          onConnectionClose,
+          onConnectionError,
+          onUsersChange,
           onEvaluateCode: this.handleEvaluateCode,
           // onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
           verbose: true
@@ -64,7 +55,8 @@ class TextEditor extends React.Component {
         this.liveCodeMirror.setUsername(userName);
 
         // Subscribes to messages directed to ourselves
-        this.pubsubClient.subscribe(`user:${clientId}`, this.handleMessageUser);
+        const { onMessageUser } = this.props;
+        this.pubsubClient.subscribe(`user:${clientId}`, onMessageUser);
       },
       onClose: () => {
         this.liveCodeMirror.detachDocument();
@@ -73,18 +65,20 @@ class TextEditor extends React.Component {
     });
 
     // Subscribes to messages from targets (e.g. stdout and stderr REPLs)
-    this.pubsubClient.subscribe(
-      `target:${target}:out`,
-      this.handleMessageTarget
-    );
+    this.subscribeToTargetOutput(target);
   }
 
   componentDidUpdate(prevProps) {
     if (this.liveCodeMirror) {
-      const { userName } = this.props;
+      const { userName, target } = this.props;
       if (prevProps.userName !== userName) {
         console.log(`Change username to '${userName}'`);
         this.liveCodeMirror.setUsername(userName);
+      }
+
+      if (prevProps.target !== target) {
+        // TODO Unsubscribe from old target and subscribe to new target
+        // ...
       }
     }
   }
@@ -94,94 +88,35 @@ class TextEditor extends React.Component {
     this.liveCodeMirror.detachDocument();
   }
 
-  handleConnectionOpen = () => {
-    this.setState({ status: "Connected" });
-  };
-
-  handleConnectionClose = () => {
-    this.setState({ status: "Disconnected" });
-  };
-
-  handleConnectionError = () => {
-    this.setState({ status: "Error" });
-  };
-
-  handleUsersChange = users => {
-    console.log(users);
-    this.setState({ users });
-  };
-
   handleEvaluateCode = body => {
-    const { userName, target } = this.state;
+    const { userName, target, onEvaluateCode } = this.props;
     this.pubsubClient.publish(`target:${target}:in`, { userName, body });
+    onEvaluateCode(body);
   };
 
   // handleEvaluateRemoteCode = (body, userName) => {
   //   this.pubsubClient.publish(`target:${target}:in`, { userName, body });
   // };
 
-  handleMessageTarget = message => {
-    console.log(`[message] target: ${JSON.stringify(message)}`);
-    this.setState(prevState => ({
-      messages: [message, ...prevState.messages]
-    }));
-  };
-
-  handleMessageUser = message => {
-    console.log(`[message] user: ${JSON.stringify(message)}`);
-  };
-
-  handleTargetSelectChange = e => {
-    this.setState({ target: e.target.value });
-  };
-
-  toggleUserList = e => {
-    this.setState((prevState, _) => ({
-      showUserList: !prevState.showUserList
-    }));
-  };
-
-  toggleTargetMessagesPane = e => {
-    this.setState((prevState, _) => ({
-      showTargetMessagesPane: !prevState.showTargetMessagesPane
-    }));
-  };
+  subscribeToTargetOutput(target) {
+    const { onMessageTarget } = this.props;
+    this.pubsubClient.subscribe(`target:${target}:out`, onMessageTarget);
+  }
 
   render() {
-    const {
-      status,
-      users,
-      messages,
-      target,
-      showUserList,
-      showTargetMessagesPane
-    } = this.state;
-
     return (
-      <React.Fragment>
-        <Status>{status}</Status>
-        <CodeMirror
-          className="editor"
-          ref={c => {
-            this.editor = c;
-          }}
-          options={{
-            mode: "haskell",
-            theme: "material",
-            lineNumbers: true,
-            scrollbarStyle: "simple"
-          }}
-        />
-        {showUserList && <UserList users={users} />}
-        <TargetSelect
-          value={target}
-          options={TARGETS}
-          onChange={this.handleTargetSelectChange}
-        />
-        {showTargetMessagesPane && messages && (
-          <TargetMessagesPane messages={messages} />
-        )}
-      </React.Fragment>
+      <CodeMirror
+        className="editor"
+        ref={c => {
+          this.editor = c;
+        }}
+        options={{
+          mode: "haskell",
+          theme: "material",
+          lineNumbers: true,
+          scrollbarStyle: "simple"
+        }}
+      />
     );
   }
 }
@@ -189,11 +124,27 @@ class TextEditor extends React.Component {
 TextEditor.propTypes = {
   websocketsHost: PropTypes.string.isRequired,
   sessionName: PropTypes.string.isRequired,
-  userName: PropTypes.string
+  userName: PropTypes.string,
+  target: PropTypes.string,
+  onConnectionOpen: PropTypes.func,
+  onConnectionClose: PropTypes.func,
+  onConnectionError: PropTypes.func,
+  onUsersChange: PropTypes.func,
+  onEvaluateCode: PropTypes.func,
+  onMessageTarget: PropTypes.func,
+  onMessageUser: PropTypes.func
 };
 
 TextEditor.defaultProps = {
-  userName: "anonymous"
+  userName: "anonymous",
+  target: "default",
+  onConnectionOpen: () => {},
+  onConnectionClose: () => {},
+  onConnectionError: () => {},
+  onUsersChange: () => {},
+  onEvaluateCode: () => {},
+  onMessageTarget: () => {},
+  onMessageUser: () => {}
 };
 
 export default TextEditor;
