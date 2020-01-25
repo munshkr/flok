@@ -1,7 +1,6 @@
 import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import PropTypes from "prop-types";
-import getConfig from "next/config";
 import { PubSubClient } from "flok-core";
 
 import LiveCodeMirror from "../lib/livecodemirror";
@@ -28,8 +27,7 @@ class TextEditor extends React.Component {
     showTargetMessagesPane: true,
     messages: [],
     users: [],
-    target: "default",
-    user: null
+    target: "default"
   };
 
   componentDidMount() {
