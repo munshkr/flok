@@ -8,23 +8,28 @@ const TextEditor = dynamic(() => import("../../components/TextEditor"), {
   ssr: false
 });
 
-const SessionPage = ({ host, name }) => (
+const SessionPage = ({ host, session, user }) => (
   <Layout>
     <Head>
-      <title>{`flok ~ ${name}`}</title>
+      <title>{`${session} :: flok`}</title>
     </Head>
-    <TextEditor websocketsHost={host} sessionName={name} />
+    <TextEditor websocketsHost={host} sessionName={session} userName={user} />
   </Layout>
 );
 
 SessionPage.getInitialProps = async ({ req, query }) => {
   const host = req && req.headers && req.headers.host;
-  return { host, name: query.name };
+  return { host, session: query.session, user: query.user };
 };
 
 SessionPage.propTypes = {
   host: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired
+  session: PropTypes.string.isRequired,
+  user: PropTypes.string
+};
+
+SessionPage.defaultProps = {
+  user: "anonymous"
 };
 
 export default SessionPage;

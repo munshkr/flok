@@ -23,20 +23,20 @@ const TARGETS = ["default", "tidal", "sclang", "foxdot"];
 
 class TextEditor extends React.Component {
   state = {
-    userName: "anonymous",
     status: "Not connected",
     showUserList: true,
     showTargetMessagesPane: true,
     messages: [],
     users: [],
-    target: "default"
+    target: "default",
+    user: null
   };
 
   componentDidMount() {
-    const { websocketsHost, sessionName } = this.props;
-    const { userName, target } = this.state;
+    const { websocketsHost, sessionName, userName } = this.props;
+    const { target } = this.state;
 
-    const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsProtocol = location.protocol === "https:" ? "wss:" : "ws:";
     const wsDbUrl = `${wsProtocol}//${websocketsHost}/db`;
     console.log(`Database WebSocket URL: ${wsDbUrl}`);
 
@@ -81,10 +81,10 @@ class TextEditor extends React.Component {
     );
   }
 
-  componentDidUpdate(_prevProps, prevState, _snapshot) {
+  componentDidUpdate(prevProps) {
     if (this.liveCodeMirror) {
-      const { userName } = this.state;
-      if (prevState.userName !== userName) {
+      const { userName } = this.props;
+      if (prevProps.userName !== userName) {
         console.log(`Change username to '${userName}'`);
         this.liveCodeMirror.setUsername(userName);
       }
@@ -190,7 +190,12 @@ class TextEditor extends React.Component {
 
 TextEditor.propTypes = {
   websocketsHost: PropTypes.string.isRequired,
-  sessionName: PropTypes.string.isRequired
+  sessionName: PropTypes.string.isRequired,
+  userName: PropTypes.string
+};
+
+TextEditor.defaultProps = {
+  userName: "anonymous"
 };
 
 export default TextEditor;

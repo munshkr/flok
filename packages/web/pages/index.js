@@ -4,7 +4,8 @@ import Layout from "../components/Layout";
 
 class NewSessionForm extends React.Component {
   state = {
-    name: ""
+    session: "",
+    user: ""
   };
 
   handleChange = e => {
@@ -12,26 +13,53 @@ class NewSessionForm extends React.Component {
   };
 
   handleSubmit = e => {
-    const { name } = this.state;
+    let { session, user } = this.state;
+
     e.preventDefault();
-    Router.push(`/s/${name}`);
+
+    // Default values
+    if (!session) session = "default";
+    if (!user) user = "anonymous";
+
+    Router.push(`/s/${session}?user=${user}`);
   };
 
   render() {
-    const { name } = this.state;
+    const { session, user } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
         <div className="field">
           <div className="control">
             <input
-              name="name"
+              name="session"
               onChange={this.handleChange}
-              value={name}
-              className="input is-medium"
+              value={session}
+              className="input is-large"
               type="text"
-              placeholder="Type session name and press Enter"
+              placeholder="Type a session name"
             />
+          </div>
+        </div>
+
+        <div className="field">
+          <div className="control">
+            <input
+              name="user"
+              onChange={this.handleChange}
+              value={user}
+              className="input is-large"
+              type="text"
+              placeholder="Type a nick name and press Enter"
+            />
+          </div>
+        </div>
+
+        <div className="field">
+          <div className="control">
+            <button type="submit" className="button is-link is-large">
+              Join!
+            </button>
           </div>
         </div>
       </form>
