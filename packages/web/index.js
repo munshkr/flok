@@ -1,4 +1,4 @@
-const Server = require("./lib/server");
+const Server = require("./lib/Server");
 
 module.exports = { Server };
 

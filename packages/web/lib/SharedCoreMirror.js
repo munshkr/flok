@@ -4,7 +4,7 @@ import ShareDB from "sharedb/lib/client";
 // FIXME more colors?
 const COLORS = ["#ff0000", "#00ff00", "#0000ff"];
 
-class LiveCodeMirror {
+class SharedCodeMirror {
   /**
    * @constructor
    * @param {CodeMirror} codeMirror - a CodeMirror editor instance
@@ -517,4 +517,4 @@ class LiveCodeMirror {
   }
 }
 
-module.exports = LiveCodeMirror;
+export default SharedCodeMirror;
