@@ -24,6 +24,7 @@
     "express": "^4.17.1",
     "flok-core": "^0.2.3",
     "next": "^9.0.3",
+    "prop-types": "^15.7.2",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "reconnecting-websocket": "^4.1.10",
@@ -46,7 +47,6 @@
     "mocha": "^6.2.2",
     "node-sass": "^4.13.0",
     "prettier": "^1.18.2",
-    "prop-types": "^15.7.2",
     "react-codemirror2": "^6.0.0"
   }
 }
