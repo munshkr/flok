@@ -2,7 +2,7 @@ import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import PropTypes from "prop-types";
 import { PubSubClient } from "flok-core";
-import LiveCodeMirror from "../lib/LiveCodeMirror";
+import SharedCodeMirror from "../lib/SharedCodeMirror";
 
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/haskell/haskell";
@@ -36,31 +36,35 @@ class TextEditor extends React.Component {
       connect: true,
       reconnect: true,
       onMeMessage: clientId => {
-        this.liveCodeMirror = new LiveCodeMirror(this.editor.editor, wsDbUrl, {
-          userId: clientId,
-          // extraKeys: {
-          //   "Ctrl-Alt-U": this.toggleUserList,
-          //   "Ctrl-Alt-M": this.toggleTargetMessagesPane
-          // },
-          onConnectionOpen,
-          onConnectionClose,
-          onConnectionError,
-          onUsersChange,
-          onEvaluateCode: this.handleEvaluateCode,
-          // onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
-          verbose: true
-        });
+        this.sharedCodeMirror = new SharedCodeMirror(
+          this.editor.editor,
+          wsDbUrl,
+          {
+            userId: clientId,
+            // extraKeys: {
+            //   "Ctrl-Alt-U": this.toggleUserList,
+            //   "Ctrl-Alt-M": this.toggleTargetMessagesPane
+            // },
+            onConnectionOpen,
+            onConnectionClose,
+            onConnectionError,
+            onUsersChange,
+            onEvaluateCode: this.handleEvaluateCode,
+            // onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
+            verbose: true
+          }
+        );
 
-        this.liveCodeMirror.attachDocument("flok", sessionName);
-        this.liveCodeMirror.setUsername(userName);
+        this.sharedCodeMirror.attachDocument("flok", sessionName);
+        this.sharedCodeMirror.setUsername(userName);
 
         // Subscribes to messages directed to ourselves
         const { onMessageUser } = this.props;
         this.pubsubClient.subscribe(`user:${clientId}`, onMessageUser);
       },
       onClose: () => {
-        this.liveCodeMirror.detachDocument();
-        this.liveCodeMirror = null;
+        this.sharedCodeMirror.detachDocument();
+        this.sharedCodeMirror = null;
       }
     });
 
@@ -69,11 +73,11 @@ class TextEditor extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.liveCodeMirror) {
+    if (this.sharedCodeMirror) {
       const { userName, target } = this.props;
       if (prevProps.userName !== userName) {
         console.log(`Change username to '${userName}'`);
-        this.liveCodeMirror.setUsername(userName);
+        this.sharedCodeMirror.setUsername(userName);
       }
 
       if (prevProps.target !== target) {
@@ -85,7 +89,7 @@ class TextEditor extends React.Component {
 
   componentWillUnmount() {
     // console.log("detach doc");
-    this.liveCodeMirror.detachDocument();
+    this.sharedCodeMirror.detachDocument();
   }
 
   handleEvaluateCode = body => {

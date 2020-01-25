@@ -22,7 +22,7 @@ class SharedCodeMirror {
    *    - onEvaluateCode: optional. A handler called whenever someone evaluates code
    *    - onEvaluateRemoteCode: optional. A handler called whenever someone other
    *      than current user evaluates code.
-   * @return {LiveCodeMirror} the created LiveCodeMirror object
+   * @return {SharedCodeMirror} the created SharedCodeMirror object
    */
   constructor(codeMirror, websocketsUrl, options) {
     this.codeMirror = codeMirror;
@@ -177,7 +177,7 @@ class SharedCodeMirror {
         }
       } else {
         this.doc = doc;
-        this.log("LiveCodeMirror: subscribed to doc", doc);
+        this.log("SharedCodeMirror: subscribed to doc", doc);
         this.start();
       }
       if (callback) {
@@ -197,7 +197,7 @@ class SharedCodeMirror {
     const { doc, codeMirror } = this;
 
     if (!doc.type) {
-      this.log("LiveCodeMirror: creating empty doc");
+      this.log("SharedCodeMirror: creating empty doc");
 
       const data = {};
 
@@ -217,7 +217,7 @@ class SharedCodeMirror {
         }
       });
     } else {
-      this.log("LiveCodeMirror: document already exists; add user");
+      this.log("SharedCodeMirror: document already exists; add user");
 
       // Update current users map from document
       this.users = doc.data.users;
@@ -263,7 +263,7 @@ class SharedCodeMirror {
     doc.removeListener("del", this.shareDBDel);
     doc.removeListener("error", this.shareDBError);
     delete this.doc;
-    this.log("LiveCodeMirror: unsubscribed from doc");
+    this.log("SharedCodeMirror: unsubscribed from doc");
   }
 
   /**
@@ -275,7 +275,7 @@ class SharedCodeMirror {
     const editorValue = this.codeMirror.getValue();
     if (expectedValue !== editorValue) {
       this.onError(
-        "LiveCodeMirror: value in CodeMirror does not match expected value:",
+        "SharedCodeMirror: value in CodeMirror does not match expected value:",
         "\n\nExpected value:\n",
         expectedValue,
         "\n\nEditor value:\n",
@@ -298,7 +298,7 @@ class SharedCodeMirror {
       return;
     }
 
-    this.log("LiveCodeMirror: applying ops", ops);
+    this.log("SharedCodeMirror: applying ops", ops);
     this.suppressChange = true;
 
     // eslint-disable-next-line no-restricted-syntax
@@ -489,7 +489,7 @@ class SharedCodeMirror {
   }
 
   sendOP(op) {
-    this.log("LiveCodeMirror: submitting op", op);
+    this.log("SharedCodeMirror: submitting op", op);
     this.doc.submitOp(op, error => {
       if (error) {
         this.onError(error);
