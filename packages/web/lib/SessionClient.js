@@ -75,17 +75,7 @@ class SessionClient {
 
     this.editors[id] = sharedEditor;
 
-    // FIXME: Define methods for the following procedure
-    sharedEditor.editor.setValue(doc.data.content);
-    sharedEditor.editor.on("beforeChange", (_codeMirror, change) => {
-      sharedEditor.handleBeforeLocalChange(this, change);
-    });
-    sharedEditor.editor.on("changes", (_codeMirror, changes) => {
-      sharedEditor.handleAfterLocalChanges(this, changes);
-    });
-    sharedEditor.editor.on("cursorActivity", () => {
-      sharedEditor.triggerCursorActivity();
-    });
+    sharedEditor.attach(this);
   }
 
   triggerUsersChange() {
@@ -111,9 +101,10 @@ class SessionClient {
     const editors = Object.values(this.editors);
     for (let i = 0; i < editors.length; i += 1) {
       const sharedEditor = editors[i];
-      sharedEditor.editor.off("beforeChange");
-      sharedEditor.editor.off("changes");
+      sharedEditor.detach();
     }
+
+    // Remove doc hooks
     doc.removeListener("op", this._handleRemoteChange);
     doc.removeListener("del", this._handleDocDelete);
     doc.removeListener("error");

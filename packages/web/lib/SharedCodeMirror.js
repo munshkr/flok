@@ -19,7 +19,6 @@ class SharedCodeMirror {
   constructor(ctx) {
     const { editor, onEvaluateCode, onCursorActivity, debug, extraKeys } = ctx;
 
-    // FIXME Rename to editor
     this.editor = editor;
     this.onEvaluateCode = onEvaluateCode || (() => {});
     this.onCursorActivity = onCursorActivity || (() => {});
@@ -37,6 +36,29 @@ class SharedCodeMirror {
         console.debug(...args);
       }
     };
+  }
+
+  attach(sessionClient) {
+    const { editor } = this;
+
+    editor.setValue(sessionClient.doc.data.content);
+    editor.on("beforeChange", (_codeMirror, change) => {
+      this.handleBeforeLocalChange(sessionClient, change);
+    });
+    editor.on("changes", (_codeMirror, changes) => {
+      this.handleAfterLocalChanges(sessionClient, changes);
+    });
+    editor.on("cursorActivity", () => {
+      this.triggerCursorActivity();
+    });
+  }
+
+  dettach() {
+    const { editor } = this;
+
+    editor.off("beforeChange");
+    editor.off("changes");
+    editor.off("cursorActivity");
   }
 
   updateBookmarkForUser(userId, userNum, cursorPos) {
@@ -130,8 +152,6 @@ class SharedCodeMirror {
     sessionClient.sendOP(op);
 
     // Force update cursor activity
-
-    // FIXME Use a callback to send cursor activity update
     this.triggerCursorActivity();
 
     this.assertValue(sessionClient);
