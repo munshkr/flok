@@ -1,6 +1,3 @@
-import ReconnectingWebSocket from "reconnecting-websocket";
-import ShareDB from "sharedb/lib/client";
-
 // FIXME more colors?
 const COLORS = ["#ff0000", "#00ff00", "#0000ff"];
 
@@ -38,10 +35,14 @@ class SharedCodeMirror {
     };
   }
 
-  attach(sessionClient) {
+  attach(sessionClient, id) {
     const { editor } = this;
 
-    editor.setValue(sessionClient.doc.data.content);
+    this.id = id;
+
+    const content = sessionClient.getContentFromEditor(id);
+    editor.setValue(content);
+
     editor.on("beforeChange", (_codeMirror, change) => {
       this._handleBeforeLocalChange(sessionClient, change);
     });
@@ -59,6 +60,8 @@ class SharedCodeMirror {
     editor.off("beforeChange");
     editor.off("changes");
     editor.off("cursorActivity");
+
+    delete this.id;
   }
 
   updateBookmarkForUser(userId, userNum, cursorPos) {
@@ -92,17 +95,17 @@ class SharedCodeMirror {
    * Asserts that the CodeMirror instance's value matches the document's content
    * in order to ensure that the two copies haven't diverged.
    */
-  _assertValue(sessionClient) {
-    const expectedValue = sessionClient.doc.data.content;
-    const editorValue = this.editor.getValue();
+  assertValue(sessionClient) {
+    const expectedValue = sessionClient.getContentFromEditor(this.id);
+    const currentValue = this.editor.getValue();
 
-    if (expectedValue !== editorValue) {
-      this.onError(
+    if (expectedValue !== currentValue) {
+      console.error(
         "SharedCodeMirror: value in CodeMirror does not match expected value:",
         "\n\nExpected value:\n",
         expectedValue,
         "\n\nEditor value:\n",
-        editorValue
+        currentValue
       );
 
       this.suppressChange = true;
@@ -147,14 +150,14 @@ class SharedCodeMirror {
       return;
     }
 
-    const { ops } = this;
-    sessionClient.updateEditorContent(ops);
+    const { id, ops } = this;
+    sessionClient.updateContent({ editorId: id, ops });
     delete this.ops;
 
     // Force update cursor activity
     this.triggerCursorActivity();
 
-    this._assertValue(sessionClient);
+    this.assertValue(sessionClient);
   }
 
   triggerCursorActivity() {

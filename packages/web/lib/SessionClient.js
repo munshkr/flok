@@ -71,11 +71,13 @@ class SessionClient {
    * batch of operations.
    */
   attachEditor(id, sharedEditor) {
-    const { doc } = this;
-
     this.editors[id] = sharedEditor;
+    sharedEditor.attach(this, id);
 
-    sharedEditor.attach(this);
+    const content = sharedEditor.editor.getValue();
+    if (!this.doc.data.contents[id]) {
+      this.sendOP([{ p: ["contents", id], oi: content }]);
+    }
   }
 
   triggerUsersChange() {
@@ -101,7 +103,7 @@ class SessionClient {
     const editors = Object.values(this.editors);
     for (let i = 0; i < editors.length; i += 1) {
       const sharedEditor = editors[i];
-      sharedEditor.detach();
+      sharedEditor.dettach();
     }
 
     // Remove doc hooks
@@ -185,7 +187,7 @@ class SessionClient {
       const data = {};
 
       // Empty document
-      data.content = "";
+      data.contents = {};
 
       // Add current user
       this.users = {};
@@ -237,25 +239,30 @@ class SessionClient {
     ]);
   }
 
-  updateContent(ops) {
-    this.sendOP([{ p: ["content"], t: "text0", o: ops }]);
+  updateContent({ editorId, ops }) {
+    this.sendOP([{ p: ["contents", editorId], t: "text0", o: ops }]);
+  }
+
+  getContentFromEditor(id) {
+    const { doc } = this;
+    return (doc && doc.data && doc.data.contents[id]) || "";
   }
 
   _updateEditorBookmarks() {
     const { editors, users } = this;
 
     // FIXME: Support multiple editors
-    const someEditorId = Object.keys(editors)[0];
-    const editor = editors[someEditorId];
-
-    if (editor) {
+    Object.keys(editors).forEach(editorId => {
       Object.keys(users).forEach(userId => {
+        const editor = editors[editorId];
+        // TODO
+        //const userData = users[userId][editorId];
         const userData = users[userId];
         const cursorPos = { line: userData.l, ch: userData.c };
         const userNum = Object.keys(users).indexOf(userId);
         editor.updateBookmarkForUser(userId, userNum, cursorPos);
       });
-    }
+    });
   }
 
   /**
@@ -270,57 +277,64 @@ class SessionClient {
 
     this.log("Applying OPs:", ops);
 
-    // FIXME: Support multiple editors
     const { editors } = this;
-    const someEditorId = Object.keys(editors)[0];
-    const sharedEditor = editors[someEditorId];
 
-    sharedEditor.suppressChange = true;
+    Object.keys(editors).forEach(editorId => {
+      const sharedEditor = editors[editorId];
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (let part of ops) {
-      if (part.t === "text0") {
-        const op = part.o;
-        const { editor } = sharedEditor;
-        if (op.length === 2 && op[0].d && op[1].i && op[0].p === op[1].p) {
-          // replace operation
-          const from = editor.posFromIndex(op[0].p);
-          const to = editor.posFromIndex(op[0].p + op[0].d.length);
-          editor.replaceRange(op[1].i, from, to);
-        } else {
-          // eslint-disable-next-line no-restricted-syntax
-          for (part of op) {
-            const from = editor.posFromIndex(part.p);
-            if (part.d) {
-              // delete operation
-              const to = editor.posFromIndex(part.p + part.d.length);
-              editor.replaceRange("", from, to);
-            } else if (part.i) {
-              // insert operation
-              editor.replaceRange(part.i, from);
+      sharedEditor.suppressChange = true;
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (let part of ops) {
+        if (part.p[0] === "contents" && part.p[1] === someEditorId) {
+          const { editor } = sharedEditor;
+
+          if (part.oi) {
+            this.log("New buffer");
+            editor.setValue(part.oi);
+          } else if (part.t === "text0") {
+            const op = part.o;
+            if (op.length === 2 && op[0].d && op[1].i && op[0].p === op[1].p) {
+              // replace operation
+              const from = editor.posFromIndex(op[0].p);
+              const to = editor.posFromIndex(op[0].p + op[0].d.length);
+              editor.replaceRange(op[1].i, from, to);
+            } else {
+              // eslint-disable-next-line no-restricted-syntax
+              for (part of op) {
+                const from = editor.posFromIndex(part.p);
+                if (part.d) {
+                  // delete operation
+                  const to = editor.posFromIndex(part.p + part.d.length);
+                  editor.replaceRange("", from, to);
+                } else if (part.i) {
+                  // insert operation
+                  editor.replaceRange(part.i, from);
+                }
+              }
             }
           }
+        } else if (part.p[0] === "users" && part.oi) {
+          // insert or replace user data
+          const userId = part.p[1];
+          const userData = part.oi;
+          this.users[userId] = userData;
+          this.triggerUsersChange();
+
+          const cursorPos = { line: userData.l, ch: userData.c };
+          const userNum = Object.keys(this.users).indexOf(userId);
+          sharedEditor.updateBookmarkForUser(userId, userNum, cursorPos);
+        } else if (part.p[0] === "eval" && part.oi) {
+          const { c, b, e, _u } = part.oi;
+          this.log(`Remote evaluate: (${b}-${e}):`, c);
+          // sharedEditor.onEvaluateRemoteCode(c, u);
+          sharedEditor.flash(b, e);
         }
-      } else if (part.p[0] === "users" && part.oi) {
-        // insert or replace user data
-        const userId = part.p[1];
-        const userData = part.oi;
-        this.users[userId] = userData;
-        this.triggerUsersChange();
-
-        const cursorPos = { line: userData.l, ch: userData.c };
-        const userNum = Object.keys(this.users).indexOf(userId);
-        sharedEditor.updateBookmarkForUser(userId, userNum, cursorPos);
-      } else if (part.p[0] === "eval" && part.oi) {
-        const { c, b, e, _u } = part.oi;
-        this.log(`Remote evaluate: (${b}-${e}):`, c);
-        // sharedEditor.onEvaluateRemoteCode(c, u);
-        sharedEditor.flash(b, e);
       }
-    }
 
-    sharedEditor.suppressChange = false;
-    sharedEditor.assertValue(this);
+      sharedEditor.suppressChange = false;
+      sharedEditor.assertValue(this);
+    });
   };
 
   _handleDocDelete = (_data, _source) => {
