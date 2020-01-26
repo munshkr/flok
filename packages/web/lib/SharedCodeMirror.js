@@ -43,10 +43,10 @@ class SharedCodeMirror {
 
     editor.setValue(sessionClient.doc.data.content);
     editor.on("beforeChange", (_codeMirror, change) => {
-      this.handleBeforeLocalChange(sessionClient, change);
+      this._handleBeforeLocalChange(sessionClient, change);
     });
     editor.on("changes", (_codeMirror, changes) => {
-      this.handleAfterLocalChanges(sessionClient, changes);
+      this._handleAfterLocalChanges(sessionClient, changes);
     });
     editor.on("cursorActivity", () => {
       this.triggerCursorActivity();
@@ -92,7 +92,7 @@ class SharedCodeMirror {
    * Asserts that the CodeMirror instance's value matches the document's content
    * in order to ensure that the two copies haven't diverged.
    */
-  assertValue(sessionClient) {
+  _assertValue(sessionClient) {
     const expectedValue = sessionClient.doc.data.content;
     const editorValue = this.editor.getValue();
 
@@ -116,7 +116,7 @@ class SharedCodeMirror {
    * is an echo of the most recently applied remote operations, otherwise it
    * collects all the operations which are later sent to the server.
    */
-  handleBeforeLocalChange(_sessionClient, change) {
+  _handleBeforeLocalChange(_sessionClient, change) {
     if (this.suppressChange) {
       return;
     }
@@ -142,19 +142,19 @@ class SharedCodeMirror {
    * an echo of the most recently applied remote operations, otherwise it
    * sends the previously collected operations to the server.
    */
-  handleAfterLocalChanges(sessionClient, _changes) {
+  _handleAfterLocalChanges(sessionClient, _changes) {
     if (this.suppressChange) {
       return;
     }
 
-    const op = [{ p: ["content"], t: "text0", o: this.ops }];
+    const { ops } = this;
+    sessionClient.updateEditorContent(ops);
     delete this.ops;
-    sessionClient.sendOP(op);
 
     // Force update cursor activity
     this.triggerCursorActivity();
 
-    this.assertValue(sessionClient);
+    this._assertValue(sessionClient);
   }
 
   triggerCursorActivity() {

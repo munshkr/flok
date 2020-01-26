@@ -237,6 +237,10 @@ class SessionClient {
     ]);
   }
 
+  updateContent(ops) {
+    this.sendOP([{ p: ["content"], t: "text0", o: ops }]);
+  }
+
   _updateEditorBookmarks() {
     const { editors, users } = this;
 
