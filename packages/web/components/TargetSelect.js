@@ -3,11 +3,9 @@ import PropTypes from "prop-types";
 
 const TargetSelect = ({ value, options, onChange }) => (
   <div className="select target-select">
-    <select onChange={onChange}>
+    <select onChange={onChange} value={value}>
       {options.map((option, i) => (
-        <option key={i} selected={option === value}>
-          {option}
-        </option>
+        <option key={i}>{option}</option>
       ))}
     </select>
   </div>

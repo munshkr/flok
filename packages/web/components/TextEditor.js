@@ -1,8 +1,10 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import PropTypes from "prop-types";
-import { PubSubClient } from "flok-core";
+
 import SharedCodeMirror from "../lib/SharedCodeMirror";
+import SessionManager from "../lib/SessionManager";
 
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/haskell/haskell";
@@ -14,105 +16,25 @@ import "codemirror/addon/selection/mark-selection";
 
 class TextEditor extends React.Component {
   componentDidMount() {
-    const {
-      websocketsHost,
-      sessionName,
-      userName,
-      target,
-      onConnectionOpen,
-      onConnectionClose,
-      onConnectionError,
-      onUsersChange
-    } = this.props;
+    const { editorId, sessionManager, onEvaluateCode } = this.props;
+    const { editor } = this.cm;
 
-    const wsProtocol = location.protocol === "https:" ? "wss:" : "ws:";
-    const wsDbUrl = `${wsProtocol}//${websocketsHost}/db`;
-    console.log(`Database WebSocket URL: ${wsDbUrl}`);
-
-    const pubsubWsUrl = `${wsProtocol}//${websocketsHost}/pubsub`;
-    console.log(`Pub/Sub WebSocket URL: ${pubsubWsUrl}`);
-
-    this.pubsubClient = new PubSubClient(pubsubWsUrl, {
-      connect: true,
-      reconnect: true,
-      onMeMessage: clientId => {
-        this.sharedCodeMirror = new SharedCodeMirror(
-          this.editor.editor,
-          wsDbUrl,
-          {
-            userId: clientId,
-            // extraKeys: {
-            //   "Ctrl-Alt-U": this.toggleUserList,
-            //   "Ctrl-Alt-M": this.toggleTargetMessagesPane
-            // },
-            onConnectionOpen,
-            onConnectionClose,
-            onConnectionError,
-            onUsersChange,
-            onEvaluateCode: this.handleEvaluateCode,
-            // onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
-            verbose: true
-          }
-        );
-
-        this.sharedCodeMirror.attachDocument("flok", sessionName);
-        this.sharedCodeMirror.setUsername(userName);
-
-        // Subscribes to messages directed to ourselves
-        const { onMessageUser } = this.props;
-        this.pubsubClient.subscribe(`user:${clientId}`, onMessageUser);
-      },
-      onClose: () => {
-        this.sharedCodeMirror.detachDocument();
-        this.sharedCodeMirror = null;
-      }
+    this.sharedCodeMirror = new SharedCodeMirror({
+      editor,
+      onEvaluateCode,
+      // onEvaluateRemoteCode,
+      verbose: true
     });
 
-    // Subscribes to messages from targets (e.g. stdout and stderr REPLs)
-    this.subscribeToTargetOutput(target);
-  }
-
-  componentDidUpdate(prevProps) {
-    if (this.sharedCodeMirror) {
-      const { userName, target } = this.props;
-      if (prevProps.userName !== userName) {
-        console.log(`Change username to '${userName}'`);
-        this.sharedCodeMirror.setUsername(userName);
-      }
-
-      if (prevProps.target !== target) {
-        // TODO Unsubscribe from old target and subscribe to new target
-        // ...
-      }
-    }
-  }
-
-  componentWillUnmount() {
-    // console.log("detach doc");
-    this.sharedCodeMirror.detachDocument();
-  }
-
-  handleEvaluateCode = body => {
-    const { userName, target, onEvaluateCode } = this.props;
-    this.pubsubClient.publish(`target:${target}:in`, { userName, body });
-    onEvaluateCode(body);
-  };
-
-  // handleEvaluateRemoteCode = (body, userName) => {
-  //   this.pubsubClient.publish(`target:${target}:in`, { userName, body });
-  // };
-
-  subscribeToTargetOutput(target) {
-    const { onMessageTarget } = this.props;
-    this.pubsubClient.subscribe(`target:${target}:out`, onMessageTarget);
+    sessionManager.attachEditor(editorId, this.sharedCodeMirror);
   }
 
   render() {
     return (
       <CodeMirror
         className="editor"
-        ref={c => {
-          this.editor = c;
+        ref={el => {
+          this.cm = el;
         }}
         options={{
           mode: "haskell",
@@ -126,29 +48,15 @@ class TextEditor extends React.Component {
 }
 
 TextEditor.propTypes = {
-  websocketsHost: PropTypes.string.isRequired,
-  sessionName: PropTypes.string.isRequired,
-  userName: PropTypes.string,
-  target: PropTypes.string,
-  onConnectionOpen: PropTypes.func,
-  onConnectionClose: PropTypes.func,
-  onConnectionError: PropTypes.func,
-  onUsersChange: PropTypes.func,
-  onEvaluateCode: PropTypes.func,
-  onMessageTarget: PropTypes.func,
-  onMessageUser: PropTypes.func
+  sessionManager: PropTypes.instanceOf(SessionManager).isRequired,
+  editorId: PropTypes.string.isRequired,
+  onEvaluateCode: PropTypes.func
+  // onEvaluateRemoteCode: PropTypes.func
 };
 
 TextEditor.defaultProps = {
-  userName: "anonymous",
-  target: "default",
-  onConnectionOpen: () => {},
-  onConnectionClose: () => {},
-  onConnectionError: () => {},
-  onUsersChange: () => {},
-  onEvaluateCode: () => {},
-  onMessageTarget: () => {},
-  onMessageUser: () => {}
+  onEvaluateCode: () => {}
+  // onEvaluateRemoteCode: () => {}
 };
 
 export default TextEditor;
