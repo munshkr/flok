@@ -4,12 +4,26 @@ import ShareDB from "sharedb/lib/client";
 // FIXME Replace callbacks for Promises
 
 class SessionClient {
+  /**
+   * @constructor
+   * @param {Object} options - configuration options:
+   *    - userId: user/client unique id
+   *    - webSocketsUrl: WebSocket url - a URL string of the WebSocket server
+   *    - collectionName: optional. ShareDB collection (default: "flok")
+   *    - onConnectionOpen: optional. Handler for WebSockets 'open' event
+   *    - onConnectionClose: optional. Handler for WebSockets 'close' event
+   *    - onConnectionError: optional. Handler for WebSockets 'error' event
+   *    - onUsersChange: optional. A handler called whenever a new user connects
+   *      or disconnects.
+   *    - debug: optional. If true, log messages will be printed to the console.
+   * @return {SessionClient} the created SessionClient object
+   */
   constructor(ctx) {
     const {
       userId,
       webSocketsUrl,
       collectionName,
-      verbose,
+      debug,
       onConnectionOpen,
       onConnectionClose,
       onConnectionError,
@@ -27,9 +41,9 @@ class SessionClient {
     this.users = {};
     this.editors = {};
 
-    const isVerbose = Boolean(verbose) || true;
+    const isDebug = Boolean(debug);
     this.log = (...args) => {
-      if (isVerbose) {
+      if (isDebug) {
         // eslint-disable-next-line no-console
         console.debug(...args);
       }
@@ -76,7 +90,7 @@ class SessionClient {
   }
 
   triggerUsersChange() {
-    this.log(`Current users: ${JSON.stringify(this.users)}`);
+    this.log("Current users:", this.users);
     this.onUsersChange(
       Object.keys(this.users).map(id => ({ id, name: this.users[id].n }))
     );
@@ -88,7 +102,7 @@ class SessionClient {
   release() {
     const { doc } = this;
 
-    this.log("releasing SharedDB document");
+    this.log("Releasing document");
     this.log(doc);
     if (!doc) return;
 
@@ -107,7 +121,7 @@ class SessionClient {
 
     delete this.doc;
 
-    this.log("unsubscribed from doc");
+    this.log("Unsubscribed from document");
   }
 
   setUsername(newName) {
@@ -155,7 +169,7 @@ class SessionClient {
   _attachDoc(callback) {
     const { doc } = this;
 
-    this.log("doc", doc);
+    this.log("Document:", doc);
 
     doc.subscribe(error => {
       if (error) {
@@ -163,7 +177,7 @@ class SessionClient {
           console.error(error);
         }
       } else {
-        this.log("subscribed to doc", doc);
+        this.log("Subscribed to document:", doc);
         this._start();
       }
       if (callback) {
@@ -176,7 +190,7 @@ class SessionClient {
     const { doc } = this;
 
     if (!doc.type) {
-      this.log("creating empty ShareDB doc");
+      this.log("Creating empty document");
 
       const data = {};
 
@@ -196,7 +210,7 @@ class SessionClient {
         }
       });
     } else {
-      this.log("ShareDB document already exists; add user");
+      this.log("Document already exists; add user");
 
       // Update current users map from document
       this.users = doc.data.users;
@@ -260,7 +274,7 @@ class SessionClient {
       return;
     }
 
-    this.log("applying ops", ops);
+    this.log("Applying OPs:", ops);
 
     // FIXME: Support multiple editors
     const { editors } = this;
@@ -305,7 +319,7 @@ class SessionClient {
         sharedEditor.updateBookmarkForUser(userId, userNum, cursorPos);
       } else if (part.p[0] === "eval" && part.oi) {
         const { c, b, e, _u } = part.oi;
-        this.log(`Remote evaluate (${b}-${e}): ${JSON.stringify(c)}`);
+        this.log(`Remote evaluate: (${b}-${e}):`, c);
         // sharedEditor.onEvaluateRemoteCode(c, u);
         sharedEditor.flash(b, e);
       }
@@ -320,7 +334,7 @@ class SessionClient {
   };
 
   sendOP(op) {
-    this.log("submitting op", op);
+    this.log("Submitting OP:", op);
     this.doc.submitOp(op, error => {
       if (error) {
         console.error(error);

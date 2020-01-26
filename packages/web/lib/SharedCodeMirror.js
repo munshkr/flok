@@ -7,31 +7,17 @@ const COLORS = ["#ff0000", "#00ff00", "#0000ff"];
 class SharedCodeMirror {
   /**
    * @constructor
-   * @param {CodeMirror} codeMirror - a CodeMirror editor instance
    * @param {String} WebSocket url - a URL string of the WebSocket server
    * @param {Object} options - configuration options:
    *    - editor: CodeMirror editor instance
-   *    - verbose: optional. If true, log messages will be printed to the console.
-   *    - onError: optional. A handler to which a single error message is
-   *      provided. The default behavior is to print error messages to the console.
-   *    - onConnectionOpen: optional. Handler for WebSockets 'open' event
-   *    - onConnectionClose: optional. Handler for WebSockets 'close' event
-   *    - onConnectionError: optional. Handler for WebSockets 'error' event
-   *    - onUsersChange: optional. A handler called whenever a new user connects
-   *      or disconnects.
    *    - onEvaluateCode: optional. A handler called whenever someone evaluates code
    *    - onEvaluateRemoteCode: optional. A handler called whenever someone other
    *      than current user evaluates code.
+   *    - debug: optional. If true, log messages will be printed to the console.
    * @return {SharedCodeMirror} the created SharedCodeMirror object
    */
   constructor(ctx) {
-    const {
-      editor,
-      onEvaluateCode,
-      onCursorActivity,
-      verbose,
-      extraKeys
-    } = ctx;
+    const { editor, onEvaluateCode, onCursorActivity, debug, extraKeys } = ctx;
 
     // FIXME Rename to editor
     this.codeMirror = editor;
@@ -44,9 +30,9 @@ class SharedCodeMirror {
 
     this.setExtraKeys();
 
-    const isVerbose = Boolean(verbose) || true;
+    const isDebug = Boolean(debug);
     this.log = (...args) => {
-      if (isVerbose) {
+      if (isDebug) {
         // eslint-disable-next-line no-console
         console.debug(...args);
       }
@@ -153,7 +139,7 @@ class SharedCodeMirror {
 
   triggerCursorActivity() {
     const { line, ch } = this.codeMirror.getDoc().getCursor();
-    this.log("cursorActivity:", line, ch);
+    this.log("Trigger cursor activity:", line, ch);
     this.onCursorActivity({ line, column: ch });
   }
 

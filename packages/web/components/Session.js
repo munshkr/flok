@@ -26,16 +26,16 @@ class Session extends React.Component {
   };
 
   componentDidMount() {
-    const { sessionName, userName } = this.props;
+    const { sessionName, userName, debug } = this.props;
     const { target } = this.state;
 
     const wsUrl = this.getWebsocketsUrl();
 
     const wsDbUrl = `${wsUrl}/db`;
-    console.log(`Database WebSocket URL: ${wsDbUrl}`);
+    this.log(`Database WebSocket URL: ${wsDbUrl}`);
 
     const pubsubWsUrl = `${wsUrl}/pubsub`;
-    console.log(`Pub/Sub WebSocket URL: ${pubsubWsUrl}`);
+    this.log(`Pub/Sub WebSocket URL: ${pubsubWsUrl}`);
 
     this.pubsubClient = new PubSubClient(pubsubWsUrl, {
       connect: true,
@@ -47,7 +47,8 @@ class Session extends React.Component {
           onConnectionOpen: this.handleConnectionOpen,
           onConnectionClose: this.handleConnectionClose,
           onConnectionError: this.handleConnectionError,
-          onUsersChange: this.handleUsersChange
+          onUsersChange: this.handleUsersChange,
+          debug
         });
 
         this.sessionClient.join(sessionName);
@@ -76,7 +77,7 @@ class Session extends React.Component {
 
       // If username changed, set new username
       if (prevProps.userName !== userName) {
-        console.log(`Change username to '${userName}'`);
+        this.log(`Change username to '${userName}'`);
         this.sessionClient.setUsername(userName);
       }
 
@@ -115,7 +116,7 @@ class Session extends React.Component {
   };
 
   handleUsersChange = users => {
-    console.log("users:", users);
+    this.log("Users:", users);
     this.setState({ users });
   };
 
@@ -139,14 +140,14 @@ class Session extends React.Component {
   // };
 
   handleMessageTarget = message => {
-    console.log(`[message] target: ${JSON.stringify(message)}`);
+    this.log(`[message] target: ${JSON.stringify(message)}`);
     this.setState(prevState => ({
       messages: [message, ...prevState.messages]
     }));
   };
 
   handleMessageUser = message => {
-    console.log(`[message] user: ${JSON.stringify(message)}`);
+    this.log(`[message] user: ${JSON.stringify(message)}`);
   };
 
   handleTargetSelectChange = e => {
@@ -165,6 +166,13 @@ class Session extends React.Component {
     }));
   };
 
+  log(...args) {
+    const { debug } = this.props;
+    if (debug) {
+      console.debug(...args);
+    }
+  }
+
   render() {
     const {
       status,
@@ -174,6 +182,8 @@ class Session extends React.Component {
       showUserList,
       showTargetMessagesPane
     } = this.state;
+
+    const { debug } = this.props;
 
     const { sessionClient } = this;
     const showTextEditor = Boolean(sessionClient);
@@ -187,6 +197,7 @@ class Session extends React.Component {
             sessionClient={sessionClient}
             onEvaluateCode={this.handleEvaluateCode}
             onCursorActivity={this.handleCursorActivity}
+            debug={debug}
           />
         )}
         {showUserList && <UserList users={users} />}
@@ -206,11 +217,13 @@ class Session extends React.Component {
 Session.propTypes = {
   websocketsHost: PropTypes.string.isRequired,
   sessionName: PropTypes.string.isRequired,
-  userName: PropTypes.string
+  userName: PropTypes.string,
+  debug: PropTypes.bool
 };
 
 Session.defaultProps = {
-  userName: "anonymous"
+  userName: "anonymous",
+  debug: false
 };
 
 export default Session;

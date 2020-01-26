@@ -20,7 +20,8 @@ class TextEditor extends React.Component {
       editorId,
       sessionClient,
       onEvaluateCode,
-      onCursorActivity
+      onCursorActivity,
+      debug
     } = this.props;
     const { editor } = this.cm;
 
@@ -29,7 +30,7 @@ class TextEditor extends React.Component {
       onEvaluateCode,
       // onEvaluateRemoteCode,
       onCursorActivity,
-      verbose: true
+      debug
     });
 
     sessionClient.attachEditor(editorId, this.sharedCodeMirror);
@@ -58,13 +59,15 @@ TextEditor.propTypes = {
   editorId: PropTypes.string.isRequired,
   onEvaluateCode: PropTypes.func,
   // onEvaluateRemoteCode: PropTypes.func
-  onCursorActivity: PropTypes.func
+  onCursorActivity: PropTypes.func,
+  debug: PropTypes.bool
 };
 
 TextEditor.defaultProps = {
   onEvaluateCode: () => {},
   // onEvaluateRemoteCode: () => {}
-  onCursorActivity: () => {}
+  onCursorActivity: () => {},
+  debug: false
 };
 
 export default TextEditor;

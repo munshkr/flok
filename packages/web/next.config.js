@@ -2,9 +2,14 @@
 // next.config.js
 const withCSS = require("@zeit/next-css");
 const withSass = require("@zeit/next-sass");
+const process = require("process");
 
 module.exports = withCSS(
   withSass({
+    publicRuntimeConfig: {
+      isDevelopment: process.env.NODE_ENV !== "production"
+    },
+
     webpack(config) {
       // Fixes npm packages that depend on `fs` module
       config.node = {
