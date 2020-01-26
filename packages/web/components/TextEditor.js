@@ -16,13 +16,19 @@ import "codemirror/addon/selection/mark-selection";
 
 class TextEditor extends React.Component {
   componentDidMount() {
-    const { editorId, sessionClient, onEvaluateCode } = this.props;
+    const {
+      editorId,
+      sessionClient,
+      onEvaluateCode,
+      onCursorActivity
+    } = this.props;
     const { editor } = this.cm;
 
     this.sharedCodeMirror = new SharedCodeMirror({
       editor,
       onEvaluateCode,
       // onEvaluateRemoteCode,
+      onCursorActivity,
       verbose: true
     });
 
@@ -50,13 +56,15 @@ class TextEditor extends React.Component {
 TextEditor.propTypes = {
   sessionClient: PropTypes.instanceOf(SessionClient).isRequired,
   editorId: PropTypes.string.isRequired,
-  onEvaluateCode: PropTypes.func
+  onEvaluateCode: PropTypes.func,
   // onEvaluateRemoteCode: PropTypes.func
+  onCursorActivity: PropTypes.func
 };
 
 TextEditor.defaultProps = {
-  onEvaluateCode: () => {}
+  onEvaluateCode: () => {},
   // onEvaluateRemoteCode: () => {}
+  onCursorActivity: () => {}
 };
 
 export default TextEditor;

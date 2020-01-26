@@ -120,12 +120,16 @@ class Session extends React.Component {
   };
 
   handleEvaluateCode = ({ body, fromLine, toLine, user }) => {
-    const { pubsubClient, sessionClient: sessionClient } = this;
+    const { pubsubClient, sessionClient } = this;
     const { userName } = this.props;
     const { target } = this.state;
 
     pubsubClient.publish(`target:${target}:in`, { userName, code: body });
     sessionClient.evaluateCode({ body, fromLine, toLine, user });
+  };
+
+  handleCursorActivity = ({ line, column }) => {
+    this.sessionClient.updateCursorActivity({ line, column });
   };
 
   // handleEvaluateRemoteCode = (body, userName) => {
@@ -182,6 +186,7 @@ class Session extends React.Component {
             editorId="main"
             sessionClient={sessionClient}
             onEvaluateCode={this.handleEvaluateCode}
+            onCursorActivity={this.handleCursorActivity}
           />
         )}
         {showUserList && <UserList users={users} />}

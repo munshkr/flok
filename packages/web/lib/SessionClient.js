@@ -65,23 +65,21 @@ class SessionClient {
     // FIXME: Define methods for the following procedure
     sharedEditor.codeMirror.setValue(doc.data.content);
     sharedEditor.codeMirror.on("beforeChange", (_codeMirror, change) => {
-      sharedEditor.beforeLocalChange(this, change);
+      sharedEditor.handleBeforeLocalChange(this, change);
     });
     sharedEditor.codeMirror.on("changes", (_codeMirror, changes) => {
-      sharedEditor.afterLocalChanges(this, changes);
+      sharedEditor.handleAfterLocalChanges(this, changes);
     });
     sharedEditor.codeMirror.on("cursorActivity", () => {
-      sharedEditor.cursorActivity(this);
+      sharedEditor.triggerCursorActivity();
     });
   }
 
   triggerUsersChange() {
     this.log(`Current users: ${JSON.stringify(this.users)}`);
-    if (this.onUsersChange) {
-      this.onUsersChange(
-        Object.keys(this.users).map(id => ({ id, name: this.users[id].n }))
-      );
-    }
+    this.onUsersChange(
+      Object.keys(this.users).map(id => ({ id, name: this.users[id].n }))
+    );
   }
 
   /**
@@ -222,6 +220,16 @@ class SessionClient {
   evaluateCode({ body, fromLine, toLine, user }) {
     this.sendOP([
       { p: ["eval"], oi: { c: body, b: fromLine, e: toLine, u: user } }
+    ]);
+  }
+
+  updateCursorActivity({ line, column }) {
+    this.sendOP([
+      {
+        p: ["users", this.userId],
+        od: this.users[this.userId],
+        oi: { l: line, c: column, n: this.userName }
+      }
     ]);
   }
 

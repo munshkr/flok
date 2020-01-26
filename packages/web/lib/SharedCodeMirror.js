@@ -25,11 +25,18 @@ class SharedCodeMirror {
    * @return {SharedCodeMirror} the created SharedCodeMirror object
    */
   constructor(ctx) {
-    const { editor, onEvaluateCode, verbose, extraKeys } = ctx;
+    const {
+      editor,
+      onEvaluateCode,
+      onCursorActivity,
+      verbose,
+      extraKeys
+    } = ctx;
 
     // FIXME Rename to editor
     this.codeMirror = editor;
     this.onEvaluateCode = onEvaluateCode || (() => {});
+    this.onCursorActivity = onCursorActivity || (() => {});
     this.extraKeys = extraKeys || {};
 
     this.bookmarks = {};
@@ -101,7 +108,7 @@ class SharedCodeMirror {
    * is an echo of the most recently applied remote operations, otherwise it
    * collects all the operations which are later sent to the server.
    */
-  beforeLocalChange(_sessionClient, change) {
+  handleBeforeLocalChange(_sessionClient, change) {
     if (this.suppressChange) {
       return;
     }
@@ -127,7 +134,7 @@ class SharedCodeMirror {
    * an echo of the most recently applied remote operations, otherwise it
    * sends the previously collected operations to the server.
    */
-  afterLocalChanges(sessionClient, _changes) {
+  handleAfterLocalChanges(sessionClient, _changes) {
     if (this.suppressChange) {
       return;
     }
@@ -139,22 +146,15 @@ class SharedCodeMirror {
     // Force update cursor activity
 
     // FIXME Use a callback to send cursor activity update
-    this.cursorActivity(sessionClient);
+    this.triggerCursorActivity();
 
     this.assertValue(sessionClient);
   }
 
-  cursorActivity(sessionClient) {
+  triggerCursorActivity() {
     const { line, ch } = this.codeMirror.getDoc().getCursor();
     this.log("cursorActivity:", line, ch);
-
-    sessionClient.sendOP([
-      {
-        p: ["users", this.userId],
-        od: sessionClient.users[this.userId],
-        oi: { l: line, c: ch, n: this.userName }
-      }
-    ]);
+    this.onCursorActivity({ line, column: ch });
   }
 
   evaluateLine = () => {
