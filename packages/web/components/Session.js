@@ -7,7 +7,7 @@ import Status from "./Status";
 import UserList from "./UserList";
 import TargetMessagesPane from "./TargetMessagesPane";
 import TargetSelect from "./TargetSelect";
-import SessionManager from "../lib/SessionManager";
+import SessionClient from "../lib/SessionClient";
 
 const TARGETS = ["default", "tidal", "sclang", "foxdot"];
 
@@ -41,7 +41,7 @@ class Session extends React.Component {
       connect: true,
       reconnect: true,
       onMeMessage: clientId => {
-        this.sessionManager = new SessionManager({
+        this.sessionClient = new SessionClient({
           clientId,
           webSocketsUrl: wsDbUrl,
           onConnectionOpen: this.handleConnectionOpen,
@@ -50,8 +50,8 @@ class Session extends React.Component {
           onUsersChange: this.handleUsersChange
         });
 
-        this.sessionManager.join(sessionName);
-        this.sessionManager.setUsername(userName);
+        this.sessionClient.join(sessionName);
+        this.sessionClient.setUsername(userName);
 
         // Subscribes to messages directed to ourselves
         this.pubsubClient.subscribe(`user:${clientId}`, this.handleMessageUser);
@@ -63,21 +63,21 @@ class Session extends React.Component {
         );
       },
       onClose: () => {
-        this.sessionManager.quit();
-        this.sessionManager = null;
+        this.sessionClient.quit();
+        this.sessionClient = null;
       }
     });
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (this.sessionManager) {
+    if (this.sessionClient) {
       const { userName } = this.props;
       const { target } = this.state;
 
       // If username changed, set new username
       if (prevProps.userName !== userName) {
         console.log(`Change username to '${userName}'`);
-        this.sessionManager.setUsername(userName);
+        this.sessionClient.setUsername(userName);
       }
 
       // If target changed, unsubscribe from previous target, and subscribe to
@@ -89,9 +89,9 @@ class Session extends React.Component {
   }
 
   componentWillUnmount() {
-    if (this.sessionManager) {
-      this.sessionManager.release();
-      this.sessionManager = null;
+    if (this.sessionClient) {
+      this.sessionClient.release();
+      this.sessionClient = null;
     }
   }
 
@@ -120,12 +120,12 @@ class Session extends React.Component {
   };
 
   handleEvaluateCode = ({ body, fromLine, toLine, user }) => {
-    const { pubsubClient, sessionManager } = this;
+    const { pubsubClient, sessionClient: sessionClient } = this;
     const { userName } = this.props;
     const { target } = this.state;
 
     pubsubClient.publish(`target:${target}:in`, { userName, code: body });
-    sessionManager.evaluateCode({ body, fromLine, toLine, user });
+    sessionClient.evaluateCode({ body, fromLine, toLine, user });
   };
 
   // handleEvaluateRemoteCode = (body, userName) => {
@@ -171,8 +171,8 @@ class Session extends React.Component {
       showTargetMessagesPane
     } = this.state;
 
-    const { sessionManager } = this;
-    const showTextEditor = Boolean(sessionManager);
+    const { sessionClient } = this;
+    const showTextEditor = Boolean(sessionClient);
 
     return (
       <React.Fragment>
@@ -180,7 +180,7 @@ class Session extends React.Component {
         {showTextEditor && (
           <TextEditor
             editorId="main"
-            sessionManager={sessionManager}
+            sessionClient={sessionClient}
             onEvaluateCode={this.handleEvaluateCode}
           />
         )}

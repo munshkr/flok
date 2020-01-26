@@ -3,7 +3,7 @@ import ShareDB from "sharedb/lib/client";
 
 // FIXME Replace callbacks for Promises
 
-class SessionManager {
+class SessionClient {
   constructor(ctx) {
     const {
       userId,
@@ -321,4 +321,4 @@ class SessionManager {
   }
 }
 
-export default SessionManager;
+export default SessionClient;

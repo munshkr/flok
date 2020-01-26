@@ -4,7 +4,7 @@ import { UnControlled as CodeMirror } from "react-codemirror2";
 import PropTypes from "prop-types";
 
 import SharedCodeMirror from "../lib/SharedCodeMirror";
-import SessionManager from "../lib/SessionManager";
+import SessionClient from "../lib/SessionClient";
 
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/haskell/haskell";
@@ -16,7 +16,7 @@ import "codemirror/addon/selection/mark-selection";
 
 class TextEditor extends React.Component {
   componentDidMount() {
-    const { editorId, sessionManager, onEvaluateCode } = this.props;
+    const { editorId, sessionClient, onEvaluateCode } = this.props;
     const { editor } = this.cm;
 
     this.sharedCodeMirror = new SharedCodeMirror({
@@ -26,7 +26,7 @@ class TextEditor extends React.Component {
       verbose: true
     });
 
-    sessionManager.attachEditor(editorId, this.sharedCodeMirror);
+    sessionClient.attachEditor(editorId, this.sharedCodeMirror);
   }
 
   render() {
@@ -48,7 +48,7 @@ class TextEditor extends React.Component {
 }
 
 TextEditor.propTypes = {
-  sessionManager: PropTypes.instanceOf(SessionManager).isRequired,
+  sessionClient: PropTypes.instanceOf(SessionClient).isRequired,
   editorId: PropTypes.string.isRequired,
   onEvaluateCode: PropTypes.func
   // onEvaluateRemoteCode: PropTypes.func

@@ -77,8 +77,8 @@ class SharedCodeMirror {
    * Asserts that the CodeMirror instance's value matches the document's content
    * in order to ensure that the two copies haven't diverged.
    */
-  assertValue(sessionManager) {
-    const expectedValue = sessionManager.doc.data.content;
+  assertValue(sessionClient) {
+    const expectedValue = sessionClient.doc.data.content;
     const editorValue = this.codeMirror.getValue();
 
     if (expectedValue !== editorValue) {
@@ -101,7 +101,7 @@ class SharedCodeMirror {
    * is an echo of the most recently applied remote operations, otherwise it
    * collects all the operations which are later sent to the server.
    */
-  beforeLocalChange(_sessionManager, change) {
+  beforeLocalChange(_sessionClient, change) {
     if (this.suppressChange) {
       return;
     }
@@ -127,31 +127,31 @@ class SharedCodeMirror {
    * an echo of the most recently applied remote operations, otherwise it
    * sends the previously collected operations to the server.
    */
-  afterLocalChanges(sessionManager, _changes) {
+  afterLocalChanges(sessionClient, _changes) {
     if (this.suppressChange) {
       return;
     }
 
     const op = [{ p: ["content"], t: "text0", o: this.ops }];
     delete this.ops;
-    sessionManager.sendOP(op);
+    sessionClient.sendOP(op);
 
     // Force update cursor activity
 
     // FIXME Use a callback to send cursor activity update
-    this.cursorActivity(sessionManager);
+    this.cursorActivity(sessionClient);
 
-    this.assertValue(sessionManager);
+    this.assertValue(sessionClient);
   }
 
-  cursorActivity(sessionManager) {
+  cursorActivity(sessionClient) {
     const { line, ch } = this.codeMirror.getDoc().getCursor();
     this.log("cursorActivity:", line, ch);
 
-    sessionManager.sendOP([
+    sessionClient.sendOP([
       {
         p: ["users", this.userId],
-        od: sessionManager.users[this.userId],
+        od: sessionClient.users[this.userId],
         oi: { l: line, c: ch, n: this.userName }
       }
     ]);
