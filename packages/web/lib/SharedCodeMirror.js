@@ -20,7 +20,7 @@ class SharedCodeMirror {
     const { editor, onEvaluateCode, onCursorActivity, debug, extraKeys } = ctx;
 
     // FIXME Rename to editor
-    this.codeMirror = editor;
+    this.editor = editor;
     this.onEvaluateCode = onEvaluateCode || (() => {});
     this.onCursorActivity = onCursorActivity || (() => {});
     this.extraKeys = extraKeys || {};
@@ -40,7 +40,7 @@ class SharedCodeMirror {
   }
 
   updateBookmarkForUser(userId, userNum, cursorPos) {
-    const { codeMirror } = this;
+    const { editor } = this;
 
     const marker = this.bookmarks[userId];
     if (marker) {
@@ -48,7 +48,7 @@ class SharedCodeMirror {
     }
 
     // Generate DOM node (marker / design you want to display)
-    const cursorCoords = codeMirror.cursorCoords(cursorPos);
+    const cursorCoords = editor.cursorCoords(cursorPos);
     const el = document.createElement("span");
     el.style.borderLeftStyle = "solid";
     el.style.borderLeftWidth = "2px";
@@ -61,7 +61,7 @@ class SharedCodeMirror {
     // Set the generated DOM node at the position of the cursor sent from another client
     // setBookmark first argument: The position of the cursor sent from another client
     // Second argument widget: Generated DOM node
-    this.bookmarks[userId] = codeMirror.setBookmark(cursorPos, {
+    this.bookmarks[userId] = editor.setBookmark(cursorPos, {
       widget: el
     });
   }
@@ -72,7 +72,7 @@ class SharedCodeMirror {
    */
   assertValue(sessionClient) {
     const expectedValue = sessionClient.doc.data.content;
-    const editorValue = this.codeMirror.getValue();
+    const editorValue = this.editor.getValue();
 
     if (expectedValue !== editorValue) {
       this.onError(
@@ -84,7 +84,7 @@ class SharedCodeMirror {
       );
 
       this.suppressChange = true;
-      this.codeMirror.setValue(expectedValue);
+      this.editor.setValue(expectedValue);
       this.suppressChange = false;
     }
   }
@@ -102,10 +102,10 @@ class SharedCodeMirror {
     if (!this.ops) {
       this.ops = [];
     }
-    const index = this.codeMirror.indexFromPos(change.from);
+    const index = this.editor.indexFromPos(change.from);
     if (change.from !== change.to) {
       // delete operation
-      const deleted = this.codeMirror.getRange(change.from, change.to);
+      const deleted = this.editor.getRange(change.from, change.to);
       this.ops.push({ p: index, d: deleted });
     }
     if (change.text[0] !== "" || change.text.length > 0) {
@@ -138,16 +138,16 @@ class SharedCodeMirror {
   }
 
   triggerCursorActivity() {
-    const { line, ch } = this.codeMirror.getDoc().getCursor();
+    const { line, ch } = this.editor.getDoc().getCursor();
     this.log("Trigger cursor activity:", line, ch);
     this.onCursorActivity({ line, column: ch });
   }
 
   evaluateLine = () => {
-    const { codeMirror } = this;
+    const { editor } = this;
 
-    const currentLine = codeMirror.getCursor().line;
-    const lines = codeMirror.getValue().split("\n");
+    const currentLine = editor.getCursor().line;
+    const lines = editor.getValue().split("\n");
     const code = lines[currentLine].trim();
 
     if (code !== "") {
@@ -156,9 +156,9 @@ class SharedCodeMirror {
   };
 
   evaluateParagraph = () => {
-    const { codeMirror } = this;
-    const currentLine = codeMirror.getCursor().line;
-    const lines = codeMirror.getValue().split("\n");
+    const { editor } = this;
+    const currentLine = editor.getCursor().line;
+    const lines = editor.getValue().split("\n");
 
     let code = "";
     let start = false;
@@ -200,10 +200,10 @@ class SharedCodeMirror {
   }
 
   flash(fromLine, toLine) {
-    const { codeMirror } = this;
+    const { editor } = this;
 
     // Mark text with .flash-selection class
-    const marker = codeMirror.markText(
+    const marker = editor.markText(
       { line: fromLine, ch: 0 },
       { line: toLine + 1, ch: 0 },
       { className: "flash-selection" }
@@ -217,7 +217,7 @@ class SharedCodeMirror {
 
   setExtraKeys() {
     // Set extra keys for code evaluation
-    this.codeMirror.setOption("extraKeys", {
+    this.editor.setOption("extraKeys", {
       ...this.extraKeys,
       "Shift-Enter": this.evaluateLine,
       "Ctrl-Enter": this.evaluateParagraph,

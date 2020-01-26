@@ -70,21 +70,20 @@ class SessionClient {
    * the pre-change coordinate system, while the latter marks the end of the
    * batch of operations.
    */
-  // FIXME: Rename codeMirror to editor
   attachEditor(id, sharedEditor) {
     const { doc } = this;
 
     this.editors[id] = sharedEditor;
 
     // FIXME: Define methods for the following procedure
-    sharedEditor.codeMirror.setValue(doc.data.content);
-    sharedEditor.codeMirror.on("beforeChange", (_codeMirror, change) => {
+    sharedEditor.editor.setValue(doc.data.content);
+    sharedEditor.editor.on("beforeChange", (_codeMirror, change) => {
       sharedEditor.handleBeforeLocalChange(this, change);
     });
-    sharedEditor.codeMirror.on("changes", (_codeMirror, changes) => {
+    sharedEditor.editor.on("changes", (_codeMirror, changes) => {
       sharedEditor.handleAfterLocalChanges(this, changes);
     });
-    sharedEditor.codeMirror.on("cursorActivity", () => {
+    sharedEditor.editor.on("cursorActivity", () => {
       sharedEditor.triggerCursorActivity();
     });
   }
@@ -112,8 +111,8 @@ class SessionClient {
     const editors = Object.values(this.editors);
     for (let i = 0; i < editors.length; i += 1) {
       const sharedEditor = editors[i];
-      sharedEditor.codeMirror.off("beforeChange");
-      sharedEditor.codeMirror.off("changes");
+      sharedEditor.editor.off("beforeChange");
+      sharedEditor.editor.off("changes");
     }
     doc.removeListener("op", this._handleRemoteChange);
     doc.removeListener("del", this._handleDocDelete);
@@ -287,23 +286,23 @@ class SessionClient {
     for (let part of ops) {
       if (part.t === "text0") {
         const op = part.o;
-        const { codeMirror } = sharedEditor;
+        const { editor } = sharedEditor;
         if (op.length === 2 && op[0].d && op[1].i && op[0].p === op[1].p) {
           // replace operation
-          const from = codeMirror.posFromIndex(op[0].p);
-          const to = codeMirror.posFromIndex(op[0].p + op[0].d.length);
-          codeMirror.replaceRange(op[1].i, from, to);
+          const from = editor.posFromIndex(op[0].p);
+          const to = editor.posFromIndex(op[0].p + op[0].d.length);
+          editor.replaceRange(op[1].i, from, to);
         } else {
           // eslint-disable-next-line no-restricted-syntax
           for (part of op) {
-            const from = codeMirror.posFromIndex(part.p);
+            const from = editor.posFromIndex(part.p);
             if (part.d) {
               // delete operation
-              const to = codeMirror.posFromIndex(part.p + part.d.length);
-              codeMirror.replaceRange("", from, to);
+              const to = editor.posFromIndex(part.p + part.d.length);
+              editor.replaceRange("", from, to);
             } else if (part.i) {
               // insert operation
-              codeMirror.replaceRange(part.i, from);
+              editor.replaceRange(part.i, from);
             }
           }
         }
