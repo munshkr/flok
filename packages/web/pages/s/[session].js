@@ -28,12 +28,7 @@ class SessionPage extends React.Component {
         <Head>
           <title>{`${session} :: flok`}</title>
         </Head>
-        <Session
-          websocketsHost={host}
-          sessionName={session}
-          userName={user}
-          debug={isDevelopment}
-        />
+        <Session websocketsHost={host} sessionName={session} userName={user} />
       </Layout>
     );
   }

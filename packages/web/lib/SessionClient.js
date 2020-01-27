@@ -15,7 +15,6 @@ class SessionClient {
    *    - onConnectionError: optional. Handler for WebSockets 'error' event
    *    - onUsersChange: optional. A handler called whenever a new user connects
    *      or disconnects.
-   *    - debug: optional. If true, log messages will be printed to the console.
    * @return {SessionClient} the created SessionClient object
    */
   constructor(ctx) {
@@ -23,7 +22,7 @@ class SessionClient {
       userId,
       webSocketsUrl,
       collectionName,
-      debug,
+      onJoin,
       onConnectionOpen,
       onConnectionClose,
       onConnectionError,
@@ -33,6 +32,7 @@ class SessionClient {
     this.webSocketsUrl = webSocketsUrl;
     this.userId = userId;
     this.collectionName = collectionName || "flok";
+    this.onJoin = onJoin || (() => {});
     this.onConnectionOpen = onConnectionOpen || (() => {});
     this.onConnectionClose = onConnectionClose || (() => {});
     this.onConnectionError = onConnectionError || (() => {});
@@ -40,14 +40,6 @@ class SessionClient {
 
     this.users = {};
     this.editors = {};
-
-    const isDebug = Boolean(debug);
-    this.log = (...args) => {
-      if (isDebug) {
-        // eslint-disable-next-line no-console
-        console.debug(...args);
-      }
-    };
   }
 
   join(sessionId) {
@@ -72,16 +64,29 @@ class SessionClient {
    */
   attachEditor(id, sharedEditor) {
     this.editors[id] = sharedEditor;
+
     sharedEditor.attach(this, id);
 
-    const content = sharedEditor.editor.getValue();
-    if (!this.doc.data.contents[id]) {
+    // If this is a new editor, get current content and send OP
+    if (!(this.doc.data && this.doc.data.contents[id])) {
+      const content = sharedEditor.editor.getValue();
       this.sendOP([{ p: ["contents", id], oi: content }]);
+    }
+
+    // If this is a new editor, get current cursor position and send OP
+    const { userId } = this;
+    console.debug(
+      "Going to check for cursor position in editors:",
+      this.doc.data
+    );
+    if (!(this.doc.data && this.doc.data.users[userId].es[id])) {
+      const { line, ch } = sharedEditor.editor.getCursor();
+      this.sendOP([{ p: ["users", userId, "es", id], oi: { l: line, c: ch } }]);
     }
   }
 
   triggerUsersChange() {
-    this.log("Current users:", this.users);
+    console.debug("Current users:", this.users);
     this.onUsersChange(
       Object.keys(this.users).map(id => ({ id, name: this.users[id].n }))
     );
@@ -93,9 +98,9 @@ class SessionClient {
   release() {
     const { doc } = this;
 
-    this.log("Releasing document");
-    this.log(doc);
     if (!doc) return;
+
+    console.debug("Releasing document", doc);
 
     if (doc.cm) doc.cm.version = doc.version;
 
@@ -113,7 +118,7 @@ class SessionClient {
 
     delete this.doc;
 
-    this.log("Unsubscribed from document");
+    console.debug("Unsubscribed from document");
   }
 
   setUsername(newName) {
@@ -123,6 +128,7 @@ class SessionClient {
 
     this.userName = newName;
     if (this.doc) {
+      console.debug("setUsername:", newName);
       this.sendOP([
         { p: ["users", this.userId, "n"], od: oldName, oi: newName }
       ]);
@@ -161,7 +167,7 @@ class SessionClient {
   _attachDoc(callback) {
     const { doc } = this;
 
-    this.log("Document:", doc);
+    console.debug("Document:", doc);
 
     doc.subscribe(error => {
       if (error) {
@@ -169,7 +175,7 @@ class SessionClient {
           console.error(error);
         }
       } else {
-        this.log("Subscribed to document:", doc);
+        console.debug("Subscribed to document:", doc);
         this._start();
       }
       if (callback) {
@@ -182,7 +188,7 @@ class SessionClient {
     const { doc } = this;
 
     if (!doc.type) {
-      this.log("Creating empty document");
+      console.debug("Creating empty document");
 
       const data = {};
 
@@ -191,7 +197,7 @@ class SessionClient {
 
       // Add current user
       this.users = {};
-      this.users[this.userId] = { l: 0, c: 0, n: this.userName };
+      this.users[this.userId] = { es: {}, n: this.userName };
       this.triggerUsersChange();
 
       data.users = this.users;
@@ -199,23 +205,27 @@ class SessionClient {
       doc.create(data, error => {
         if (error) {
           console.error(error);
+          return;
         }
+
+        this.onJoin();
       });
     } else {
-      this.log("Document already exists; add user");
+      console.debug("Document already exists; add user");
 
       // Update current users map from document
       this.users = doc.data.users;
 
       // FIXME Check if users list *really* changed
       this.triggerUsersChange();
-
       this._updateEditorBookmarks();
 
       // Add current user
       this.sendOP([
-        { p: ["users", this.userId], oi: { l: 0, c: 0, n: this.userName } }
+        { p: ["users", this.userId], oi: { es: {}, n: this.userName } }
       ]);
+
+      this.onJoin();
     }
 
     doc.on("op", this._handleRemoteChange);
@@ -223,19 +233,19 @@ class SessionClient {
     doc.on("error", error => console.error(error));
   }
 
-  evaluateCode({ body, fromLine, toLine, user }) {
+  evaluateCode({ editorId, body, fromLine, toLine, user }) {
     this.sendOP([
-      { p: ["eval"], oi: { c: body, b: fromLine, e: toLine, u: user } }
+      {
+        p: ["eval"],
+        oi: { ed: editorId, c: body, b: fromLine, e: toLine, u: user }
+      }
     ]);
   }
 
-  updateCursorActivity({ line, column }) {
+  updateCursorActivity({ editorId, line, column }) {
+    const { userId } = this;
     this.sendOP([
-      {
-        p: ["users", this.userId],
-        od: this.users[this.userId],
-        oi: { l: line, c: column, n: this.userName }
-      }
+      { p: ["users", userId, "es", editorId], oi: { l: line, c: column } }
     ]);
   }
 
@@ -255,9 +265,8 @@ class SessionClient {
     Object.keys(editors).forEach(editorId => {
       Object.keys(users).forEach(userId => {
         const editor = editors[editorId];
-        // TODO
-        //const userData = users[userId][editorId];
-        const userData = users[userId];
+        // const userData = users[userId];
+        const userData = users[userId].es[editorId] || {};
         const cursorPos = { line: userData.l, ch: userData.c };
         const userNum = Object.keys(users).indexOf(userId);
         editor.updateBookmarkForUser(userId, userNum, cursorPos);
@@ -275,66 +284,82 @@ class SessionClient {
       return;
     }
 
-    this.log("Applying OPs:", ops);
+    console.debug("Applying OPs:", ops);
 
     const { editors } = this;
 
-    Object.keys(editors).forEach(editorId => {
-      const sharedEditor = editors[editorId];
+    // eslint-disable-next-line no-restricted-syntax
+    for (let part of ops) {
+      if (part.p[0] === "contents") {
+        const editorId = part.p[1];
+        const sharedEditor = editors[editorId];
 
-      sharedEditor.suppressChange = true;
+        sharedEditor.suppressChange = true;
 
-      // eslint-disable-next-line no-restricted-syntax
-      for (let part of ops) {
-        if (part.p[0] === "contents" && part.p[1] === someEditorId) {
-          const { editor } = sharedEditor;
+        const { editor } = sharedEditor;
 
-          if (part.oi) {
-            this.log("New buffer");
-            editor.setValue(part.oi);
-          } else if (part.t === "text0") {
-            const op = part.o;
-            if (op.length === 2 && op[0].d && op[1].i && op[0].p === op[1].p) {
-              // replace operation
-              const from = editor.posFromIndex(op[0].p);
-              const to = editor.posFromIndex(op[0].p + op[0].d.length);
-              editor.replaceRange(op[1].i, from, to);
-            } else {
-              // eslint-disable-next-line no-restricted-syntax
-              for (part of op) {
-                const from = editor.posFromIndex(part.p);
-                if (part.d) {
-                  // delete operation
-                  const to = editor.posFromIndex(part.p + part.d.length);
-                  editor.replaceRange("", from, to);
-                } else if (part.i) {
-                  // insert operation
-                  editor.replaceRange(part.i, from);
-                }
+        if (part.oi) {
+          console.debug("New buffer");
+          editor.setValue(part.oi);
+        } else if (part.t === "text0") {
+          const op = part.o;
+          if (op.length === 2 && op[0].d && op[1].i && op[0].p === op[1].p) {
+            // replace operation
+            const from = editor.posFromIndex(op[0].p);
+            const to = editor.posFromIndex(op[0].p + op[0].d.length);
+            editor.replaceRange(op[1].i, from, to);
+          } else {
+            // eslint-disable-next-line no-restricted-syntax
+            for (part of op) {
+              const from = editor.posFromIndex(part.p);
+              if (part.d) {
+                // delete operation
+                const to = editor.posFromIndex(part.p + part.d.length);
+                editor.replaceRange("", from, to);
+              } else if (part.i) {
+                // insert operation
+                editor.replaceRange(part.i, from);
               }
             }
           }
-        } else if (part.p[0] === "users" && part.oi) {
-          // insert or replace user data
+        }
+
+        sharedEditor.suppressChange = false;
+        sharedEditor.assertValue(this);
+      } else if (part.p[0] === "users" && part.oi) {
+        if (part.p.length === 2) {
+          // New user
           const userId = part.p[1];
           const userData = part.oi;
           this.users[userId] = userData;
           this.triggerUsersChange();
-
-          const cursorPos = { line: userData.l, ch: userData.c };
+        } else if (part.p.length === 3 && part.p[2] === "n") {
+          // Nickname update
+          const userId = part.p[1];
+          const newName = part.oi;
+          this.users[userId].n = newName;
+          this.triggerUsersChange();
+        } else if (part.p.length === 4 && part.p[2] === "es") {
+          // Cursor position update
+          const userId = part.p[1];
+          const editorId = part.p[3];
+          const newPos = part.oi;
+          const cursorPos = { line: newPos.l, ch: newPos.c };
           const userNum = Object.keys(this.users).indexOf(userId);
+          const sharedEditor = editors[editorId];
           sharedEditor.updateBookmarkForUser(userId, userNum, cursorPos);
-        } else if (part.p[0] === "eval" && part.oi) {
-          const { c, b, e, _u } = part.oi;
-          this.log(`Remote evaluate: (${b}-${e}):`, c);
-          // sharedEditor.onEvaluateRemoteCode(c, u);
-          sharedEditor.flash(b, e);
         }
+      } else if (part.p[0] === "eval" && part.oi) {
+        const { c: body, b: begin, e: end, _u, ed: editorId } = part.oi;
+        console.debug(
+          `Remote evaluate on editor ${editorId}: (${begin}-${end}):`,
+          body
+        );
+        const sharedEditor = editors[editorId];
+        // sharedEditor.onEvaluateRemoteCode(c, u);
+        sharedEditor.flash(begin, end);
       }
-
-      sharedEditor.suppressChange = false;
-      sharedEditor.assertValue(this);
-    });
+    }
   };
 
   _handleDocDelete = (_data, _source) => {
@@ -342,7 +367,7 @@ class SessionClient {
   };
 
   sendOP(op) {
-    this.log("Submitting OP:", op);
+    console.debug("Submitting OP:", op);
     this.doc.submitOp(op, error => {
       if (error) {
         console.error(error);

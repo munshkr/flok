@@ -16,25 +16,27 @@ import "codemirror/addon/selection/mark-selection";
 
 class TextEditor extends React.Component {
   componentDidMount() {
-    const {
-      editorId,
-      sessionClient,
-      onEvaluateCode,
-      onCursorActivity,
-      debug
-    } = this.props;
+    const { editorId, sessionClient } = this.props;
     const { editor } = this.cm;
 
     this.sharedCodeMirror = new SharedCodeMirror({
       editor,
-      onEvaluateCode,
-      // onEvaluateRemoteCode,
-      onCursorActivity,
-      debug
+      onEvaluateCode: this.handleEvaluateCode,
+      onCursorActivity: this.handleCursorActivity
     });
 
     sessionClient.attachEditor(editorId, this.sharedCodeMirror);
   }
+
+  handleEvaluateCode = ({ body, fromLine, toLine, user }) => {
+    const { editorId, onEvaluateCode } = this.props;
+    return onEvaluateCode({ editorId, body, fromLine, toLine, user });
+  };
+
+  handleCursorActivity = ({ line, column }) => {
+    const { editorId, onCursorActivity } = this.props;
+    return onCursorActivity({ editorId, line, column });
+  };
 
   render() {
     return (
@@ -58,16 +60,13 @@ TextEditor.propTypes = {
   sessionClient: PropTypes.instanceOf(SessionClient).isRequired,
   editorId: PropTypes.string.isRequired,
   onEvaluateCode: PropTypes.func,
-  // onEvaluateRemoteCode: PropTypes.func
-  onCursorActivity: PropTypes.func,
-  debug: PropTypes.bool
+  onCursorActivity: PropTypes.func
 };
 
 TextEditor.defaultProps = {
   onEvaluateCode: () => {},
   // onEvaluateRemoteCode: () => {}
-  onCursorActivity: () => {},
-  debug: false
+  onCursorActivity: () => {}
 };
 
 export default TextEditor;

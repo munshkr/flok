@@ -10,11 +10,10 @@ class SharedCodeMirror {
    *    - onEvaluateCode: optional. A handler called whenever someone evaluates code
    *    - onEvaluateRemoteCode: optional. A handler called whenever someone other
    *      than current user evaluates code.
-   *    - debug: optional. If true, log messages will be printed to the console.
    * @return {SharedCodeMirror} the created SharedCodeMirror object
    */
   constructor(ctx) {
-    const { editor, onEvaluateCode, onCursorActivity, debug, extraKeys } = ctx;
+    const { editor, onEvaluateCode, onCursorActivity, extraKeys } = ctx;
 
     this.editor = editor;
     this.onEvaluateCode = onEvaluateCode || (() => {});
@@ -25,14 +24,6 @@ class SharedCodeMirror {
     this.suppressChange = false;
 
     this.setExtraKeys();
-
-    const isDebug = Boolean(debug);
-    this.log = (...args) => {
-      if (isDebug) {
-        // eslint-disable-next-line no-console
-        console.debug(...args);
-      }
-    };
   }
 
   attach(sessionClient, id) {
@@ -86,6 +77,7 @@ class SharedCodeMirror {
     // Set the generated DOM node at the position of the cursor sent from another client
     // setBookmark first argument: The position of the cursor sent from another client
     // Second argument widget: Generated DOM node
+    console.debug("cursorPos:", cursorPos);
     this.bookmarks[userId] = editor.setBookmark(cursorPos, {
       widget: el
     });
@@ -162,7 +154,7 @@ class SharedCodeMirror {
 
   triggerCursorActivity() {
     const { line, ch } = this.editor.getDoc().getCursor();
-    this.log("Trigger cursor activity:", line, ch);
+    console.debug("Trigger cursor activity:", line, ch);
     this.onCursorActivity({ line, column: ch });
   }
 
@@ -216,8 +208,8 @@ class SharedCodeMirror {
   };
 
   evaluate(body, fromLine, toLine) {
-    this.log([fromLine, toLine]);
-    this.log(`Evaluate (${fromLine}-${toLine}): ${JSON.stringify(body)}`);
+    console.debug([fromLine, toLine]);
+    console.debug(`Evaluate (${fromLine}-${toLine}): ${JSON.stringify(body)}`);
     this.onEvaluateCode({ body, fromLine, toLine, user: this.userName });
     this.flash(fromLine, toLine);
   }
