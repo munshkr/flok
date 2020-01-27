@@ -186,23 +186,17 @@ class Session extends React.Component {
       <React.Fragment>
         <Status>{status}</Status>
         {showTextEditors && (
-          <div className="columns">
-            <div className="column">
-              <TextEditor
-                editorId="1"
-                sessionClient={sessionClient}
-                onEvaluateCode={this.handleEvaluateCode}
-                onCursorActivity={this.handleCursorActivity}
-              />
-            </div>
-            <div className="column">
-              <TextEditor
-                editorId="2"
-                sessionClient={sessionClient}
-                onEvaluateCode={this.handleEvaluateCode}
-                onCursorActivity={this.handleCursorActivity}
-              />
-            </div>
+          <div className="columns is-gapless is-multiline">
+            {Array.from({ length: 6 }, (_x, i) => (
+              <div className="column is-4">
+                <TextEditor
+                  editorId={String(i)}
+                  sessionClient={sessionClient}
+                  onEvaluateCode={this.handleEvaluateCode}
+                  onCursorActivity={this.handleCursorActivity}
+                />
+              </div>
+            ))}
           </div>
         )}
         {showUserList && <UserList users={users} />}
@@ -214,6 +208,21 @@ class Session extends React.Component {
         {showTargetMessagesPane && messages && (
           <TargetMessagesPane messages={messages} />
         )}
+        <style jsx>
+          {`
+            .columns {
+              margin: 0;
+              padding: 0;
+            }
+
+            .column {
+              border-right: 1px solid #546e7a;
+              border-bottom: 1px solid #546e7a;
+              margin: 0;
+              padding: 0;
+            }
+          `}
+        </style>
       </React.Fragment>
     );
   }
