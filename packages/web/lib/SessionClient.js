@@ -216,14 +216,13 @@ class SessionClient {
       // Update current users map from document
       this.users = doc.data.users;
 
-      // FIXME Check if users list *really* changed
       this.triggerUsersChange();
       this._updateEditorBookmarks();
 
       // Add current user
-      this.sendOP([
-        { p: ["users", this.userId], oi: { es: {}, n: this.userName } }
-      ]);
+      const userData = { es: {}, n: this.userName };
+      this.users[this.userId] = userData;
+      this.sendOP([{ p: ["users", this.userId], oi: userData }]);
 
       this.onJoin();
     }
