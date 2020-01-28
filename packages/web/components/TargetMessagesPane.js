@@ -1,8 +1,8 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-const TargetMessagesPane = ({ messages }) => (
-  <div className="target-messages-pane">
+const TargetMessagesPane = ({ messages, className }) => (
+  <div className={`target-messages-pane ${className}`}>
     <ol>
       {messages.map((message, i) => (
         <li key={i}>
@@ -16,11 +16,13 @@ const TargetMessagesPane = ({ messages }) => (
 );
 
 TargetMessagesPane.propTypes = {
-  messages: PropTypes.arrayOf(PropTypes.object)
+  messages: PropTypes.arrayOf(PropTypes.object),
+  className: PropTypes.string
 };
 
 TargetMessagesPane.defaultProps = {
-  messages: []
+  messages: [],
+  className: ""
 };
 
 export default TargetMessagesPane;

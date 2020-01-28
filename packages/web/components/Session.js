@@ -23,7 +23,8 @@ class Session extends React.Component {
     showTextEditors: false,
     messages: [],
     users: [],
-    target: "default"
+    target: "default",
+    cursorIsAtTop: true
   };
 
   componentDidMount() {
@@ -169,6 +170,15 @@ class Session extends React.Component {
     }));
   };
 
+  handleMouseOver = e => {
+    const height = e.currentTarget.clientHeight;
+    if (e.screenY < height / 2) {
+      this.setState({ cursorIsAtTop: true });
+    } else {
+      this.setState({ cursorIsAtTop: false });
+    }
+  };
+
   render() {
     const {
       status,
@@ -177,19 +187,22 @@ class Session extends React.Component {
       target,
       showTextEditors,
       showUserList,
-      showTargetMessagesPane
+      showTargetMessagesPane,
+      cursorIsAtTop
     } = this.state;
 
     const { sessionClient } = this;
 
     return (
-      <React.Fragment>
+      // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
+      <div onMouseMove={this.handleMouseOver}>
         <Status>{status}</Status>
         {showTextEditors && (
           <div className="columns is-gapless is-multiline">
             {Array.from({ length: 6 }, (_x, i) => (
               <div className="column is-4">
                 <TextEditor
+                  key={i}
                   editorId={String(i)}
                   sessionClient={sessionClient}
                   onEvaluateCode={this.handleEvaluateCode}
@@ -206,7 +219,10 @@ class Session extends React.Component {
           onChange={this.handleTargetSelectChange}
         />
         {showTargetMessagesPane && messages && (
-          <TargetMessagesPane messages={messages} />
+          <TargetMessagesPane
+            messages={messages}
+            className={cursorIsAtTop ? "bottom" : "top"}
+          />
         )}
         <style jsx>
           {`
@@ -214,7 +230,6 @@ class Session extends React.Component {
               margin: 0;
               padding: 0;
             }
-
             .column {
               border-right: 1px solid #546e7a;
               border-bottom: 1px solid #546e7a;
@@ -223,7 +238,7 @@ class Session extends React.Component {
             }
           `}
         </style>
-      </React.Fragment>
+      </div>
     );
   }
 }

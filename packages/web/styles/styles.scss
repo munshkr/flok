@@ -75,7 +75,6 @@ html {
 
 .target-messages-pane {
   position: absolute;
-  bottom: 0;
   left: 0;
   background: #00000090;
   color: #888;
@@ -84,6 +83,13 @@ html {
   font-size: 0.8em;
   height: 30%;
   width: 100%;
+
+  &.top {
+    top: 0;
+  }
+  &.bottom {
+    bottom: 0;
+  }
 
   ol {
     list-style: none;
