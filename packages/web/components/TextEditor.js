@@ -29,8 +29,8 @@ class TextEditor extends React.Component {
   }
 
   handleEvaluateCode = ({ body, fromLine, toLine, user }) => {
-    const { editorId, onEvaluateCode } = this.props;
-    return onEvaluateCode({ editorId, body, fromLine, toLine, user });
+    const { editorId, target, onEvaluateCode } = this.props;
+    return onEvaluateCode({ editorId, target, body, fromLine, toLine, user });
   };
 
   handleCursorActivity = ({ line, column }) => {
@@ -59,11 +59,13 @@ class TextEditor extends React.Component {
 TextEditor.propTypes = {
   sessionClient: PropTypes.instanceOf(SessionClient).isRequired,
   editorId: PropTypes.string.isRequired,
+  target: PropTypes.string,
   onEvaluateCode: PropTypes.func,
   onCursorActivity: PropTypes.func
 };
 
 TextEditor.defaultProps = {
+  target: "default",
   onEvaluateCode: () => {},
   // onEvaluateRemoteCode: () => {}
   onCursorActivity: () => {}

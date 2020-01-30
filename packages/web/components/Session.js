@@ -6,10 +6,18 @@ import { PubSubClient } from "flok-core";
 import Status from "./Status";
 import UserList from "./UserList";
 import TargetMessagesPane from "./TargetMessagesPane";
-import TargetSelect from "./TargetSelect";
 import SessionClient from "../lib/SessionClient";
 
-const TARGETS = ["default", "tidal", "sclang", "foxdot"];
+const LAYOUT = {
+  editors: [
+    { id: "1", target: "tidal" },
+    { id: "2", target: "tidal" },
+    { id: "3", target: "tidal" },
+    { id: "4", target: "sclang" },
+    { id: "5", target: "sclang" },
+    { id: "6", target: "sclang" }
+  ]
+};
 
 const TextEditor = dynamic(() => import("./TextEditor"), {
   ssr: false
@@ -23,13 +31,14 @@ class Session extends React.Component {
     showTextEditors: false,
     messages: [],
     users: [],
-    target: "default",
     cursorIsAtTop: true
   };
 
   componentDidMount() {
     const { sessionName, userName } = this.props;
-    const { target } = this.state;
+
+    const targets = [...new Set(LAYOUT.editors.map(({ target }) => target))];
+    console.log("Targets:", targets);
 
     const wsUrl = this.getWebsocketsUrl();
 
@@ -62,10 +71,12 @@ class Session extends React.Component {
         this.pubsubClient.subscribe(`user:${clientId}`, this.handleMessageUser);
 
         // Subscribe to messages directed to a specific target
-        this.pubsubClient.subscribe(
-          `target:${target}:out`,
-          this.handleMessageTarget
-        );
+        targets.forEach(target => {
+          this.pubsubClient.subscribe(
+            `target:${target}:out`,
+            this.handleMessageTarget
+          );
+        });
       },
       onClose: () => {
         this.sessionClient.quit();
@@ -124,10 +135,9 @@ class Session extends React.Component {
     this.setState({ users });
   };
 
-  handleEvaluateCode = ({ editorId, body, fromLine, toLine, user }) => {
+  handleEvaluateCode = ({ editorId, target, body, fromLine, toLine, user }) => {
     const { pubsubClient, sessionClient } = this;
     const { userName } = this.props;
-    const { target } = this.state;
 
     pubsubClient.publish(`target:${target}:in`, { userName, code: body });
     sessionClient.evaluateCode({ editorId, body, fromLine, toLine, user });
@@ -184,7 +194,6 @@ class Session extends React.Component {
       status,
       users,
       messages,
-      target,
       showTextEditors,
       showUserList,
       showTargetMessagesPane,
@@ -199,11 +208,11 @@ class Session extends React.Component {
         <Status>{status}</Status>
         {showTextEditors && (
           <div className="columns is-gapless is-multiline">
-            {Array.from({ length: 6 }, (_x, i) => (
-              <div className="column is-4">
+            {LAYOUT.editors.map(({ id, target }) => (
+              <div key={id} className="column is-4">
                 <TextEditor
-                  key={i}
-                  editorId={String(i)}
+                  editorId={id}
+                  target={target}
                   sessionClient={sessionClient}
                   onEvaluateCode={this.handleEvaluateCode}
                   onCursorActivity={this.handleCursorActivity}
@@ -213,11 +222,6 @@ class Session extends React.Component {
           </div>
         )}
         {showUserList && <UserList users={users} />}
-        <TargetSelect
-          value={target}
-          options={TARGETS}
-          onChange={this.handleTargetSelectChange}
-        />
         {showTargetMessagesPane && messages && (
           <TargetMessagesPane
             messages={messages}
