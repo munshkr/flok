@@ -139,7 +139,7 @@ class Session extends React.Component {
     const { pubsubClient, sessionClient } = this;
     const { userName } = this.props;
 
-    pubsubClient.publish(`target:${target}:in`, { userName, code: body });
+    pubsubClient.publish(`target:${target}:in`, { userName, body });
     sessionClient.evaluateCode({ editorId, body, fromLine, toLine, user });
   };
 
