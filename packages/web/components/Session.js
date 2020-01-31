@@ -156,7 +156,7 @@ class Session extends React.Component {
   handleMessageTarget = message => {
     console.debug(`[message] target: ${JSON.stringify(message)}`);
     this.setState(prevState => ({
-      messages: [message, ...prevState.messages]
+      messages: [...prevState.messages, message]
     }));
   };
 
