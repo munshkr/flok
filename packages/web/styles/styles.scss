@@ -95,6 +95,9 @@ html {
   &.bottom {
     bottom: 0;
   }
+  &.maximized {
+    height: 100%;
+  }
 
   ol {
     list-style: none;

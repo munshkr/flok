@@ -27,11 +27,12 @@ class Session extends React.Component {
   state = {
     status: "Not connected",
     showUserList: true,
-    showTargetMessagesPane: true,
+    showTargetMessagesPane: false,
     showTextEditors: false,
     messages: [],
     users: [],
-    cursorIsAtTop: true
+    messagesPaneIsTop: false,
+    messagesPaneIsMaximized: false
   };
 
   componentDidMount() {
@@ -139,6 +140,8 @@ class Session extends React.Component {
     const { pubsubClient, sessionClient } = this;
     const { userName } = this.props;
 
+    this.setState({ showTargetMessagesPane: false });
+
     pubsubClient.publish(`target:${target}:in`, { userName, body });
     sessionClient.evaluateCode({ editorId, body, fromLine, toLine, user });
   };
@@ -156,7 +159,8 @@ class Session extends React.Component {
   handleMessageTarget = message => {
     console.debug(`[message] target: ${JSON.stringify(message)}`);
     this.setState(prevState => ({
-      messages: [...prevState.messages, message]
+      messages: [...prevState.messages, message],
+      showTargetMessagesPane: true
     }));
   };
 
@@ -174,19 +178,20 @@ class Session extends React.Component {
     }));
   };
 
-  toggleTargetMessagesPane = () => {
-    this.setState((prevState, _) => ({
-      showTargetMessagesPane: !prevState.showTargetMessagesPane
+  handleTargetMessagesPaneTogglePosition = () => {
+    this.setState(prevState => ({
+      messagesPaneIsTop: !prevState.messagesPaneIsTop
     }));
   };
 
-  handleMouseOver = e => {
-    const height = e.currentTarget.clientHeight;
-    if (e.screenY < height / 2) {
-      this.setState({ cursorIsAtTop: true });
-    } else {
-      this.setState({ cursorIsAtTop: false });
-    }
+  handleTargetMessagesPaneToggleMaximize = () => {
+    this.setState(prevState => ({
+      messagesPaneIsMaximized: !prevState.messagesPaneIsMaximized
+    }));
+  };
+
+  handleTargetMessagesPaneClose = () => {
+    this.setState({ showTargetMessagesPane: false });
   };
 
   render() {
@@ -197,7 +202,8 @@ class Session extends React.Component {
       showTextEditors,
       showUserList,
       showTargetMessagesPane,
-      cursorIsAtTop
+      messagesPaneIsTop,
+      messagesPaneIsMaximized
     } = this.state;
 
     const { sessionClient } = this;
@@ -225,7 +231,11 @@ class Session extends React.Component {
         {showTargetMessagesPane && messages && (
           <TargetMessagesPane
             messages={messages}
-            className={cursorIsAtTop ? "bottom" : "top"}
+            isTop={messagesPaneIsTop}
+            isMaximized={messagesPaneIsMaximized}
+            onTogglePosition={this.handleTargetMessagesPaneTogglePosition}
+            onToggleMaximize={this.handleTargetMessagesPaneToggleMaximize}
+            onClose={this.handleTargetMessagesPaneClose}
           />
         )}
         <style jsx>
