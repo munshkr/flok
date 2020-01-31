@@ -10,62 +10,48 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 const Button = ({ icon, ...props }) => (
-  <button className="button" type="button" {...props}>
+  <a {...props}>
     <FontAwesomeIcon icon={icon} />
-  </button>
+  </a>
 );
 
-class TargetMessagesPane extends React.Component {
-  state = {
-    maximized: false
-  };
-
-  handleMaximizeRestore = () => {
-    this.setState(prevState => ({ maximized: !prevState.maximized }));
-  };
-
-  render() {
-    const {
-      messages,
-      isTop,
-      isMaximized,
-      onTogglePosition,
-      onToggleMaximize,
-      onClose
-    } = this.props;
-
-    return (
-      <div
-        className={`target-messages-pane ${
-          isTop ? "top" : "bottom"
-        } ${isMaximized && "maximized"}`}
-      >
-        <div className="buttons has-addons are-small">
-          <Button
-            icon={isTop ? faCaretSquareDown : faCaretSquareUp}
-            onClick={onTogglePosition}
-          />
-          <Button
-            icon={isMaximized ? faWindowRestore : faWindowMaximize}
-            onClick={onToggleMaximize}
-          />
-          <Button icon={faWindowClose} onClick={onClose} />
-        </div>
-        <div className="scrollable-content">
-          <ol>
-            {messages.map((message, i) => (
-              <li key={i}>
-                <pre className={message.type === "stderr" ? "error" : ""}>
-                  {message.body.join("\n").trim()}
-                </pre>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </div>
-    );
-  }
-}
+const TargetMessagesPane = ({
+  messages,
+  isTop,
+  isMaximized,
+  onTogglePosition,
+  onToggleMaximize,
+  onClose
+}) => (
+  <div
+    className={`target-messages-pane ${
+      isTop ? "top" : "bottom"
+    } ${isMaximized && "maximized"}`}
+  >
+    <div className="button-group">
+      <Button
+        icon={isTop ? faCaretSquareDown : faCaretSquareUp}
+        onClick={onTogglePosition}
+      />
+      <Button
+        icon={isMaximized ? faWindowRestore : faWindowMaximize}
+        onClick={onToggleMaximize}
+      />
+      <Button icon={faWindowClose} onClick={onClose} />
+    </div>
+    <div className="scrollable-content">
+      <ol>
+        {messages.map((message, i) => (
+          <li key={i}>
+            <pre className={message.type === "stderr" ? "error" : ""}>
+              {message.body.join("\n").trim()}
+            </pre>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </div>
+);
 
 TargetMessagesPane.propTypes = {
   messages: PropTypes.arrayOf(PropTypes.object),
