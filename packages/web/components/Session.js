@@ -79,7 +79,7 @@ class Session extends React.Component {
         });
       },
       onClose: () => {
-        this.sessionClient.quit();
+        this.sessionClient.release();
         this.sessionClient = null;
       }
     });
