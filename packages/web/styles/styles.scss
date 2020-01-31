@@ -81,8 +81,13 @@ html {
   z-index: 1000;
   font-family: monospace;
   font-size: 0.8em;
-  height: 30%;
+  height: 30em;
   width: 100%;
+
+  .scrollable-content {
+    height: 100%;
+    overflow: auto;
+  }
 
   &.top {
     top: 0;
