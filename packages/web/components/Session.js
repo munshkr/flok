@@ -9,6 +9,8 @@ import TargetMessagesPane from "./TargetMessagesPane";
 import SessionClient from "../lib/SessionClient";
 import HydraCanvas from "./HydraCanvas";
 
+const MAX_LINES = 100;
+
 const LAYOUT = {
   editors: [
     { id: "1", target: "tidal" },
@@ -75,9 +77,8 @@ class Session extends React.Component {
 
         // Subscribe to messages directed to a specific target
         targets.forEach(target => {
-          this.pubsubClient.subscribe(
-            `target:${target}:out`,
-            this.handleMessageTarget
+          this.pubsubClient.subscribe(`target:${target}:out`, content =>
+            this.handleMessageTarget({ target, content })
           );
         });
       },
@@ -142,7 +143,7 @@ class Session extends React.Component {
     const { pubsubClient, sessionClient } = this;
     const { userName } = this.props;
 
-    this.setState({ showTargetMessagesPane: false });
+    // this.setState({ showTargetMessagesPane: false });
 
     if (target === "hydra") {
       this.setState({ hydraCode: body });
@@ -163,12 +164,15 @@ class Session extends React.Component {
     this.sessionClient.updateCursorActivity({ editorId, line, column });
   };
 
-  handleMessageTarget = message => {
-    console.debug(`[message] target: ${JSON.stringify(message)}`);
-    this.setState(prevState => ({
-      messages: [...prevState.messages, message],
-      showTargetMessagesPane: true
-    }));
+  handleMessageTarget = ({ target, content }) => {
+    console.debug(`[message] [target=${target}] ${JSON.stringify(content)}`);
+    this.setState(prevState => {
+      const allMessages = [...prevState.messages, { target, content }];
+      return {
+        messages: allMessages.slice(-MAX_LINES, allMessages.length),
+        showTargetMessagesPane: true
+      };
+    });
   };
 
   handleMessageUser = message => {
