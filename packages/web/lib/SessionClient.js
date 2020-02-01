@@ -355,7 +355,7 @@ class SessionClient {
           body
         );
         const sharedEditor = editors[editorId];
-        // sharedEditor.onEvaluateRemoteCode(c, u);
+        sharedEditor.onEvaluateRemoteCode({ body });
         sharedEditor.flash(begin, end);
       }
     }

@@ -22,6 +22,7 @@ class TextEditor extends React.Component {
     this.sharedCodeMirror = new SharedCodeMirror({
       editor,
       onEvaluateCode: this.handleEvaluateCode,
+      onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
       onCursorActivity: this.handleCursorActivity
     });
 
@@ -31,6 +32,11 @@ class TextEditor extends React.Component {
   handleEvaluateCode = ({ body, fromLine, toLine, user }) => {
     const { editorId, target, onEvaluateCode } = this.props;
     return onEvaluateCode({ editorId, target, body, fromLine, toLine, user });
+  };
+
+  handleEvaluateRemoteCode = ({ body }) => {
+    const { editorId, target, onEvaluateRemoteCode } = this.props;
+    return onEvaluateRemoteCode({ editorId, target, body });
   };
 
   handleCursorActivity = ({ line, column }) => {
@@ -61,13 +67,14 @@ TextEditor.propTypes = {
   editorId: PropTypes.string.isRequired,
   target: PropTypes.string,
   onEvaluateCode: PropTypes.func,
+  onEvaluateRemoteCode: PropTypes.func,
   onCursorActivity: PropTypes.func
 };
 
 TextEditor.defaultProps = {
   target: "default",
   onEvaluateCode: () => {},
-  // onEvaluateRemoteCode: () => {}
+  onEvaluateRemoteCode: () => {},
   onCursorActivity: () => {}
 };
 

@@ -153,15 +153,15 @@ class Session extends React.Component {
     sessionClient.evaluateCode({ editorId, body, fromLine, toLine, user });
   };
 
+  handleEvaluateRemoteCode = ({ editorId, target, body }) => {
+    if (target === "hydra") {
+      this.setState({ hydraCode: body });
+    }
+  };
+
   handleCursorActivity = ({ editorId, line, column }) => {
     this.sessionClient.updateCursorActivity({ editorId, line, column });
   };
-
-  // handleEvaluateRemoteCode = (body, userName) => {
-  //   const { userName } = this.props;
-  //   const { target } = this.state
-  //   this.pubsubClient.publish(`target:${target}:in`, { userName, body });
-  // };
 
   handleMessageTarget = message => {
     console.debug(`[message] target: ${JSON.stringify(message)}`);
@@ -230,6 +230,7 @@ class Session extends React.Component {
                   target={target}
                   sessionClient={sessionClient}
                   onEvaluateCode={this.handleEvaluateCode}
+                  onEvaluateRemoteCode={this.handleEvaluateRemoteCode}
                   onCursorActivity={this.handleCursorActivity}
                 />
               </div>

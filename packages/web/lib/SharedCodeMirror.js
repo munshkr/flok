@@ -13,10 +13,17 @@ class SharedCodeMirror {
    * @return {SharedCodeMirror} the created SharedCodeMirror object
    */
   constructor(ctx) {
-    const { editor, onEvaluateCode, onCursorActivity, extraKeys } = ctx;
+    const {
+      editor,
+      onEvaluateCode,
+      onEvaluateRemoteCode,
+      onCursorActivity,
+      extraKeys
+    } = ctx;
 
     this.editor = editor;
     this.onEvaluateCode = onEvaluateCode || (() => {});
+    this.onEvaluateRemoteCode = onEvaluateRemoteCode || (() => {});
     this.onCursorActivity = onCursorActivity || (() => {});
     this.extraKeys = extraKeys || {};
 
