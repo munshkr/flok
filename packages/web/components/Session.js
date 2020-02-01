@@ -255,10 +255,9 @@ class Session extends React.Component {
               padding: 0;
             }
             .column {
-              border-right: 1px solid #546e7a;
-              border-bottom: 1px solid #546e7a;
               margin: 0;
               padding: 0;
+              box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
             }
           `}
         </style>
