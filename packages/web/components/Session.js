@@ -7,6 +7,7 @@ import Status from "./Status";
 import UserList from "./UserList";
 import TargetMessagesPane from "./TargetMessagesPane";
 import SessionClient from "../lib/SessionClient";
+import HydraCanvas from "./HydraCanvas";
 
 const LAYOUT = {
   editors: [
@@ -15,7 +16,7 @@ const LAYOUT = {
     { id: "3", target: "tidal" },
     { id: "4", target: "sclang" },
     { id: "5", target: "sclang" },
-    { id: "6", target: "sclang" }
+    { id: "6", target: "hydra" }
   ]
 };
 
@@ -32,7 +33,8 @@ class Session extends React.Component {
     messages: [],
     users: [],
     messagesPaneIsTop: false,
-    messagesPaneIsMaximized: false
+    messagesPaneIsMaximized: false,
+    hydraCode: ""
   };
 
   componentDidMount() {
@@ -142,7 +144,12 @@ class Session extends React.Component {
 
     this.setState({ showTargetMessagesPane: false });
 
-    pubsubClient.publish(`target:${target}:in`, { userName, body });
+    if (target === "hydra") {
+      this.setState({ hydraCode: body });
+    } else {
+      pubsubClient.publish(`target:${target}:in`, { userName, body });
+    }
+
     sessionClient.evaluateCode({ editorId, body, fromLine, toLine, user });
   };
 
@@ -203,14 +210,16 @@ class Session extends React.Component {
       showUserList,
       showTargetMessagesPane,
       messagesPaneIsTop,
-      messagesPaneIsMaximized
+      messagesPaneIsMaximized,
+      hydraCode
     } = this.state;
 
     const { sessionClient } = this;
 
     return (
       // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-      <div onMouseMove={this.handleMouseOver}>
+      <div>
+        <HydraCanvas code={hydraCode} fullscreen />
         <Status>{status}</Status>
         {showTextEditors && (
           <div className="columns is-gapless is-multiline">

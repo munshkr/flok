@@ -48,7 +48,7 @@ class TextEditor extends React.Component {
         options={{
           mode: "haskell",
           theme: "material",
-          lineNumbers: true,
+          lineNumbers: false,
           scrollbarStyle: "simple"
         }}
       />

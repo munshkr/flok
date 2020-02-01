@@ -31,6 +31,16 @@ html {
 //   height: 100%;
 // }
 
+// Transparent background
+.CodeMirror {
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.CodeMirror .CodeMirror-line span {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 2px 0;
+}
+
 .flash-selection {
   background-color: #ff7;
   color: #000;
