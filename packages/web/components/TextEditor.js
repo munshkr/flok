@@ -54,7 +54,8 @@ class TextEditor extends React.Component {
         options={{
           mode: "haskell",
           theme: "material",
-          lineNumbers: false
+          lineNumbers: false,
+          lineWrapping: true
         }}
       />
     );
