@@ -58,10 +58,10 @@ class TargetMessagesPane extends React.Component {
           className="scrollable-content"
         >
           <ol>
-            {messages.map(({ _target, content }, i) => (
+            {messages.map(({ target, content }, i) => (
               <li key={i}>
                 <pre className={content.type === "stderr" ? "error" : ""}>
-                  {content.body.join("\n").trim()}
+                  {`[${target}] ${content.body.join("\n").trim()}`}
                 </pre>
               </li>
             ))}
