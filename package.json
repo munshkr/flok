@@ -15,7 +15,6 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn test"
     }
   },
   "workspaces": [
