@@ -7,7 +7,7 @@ import Status from "./Status";
 import UserList from "./UserList";
 import TargetMessagesPane from "./TargetMessagesPane";
 import SessionClient from "../lib/SessionClient";
-import HydraCanvas from "./HydraCanvas";
+// import HydraCanvas from "./HydraCanvas";
 
 const MAX_LINES = 100;
 
@@ -18,7 +18,7 @@ const LAYOUT = {
     { id: "3", target: "default" },
     { id: "4", target: "default" },
     { id: "5", target: "default" },
-    { id: "6", target: "hydra" }
+    { id: "6", target: "default" }
   ]
 };
 
@@ -223,7 +223,7 @@ class Session extends React.Component {
     return (
       // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
       <div>
-        <HydraCanvas code={hydraCode} fullscreen />
+        {/*<HydraCanvas code={hydraCode} fullscreen />*/}
         <Status>{status}</Status>
         {showTextEditors && (
           <div className="columns is-gapless is-multiline">

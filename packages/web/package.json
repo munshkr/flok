@@ -26,7 +26,6 @@
     "core-js": "^2.6.11",
     "express": "^4.17.1",
     "flok-core": "^0.2.3",
-    "hydra-synth": "^1.0.27",
     "next": "^9.0.3",
     "prop-types": "^15.7.2",
     "react": "^16.10.2",
