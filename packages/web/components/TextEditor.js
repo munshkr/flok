@@ -2,9 +2,11 @@
 import React from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import PropTypes from "prop-types";
+import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
 
 import SharedCodeMirror from "../lib/SharedCodeMirror";
 import SessionClient from "../lib/SessionClient";
+import Button from "./Button";
 
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/haskell/haskell";
@@ -39,6 +41,18 @@ class TextEditor extends React.Component {
     return onEvaluateRemoteCode({ editorId, target, body });
   };
 
+  handleEvaluateButtonClick = () => {
+    const { editorId, target, onEvaluateCode } = this.props;
+    const { editor } = this.cm;
+    return onEvaluateCode({
+      editorId,
+      target,
+      body: editor.getValue(),
+      fromLine: 0,
+      toLine: editor.lineCount()
+    });
+  };
+
   handleCursorActivity = ({ line, column }) => {
     const { editorId, onCursorActivity } = this.props;
     return onCursorActivity({ editorId, line, column });
@@ -46,18 +60,26 @@ class TextEditor extends React.Component {
 
   render() {
     return (
-      <CodeMirror
-        className="editor"
-        ref={el => {
-          this.cm = el;
-        }}
-        options={{
-          mode: "haskell",
-          theme: "material",
-          lineNumbers: false,
-          lineWrapping: true
-        }}
-      />
+      <div>
+        <div className="evaluate">
+          <Button
+            icon={faPlayCircle}
+            onClick={this.handleEvaluateButtonClick}
+          />
+        </div>
+        <CodeMirror
+          className="editor"
+          ref={el => {
+            this.cm = el;
+          }}
+          options={{
+            mode: "haskell",
+            theme: "material",
+            lineNumbers: false,
+            lineWrapping: true
+          }}
+        />
+      </div>
     );
   }
 }

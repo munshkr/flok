@@ -1,6 +1,5 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCaretSquareDown,
   faCaretSquareUp,
@@ -8,18 +7,12 @@ import {
   faWindowMaximize,
   faWindowClose
 } from "@fortawesome/free-solid-svg-icons";
-
-const Button = ({ icon, ...props }) => (
-  <a {...props}>
-    <FontAwesomeIcon icon={icon} />
-  </a>
-);
+import Button from "./Button";
 
 class TargetMessagesPane extends React.Component {
   componentDidUpdate(prevProps) {
     const { messages } = this.props;
     if (this.container && prevProps.messages !== messages) {
-      console.log("container scroll");
       this.container.scrollTop = this.container.scrollHeight;
     }
   }

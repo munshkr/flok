@@ -27,6 +27,9 @@ class HydraCanvas extends React.Component {
     // eslint-disable-next-line global-require
     const Hydra = require("hydra-synth");
 
+    // For some reason on Android mobile, Chrome has this object undefined:
+    if (!window.navigator.mediaDevices) return;
+
     this.hydra = new Hydra({ canvas: this.canvas, makeGlobal });
 
     if (local) {

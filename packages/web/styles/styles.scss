@@ -8,7 +8,6 @@ $strong-color: #cccccc;
 
 html {
   background-color: $body-background-color;
-  overflow: hidden;
 }
 
 .title {
@@ -77,11 +76,24 @@ html {
   }
 }
 
-.target-select {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  z-index: 1001;
+.evaluate {
+  display: none;
+}
+
+@media only screen and (max-width: 600px) {
+  .evaluate {
+    float: right;
+    display: block;
+
+    a {
+      font-size: 2em;
+      margin: 0 0.125em;
+      color: #888;
+    }
+    a:hover {
+      color: #fefefe;
+    }
+  }
 }
 
 .target-messages-pane {
