@@ -14,8 +14,7 @@
     "heroku-prebuild": "yarn add -W sharedb-mongo"
   },
   "husky": {
-    "hooks": {
-    }
+    "hooks": {}
   },
   "workspaces": [
     "packages/*"
