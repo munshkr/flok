@@ -180,7 +180,8 @@ class SharedCodeMirror {
   evaluateParagraph = () => {
     const { editor } = this;
     const currentLine = editor.getCursor().line;
-    const lines = editor.getValue().split("\n");
+    const content = `${editor.getValue()}\n`;
+    const lines = content.split("\n");
 
     let code = "";
     let start = false;
