@@ -31,6 +31,13 @@ class TextEditor extends React.Component {
     sessionClient.attachEditor(editorId, this.sharedCodeMirror);
   }
 
+  // componentDidUpdate(prevProps) {
+  //   const { currentLine } = this.props;
+  //   if (currentLine !== prevProps.currentLine) {
+  //     this.jumpToLine(currentLine);
+  //   }
+  // }
+
   handleEvaluateCode = ({ body, fromLine, toLine, user }) => {
     const { editorId, target, onEvaluateCode } = this.props;
     return onEvaluateCode({ editorId, target, body, fromLine, toLine, user });
@@ -88,6 +95,7 @@ TextEditor.propTypes = {
   sessionClient: PropTypes.instanceOf(SessionClient).isRequired,
   editorId: PropTypes.string.isRequired,
   target: PropTypes.string,
+  // currentLine: PropTypes.number,
   onEvaluateCode: PropTypes.func,
   onEvaluateRemoteCode: PropTypes.func,
   onCursorActivity: PropTypes.func
@@ -95,6 +103,7 @@ TextEditor.propTypes = {
 
 TextEditor.defaultProps = {
   target: "default",
+  // currentLine: 0,
   onEvaluateCode: () => {},
   onEvaluateRemoteCode: () => {},
   onCursorActivity: () => {}

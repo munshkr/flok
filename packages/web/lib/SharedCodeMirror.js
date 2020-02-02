@@ -247,6 +247,13 @@ class SharedCodeMirror {
       "Cmd-Enter": this.evaluateParagraph
     });
   }
+
+  jumpToLine(i) {
+    const { editor } = this;
+    const { top } = editor.charCoords({ line: i, ch: 0 }, "local");
+    const middleHeight = editor.getScrollerElement().offsetHeight / 2;
+    editor.scrollTo(null, top - middleHeight - 5);
+  }
 }
 
 export default SharedCodeMirror;

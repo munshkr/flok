@@ -326,6 +326,7 @@ class SessionClient {
         sharedEditor.suppressChange = false;
         sharedEditor.assertValue(this);
       } else if (part.p[0] === "users" && part.oi) {
+        console.debug("**", part);
         if (part.p.length === 2) {
           // New user
           const userId = part.p[1];
@@ -339,6 +340,7 @@ class SessionClient {
           this.users[userId].n = newName;
           this.triggerUsersChange();
         } else if (part.p.length === 4 && part.p[2] === "es") {
+          console.debug("Cursor position update");
           // Cursor position update
           const userId = part.p[1];
           const editorId = part.p[3];
@@ -346,7 +348,9 @@ class SessionClient {
           const cursorPos = { line: newPos.l, ch: newPos.c };
           const userNum = Object.keys(this.users).indexOf(userId);
           const sharedEditor = editors[editorId];
+          console.log("Jump to line:", newPos.l);
           sharedEditor.updateBookmarkForUser(userId, userNum, cursorPos);
+          sharedEditor.jumpToLine(newPos.l);
         }
       } else if (part.p[0] === "eval" && part.oi) {
         const { c: body, b: begin, e: end, _u, ed: editorId } = part.oi;
