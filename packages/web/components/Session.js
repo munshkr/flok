@@ -13,11 +13,11 @@ const MAX_LINES = 100;
 
 const LAYOUT = {
   editors: [
-    { id: "1", target: "tidal" },
-    { id: "2", target: "tidal" },
-    { id: "3", target: "tidal" },
-    { id: "4", target: "sclang" },
-    { id: "5", target: "sclang" },
+    { id: "1", target: "default" },
+    { id: "2", target: "default" },
+    { id: "3", target: "default" },
+    { id: "4", target: "default" },
+    { id: "5", target: "default" },
     { id: "6", target: "hydra" }
   ]
 };
