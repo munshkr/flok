@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Button = ({ icon, ...props }) => (
@@ -9,7 +8,7 @@ const Button = ({ icon, ...props }) => (
 );
 
 Button.propTypes = {
-  icon: PropTypes.string.isRequired
+  icon: FontAwesomeIcon.propTypes.icon.isRequired
 };
 
 export default Button;
