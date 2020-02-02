@@ -1,7 +1,7 @@
 {
   "name": "flok-core",
   "description": "Core package of flok, contains Pub/Sub and ShareDB functionality, and CLI-based client",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "main": "index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
