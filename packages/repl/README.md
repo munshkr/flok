@@ -39,6 +39,14 @@ when you (or someone else) evaluates code in flok, it will be sent to `sclang`.
 
 ### Remote server
 
+**WARNING - Please Read**: As of today, using a public remote hub is dangerous
+as *anyone* can evaluate code on your computer via flok, be it sound playing or
+writing files on your disk (any general purpose programming language can do
+that), so unless you made flok-repl run on a sandboxed environment, please,
+make sure only trusted users are using your session when you use a public hub.
+I will not be responsible for any damaged caused by flok.  You have been
+warned.
+
 To start a REPL for a remote server/hub, you must provide a `--hub/-H` option.
 
 There is currently a remote hub on `flok-hub.herokuapp.com`.  For example, to
