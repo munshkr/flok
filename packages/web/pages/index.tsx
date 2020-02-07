@@ -2,14 +2,12 @@ import Router from "next/router";
 import React, { Component, ChangeEvent, FormEvent } from "react";
 import Layout from "../components/Layout";
 
-interface Props {}
-
 interface State {
   session: string;
   user: string;
 }
 
-class NewSessionForm extends Component<Props, State> {
+class NewSessionForm extends Component<{}, State> {
   state = {
     session: "",
     user: ""
@@ -18,6 +16,11 @@ class NewSessionForm extends Component<Props, State> {
   handleChangeSession = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
     this.setState({ session: target.value });
+  };
+
+  handleChangeUser = (e: ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+    this.setState({ user: target.value });
   };
 
   handleSubmit = (e: FormEvent) => {
@@ -54,7 +57,7 @@ class NewSessionForm extends Component<Props, State> {
           <div className="control">
             <input
               name="user"
-              onChange={this.handleChange}
+              onChange={this.handleChangeUser}
               value={user}
               className="input is-large"
               type="text"

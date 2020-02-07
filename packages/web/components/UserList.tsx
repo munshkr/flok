@@ -1,7 +1,13 @@
 import React from "react";
-import PropTypes from "prop-types";
 
-const UserList = ({ users }) => (
+type Props = {
+  users?: {
+    id: string;
+    name: string;
+  }[];
+};
+
+const UserList = ({ users }: Props) => (
   <div className="users-list">
     <ul>
       {users.map(user => (
@@ -10,10 +16,6 @@ const UserList = ({ users }) => (
     </ul>
   </div>
 );
-
-UserList.propTypes = {
-  users: PropTypes.arrayOf(PropTypes.object)
-};
 
 UserList.defaultProps = {
   users: []

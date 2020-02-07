@@ -1,7 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import React from "react";
+import React, { Component } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
-import PropTypes from "prop-types";
 import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
 
 import SharedCodeMirror from "../lib/SharedCodeMirror";
@@ -16,7 +15,47 @@ import "codemirror/addon/scroll/simplescrollbars";
 import "codemirror/addon/scroll/simplescrollbars.css";
 import "codemirror/addon/selection/mark-selection";
 
-class TextEditor extends React.Component {
+type EvaluateCodeArgs = {
+  editorId: string;
+  target: string;
+  body: string;
+  fromLine: number;
+  toLine: number;
+  user?: string;
+};
+
+type EvaluateRemoteCodeArgs = {
+  editorId: string;
+  target: string;
+  body: string;
+};
+
+type CursorActivityArgs = {
+  editorId: string;
+  line: number;
+  column: number;
+};
+
+type Props = {
+  sessionClient: SessionClient;
+  editorId: string;
+  target?: string;
+  onEvaluateCode?: (args: EvaluateCodeArgs) => void;
+  onEvaluateRemoteCode?: (args: EvaluateRemoteCodeArgs) => void;
+  onCursorActivity?: (args: CursorActivityArgs) => void;
+};
+
+class TextEditor extends Component<Props, {}> {
+  static defaultProps = {
+    target: "default",
+    onEvaluateCode: () => {},
+    onEvaluateRemoteCode: () => {},
+    onCursorActivity: () => {}
+  };
+
+  cm: { editor: any };
+  sharedCodeMirror: SharedCodeMirror;
+
   componentDidMount() {
     const { editorId, sessionClient } = this.props;
     const { editor } = this.cm;
@@ -44,6 +83,7 @@ class TextEditor extends React.Component {
   handleEvaluateButtonClick = () => {
     const { editorId, target, onEvaluateCode } = this.props;
     const { editor } = this.cm;
+
     return onEvaluateCode({
       editorId,
       target,
@@ -83,21 +123,5 @@ class TextEditor extends React.Component {
     );
   }
 }
-
-TextEditor.propTypes = {
-  sessionClient: PropTypes.instanceOf(SessionClient).isRequired,
-  editorId: PropTypes.string.isRequired,
-  target: PropTypes.string,
-  onEvaluateCode: PropTypes.func,
-  onEvaluateRemoteCode: PropTypes.func,
-  onCursorActivity: PropTypes.func
-};
-
-TextEditor.defaultProps = {
-  target: "default",
-  onEvaluateCode: () => {},
-  onEvaluateRemoteCode: () => {},
-  onCursorActivity: () => {}
-};
 
 export default TextEditor;

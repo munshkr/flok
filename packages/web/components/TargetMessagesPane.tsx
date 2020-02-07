@@ -1,5 +1,4 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { Component, MouseEvent } from "react";
 import {
   faCaretSquareDown,
   faCaretSquareUp,
@@ -9,8 +8,27 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "./Button";
 
-class TargetMessagesPane extends React.Component {
-  componentDidUpdate(prevProps) {
+type Props = {
+  messages: any[]; // FIXME replace any with MessageType
+  isTop: boolean;
+  isMaximized: boolean;
+  onTogglePosition: (e: MouseEvent) => any;
+  onToggleMaximize: (e: MouseEvent) => any;
+  onClose: (e: MouseEvent) => any;
+};
+
+class TargetMessagesPane extends Component<Props, {}> {
+  static defaultProps = {
+    messages: [],
+    isTop: false,
+    isMaximized: false,
+    onTogglePosition: () => {},
+    onToggleMaximize: () => {},
+    onClose: () => {}
+  };
+  container: HTMLElement;
+
+  componentDidUpdate(prevProps: Props) {
     const { messages } = this.props;
     if (this.container && prevProps.messages !== messages) {
       this.container.scrollTop = this.container.scrollHeight;
@@ -64,23 +82,5 @@ class TargetMessagesPane extends React.Component {
     );
   }
 }
-
-TargetMessagesPane.propTypes = {
-  messages: PropTypes.arrayOf(PropTypes.object),
-  isTop: PropTypes.bool,
-  isMaximized: PropTypes.bool,
-  onTogglePosition: PropTypes.func,
-  onToggleMaximize: PropTypes.func,
-  onClose: PropTypes.func
-};
-
-TargetMessagesPane.defaultProps = {
-  messages: [],
-  isTop: false,
-  isMaximized: false,
-  onTogglePosition: () => {},
-  onToggleMaximize: () => {},
-  onClose: () => {}
-};
 
 export default TargetMessagesPane;

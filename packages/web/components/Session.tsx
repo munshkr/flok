@@ -1,5 +1,4 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { Component } from "react";
 import dynamic from "next/dynamic";
 
 import { PubSubClient } from "flok-core";
@@ -9,7 +8,7 @@ import TargetMessagesPane from "./TargetMessagesPane";
 import SessionClient from "../lib/SessionClient";
 // import HydraCanvas from "./HydraCanvas";
 
-const MAX_LINES = 100;
+const MAX_LINES: number = 100;
 
 const LAYOUT = {
   editors: [
@@ -26,8 +25,31 @@ const TextEditor = dynamic(() => import("./TextEditor"), {
   ssr: false
 });
 
-class Session extends React.Component {
-  state = {
+interface Message {
+  target: string;
+  content: string;
+}
+
+type Props = {
+  websocketsHost: string;
+  sessionName: string;
+  userName?: string;
+};
+
+type State = {
+  status: string;
+  showUserList: boolean;
+  showTargetMessagesPane: boolean;
+  showTextEditors: boolean;
+  messages: Message[];
+  users: string[];
+  messagesPaneIsTop: boolean;
+  messagesPaneIsMaximized: boolean;
+  hydraCode: string;
+};
+
+class Session extends Component<Props, State> {
+  state: State = {
     status: "Not connected",
     showUserList: true,
     showTargetMessagesPane: false,
@@ -38,6 +60,12 @@ class Session extends React.Component {
     messagesPaneIsMaximized: false,
     hydraCode: ""
   };
+  pubsubClient: PubSubClient;
+  sessionClient: SessionClient;
+
+  static defaultProps = {
+    userName: "anonymous"
+  };
 
   componentDidMount() {
     const { sessionName, userName } = this.props;
@@ -45,18 +73,18 @@ class Session extends React.Component {
     const targets = [...new Set(LAYOUT.editors.map(({ target }) => target))];
     console.log("Targets:", targets);
 
-    const wsUrl = this.getWebsocketsUrl();
+    const wsUrl: string = this.getWebsocketsUrl();
 
-    const wsDbUrl = `${wsUrl}/db`;
+    const wsDbUrl: string = `${wsUrl}/db`;
     console.log(`Database WebSocket URL: ${wsDbUrl}`);
 
-    const pubsubWsUrl = `${wsUrl}/pubsub`;
+    const pubsubWsUrl: string = `${wsUrl}/pubsub`;
     console.log(`Pub/Sub WebSocket URL: ${pubsubWsUrl}`);
 
     this.pubsubClient = new PubSubClient(pubsubWsUrl, {
       connect: true,
       reconnect: true,
-      onMeMessage: clientId => {
+      onMeMessage: (clientId: string) => {
         this.sessionClient = new SessionClient({
           userId: userName,
           webSocketsUrl: wsDbUrl,
@@ -89,10 +117,10 @@ class Session extends React.Component {
     });
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     if (this.sessionClient) {
       const { userName } = this.props;
-      const { target } = this.state;
+      // const { target } = this.state;
 
       // If username changed, set new username
       if (prevProps.userName !== userName) {
@@ -102,9 +130,9 @@ class Session extends React.Component {
 
       // If target changed, unsubscribe from previous target, and subscribe to
       // new target.
-      if (prevState.target !== target) {
-        // TODO: ...
-      }
+      // if (prevState.target !== target) {
+      //   // TODO: ...
+      // }
     }
   }
 
@@ -115,7 +143,7 @@ class Session extends React.Component {
     }
   }
 
-  getWebsocketsUrl() {
+  getWebsocketsUrl(): string {
     const { websocketsHost } = this.props;
 
     const protocol = location.protocol === "https:" ? "wss:" : "ws:";
@@ -134,7 +162,7 @@ class Session extends React.Component {
     this.setState({ status: "Error" });
   };
 
-  handleUsersChange = users => {
+  handleUsersChange = (users: string[]) => {
     console.debug("Users:", users);
     this.setState({ users });
   };
@@ -154,7 +182,7 @@ class Session extends React.Component {
     sessionClient.evaluateCode({ editorId, body, fromLine, toLine, user });
   };
 
-  handleEvaluateRemoteCode = ({ editorId, target, body }) => {
+  handleEvaluateRemoteCode = ({ _editorId, target, body }) => {
     if (target === "hydra") {
       this.setState({ hydraCode: body });
     }
@@ -175,28 +203,24 @@ class Session extends React.Component {
     });
   };
 
-  handleMessageUser = message => {
+  handleMessageUser = (message: string) => {
     console.debug(`[message] user: ${JSON.stringify(message)}`);
   };
 
-  handleTargetSelectChange = e => {
-    this.setState({ target: e.target.value });
-  };
-
   toggleUserList = () => {
-    this.setState((prevState, _) => ({
+    this.setState((prevState: State, _) => ({
       showUserList: !prevState.showUserList
     }));
   };
 
   handleTargetMessagesPaneTogglePosition = () => {
-    this.setState(prevState => ({
+    this.setState((prevState: State) => ({
       messagesPaneIsTop: !prevState.messagesPaneIsTop
     }));
   };
 
   handleTargetMessagesPaneToggleMaximize = () => {
-    this.setState(prevState => ({
+    this.setState((prevState: State) => ({
       messagesPaneIsMaximized: !prevState.messagesPaneIsMaximized
     }));
   };
@@ -214,8 +238,8 @@ class Session extends React.Component {
       showUserList,
       showTargetMessagesPane,
       messagesPaneIsTop,
-      messagesPaneIsMaximized,
-      hydraCode
+      messagesPaneIsMaximized
+      // hydraCode
     } = this.state;
 
     const { sessionClient } = this;
@@ -269,15 +293,5 @@ class Session extends React.Component {
     );
   }
 }
-
-Session.propTypes = {
-  websocketsHost: PropTypes.string.isRequired,
-  sessionName: PropTypes.string.isRequired,
-  userName: PropTypes.string
-};
-
-Session.defaultProps = {
-  userName: "anonymous"
-};
 
 export default Session;

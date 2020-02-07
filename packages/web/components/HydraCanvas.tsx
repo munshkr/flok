@@ -1,28 +1,41 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { Component } from "react";
 
-const GLOBAL_VARS_RE = /\b(o0|o1|o2|o3|s0|s1|s2|s3|time|a)\b/g;
-const GLOBAL_FUNCS_RE = /\b(gradient|osc|shape|noise|solid|voronoi|src|render)\b\(/g;
+const GLOBAL_VARS_RE: RegExp = /\b(o0|o1|o2|o3|s0|s1|s2|s3|time|a)\b/g;
+const GLOBAL_FUNCS_RE: RegExp = /\b(gradient|osc|shape|noise|solid|voronoi|src|render)\b\(/g;
 
-const localizeHydraCode = code => {
-  const replaceFunc = func => `H.${func}`;
+const localizeHydraCode = (code: string): string => {
+  const replaceFunc = (func: string): string => `H.${func}`;
   return code
     .replace(GLOBAL_FUNCS_RE, replaceFunc)
     .replace(GLOBAL_VARS_RE, replaceFunc);
 };
 
-class HydraCanvas extends React.Component {
-  constructor(props) {
-    super(props);
+type Props = {
+  code?: string;
+  fullscreen?: boolean;
+  local?: boolean;
+};
 
-    this.state = {
-      error: null
-    };
-  }
+type State = {
+  error: string;
+};
+
+class HydraCanvas extends Component<Props, State> {
+  state: State = {
+    error: null
+  };
+  hydra: any;
+  canvas: any;
+
+  static defaultProps = {
+    code: "",
+    fullscreen: false,
+    local: false
+  };
 
   componentDidMount() {
     const { code, local } = this.props;
-    const makeGlobal = !local;
+    const makeGlobal: boolean = !local;
 
     // eslint-disable-next-line global-require
     const Hydra = require("hydra-synth");
@@ -47,7 +60,7 @@ class HydraCanvas extends React.Component {
     this.tryEval(code);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     const { code } = this.props;
 
     if (!code) return;
@@ -61,10 +74,10 @@ class HydraCanvas extends React.Component {
     delete this.hydra;
   }
 
-  tryEval(code) {
+  tryEval(code: string) {
     const { local } = this.props;
 
-    let evalCode = code;
+    let evalCode: string = code;
     if (local) evalCode = localizeHydraCode(code);
 
     console.debug(evalCode);
@@ -83,7 +96,7 @@ class HydraCanvas extends React.Component {
     const { fullscreen } = this.props;
     const { error } = this.state;
 
-    const className = fullscreen ? "fullscreen" : "";
+    const className: string = fullscreen ? "fullscreen" : "";
 
     return (
       <div>
@@ -124,17 +137,5 @@ class HydraCanvas extends React.Component {
     );
   }
 }
-
-HydraCanvas.propTypes = {
-  code: PropTypes.string,
-  fullscreen: PropTypes.bool,
-  local: PropTypes.bool
-};
-
-HydraCanvas.defaultProps = {
-  code: "",
-  fullscreen: false,
-  local: false
-};
 
 export default HydraCanvas;
