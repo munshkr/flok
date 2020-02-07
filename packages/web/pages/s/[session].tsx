@@ -1,7 +1,7 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React, { Component } from "react";
 import Head from "next/head";
 import getConfig from "next/config";
+import { NextPageContext } from "next";
 
 import Layout from "../../components/Layout";
 import Session from "../../components/Session";
@@ -9,8 +9,18 @@ import Session from "../../components/Session";
 const { publicRuntimeConfig } = getConfig();
 const { isDevelopment } = publicRuntimeConfig;
 
-class SessionPage extends React.Component {
-  static async getInitialProps({ req, query }) {
+interface Props {
+  host: string;
+  session: string;
+  user: string;
+}
+
+class SessionPage extends Component<Props> {
+  static defaultProps = {
+    user: "anonymous"
+  };
+
+  static async getInitialProps({ req, query }: NextPageContext) {
     const host = req && req.headers && req.headers.host;
     return { host, session: query.session, user: query.user };
   }
@@ -33,15 +43,5 @@ class SessionPage extends React.Component {
     );
   }
 }
-
-SessionPage.propTypes = {
-  host: PropTypes.string.isRequired,
-  session: PropTypes.string.isRequired,
-  user: PropTypes.string
-};
-
-SessionPage.defaultProps = {
-  user: "anonymous"
-};
 
 export default SessionPage;
