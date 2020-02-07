@@ -36,6 +36,7 @@
     "ws": "^7.0.1"
   },
   "devDependencies": {
+    "@types/react": "^16.9.19",
     "babel-eslint": "^10.0.2",
     "bulma": "^0.8.0",
     "chai": "^4.2.0",
@@ -50,6 +51,7 @@
     "mocha": "^6.2.2",
     "node-sass": "^4.13.0",
     "prettier": "^1.18.2",
-    "react-codemirror2": "^6.0.0"
+    "react-codemirror2": "^6.0.0",
+    "typescript": "^3.7.5"
   }
 }
