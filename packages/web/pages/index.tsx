@@ -1,18 +1,26 @@
 import Router from "next/router";
-import React from "react";
+import React, { Component, ChangeEvent, FormEvent } from "react";
 import Layout from "../components/Layout";
 
-class NewSessionForm extends React.Component {
+interface Props {}
+
+interface State {
+  session: string;
+  user: string;
+}
+
+class NewSessionForm extends Component<Props, State> {
   state = {
     session: "",
     user: ""
   };
 
-  handleChange = e => {
-    this.setState({ [e.target.name]: e.target.value });
+  handleChangeSession = (e: ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+    this.setState({ session: target.value });
   };
 
-  handleSubmit = e => {
+  handleSubmit = (e: FormEvent) => {
     let { session, user } = this.state;
 
     e.preventDefault();
@@ -33,7 +41,7 @@ class NewSessionForm extends React.Component {
           <div className="control">
             <input
               name="session"
-              onChange={this.handleChange}
+              onChange={this.handleChangeSession}
               value={session}
               className="input is-large"
               type="text"
