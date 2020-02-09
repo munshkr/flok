@@ -1,7 +1,28 @@
+import SessionClient from "./SessionClient";
+
 // FIXME more colors?
 const COLORS = ["#ff0000", "#00ff00", "#0000ff"];
 
+type SharedCodeMirrorContext = {
+  editor: any;
+  onEvaluateCode?: Function;
+  onEvaluateRemoteCode?: Function;
+  onCursorActivity?: Function;
+  extraKeys?: {};
+};
+
 class SharedCodeMirror {
+  editor: any;
+  onEvaluateCode: Function;
+  onEvaluateRemoteCode: Function;
+  onCursorActivity: Function;
+  extraKeys: {};
+  bookmarks: {};
+  suppressChange: boolean;
+  id: string;
+  ops: [];
+  userName: string;
+
   /**
    * @constructor
    * @param {String} WebSocket url - a URL string of the WebSocket server
@@ -12,7 +33,7 @@ class SharedCodeMirror {
    *      than current user evaluates code.
    * @return {SharedCodeMirror} the created SharedCodeMirror object
    */
-  constructor(ctx) {
+  constructor(ctx: SharedCodeMirrorContext) {
     const {
       editor,
       onEvaluateCode,
@@ -33,12 +54,12 @@ class SharedCodeMirror {
     this.setExtraKeys();
   }
 
-  attach(sessionClient, id) {
+  attach(sessionClient: SessionClient, id: string) {
     const { editor } = this;
 
     this.id = id;
 
-    const content = sessionClient.getContentFromEditor(id);
+    const content: string = sessionClient.getContentFromEditor(id);
     editor.setValue(content);
 
     editor.on("beforeChange", (_codeMirror, change) => {
@@ -62,7 +83,7 @@ class SharedCodeMirror {
     delete this.id;
   }
 
-  updateBookmarkForUser(userId, userNum, cursorPos) {
+  updateBookmarkForUser(userId: string, userNum: number, cursorPos) {
     const { editor } = this;
 
     const marker = this.bookmarks[userId];
@@ -78,8 +99,8 @@ class SharedCodeMirror {
     const color = COLORS[userNum % COLORS.length];
     el.style.borderLeftColor = color;
     el.style.height = `${cursorCoords.bottom - cursorCoords.top}px`;
-    el.style.padding = 0;
-    el.style.zIndex = 0;
+    el.style.padding = "0";
+    el.style.zIndex = "0";
 
     // Set the generated DOM node at the position of the cursor sent from another client
     // setBookmark first argument: The position of the cursor sent from another client
@@ -94,7 +115,7 @@ class SharedCodeMirror {
    * Asserts that the CodeMirror instance's value matches the document's content
    * in order to ensure that the two copies haven't diverged.
    */
-  assertValue(sessionClient) {
+  assertValue(sessionClient: SessionClient) {
     const expectedValue = sessionClient.getContentFromEditor(this.id);
     const currentValue = this.editor.getValue();
 
@@ -118,7 +139,7 @@ class SharedCodeMirror {
    * is an echo of the most recently applied remote operations, otherwise it
    * collects all the operations which are later sent to the server.
    */
-  _handleBeforeLocalChange(_sessionClient, change) {
+  _handleBeforeLocalChange(_sessionClient: SessionClient, change) {
     if (this.suppressChange) {
       return;
     }
@@ -144,7 +165,7 @@ class SharedCodeMirror {
    * an echo of the most recently applied remote operations, otherwise it
    * sends the previously collected operations to the server.
    */
-  _handleAfterLocalChanges(sessionClient, _changes) {
+  _handleAfterLocalChanges(sessionClient: SessionClient, _changes) {
     if (this.suppressChange) {
       return;
     }
@@ -215,14 +236,14 @@ class SharedCodeMirror {
     }
   };
 
-  evaluate(body, fromLine, toLine) {
+  evaluate(body: string, fromLine: number, toLine: number) {
     console.debug([fromLine, toLine]);
     console.debug(`Evaluate (${fromLine}-${toLine}): ${JSON.stringify(body)}`);
     this.onEvaluateCode({ body, fromLine, toLine, user: this.userName });
     this.flash(fromLine, toLine);
   }
 
-  flash(fromLine, toLine) {
+  flash(fromLine: number, toLine: number) {
     const { editor } = this;
 
     // Mark text with .flash-selection class
