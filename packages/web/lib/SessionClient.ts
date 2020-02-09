@@ -1,9 +1,51 @@
 import ReconnectingWebSocket from "reconnecting-websocket";
 import ShareDB from "sharedb/lib/client";
+import SharedCodeMirror from "./SharedCodeMirror";
 
 // FIXME Replace callbacks for Promises
 
+type UserPosData = {
+  l: number; // line
+  c: number; // col
+};
+
+type UserData = {
+  es: { [editorId: string]: UserPosData }; // editors
+  n: string; // username
+};
+
+type DocumentData = {
+  contents: { [editorId: string]: string };
+  users: { [userId: string]: UserData };
+};
+
+type SessionClientContext = {
+  userId: string;
+  webSocketsUrl: string;
+  collectionName?: string;
+  onJoin?: Function;
+  onConnectionOpen?: Function;
+  onConnectionClose?: Function;
+  onConnectionError?: Function;
+  onUsersChange?: Function;
+};
+
 class SessionClient {
+  userId: string;
+  userName: any;
+  collectionName: string;
+  webSocketsUrl: string;
+  users: { [userId: string]: UserData };
+  editors: { [editorId: string]: SharedCodeMirror };
+  connection: ShareDB.Connection;
+  doc: any;
+  socket: ReconnectingWebSocket;
+  onJoin: Function;
+  onConnectionOpen: Function;
+  onConnectionClose: Function;
+  onConnectionError: Function;
+  onUsersChange: Function;
+
   /**
    * @constructor
    * @param {Object} options - configuration options:
@@ -17,7 +59,7 @@ class SessionClient {
    *      or disconnects.
    * @return {SessionClient} the created SessionClient object
    */
-  constructor(ctx) {
+  constructor(ctx: SessionClientContext) {
     const {
       userId,
       webSocketsUrl,
@@ -42,7 +84,7 @@ class SessionClient {
     this.editors = {};
   }
 
-  join(sessionId) {
+  join(sessionId: string) {
     if (!this.connection) this._initConnection();
 
     this.release();
@@ -62,7 +104,7 @@ class SessionClient {
    * the pre-change coordinate system, while the latter marks the end of the
    * batch of operations.
    */
-  attachEditor(id, sharedEditor) {
+  attachEditor(id: string, sharedEditor: SharedCodeMirror) {
     this.editors[id] = sharedEditor;
 
     sharedEditor.attach(this, id);
@@ -107,7 +149,7 @@ class SessionClient {
     // Unsubscribe events from all attached SharedEditor instances
     const editors = Object.values(this.editors);
     for (let i = 0; i < editors.length; i += 1) {
-      const sharedEditor = editors[i];
+      const sharedEditor: SharedCodeMirror = editors[i];
       sharedEditor.dettach();
     }
 
@@ -121,7 +163,7 @@ class SessionClient {
     console.debug("Unsubscribed from document");
   }
 
-  setUsername(newName) {
+  setUsername(newName: string) {
     const oldName = this.userName;
 
     if (newName === oldName) return;
@@ -164,12 +206,12 @@ class SessionClient {
    * @param {function (Object)=} callback - optional. Will be called when everything
    *    is hooked up. The first argument will be the error that occurred, if any.
    */
-  _attachDoc(callback) {
+  _attachDoc(callback: (error: Error) => void) {
     const { doc } = this;
 
     console.debug("Document:", doc);
 
-    doc.subscribe(error => {
+    doc.subscribe((error: Error) => {
       if (error) {
         if (!callback) {
           console.error(error);
@@ -190,19 +232,14 @@ class SessionClient {
     if (!doc.type) {
       console.debug("Creating empty document");
 
-      const data = {};
-
-      // Empty document
-      data.contents = {};
-
-      // Add current user
+      // Create empty document, with current user
       this.users = {};
       this.users[this.userId] = { es: {}, n: this.userName };
       this.triggerUsersChange();
 
-      data.users = this.users;
+      const data: DocumentData = { contents: {}, users: this.users };
 
-      doc.create(data, error => {
+      doc.create(data, (error: Error) => {
         if (error) {
           console.error(error);
           return;
@@ -220,7 +257,7 @@ class SessionClient {
       this._updateEditorBookmarks();
 
       // Add current user
-      const userData = { es: {}, n: this.userName };
+      const userData: UserData = { es: {}, n: this.userName };
       this.users[this.userId] = userData;
       this.sendOP([{ p: ["users", this.userId], oi: userData }]);
 
@@ -229,7 +266,7 @@ class SessionClient {
 
     doc.on("op", this._handleRemoteChange);
     doc.on("del", this._handleDocDelete);
-    doc.on("error", error => console.error(error));
+    doc.on("error", (error: Error) => console.error(error));
   }
 
   evaluateCode({ editorId, body, fromLine, toLine, user }) {
@@ -252,7 +289,7 @@ class SessionClient {
     this.sendOP([{ p: ["contents", editorId], t: "text0", o: ops }]);
   }
 
-  getContentFromEditor(id) {
+  getContentFromEditor(id: string) {
     const { doc } = this;
     return (doc && doc.data && doc.data.contents[id]) || "";
   }
@@ -265,7 +302,10 @@ class SessionClient {
       Object.keys(users).forEach(userId => {
         const editor = editors[editorId];
         // const userData = users[userId];
-        const userData = users[userId].es[editorId] || {};
+        const userData: UserPosData = users[userId].es[editorId] || {
+          l: null,
+          c: null
+        };
         const cursorPos = { line: userData.l, ch: userData.c };
         const userNum = Object.keys(users).indexOf(userId);
         editor.updateBookmarkForUser(userId, userNum, cursorPos);
