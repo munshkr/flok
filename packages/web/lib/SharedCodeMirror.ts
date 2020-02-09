@@ -20,7 +20,7 @@ class SharedCodeMirror {
   bookmarks: {};
   suppressChange: boolean;
   id: string;
-  ops: [];
+  ops: {}[];
   userName: string;
 
   /**
@@ -147,15 +147,15 @@ class SharedCodeMirror {
     if (!this.ops) {
       this.ops = [];
     }
-    const index = this.editor.indexFromPos(change.from);
+    const index: number = this.editor.indexFromPos(change.from);
     if (change.from !== change.to) {
       // delete operation
-      const deleted = this.editor.getRange(change.from, change.to);
+      const deleted: string = this.editor.getRange(change.from, change.to);
       this.ops.push({ p: index, d: deleted });
     }
     if (change.text[0] !== "" || change.text.length > 0) {
       // insert operation
-      const inserted = change.text.join("\n");
+      const inserted: string = change.text.join("\n");
       this.ops.push({ p: index, i: inserted });
     }
   }

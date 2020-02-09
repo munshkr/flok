@@ -38,7 +38,21 @@ class SessionPage extends Component<Props> {
         <Head>
           <title>{`${session} :: flok`}</title>
         </Head>
-        <Session websocketsHost={host} sessionName={session} userName={user} />
+        <Session
+          websocketsHost={host}
+          sessionName={session}
+          userName={user}
+          layout={{
+            editors: [
+              { id: "1", target: "default" },
+              { id: "2", target: "default" },
+              { id: "3", target: "default" },
+              { id: "4", target: "default" },
+              { id: "5", target: "default" },
+              { id: "6", target: "default" }
+            ]
+          }}
+        />
       </Layout>
     );
   }

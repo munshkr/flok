@@ -10,17 +10,6 @@ import SessionClient from "../lib/SessionClient";
 
 const MAX_LINES: number = 100;
 
-const LAYOUT = {
-  editors: [
-    { id: "1", target: "default" },
-    { id: "2", target: "default" },
-    { id: "3", target: "default" },
-    { id: "4", target: "default" },
-    { id: "5", target: "default" },
-    { id: "6", target: "default" }
-  ]
-};
-
 const TextEditor = dynamic(() => import("./TextEditor"), {
   ssr: false
 });
@@ -39,6 +28,12 @@ type Props = {
   websocketsHost: string;
   sessionName: string;
   userName?: string;
+  layout: {
+    editors: {
+      id: string;
+      target: string;
+    }[];
+  };
 };
 
 type State = {
@@ -73,9 +68,9 @@ class Session extends Component<Props, State> {
   };
 
   componentDidMount() {
-    const { sessionName, userName } = this.props;
+    const { sessionName, userName, layout } = this.props;
 
-    const targets = [...new Set(LAYOUT.editors.map(({ target }) => target))];
+    const targets = [...new Set(layout.editors.map(({ target }) => target))];
     console.log("Targets:", targets);
 
     const wsUrl: string = this.getWebsocketsUrl();
@@ -246,6 +241,7 @@ class Session extends Component<Props, State> {
       messagesPaneIsMaximized
       // hydraCode
     } = this.state;
+    const { layout } = this.props;
 
     const { sessionClient } = this;
 
@@ -256,7 +252,7 @@ class Session extends Component<Props, State> {
         <Status>{status}</Status>
         {showTextEditors && (
           <div className="columns is-gapless is-multiline">
-            {LAYOUT.editors.map(({ id, target }) => (
+            {layout.editors.map(({ id, target }) => (
               <div key={id} className="column is-4">
                 <TextEditor
                   editorId={id}
@@ -286,6 +282,7 @@ class Session extends Component<Props, State> {
             .columns {
               margin: 0;
               padding: 0;
+              cursor: text;
             }
             .column {
               margin: 0;
