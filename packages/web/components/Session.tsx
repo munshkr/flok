@@ -25,10 +25,15 @@ const TextEditor = dynamic(() => import("./TextEditor"), {
   ssr: false
 });
 
-interface Message {
+type Message = {
   target: string;
   content: string;
-}
+};
+
+type User = {
+  id: string;
+  name: string;
+};
 
 type Props = {
   websocketsHost: string;
@@ -42,7 +47,7 @@ type State = {
   showTargetMessagesPane: boolean;
   showTextEditors: boolean;
   messages: Message[];
-  users: string[];
+  users: User[];
   messagesPaneIsTop: boolean;
   messagesPaneIsMaximized: boolean;
   hydraCode: string;
@@ -162,7 +167,7 @@ class Session extends Component<Props, State> {
     this.setState({ status: "Error" });
   };
 
-  handleUsersChange = (users: string[]) => {
+  handleUsersChange = (users: User[]) => {
     console.debug("Users:", users);
     this.setState({ users });
   };
@@ -182,7 +187,7 @@ class Session extends Component<Props, State> {
     sessionClient.evaluateCode({ editorId, body, fromLine, toLine, user });
   };
 
-  handleEvaluateRemoteCode = ({ _editorId, target, body }) => {
+  handleEvaluateRemoteCode = ({ editorId, target, body }) => {
     if (target === "hydra") {
       this.setState({ hydraCode: body });
     }

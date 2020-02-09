@@ -53,7 +53,7 @@ class TextEditor extends Component<Props, {}> {
     onCursorActivity: () => {}
   };
 
-  cm: { editor: any };
+  cm: any;
   sharedCodeMirror: SharedCodeMirror;
 
   componentDidMount() {
