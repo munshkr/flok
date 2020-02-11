@@ -13,8 +13,8 @@
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
     "prepare": "yarn build",
-    "prepublishOnly": "yarn test && yarn lint",
-    "preversion": "yarn lint",
+    "prepublishOnly": "yarn test",
+    "preversion": "exit 0",
     "test": "exit 0"
   },
   "dependencies": {
