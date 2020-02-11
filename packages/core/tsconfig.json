@@ -6,8 +6,5 @@
     "outDir": "./lib",
     "target": "es2019"
   },
-  "include": [
-    "./src/**/*"
-  ]
+  "include": ["./src/**/*"]
 }
-

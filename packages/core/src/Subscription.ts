@@ -1,17 +1,25 @@
-/* eslint-disable class-methods-use-this */
-const { Map } = require("immutable");
-const uuid = require("uuid/v1");
+import { Map } from 'immutable';
+import uuid from 'uuid/v1';
+
+type SubscriptionType = {
+  id: string;
+  topic: string;
+  clientId: string;
+  type: string;
+};
 
 class Subscription {
+  subscriptions: Map<string, SubscriptionType>;
+
   constructor() {
-    this.subscriptions = new Map();
+    this.subscriptions = Map();
   }
 
   /**
    * Return subsciption
    * @param id
    */
-  get(id) {
+  get(id: string): SubscriptionType {
     return this.subscriptions.get(id);
   }
 
@@ -22,12 +30,11 @@ class Subscription {
    * @param type
    * @returns {*}
    */
-  add(topic, clientId, type = "ws") {
+  add(topic: string, clientId: string, type: string = 'ws'): string {
     // need to find subscription with same type = 'ws'
 
     const findSubscriptionWithClientId = this.subscriptions.find(
-      sub =>
-        sub.clientId === clientId && sub.type === type && sub.topic === topic
+      sub => sub.clientId === clientId && sub.type === type && sub.topic === topic,
     );
 
     if (findSubscriptionWithClientId) {
@@ -35,14 +42,14 @@ class Subscription {
       return findSubscriptionWithClientId.id;
     }
     const id = this.autoId();
-    const subscription = {
+    const subscription: SubscriptionType = {
       id,
       topic,
       clientId,
-      type // email, phone
+      type, // email, phone
     };
 
-    console.log("New subscriber via add method:", subscription);
+    console.log('New subscriber via add method:', subscription);
     this.subscriptions = this.subscriptions.set(id, subscription);
     return id;
   }
@@ -51,7 +58,7 @@ class Subscription {
    * Remove a subsciption
    * @param id
    */
-  remove(id) {
+  remove(id: string) {
     this.subscriptions = this.subscriptions.remove(id);
   }
 
@@ -65,21 +72,21 @@ class Subscription {
   /**
    * Get Subscriptions
    * @param predicate
-   * @returns {any}
+   * @returns Map<string, SubscriptionType>
    */
-  getSubscriptions(predicate = null) {
-    return predicate
-      ? this.subscriptions.filter(predicate)
-      : this.subscriptions;
+  getSubscriptions(
+    predicate: (value: SubscriptionType, key: string, iter: Map<string, SubscriptionType>) => boolean = null,
+  ): Map<string, SubscriptionType> {
+    return predicate ? this.subscriptions.filter(predicate) : this.subscriptions;
   }
 
   /**
    * Generate new ID
    * @returns {*}
    */
-  autoId() {
+  autoId(): string {
     return uuid();
   }
 }
 
-module.exports = Subscription;
+export default Subscription;

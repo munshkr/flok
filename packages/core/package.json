@@ -2,7 +2,7 @@
   "name": "flok-core",
   "description": "Core package of flok, contains Pub/Sub and ShareDB functionality, and CLI-based client",
   "version": "0.3.0",
-  "main": "index.js",
+  "main": "./lib/index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "files": [
@@ -12,9 +12,9 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
-    "prepare" : "yarn build",
-    "prepublishOnly" : "yarn test && yarn lint",
-    "preversion" : "yarn lint",
+    "prepare": "yarn build",
+    "prepublishOnly": "yarn test && yarn lint",
+    "preversion": "yarn lint",
     "test": "exit 0"
   },
   "dependencies": {
@@ -29,6 +29,8 @@
     "ws": "^7.0.1"
   },
   "devDependencies": {
+    "@types/fbemitter": "^2.0.32",
+    "@types/ws": "^7.2.1",
     "prettier": "^1.19.1",
     "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",

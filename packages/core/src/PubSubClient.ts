@@ -1,10 +1,35 @@
-// eslint-disable class-methods-use-this
-// eslint-disable-next-line prefer-destructuring
-const { EventEmitter } = require("fbemitter");
-const WebSocket = require("isomorphic-ws");
+import { EventEmitter } from 'fbemitter';
+import * as WebSocket from 'isomorphic-ws';
+
+type QueueItem = {
+  type: string;
+  payload: any;
+};
+
+type PubSubClientContext = {
+  connect: boolean;
+  reconnect: boolean;
+  onMeMessage?: Function;
+  onClose?: Function;
+};
 
 class PubSubClient {
-  constructor(url, options = { connect: true, reconnect: true }) {
+  emitter: EventEmitter;
+  onMeMessage: Function;
+  onClose: Function;
+
+  _connected: boolean;
+  _ws: WebSocket;
+  _queue: QueueItem[];
+  _id: string;
+  _listeners: any[];
+  _subscriptions: any[];
+  _isReconnecting: boolean;
+  _url: string;
+  _options: PubSubClientContext;
+  _reconnectTimeout: NodeJS.Timeout;
+
+  constructor(url: string, options: PubSubClientContext = { connect: true, reconnect: true }) {
     // Binding
     this.reconnect = this.reconnect.bind(this);
     this.connect = this.connect.bind(this);
@@ -48,7 +73,7 @@ class PubSubClient {
    * Un Subscribe a topic, no longer receive new message of the topic
    * @param topic
    */
-  unsubscribe(topic) {
+  unsubscribe(topic: string) {
     const subscription = this._subscriptions.find(sub => sub.topic === topic);
 
     if (subscription && subscription.listener) {
@@ -58,10 +83,10 @@ class PubSubClient {
 
     // need to tell to the server side that i dont want to receive message from this topic
     this.send({
-      action: "unsubscribe",
+      action: 'unsubscribe',
       payload: {
-        topic
-      }
+        topic,
+      },
     });
   }
 
@@ -70,7 +95,7 @@ class PubSubClient {
    * @param topic
    * @param cb
    */
-  subscribe(topic, cb) {
+  subscribe(topic: string, cb: Function) {
     const listener = this.emitter.addListener(`subscribe_topic_${topic}`, cb);
     // add listener to array
     this._listeners.push(listener);
@@ -78,17 +103,17 @@ class PubSubClient {
     // send server with message
 
     this.send({
-      action: "subscribe",
+      action: 'subscribe',
       payload: {
-        topic
-      }
+        topic,
+      },
     });
 
     // let store this into subscriptions for later when use reconnect and we need to run queque to subscribe again
     this._subscriptions.push({
       topic,
       callback: cb || null,
-      listener
+      listener,
     });
   }
 
@@ -97,13 +122,13 @@ class PubSubClient {
    * @param topic
    * @param message
    */
-  publish(topic, message) {
+  publish(topic: string, message: any) {
     this.send({
-      action: "publish",
+      action: 'publish',
       payload: {
         topic,
-        message
-      }
+        message,
+      },
     });
   }
 
@@ -112,20 +137,20 @@ class PubSubClient {
    * @param topic
    * @param message
    */
-  broadcast(topic, message) {
+  broadcast(topic: string, message: any) {
     this.send({
-      action: "broadcast",
+      action: 'broadcast',
       payload: {
         topic,
-        message
-      }
+        message,
+      },
     });
   }
 
   /**
    * Return client conneciton ID
    */
-  id() {
+  id(): string {
     return this._id;
   }
 
@@ -134,8 +159,8 @@ class PubSubClient {
    * @param message
    * @returns {*}
    */
-  stringToJson(message) {
-    let res;
+  stringToJson(message: string): any {
+    let res: any;
     try {
       res = JSON.parse(message);
     } catch (e) {
@@ -149,16 +174,16 @@ class PubSubClient {
    * Send a message to the server
    * @param message
    */
-  send(message) {
-    let res;
+  send(message: any) {
+    let res: string;
     if (this._connected === true && this._ws.readyState === 1) {
       res = JSON.stringify(message);
       this._ws.send(res);
     } else {
       // let keep it in queue
       this._queue.push({
-        type: "message",
-        payload: message
+        type: 'message',
+        payload: message,
       });
     }
   }
@@ -170,7 +195,7 @@ class PubSubClient {
     if (this._queue.length) {
       this._queue.forEach((q, index) => {
         switch (q.type) {
-          case "message":
+          case 'message':
             this.send(q.payload);
 
             break;
@@ -193,10 +218,10 @@ class PubSubClient {
     if (this._subscriptions.length) {
       this._subscriptions.forEach(subscription => {
         this.send({
-          action: "subscribe",
+          action: 'subscribe',
           payload: {
-            topic: subscription.topic
-          }
+            topic: subscription.topic,
+          },
         });
       });
     }
@@ -213,7 +238,7 @@ class PubSubClient {
     // Set timeout
     this._isReconnecting = true;
     this._reconnectTimeout = setTimeout(() => {
-      console.log("Reconnecting....");
+      console.log('Reconnecting....');
       this.connect();
     }, 2000);
   }
@@ -236,8 +261,8 @@ class PubSubClient {
       this._connected = true;
       this._isReconnecting = false;
 
-      console.log("Connected to the server");
-      this.send({ action: "me" });
+      console.log('Connected to the server');
+      this.send({ action: 'me' });
       // run queue
       this.runQueue();
 
@@ -245,22 +270,19 @@ class PubSubClient {
     };
     // listen a message from the server
     ws.onmessage = message => {
-      const jsonMessage = this.stringToJson(message.data);
+      const jsonMessage = this.stringToJson(message.data.toString());
 
       const { action } = jsonMessage;
       const { payload } = jsonMessage;
 
       switch (action) {
-        case "me":
+        case 'me':
           this._id = payload.id;
           this.onMeMessage(this._id);
           break;
 
-        case "publish":
-          this.emitter.emit(
-            `subscribe_topic_${payload.topic}`,
-            payload.message
-          );
+        case 'publish':
+          this.emitter.emit(`subscribe_topic_${payload.topic}`, payload.message);
           // let emit this to subscribers
           break;
 
@@ -269,14 +291,14 @@ class PubSubClient {
       }
     };
     ws.onerror = err => {
-      console.log("unable connect to the server", err);
+      console.log('unable connect to the server', err);
 
       this._connected = false;
       this._isReconnecting = false;
       this.reconnect();
     };
     ws.onclose = () => {
-      console.log("Connection is closed");
+      console.log('Connection is closed');
 
       this._connected = false;
       this._isReconnecting = false;
@@ -297,4 +319,4 @@ class PubSubClient {
   }
 }
 
-module.exports = PubSubClient;
+export default PubSubClient;
