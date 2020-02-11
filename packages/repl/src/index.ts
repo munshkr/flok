@@ -211,9 +211,5 @@ function createREPLFor(repl: string, ctx: REPLContext) {
   return new replClass({ ...ctx, command: repl });
 }
 
-module.exports = {
-  replClasses,
-  createREPLFor,
-  REPL,
-  ...Object.values(replClasses),
-};
+export { replClasses, createREPLFor, REPL, TidalREPL, SuperColliderREPL };
+export default REPL;

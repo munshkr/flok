@@ -2,11 +2,12 @@
   "name": "flok-repl",
   "description": "REPL client for Flok",
   "version": "0.3.0",
-  "main": "index.js",
+  "main": "./lib/index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "files": [
-    "lib/**/*"
+    "lib/**/*",
+    "bin/*"
   ],
   "scripts": {
     "build": "tsc",
