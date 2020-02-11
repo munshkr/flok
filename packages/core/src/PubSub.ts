@@ -15,8 +15,8 @@ class PubSub {
   wss: WebSocket;
   clients: Map<string, ClientType>;
   subscription: Subscription;
-  onConnection: Function;
-  onDisconnection: Function;
+  onConnection: (id: string) => void;
+  onDisconnection: (id: string) => void;
 
   constructor(ctx) {
     this.wss = ctx.wss;
@@ -31,8 +31,16 @@ class PubSub {
     this.handlePublishMessage = this.handlePublishMessage.bind(this);
     this.removeClient = this.removeClient.bind(this);
 
-    this.onConnection = ctx.onConnection || (() => {});
-    this.onDisconnection = ctx.onDisconnection || (() => {});
+    this.onConnection =
+      ctx.onConnection ||
+      (() => {
+        return;
+      });
+    this.onDisconnection =
+      ctx.onDisconnection ||
+      (() => {
+        return;
+      });
 
     this.load();
   }
