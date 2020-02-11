@@ -5,8 +5,17 @@
   "main": "index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
+  "files": [
+    "lib/**/*"
+  ],
   "scripts": {
-    "test": "mocha"
+    "build": "tsc",
+    "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
+    "lint": "tslint -p tsconfig.json",
+    "prepare" : "yarn build",
+    "prepublishOnly" : "yarn test && yarn lint",
+    "preversion" : "yarn lint",
+    "test": "exit 0"
   },
   "dependencies": {
     "@teamwork/websocket-json-stream": "^2.0.0",
@@ -20,16 +29,9 @@
     "ws": "^7.0.1"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.2",
-    "chai": "^4.2.0",
-    "eslint": "^6.0.1",
-    "eslint-config-airbnb": "^17.1.0",
-    "eslint-config-prettier": "^6.0.0",
-    "eslint-plugin-import": "^2.18.0",
-    "eslint-plugin-jsx-a11y": "^6.2.1",
-    "eslint-plugin-prettier": "^3.1.0",
-    "eslint-plugin-react": "^7.14.2",
-    "mocha": "^6.2.2",
-    "prettier": "^1.18.2"
+    "prettier": "^1.19.1",
+    "tslint": "^6.0.0",
+    "tslint-config-prettier": "^1.18.0",
+    "typescript": "^3.7.5"
   }
 }

@@ -1,9 +1,9 @@
-const { spawn, execSync } = require("child_process");
-const EventEmitter = require("events");
-const path = require("path");
-const commandExistsSync = require("command-exists").sync;
-const os = require("os");
-const { PubSubClient } = require("flok-core");
+const { spawn, execSync } = require('child_process');
+const EventEmitter = require('events');
+const path = require('path');
+const commandExistsSync = require('command-exists').sync;
+const os = require('os');
+const { PubSubClient } = require('flok-core');
 
 class REPL {
   constructor(ctx) {
@@ -11,22 +11,22 @@ class REPL {
 
     this.command = command;
 
-    this.target = target || "default";
-    this.hub = hub || "ws://localhost:3000";
-    this.pubSubPath = pubSubPath || "/pubsub";
+    this.target = target || 'default';
+    this.hub = hub || 'ws://localhost:3000';
+    this.pubSubPath = pubSubPath || '/pubsub';
 
     this.emitter = new EventEmitter();
 
     this._connectToPubSubServer();
 
-    this._buffers = { stdout: "", stderr: "" };
+    this._buffers = { stdout: '', stderr: '' };
     this._lastUserName = null;
   }
 
   // eslint-disable-next-line class-methods-use-this
   start() {
     // Spawn process
-    const parts = this.command.split(" ");
+    const parts = this.command.split(' ');
 
     const cmd = parts[0];
     const args = parts.slice(1);
@@ -34,16 +34,16 @@ class REPL {
     this.repl = spawn(cmd, args, { shell: true });
 
     // Handle stdout and stderr
-    this.repl.stdout.on("data", data => {
-      this._handleData(data, "stdout");
+    this.repl.stdout.on('data', data => {
+      this._handleData(data, 'stdout');
     });
 
-    this.repl.stderr.on("data", data => {
-      this._handleData(data, "stderr");
+    this.repl.stderr.on('data', data => {
+      this._handleData(data, 'stderr');
     });
 
-    this.repl.on("close", code => {
-      this.emitter.emit("close", { code });
+    this.repl.on('close', code => {
+      this.emitter.emit('close', { code });
       console.log(`child process exited with code ${code}`);
     });
 
@@ -59,8 +59,8 @@ class REPL {
     const newBody = this.prepare(body);
     this.repl.stdin.write(`${newBody}\n`);
 
-    const lines = newBody.split("\n");
-    this.emitter.emit("data", { type: "stdin", lines });
+    const lines = newBody.split('\n');
+    this.emitter.emit('data', { type: 'stdin', lines });
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -78,29 +78,29 @@ class REPL {
     console.log(wsUrl);
     this.pubSub = new PubSubClient(wsUrl, {
       connect: true,
-      reconnect: true
+      reconnect: true,
     });
   }
 
   _handleData(data, type) {
     const newBuffer = this._buffers[type].concat(data.toString());
-    const lines = newBuffer.split("\n");
+    const lines = newBuffer.split('\n');
 
     this._buffers[type] = lines.pop();
 
-    this.emitter.emit("data", { type, lines });
+    this.emitter.emit('data', { type, lines });
 
     if (lines.length > 0) {
       this.pubSub.publish(`target:${this.target}:out`, {
         target: this.target,
         type,
-        body: lines
+        body: lines,
       });
       if (this._lastUserName) {
         this.pubSub.publish(`user:${this._lastUserName}`, {
           target: this.target,
           type,
-          body: lines
+          body: lines,
         });
       }
     }
@@ -111,26 +111,26 @@ class SuperColliderREPL extends REPL {
   constructor(ctx) {
     super({
       ...ctx,
-      command: SuperColliderREPL.commandPath()
+      command: SuperColliderREPL.commandPath(),
     });
   }
 
   // eslint-disable-next-line class-methods-use-this
   prepare(body) {
-    return `${body.replace(/(\n)/gm, " ").trim()}\n`;
+    return `${body.replace(/(\n)/gm, ' ').trim()}\n`;
   }
 
   static commandPath() {
     // FIXME: On Linux and Darwin, it should try to run `which`, and if it
     // fails, use default paths like these.
     switch (os.platform()) {
-      case "darwin":
-        return "/Applications/SuperCollider.app/Contents/MacOS/sclang";
-      case "linux":
+      case 'darwin':
+        return '/Applications/SuperCollider.app/Contents/MacOS/sclang';
+      case 'linux':
         // FIXME Fallback paths (/usr/local/bin/ -> /usr/bin)
-        return "/usr/local/bin/sclang";
+        return '/usr/local/bin/sclang';
       default:
-        throw Error("Unsupported platform");
+        throw Error('Unsupported platform');
     }
   }
 }
@@ -139,9 +139,7 @@ class TidalREPL extends REPL {
   constructor(ctx) {
     super({
       ...ctx,
-      command: `${TidalREPL.commandPath(
-        "ghci"
-      )} -ghci-script ${TidalREPL.defaultBootScript()}`
+      command: `${TidalREPL.commandPath('ghci')} -ghci-script ${TidalREPL.defaultBootScript()}`,
     });
   }
 
@@ -152,26 +150,24 @@ class TidalREPL extends REPL {
   }
 
   static defaultBootScript() {
-    return path.join(TidalREPL.dataDir(), "BootTidal.hs");
+    return path.join(TidalREPL.dataDir(), 'BootTidal.hs');
   }
 
   static dataDir() {
     try {
-      const dataDir = execSync(
-        `${TidalREPL.commandPath("ghc-pkg")} field tidal data-dir`
-      )
+      const dataDir = execSync(`${TidalREPL.commandPath('ghc-pkg')} field tidal data-dir`)
         .toString()
         .trim();
 
-      return dataDir.substring(dataDir.indexOf(" ") + 1);
+      return dataDir.substring(dataDir.indexOf(' ') + 1);
     } catch (err) {
       console.error(`Error get tidal data-dir: ${err}`);
-      return "";
+      return '';
     }
   }
 
   static commandPath(cmd) {
-    if (commandExistsSync("stack")) {
+    if (commandExistsSync('stack')) {
       return `stack exec -- ${cmd}`;
     }
     return cmd;
@@ -181,7 +177,7 @@ class TidalREPL extends REPL {
 const replClasses = {
   default: REPL,
   tidal: TidalREPL,
-  sclang: SuperColliderREPL
+  sclang: SuperColliderREPL,
 };
 
 function createREPLFor(repl, ctx) {
@@ -197,5 +193,5 @@ module.exports = {
   replClasses,
   createREPLFor,
   REPL,
-  ...Object.values(replClasses)
+  ...Object.values(replClasses),
 };
