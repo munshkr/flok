@@ -8,8 +8,6 @@
   "license": "GPL-3.0+",
   "private": true,
   "scripts": {
-    "test": "lerna run test",
-    "prepublish": "lerna run prepublish",
     "heroku-prebuild": "yarn add -W sharedb-mongo"
   },
   "husky": {
