@@ -1,12 +1,34 @@
-const { spawn, execSync } = require('child_process');
-const EventEmitter = require('events');
-const path = require('path');
-const commandExistsSync = require('command-exists').sync;
-const os = require('os');
-const { PubSubClient } = require('flok-core');
+import { ChildProcess, execSync, spawn } from 'child_process';
+import { sync as commandExistsSync } from 'command-exists';
+import { EventEmitter } from 'events';
+import { PubSubClient } from 'flok-core';
+import * as os from 'os';
+import * as path from 'path';
+
+type Message = {
+  body: string;
+  userName: string;
+};
+
+type REPLContext = {
+  command: string;
+  target: string;
+  hub: string;
+  pubSubPath: string;
+};
 
 class REPL {
-  constructor(ctx) {
+  command: string;
+  target: string;
+  hub: string;
+  pubSubPath: string;
+  emitter: EventEmitter;
+  _buffers: { stdout: string; stderr: string };
+  _lastUserName: string;
+  repl: ChildProcess;
+  pubSub: PubSubClient;
+
+  constructor(ctx: REPLContext) {
     const { command, target, hub, pubSubPath } = ctx;
 
     this.command = command;
@@ -34,28 +56,28 @@ class REPL {
     this.repl = spawn(cmd, args, { shell: true });
 
     // Handle stdout and stderr
-    this.repl.stdout.on('data', data => {
+    this.repl.stdout.on('data', (data: any) => {
       this._handleData(data, 'stdout');
     });
 
-    this.repl.stderr.on('data', data => {
+    this.repl.stderr.on('data', (data: any) => {
       this._handleData(data, 'stderr');
     });
 
-    this.repl.on('close', code => {
+    this.repl.on('close', (code: number) => {
       this.emitter.emit('close', { code });
       console.log(`child process exited with code ${code}`);
     });
 
     // Subscribe to pub sub
-    this.pubSub.subscribe(`target:${this.target}:in`, message => {
+    this.pubSub.subscribe(`target:${this.target}:in`, (message: Message) => {
       const { body, userName } = message;
       this.write(body);
       this._lastUserName = userName;
     });
   }
 
-  write(body) {
+  write(body: string) {
     const newBody = this.prepare(body);
     this.repl.stdin.write(`${newBody}\n`);
 
@@ -64,7 +86,7 @@ class REPL {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  prepare(body) {
+  prepare(body: string): string {
     return body.trim();
   }
 
@@ -74,15 +96,15 @@ class REPL {
 
   _connectToPubSubServer() {
     const wsUrl = `${this.hub}${this.pubSubPath}`;
-
     console.log(wsUrl);
+
     this.pubSub = new PubSubClient(wsUrl, {
       connect: true,
       reconnect: true,
     });
   }
 
-  _handleData(data, type) {
+  _handleData(data: any, type: string) {
     const newBuffer = this._buffers[type].concat(data.toString());
     const lines = newBuffer.split('\n');
 
@@ -108,7 +130,7 @@ class REPL {
 }
 
 class SuperColliderREPL extends REPL {
-  constructor(ctx) {
+  constructor(ctx: REPLContext) {
     super({
       ...ctx,
       command: SuperColliderREPL.commandPath(),
@@ -116,11 +138,11 @@ class SuperColliderREPL extends REPL {
   }
 
   // eslint-disable-next-line class-methods-use-this
-  prepare(body) {
+  prepare(body: string): string {
     return `${body.replace(/(\n)/gm, ' ').trim()}\n`;
   }
 
-  static commandPath() {
+  static commandPath(): string {
     // FIXME: On Linux and Darwin, it should try to run `which`, and if it
     // fails, use default paths like these.
     switch (os.platform()) {
@@ -136,24 +158,24 @@ class SuperColliderREPL extends REPL {
 }
 
 class TidalREPL extends REPL {
-  constructor(ctx) {
+  constructor(ctx: REPLContext) {
     super({
       ...ctx,
       command: `${TidalREPL.commandPath('ghci')} -ghci-script ${TidalREPL.defaultBootScript()}`,
     });
   }
 
-  prepare(body) {
+  prepare(body: string): string {
     let newBody = super.prepare(body);
     newBody = `:{\n${newBody}\n:}`;
     return newBody;
   }
 
-  static defaultBootScript() {
+  static defaultBootScript(): string {
     return path.join(TidalREPL.dataDir(), 'BootTidal.hs');
   }
 
-  static dataDir() {
+  static dataDir(): string {
     try {
       const dataDir = execSync(`${TidalREPL.commandPath('ghc-pkg')} field tidal data-dir`)
         .toString()
@@ -166,7 +188,7 @@ class TidalREPL extends REPL {
     }
   }
 
-  static commandPath(cmd) {
+  static commandPath(cmd: string): string {
     if (commandExistsSync('stack')) {
       return `stack exec -- ${cmd}`;
     }
@@ -180,7 +202,7 @@ const replClasses = {
   sclang: SuperColliderREPL,
 };
 
-function createREPLFor(repl, ctx) {
+function createREPLFor(repl: string, ctx: REPLContext) {
   if (replClasses[repl]) {
     return new replClasses[repl](ctx);
   }
