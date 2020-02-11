@@ -1,5 +1,5 @@
 import { EventEmitter } from 'fbemitter';
-import * as WebSocket from 'isomorphic-ws';
+import WebSocket from 'isomorphic-ws';
 
 type QueueItem = {
   type: string;
@@ -291,7 +291,7 @@ class PubSubClient {
       }
     };
     ws.onerror = err => {
-      console.log('unable connect to the server', err);
+      console.error('unable connect to the server', err.error);
 
       this._connected = false;
       this._isReconnecting = false;

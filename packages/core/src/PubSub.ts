@@ -2,7 +2,7 @@ import { Map } from 'immutable';
 import _ from 'lodash';
 import uuid from 'uuid/v1';
 import Subscription from './Subscription';
-import * as WebSocket from 'isomorphic-ws';
+import WebSocket from 'isomorphic-ws';
 
 type ClientType = {
   id: string;
