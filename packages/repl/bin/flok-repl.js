@@ -12,10 +12,11 @@ program
   .option('-H, --hub <url>', 'Hub address', 'ws://localhost:3000')
   .option('-n, --target-name <name>', 'Use the specified target name')
   .option('--path <path>', 'Evaluation WebSockets server path', '/pubsub')
+  .option('--extra <options>', 'Extra options in JSON')
   .option('--list-types', 'List all known types of REPLs')
   .parse(process.argv);
 
-const { args, type, hub, targetName, path, listTypes } = program;
+const { args, type, hub, targetName, path, listTypes, extra } = program;
 const cmd = program.args[0];
 
 if (listTypes) {
@@ -39,9 +40,21 @@ if (!useDefaultREPL && !knownTypes.includes(type)) {
 
 const target = targetName || (useDefaultREPL ? 'default' : type);
 
+let extraOptions = {};
+if (extra) {
+  try {
+    extraOptions = JSON.parse(extra);
+  } catch {
+    console.error('Invalid extra options JSON object:', extra);
+    process.exit(1);
+  }
+}
+
+// Start...
+
 console.log(`Hub address: ${hub}`);
 console.log(`Target name: ${target}`);
-console.log(`Spawn: ${JSON.stringify(args)}`);
+console.log(`Extra options`, extraOptions);
 
 let replClient;
 if (useDefaultREPL) {
@@ -50,6 +63,7 @@ if (useDefaultREPL) {
     target,
     hub,
     pubSubPath: path,
+    extraOptions,
   });
 } else {
   const replClass = replClasses[type];
@@ -57,6 +71,7 @@ if (useDefaultREPL) {
     target,
     hub: hub,
     pubSubPath: path,
+    extraOptions,
   });
 }
 
