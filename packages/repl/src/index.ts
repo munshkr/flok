@@ -15,6 +15,7 @@ type REPLContext = {
   target: string;
   hub: string;
   pubSubPath: string;
+  extraOptions?: { [option: string]: any };
 };
 
 class REPL {
@@ -22,20 +23,23 @@ class REPL {
   target: string;
   hub: string;
   pubSubPath: string;
+  extraOptions: { [option: string]: any };
   emitter: EventEmitter;
-  _buffers: { stdout: string; stderr: string };
-  _lastUserName: string;
   repl: ChildProcess;
   pubSub: PubSubClient;
 
+  _buffers: { stdout: string; stderr: string };
+  _lastUserName: string;
+
   constructor(ctx: REPLContext) {
-    const { command, target, hub, pubSubPath } = ctx;
+    const { command, target, hub, pubSubPath, extraOptions } = ctx;
 
     this.command = command;
 
     this.target = target || 'default';
     this.hub = hub || 'ws://localhost:3000';
     this.pubSubPath = pubSubPath || '/pubsub';
+    this.extraOptions = extraOptions || {};
 
     this.emitter = new EventEmitter();
 
@@ -52,7 +56,7 @@ class REPL {
 
     const cmd = parts[0];
     const args = parts.slice(1);
-    console.log(`Spawn ${cmd} with args ${args}`);
+    console.log(`Spawn '${cmd}' with args:`, args);
     this.repl = spawn(cmd, args, { shell: true });
 
     // Handle stdout and stderr
@@ -159,10 +163,9 @@ class SuperColliderREPL extends REPL {
 
 class TidalREPL extends REPL {
   constructor(ctx: REPLContext) {
-    super({
-      ...ctx,
-      command: `${TidalREPL.commandPath('ghci')} -ghci-script ${TidalREPL.defaultBootScript()}`,
-    });
+    super(ctx);
+
+    this.command = `${this.commandPath('ghci')} -ghci-script ${this.defaultBootScript()}`;
   }
 
   prepare(body: string): string {
@@ -171,28 +174,27 @@ class TidalREPL extends REPL {
     return newBody;
   }
 
-  static defaultBootScript(): string {
-    return path.join(TidalREPL.dataDir(), 'BootTidal.hs');
+  defaultBootScript(): string {
+    return path.join(this.dataDir(), 'BootTidal.hs');
   }
 
-  static dataDir(): string {
+  dataDir(): string {
+    const ghcPkgCmd = this.commandPath('ghc-pkg');
     try {
-      const dataDir = execSync(`${TidalREPL.commandPath('ghc-pkg')} field tidal data-dir`)
+      const dataDir = execSync(`${ghcPkgCmd} field tidal data-dir`)
         .toString()
         .trim();
-
-      return dataDir.substring(dataDir.indexOf(' ') + 1);
+      const firstLine = dataDir.split('\n')[0];
+      return firstLine.substring(firstLine.indexOf(' ') + 1);
     } catch (err) {
       console.error(`Error get tidal data-dir: ${err}`);
       return '';
     }
   }
 
-  static commandPath(cmd: string): string {
-    if (commandExistsSync('stack')) {
-      return `stack exec -- ${cmd}`;
-    }
-    return cmd;
+  commandPath(cmd: string): string {
+    const { useStack } = this.extraOptions;
+    return useStack ? `stack exec -- ${cmd}` : cmd;
   }
 }
 

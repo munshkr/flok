@@ -2,7 +2,7 @@
 
 const program = require('commander');
 const packageInfo = require('../package.json');
-const { REPL, replClasses } = require('../lib/repl');
+const { REPL, replClasses } = require('../lib/index');
 
 const knownTypes = Object.keys(replClasses).filter(repl => repl !== 'default');
 
