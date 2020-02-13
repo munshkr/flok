@@ -23,9 +23,10 @@ Web-based collaborative editor for live coding music and graphics
 
 ## Install
 
-flok is written in NodeJS and Javascript.  We recently started making (still
-experimental) releases on GitHub and NPM repositories. The easiest way to use
-Flok is to install the `web` and `repl` packages.
+flok is written in TypeScript (currently migrating from JavaScript).  We
+recently started making (still experimental) releases on GitHub and NPM
+repositories. The easiest way to use Flok is to install the `web` and `repl`
+packages.
 
 ```sh
 npm install -g flok-web flok-repl
@@ -54,36 +55,45 @@ You should now run a REPL for your language/interpreter. For example, to run
 `sclang` (SuperCollider interpreter):
 
 ```sh
-flok-repl sclang
+flok-repl -t sclang
 ```
 
 This will start sclang interpreter and connect it to flok. Now when you (or
 someone else) evaluates code in flok, it will be sent to `sclang`.
 
+The default hub is your own computer (i.e. `ws://localhost:3000`).  If you want
+to connect to a remote hub on your LAN, for example to 192.168.0.5:
+
+```sh
+flok-repl -t sclang -H ws://192.168.0.5:3000
+```
+
+There is a list of known interpreters. Use `flok-repl --list-types` to list
+them.  You can run any command that accepts input from the standard input, like
+any language REPL.  For instance, to use with `cat`:
+
+```sh
+flok-repl cat
+```
+
 
 ### Remote server
 
-**WARNING - Please Read**: As of today, using a public remote hub is dangerous
-as *anyone* can evaluate code on your computer via flok, be it sound playing or
-writing files on your disk (any general purpose programming language can do
-that), so unless you made flok-repl run on a sandboxed environment, please,
-make sure only trusted users are using your session when you use a public hub.
-I will not be responsible for any damaged caused by flok.  You have been
-warned.
+**WARNING - Please Read**: As of today, using a public remote hub is extremely
+dangerous as *anyone* can evaluate code on your computer via flok, be it sound
+playing or writing files on your disk (any general purpose programming language
+can do that), so unless you made `flok-repl` run on a sandboxed environment,
+please, make sure only trusted users are using your session when you use a
+public hub.  I will not be held responsible for any damaged caused by flok.
+You have been warned.
 
-There's currently a hub on `flok-hub.herokuapp.com`.  To start a REPL for that
-hub, you should run repl.js with SSL enabled.  For example, to start a `tidal`
-REPL, run the following:
+There's currently a hub on `flok-hub.herokuapp.com`.  This public server runs
+on https, so you have to use `wss://` instead of `ws://` as you would normally
+on local servers.  For example, to start a `tidal` REPL, run the following:
 
 ```
-./repl.js -H flok-hub.herokuapp.com -P 443 --secure -- tidal
+flok-repl -H wss://flok-hub.herokuapp.com -t tidal
 ```
-
-**Note**: Usually to start the TidalCycles interpreter, you have to run GHCI with
-some options and a bootstrap script, but you can use this [wrapper
-script](https://gist.github.com/munshkr/4cf8745a4983f3cd361826978481bd74) to
-simplify this process and use it with flok (Linux and macOS only, for now).
-Follow the instructions there.
 
 
 ## Development
@@ -94,10 +104,16 @@ After unpacking or cloning, from the directory of the repository run:
 yarn
 ```
 
-This will install dependencies from all packages.
+This will install dependencies from all packages, and prepare (build) packages.
 
 `web`, `repl` and `core` packages are stored on the `packages/` directory, and
 there is a root packaged managed by [Lerna](https://github.com/lerna/lerna).
+
+Lerna allows us to manage interdependant packages easily. In the case of flok,
+the `core` package is used both by `web` and `repl`, and even though they have
+`flok-core` dependency on their `package.json`, Lerna creates symbolic links to
+the local `core` package automatically.  It also makes it easy to publish new
+versions by bumping them together.
 
 
 ## Acknowledgments
