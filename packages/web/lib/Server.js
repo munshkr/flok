@@ -20,7 +20,7 @@ class Server {
   constructor(ctx) {
     const { host, port, isDevelopment, mongoDbUri } = ctx;
 
-    this.host = host || "localhost";
+    this.host = host || "0.0.0.0";
     this.port = port || 3000;
     this.isDevelopment = isDevelopment || false;
     this.mongoDbUri = mongoDbUri;
