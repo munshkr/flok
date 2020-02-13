@@ -10,7 +10,8 @@
     "build": "next build",
     "start": "NODE_ENV=production node index.js",
     "test": "exit 0",
-    "prepublish": "yarn test && yarn build"
+    "prepare": "yarn build",
+    "prepublishOnly": "yarn test"
   },
   "bin": {
     "flok-web": "./bin/flok-web.js"
