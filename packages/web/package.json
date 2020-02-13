@@ -28,6 +28,7 @@
     "core-js": "^2.6.11",
     "express": "^4.17.1",
     "flok-core": "^0.3.3",
+    "hydra-synth": "^1.0.27",
     "lib0": "^0.2.12",
     "next": "^9.2.1",
     "next-transpile-modules": "^3.0.2",

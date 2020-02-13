@@ -44,12 +44,10 @@ class SessionPage extends Component<Props> {
           userName={user}
           layout={{
             editors: [
-              { id: "1", target: "default" },
-              { id: "2", target: "default" },
-              { id: "3", target: "default" },
-              { id: "4", target: "default" },
-              { id: "5", target: "default" },
-              { id: "6", target: "default" }
+              { id: "1", target: "tidal" },
+              { id: "2", target: "tidal" },
+              { id: "3", target: "tidal" },
+              { id: "4", target: "hydra" }
             ]
           }}
         />

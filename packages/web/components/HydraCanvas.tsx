@@ -105,6 +105,8 @@ class HydraCanvas extends Component<Props, State> {
             this.canvas = e;
           }}
           className={className}
+          width={1280}
+          height={720}
         />
         {error && <span className="error">{error}</span>}
         <style jsx>
@@ -115,10 +117,9 @@ class HydraCanvas extends Component<Props, State> {
               left: 0;
               z-index: -1;
             }
-
             .fullscreen {
-              height: 100vh;
-              width: 100vw;
+              height: 100%;
+              width: 100%;
               display: block;
               overflow: hidden;
             }
