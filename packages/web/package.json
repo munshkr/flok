@@ -34,13 +34,15 @@
     "reconnecting-websocket": "^4.1.10",
     "sharedb": "^1.0.0-beta.23",
     "uuid": "^3.3.2",
-    "ws": "^7.0.1"
+    "ws": "^7.0.1",
+    "y-webrtc": "^10.1.1",
+    "yjs": "^13.0.4"
   },
   "devDependencies": {
     "@types/react": "^16.9.19",
     "babel-eslint": "^10.0.2",
     "bulma": "^0.8.0",
-    "codemirror": "^5.48.0",
+    "codemirror": "^5.51.0",
     "eslint": "^6.0.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^6.0.0",
