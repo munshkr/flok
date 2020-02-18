@@ -119,6 +119,35 @@ class TextEditor extends Component<Props, {}> {
             lineWrapping: true
           }}
         />
+        <style jsx global>{`
+          .CodeMirror {
+            font-family: Monaco, monospace;
+            font-size: 20px;
+          }
+          .remote-caret {
+            position: absolute;
+            border-left: black;
+            border-left-style: solid;
+            border-left-width: 2px;
+            height: 1.2em;
+          }
+          .remote-caret > div {
+            position: relative;
+            top: 1.5em;
+            left: -2px;
+            font-size: 16px;
+            background-color: rgb(250, 129, 0);
+            font-family: Monaco, monospace;
+            font-style: normal;
+            font-weight: normal;
+            line-height: normal;
+            user-select: none;
+            color: white;
+            padding-left: 2px;
+            padding-right: 2px;
+            z-index: 3;
+          }
+        `}</style>
       </div>
     );
   }
