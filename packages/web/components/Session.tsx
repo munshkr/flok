@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import dynamic from "next/dynamic";
 
 import { PubSubClient } from "flok-core";
-import Status from "./Status";
 import TargetMessagesPane from "./TargetMessagesPane";
 import SessionClient from "../lib/SessionClient";
 // import HydraCanvas from "./HydraCanvas";
@@ -18,11 +17,6 @@ type Message = {
   content: string;
 };
 
-type User = {
-  id: string;
-  name: string;
-};
-
 type Props = {
   websocketsHost: string;
   sessionName: string;
@@ -36,11 +30,9 @@ type Props = {
 };
 
 type State = {
-  status: string;
   showTargetMessagesPane: boolean;
   showTextEditors: boolean;
   messages: Message[];
-  users: User[];
   messagesPaneIsTop: boolean;
   messagesPaneIsMaximized: boolean;
   hydraCode: string;
@@ -48,11 +40,9 @@ type State = {
 
 class Session extends Component<Props, State> {
   state: State = {
-    status: "Not connected",
     showTargetMessagesPane: false,
     showTextEditors: false,
     messages: [],
-    users: [],
     messagesPaneIsTop: false,
     messagesPaneIsMaximized: false,
     hydraCode: ""
@@ -72,31 +62,26 @@ class Session extends Component<Props, State> {
 
     const wsUrl: string = this.getWebsocketsUrl();
 
-    const wsDbUrl: string = `${wsUrl}/db`;
-    console.log(`Database WebSocket URL: ${wsDbUrl}`);
+    const signalingServerUrl: string = `${wsUrl}/signal`;
+    console.log(`Signaling server URL: ${signalingServerUrl}`);
 
-    const pubsubWsUrl: string = `${wsUrl}/pubsub`;
-    console.log(`Pub/Sub WebSocket URL: ${pubsubWsUrl}`);
+    const pubsubUrl: string = `${wsUrl}/pubsub`;
+    console.log(`Pub/Sub server URL: ${pubsubUrl}`);
 
-    this.pubsubClient = new PubSubClient(pubsubWsUrl, {
+    this.sessionClient = new SessionClient({
+      signalingServerUrl,
+      sessionName,
+      userName,
+      onJoin: () => {
+        this.setState({ showTextEditors: true });
+      }
+    });
+    this.sessionClient.join();
+
+    this.pubsubClient = new PubSubClient(pubsubUrl, {
       connect: true,
       reconnect: true,
       onMeMessage: (clientId: string) => {
-        this.sessionClient = new SessionClient({
-          userId: userName,
-          webSocketsUrl: wsDbUrl,
-          onConnectionOpen: this.handleConnectionOpen,
-          onConnectionClose: this.handleConnectionClose,
-          onConnectionError: this.handleConnectionError,
-          onUsersChange: this.handleUsersChange,
-          onJoin: () => {
-            this.sessionClient.setUsername(userName);
-            this.setState({ showTextEditors: true });
-          }
-        });
-
-        this.sessionClient.join(sessionName);
-
         // Subscribes to messages directed to ourselves
         this.pubsubClient.subscribe(`user:${clientId}`, this.handleMessageUser);
 
@@ -108,8 +93,7 @@ class Session extends Component<Props, State> {
         });
       },
       onClose: () => {
-        this.sessionClient.release();
-        this.sessionClient = null;
+        // TODO Try to reconnect...
       }
     });
   }
@@ -138,6 +122,10 @@ class Session extends Component<Props, State> {
       this.sessionClient.release();
       this.sessionClient = null;
     }
+    if (this.pubsubClient) {
+      this.pubsubClient.disconnect();
+      this.pubsubClient = null;
+    }
   }
 
   getWebsocketsUrl(): string {
@@ -146,23 +134,6 @@ class Session extends Component<Props, State> {
     const protocol = location.protocol === "https:" ? "wss:" : "ws:";
     return `${protocol}//${websocketsHost}`;
   }
-
-  handleConnectionOpen = () => {
-    this.setState({ status: "Connected" });
-  };
-
-  handleConnectionClose = () => {
-    this.setState({ status: "Disconnected" });
-  };
-
-  handleConnectionError = () => {
-    this.setState({ status: "Error" });
-  };
-
-  handleUsersChange = (users: User[]) => {
-    console.debug("Users:", users);
-    this.setState({ users });
-  };
 
   handleEvaluateCode = ({ editorId, target, body, fromLine, toLine, user }) => {
     const { pubsubClient, sessionClient } = this;
@@ -183,10 +154,6 @@ class Session extends Component<Props, State> {
     if (target === "hydra") {
       this.setState({ hydraCode: body });
     }
-  };
-
-  handleCursorActivity = ({ editorId, line, column }) => {
-    this.sessionClient.updateCursorActivity({ editorId, line, column });
   };
 
   handleMessageTarget = ({ target, content }) => {
@@ -222,8 +189,6 @@ class Session extends Component<Props, State> {
 
   render() {
     const {
-      status,
-      users,
       messages,
       showTextEditors,
       showTargetMessagesPane,
@@ -239,7 +204,6 @@ class Session extends Component<Props, State> {
       // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
       <div>
         {/*<HydraCanvas code={hydraCode} fullscreen />*/}
-        <Status>{status}</Status>
         {showTextEditors && (
           <div className="columns is-gapless is-multiline">
             {layout.editors.map(({ id, target }) => (
@@ -250,7 +214,6 @@ class Session extends Component<Props, State> {
                   sessionClient={sessionClient}
                   onEvaluateCode={this.handleEvaluateCode}
                   onEvaluateRemoteCode={this.handleEvaluateRemoteCode}
-                  onCursorActivity={this.handleCursorActivity}
                 />
               </div>
             ))}

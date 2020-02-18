@@ -63,8 +63,7 @@ class TextEditor extends Component<Props, {}> {
     this.sharedCodeMirror = new SharedCodeMirror({
       editor,
       onEvaluateCode: this.handleEvaluateCode,
-      onEvaluateRemoteCode: this.handleEvaluateRemoteCode,
-      onCursorActivity: this.handleCursorActivity
+      onEvaluateRemoteCode: this.handleEvaluateRemoteCode
     });
 
     sessionClient.attachEditor(editorId, this.sharedCodeMirror);
@@ -91,11 +90,6 @@ class TextEditor extends Component<Props, {}> {
       fromLine: 0,
       toLine: editor.lineCount()
     });
-  };
-
-  handleCursorActivity = ({ line, column }) => {
-    const { editorId, onCursorActivity } = this.props;
-    return onCursorActivity({ editorId, line, column });
   };
 
   render() {
