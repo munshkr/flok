@@ -3,7 +3,6 @@ import dynamic from "next/dynamic";
 
 import { PubSubClient } from "flok-core";
 import Status from "./Status";
-import UserList from "./UserList";
 import TargetMessagesPane from "./TargetMessagesPane";
 import SessionClient from "../lib/SessionClient";
 // import HydraCanvas from "./HydraCanvas";
@@ -38,7 +37,6 @@ type Props = {
 
 type State = {
   status: string;
-  showUserList: boolean;
   showTargetMessagesPane: boolean;
   showTextEditors: boolean;
   messages: Message[];
@@ -51,7 +49,6 @@ type State = {
 class Session extends Component<Props, State> {
   state: State = {
     status: "Not connected",
-    showUserList: true,
     showTargetMessagesPane: false,
     showTextEditors: false,
     messages: [],
@@ -207,12 +204,6 @@ class Session extends Component<Props, State> {
     console.debug(`[message] user: ${JSON.stringify(message)}`);
   };
 
-  toggleUserList = () => {
-    this.setState((prevState: State, _) => ({
-      showUserList: !prevState.showUserList
-    }));
-  };
-
   handleTargetMessagesPaneTogglePosition = () => {
     this.setState((prevState: State) => ({
       messagesPaneIsTop: !prevState.messagesPaneIsTop
@@ -235,7 +226,6 @@ class Session extends Component<Props, State> {
       users,
       messages,
       showTextEditors,
-      showUserList,
       showTargetMessagesPane,
       messagesPaneIsTop,
       messagesPaneIsMaximized
@@ -266,7 +256,6 @@ class Session extends Component<Props, State> {
             ))}
           </div>
         )}
-        {showUserList && <UserList users={users} />}
         {showTargetMessagesPane && messages && (
           <TargetMessagesPane
             messages={messages}
