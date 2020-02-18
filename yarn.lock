@@ -10422,6 +10422,11 @@ xtend@^4.0.0, xtend@~4.0.1:
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
   integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
 
+y-codemirror@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/y-codemirror/-/y-codemirror-1.0.3.tgz#a9b40097f7706c0222a99f64b359e59e8f26750a"
+  integrity sha512-hzVIuLac1N09g4p3YY3BQIbycH2ffyOZeKt1J29J2KP+ltVAJuaAfINSme3+OYZJcbXAb6emnHD/TZ6wcHEkbA==
+
 y-protocols@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/y-protocols/-/y-protocols-0.2.0.tgz#48b9ff14f9a1f4334fce826f47effc4e60c8576e"
