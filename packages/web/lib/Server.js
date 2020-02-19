@@ -55,8 +55,6 @@ class Server {
     });
     const handle = nextApp.getRequestHandler();
 
-    // const backend = new ShareDB(backendOptions);
-
     function addClient(uuid) {
       console.log("[pubsub] Add client", uuid);
     }
@@ -154,6 +152,7 @@ class Server {
       "message",
       /** @param {object} message */ message => {
         if (typeof message === "string") {
+          // eslint-disable-next-line no-param-reassign
           message = JSON.parse(message);
         }
         if (message && message.type && !closed) {
