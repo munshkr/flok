@@ -111,13 +111,21 @@ class SessionClient {
     }
   }
 
-  evaluateCode({ editorId, body, fromLine, toLine, user }) {
-    // this.sendOP([
-    //   {
-    //     p: ["eval"],
-    //     oi: { ed: editorId, c: body, b: fromLine, e: toLine, u: user }
-    //   }
-    // ]);
+  flash(editorId: string, fromLine: number, toLine: number) {
+    const editorBinding = this._editorBindings[editorId];
+    const editor = editorBinding.target;
+
+    // Mark text with .flash-selection class
+    const marker = editor.markText(
+      { line: fromLine, ch: 0 },
+      { line: toLine + 1, ch: 0 },
+      { className: "flash-selection" }
+    );
+
+    // Clear marker after timeout
+    setTimeout(() => {
+      marker.clear();
+    }, 150);
   }
 }
 

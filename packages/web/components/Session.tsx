@@ -86,13 +86,12 @@ class Session extends Component<Props, State> {
         // Subscribes to messages directed to ourselves
         this.pubsubClient.subscribe(`user:${clientId}`, this.handleMessageUser);
 
-        // Hydra: subscribe to code evaluations
-        this.pubsubClient.subscribe(`target:hydra:eval`, content =>
-          this.handleHydraEvaluation({ content })
-        );
-
         // Subscribe to messages directed to a specific target
         targets.forEach(target => {
+          this.pubsubClient.subscribe(`target:${target}:eval`, content =>
+            this.handleEvaluateRemoteCode({ target, content })
+          );
+
           this.pubsubClient.subscribe(`target:${target}:out`, content =>
             this.handleMessageTarget({ target, content })
           );
@@ -142,31 +141,33 @@ class Session extends Component<Props, State> {
   }
 
   handleEvaluateCode = ({ editorId, target, body, fromLine, toLine, user }) => {
-    const { pubsubClient, sessionClient } = this;
-    const { userName } = this.props;
-
-    // this.setState({ showTargetMessagesPane: false });
+    const { pubsubClient } = this;
+    const content = {
+      editorId,
+      fromLine,
+      toLine
+    };
 
     if (target === "hydra") {
       // this.setState({ hydraCode: body });
-      pubsubClient.publish(`target:hydra:eval`, { body });
+      pubsubClient.publish(`target:hydra:eval`, { body, ...content });
     } else {
-      pubsubClient.publish(`target:${target}:in`, { userName, body });
+      pubsubClient.publish(`target:${target}:eval`, content);
     }
-
-    sessionClient.evaluateCode({ editorId, body, fromLine, toLine, user });
+    pubsubClient.publish(`target:${target}:in`, { user, body });
   };
 
-  handleEvaluateRemoteCode = ({ editorId, target, body }) => {
+  handleEvaluateRemoteCode = ({ target, content }) => {
+    const { editorId, fromLine, toLine } = content;
+
+    // Evaluate Hydra code locally
     if (target === "hydra") {
+      const { body } = content;
       this.setState({ hydraCode: body });
     }
-  };
 
-  handleHydraEvaluation = ({ content }) => {
-    const { body } = content;
-    console.debug(`[eval] [hydra] ${JSON.stringify(body)}`);
-    this.setState({ hydraCode: body });
+    // Flash selection on editor
+    this.sessionClient.flash(editorId, fromLine, toLine);
   };
 
   handleMessageTarget = ({ target, content }) => {
@@ -227,7 +228,6 @@ class Session extends Component<Props, State> {
                     target={target}
                     sessionClient={sessionClient}
                     onEvaluateCode={this.handleEvaluateCode}
-                    onEvaluateRemoteCode={this.handleEvaluateRemoteCode}
                   />
                 </div>
               ))}
@@ -239,7 +239,6 @@ class Session extends Component<Props, State> {
                   target="hydra"
                   sessionClient={sessionClient}
                   onEvaluateCode={this.handleEvaluateCode}
-                  onEvaluateRemoteCode={this.handleEvaluateRemoteCode}
                 />
               </div>
             </div>

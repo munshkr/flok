@@ -62,8 +62,6 @@ class TextEditor extends Component<Props, {}> {
   }
 
   evaluateLine = () => {
-    console.log("evaluate line");
-
     const { editor } = this.cm;
 
     const currentLine = editor.getCursor().line;
@@ -76,8 +74,6 @@ class TextEditor extends Component<Props, {}> {
   };
 
   evaluateParagraph = () => {
-    console.log("evaluate paragraph");
-
     const { editor } = this.cm;
     const currentLine = editor.getCursor().line;
     const content = `${editor.getValue()}\n`;
@@ -116,29 +112,10 @@ class TextEditor extends Component<Props, {}> {
   };
 
   evaluate(body: string, fromLine: number, toLine: number) {
-    const { editorId, target, onEvaluateCode } = this.props;
-
-    console.debug([fromLine, toLine]);
-    console.debug(`Evaluate (${fromLine}-${toLine}): ${JSON.stringify(body)}`);
+    const { editorId, target, onEvaluateCode, sessionClient } = this.props;
 
     onEvaluateCode({ editorId, target, body, fromLine, toLine });
-    this.flash(fromLine, toLine);
-  }
-
-  flash(fromLine: number, toLine: number) {
-    const { editor } = this.cm;
-
-    // Mark text with .flash-selection class
-    const marker = editor.markText(
-      { line: fromLine, ch: 0 },
-      { line: toLine + 1, ch: 0 },
-      { className: "flash-selection" }
-    );
-
-    // Clear marker after timeout
-    setTimeout(() => {
-      marker.clear();
-    }, 150);
+    sessionClient.flash(editorId, fromLine, toLine);
   }
 
   handleEvaluateCode = ({ body, fromLine, toLine, user }) => {
