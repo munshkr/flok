@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
 
-import SharedCodeMirror from "../lib/SharedCodeMirror";
 import SessionClient from "../lib/SessionClient";
 import Button from "./Button";
 
@@ -54,19 +53,12 @@ class TextEditor extends Component<Props, {}> {
   };
 
   cm: any;
-  sharedCodeMirror: SharedCodeMirror;
 
   componentDidMount() {
     const { editorId, sessionClient } = this.props;
     const { editor } = this.cm;
 
-    this.sharedCodeMirror = new SharedCodeMirror({
-      editor,
-      onEvaluateCode: this.handleEvaluateCode,
-      onEvaluateRemoteCode: this.handleEvaluateRemoteCode
-    });
-
-    sessionClient.attachEditor(editorId, this.sharedCodeMirror);
+    sessionClient.attachEditor(editorId, editor);
   }
 
   handleEvaluateCode = ({ body, fromLine, toLine, user }) => {

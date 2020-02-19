@@ -1,6 +1,7 @@
 import * as Y from "yjs";
 import { WebrtcProvider } from "y-webrtc";
 import { CodeMirrorBinding } from "y-codemirror";
+import CodeMirror from "codemirror";
 
 // FIXME Replace callbacks for Promises
 
@@ -95,7 +96,7 @@ class SessionClient {
    * Stops listening for changes from the CodeMirror instance and the ShareDB document.
    */
   release() {
-    for (let i = 0; i < this._editorBindings.length; i++) {
+    for (let i = 0; i < Object.keys(this._editorBindings).length; i++) {
       const binding = this._editorBindings[i];
       binding.destroy();
     }
