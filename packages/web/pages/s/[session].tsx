@@ -11,6 +11,8 @@ const { isDevelopment } = publicRuntimeConfig;
 
 interface Props {
   host: string;
+  protocol: string;
+  wsServer: string;
   session: string;
   user: string;
 }
@@ -20,26 +22,46 @@ class SessionPage extends Component<Props> {
     user: "anonymous"
   };
 
+  state = {
+    isSecure: null
+  };
+
   static async getInitialProps({ req, query }: NextPageContext) {
     const host = req && req.headers && req.headers.host;
-    return { host, session: query.session, user: query.user };
+    return {
+      host,
+      session: query.session,
+      user: query.user,
+      wsServer: query.wsServer
+    };
   }
 
   componentDidMount() {
     if (isDevelopment) {
       console.log("*** DEVELOPMENT MODE ***");
     }
+
+    const isSecure = location.protocol === "https:";
+    this.setState({ isSecure });
   }
 
   render() {
-    const { host, session, user } = this.props;
+    const { host, wsServer, session, user } = this.props;
+    const { isSecure } = this.state;
+
+    const protocol = isSecure ? "wss:" : "ws:";
+    const pubsubServerUrl = `${protocol}//${host}/pubsub`;
+
+    const signalingServerUrl = wsServer;
+
     return (
       <Layout>
         <Head>
           <title>{`${session} :: flok`}</title>
         </Head>
         <Session
-          websocketsHost={host}
+          pubsubServerUrl={pubsubServerUrl}
+          signalingServerUrl={signalingServerUrl}
           sessionName={session}
           userName={user}
           layout={{
