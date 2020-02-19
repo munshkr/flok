@@ -6052,10 +6052,17 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-lib0@^0.2.12, lib0@^0.2.3:
+lib0@^0.2.12:
   version "0.2.14"
   resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.14.tgz#5d769099e6c79977dea89e672f28a72acf0a7aba"
   integrity sha512-7xIu/6U1+xQt7dXJZC6qBhTZ6Dm0Hf8hGu09oKHk4V4I0LJASqtCW13Wsr+qvEIZ2Wa5H0U4NnjgTwCNo6MroQ==
+  dependencies:
+    isomorphic.js "^0.1.3"
+
+lib0@^0.2.3:
+  version "0.2.15"
+  resolved "https://registry.yarnpkg.com/lib0/-/lib0-0.2.15.tgz#2dfa583ef3f4445e0a4a5ee62dd2e0137fac8ee2"
+  integrity sha512-wLwuTNNgtC7EQH0b3w4iqpts69TRFVur74Wta7jwgS2w+r/vPLuGcsBA16VoPgBYME7oxDSjEesJw9p/gHmFEg==
   dependencies:
     isomorphic.js "^0.1.3"
 
@@ -10412,7 +10419,7 @@ write@1.0.3:
   dependencies:
     mkdirp "^0.5.1"
 
-ws@^7.0.1, ws@^7.2.0, ws@^7.2.1:
+ws@^7.0.1, ws@^7.2.1:
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.2.1.tgz#03ed52423cd744084b2cf42ed197c8b65a936b8e"
   integrity sha512-sucePNSafamSKoOqoNfBd8V0StlkzJKL2ZAhGQinCfNQ+oacw+Pk7lcdAElecBF2VkLNZRiIb5Oi1Q5lVUVt2A==
@@ -10422,28 +10429,12 @@ xtend@^4.0.0, xtend@~4.0.1:
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
   integrity sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==
 
-y-codemirror@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/y-codemirror/-/y-codemirror-1.0.3.tgz#a9b40097f7706c0222a99f64b359e59e8f26750a"
-  integrity sha512-hzVIuLac1N09g4p3YY3BQIbycH2ffyOZeKt1J29J2KP+ltVAJuaAfINSme3+OYZJcbXAb6emnHD/TZ6wcHEkbA==
-
 y-protocols@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/y-protocols/-/y-protocols-0.2.0.tgz#48b9ff14f9a1f4334fce826f47effc4e60c8576e"
   integrity sha512-B9MCxMqLZCziLmQFlrXVN7MbIhXzF9bdwePcHzlVFIEHxnEvYIqAQYj4FHS376LBgfcjTUs7T614D+w0bpcJLA==
   dependencies:
     lib0 "^0.2.3"
-
-y-webrtc@^10.1.1:
-  version "10.1.1"
-  resolved "https://registry.yarnpkg.com/y-webrtc/-/y-webrtc-10.1.1.tgz#8fa5a91420479c743810ae66d86ac29fb34432fc"
-  integrity sha512-4FWdAJ/jPkdOb/f+Fr1PQMCovzi7qSeYfsgZS8ankEIaQTNF+x1jbB68qilIW7OmK8+DzLPzdn0ClBPyf3taJQ==
-  dependencies:
-    lib0 "^0.2.12"
-    simple-peer "^9.6.2"
-    y-protocols "^0.2.0"
-  optionalDependencies:
-    ws "^7.2.0"
 
 y18n@^3.2.1:
   version "3.2.1"

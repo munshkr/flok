@@ -1,6 +1,6 @@
 import * as Y from "yjs";
-import { WebrtcProvider } from "y-webrtc";
-import { CodeMirrorBinding } from "y-codemirror";
+import { WebrtcProvider } from "./y-webrtc";
+import { CodeMirrorBinding } from "./y-codemirror";
 import CodeMirror from "codemirror";
 
 // FIXME Replace callbacks for Promises
