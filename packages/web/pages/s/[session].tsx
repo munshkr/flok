@@ -41,7 +41,8 @@ class SessionPage extends Component<Props> {
       console.log("*** DEVELOPMENT MODE ***");
     }
 
-    const isSecure = location.protocol === "https:";
+    // const isSecure = location.protocol === "https:";
+    const isSecure = true;
     this.setState({ isSecure });
   }
 
