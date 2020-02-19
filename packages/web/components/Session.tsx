@@ -62,12 +62,7 @@ class Session extends Component<Props, State> {
 
     const wsUrl: string = this.getWebsocketsUrl();
 
-    // const signalingServerUrl: string = `${wsUrl}/signal`;
-
-    // FIXME for now use port 3001
-    console.log("wsUrl", wsUrl);
-    const [wsProtocol, wsHostname, _port] = wsUrl.split(":");
-    const signalingServerUrl: string = `${wsProtocol}:${wsHostname}:3001`;
+    const signalingServerUrl: string = `${wsUrl}/signal`;
     console.log(`Signaling server URL: ${signalingServerUrl}`);
 
     const pubsubUrl: string = `${wsUrl}/pubsub`;

@@ -5,27 +5,45 @@ const next = require("next");
 const http = require("http");
 const url = require("url");
 const path = require("path");
-const ShareDB = require("sharedb");
 const WebSocket = require("ws");
-const WebSocketJSONStream = require("@teamwork/websocket-json-stream");
+const map = require("lib0/dist/map.cjs");
 const { PubSub } = require("flok-core");
 
-let createMongoDB;
-try {
-  createMongoDB = require("sharedb-mongo");
-  // eslint-disable-next-line no-empty
-} catch {}
+const wsReadyStateConnecting = 0;
+const wsReadyStateOpen = 1;
+const wsReadyStateClosing = 2; // eslint-disable-line
+const wsReadyStateClosed = 3; // eslint-disable-line
+
+const pingTimeout = 30000;
+
+/**
+ * @param {any} conn
+ * @param {object} message
+ */
+const send = (conn, message) => {
+  if (
+    conn.readyState !== wsReadyStateConnecting &&
+    conn.readyState !== wsReadyStateOpen
+  ) {
+    conn.close();
+  }
+  try {
+    conn.send(JSON.stringify(message));
+  } catch (e) {
+    conn.close();
+  }
+};
 
 class Server {
   constructor(ctx) {
-    const { host, port, isDevelopment, mongoDbUri } = ctx;
+    const { host, port, isDevelopment } = ctx;
 
     this.host = host || "0.0.0.0";
     this.port = port || 3000;
     this.isDevelopment = isDevelopment || false;
-    this.mongoDbUri = mongoDbUri;
 
     this.started = false;
+    this._topics = new Map();
   }
 
   start() {
@@ -37,22 +55,7 @@ class Server {
     });
     const handle = nextApp.getRequestHandler();
 
-    let backendOptions = {
-      disableDocAction: true,
-      disableSpaceDelimitedActions: true
-    };
-
-    if (this.mongoDbUri) {
-      if (!createMongoDB) {
-        throw Error(
-          "mongoDbUri was given, but package 'sharedb-mongo' is not installed"
-        );
-      }
-      const db = createMongoDB(this.mongoDbUri);
-      backendOptions = { ...backendOptions, db };
-    }
-
-    const backend = new ShareDB(backendOptions);
+    // const backend = new ShareDB(backendOptions);
 
     function addClient(uuid) {
       console.log("[pubsub] Add client", uuid);
@@ -71,7 +74,7 @@ class Server {
       server.on("upgrade", (request, socket, head) => {
         const { pathname } = url.parse(request.url);
 
-        if (pathname === "/db") {
+        if (pathname === "/signal") {
           wss.handleUpgrade(request, socket, head, ws => {
             wss.emit("connection", ws);
           });
@@ -84,11 +87,7 @@ class Server {
         }
       });
 
-      // Connect any incoming WebSocket connection to ShareDB
-      wss.on("connection", ws => {
-        const stream = new WebSocketJSONStream(ws);
-        backend.listen(stream);
-      });
+      wss.on("connection", conn => this.onSignalingServerConnection(conn));
 
       // Prepare PubSub WebScoket server (pubsub)
       const pubSubServer = new PubSub({
@@ -106,12 +105,102 @@ class Server {
 
       server.listen(this.port, this.host, err => {
         if (err) throw err;
-        // eslint-disable-next-line no-console
-        console.log(`> Ready on http://${this.host}:${this.port}`);
+        console.log(`> Listening on http://${this.host}:${this.port}`);
       });
     });
 
     return this;
+  }
+
+  onSignalingServerConnection(conn) {
+    /**
+     * @type {Set<string>}
+     */
+    const subscribedTopics = new Set();
+    let closed = false;
+    // Check if connection is still alive
+    let pongReceived = true;
+    const pingInterval = setInterval(() => {
+      if (!pongReceived) {
+        conn.close();
+        clearInterval(pingInterval);
+      } else {
+        pongReceived = false;
+        try {
+          conn.ping();
+        } catch (e) {
+          conn.close();
+        }
+      }
+    }, pingTimeout);
+
+    conn.on("pong", () => {
+      pongReceived = true;
+    });
+
+    conn.on("close", () => {
+      subscribedTopics.forEach(topicName => {
+        const subs = this._topics.get(topicName) || new Set();
+        subs.delete(conn);
+        if (subs.size === 0) {
+          this._topics.delete(topicName);
+        }
+      });
+      subscribedTopics.clear();
+      closed = true;
+    });
+
+    conn.on(
+      "message",
+      /** @param {object} message */ message => {
+        if (typeof message === "string") {
+          message = JSON.parse(message);
+        }
+        if (message && message.type && !closed) {
+          switch (message.type) {
+            case "subscribe":
+              /** @type {Array<string>} */ (message.topics || []).forEach(
+                topicName => {
+                  if (typeof topicName === "string") {
+                    // add conn to topic
+                    const topic = map.setIfUndefined(
+                      this._topics,
+                      topicName,
+                      () => new Set()
+                    );
+                    topic.add(conn);
+                    // add topic to conn
+                    subscribedTopics.add(topicName);
+                  }
+                }
+              );
+              break;
+            case "unsubscribe":
+              /** @type {Array<string>} */ (message.topics || []).forEach(
+                topicName => {
+                  const subs = this._topics.get(topicName);
+                  if (subs) {
+                    subs.delete(conn);
+                  }
+                }
+              );
+              break;
+            case "publish":
+              if (message.topic) {
+                const receivers = this._topics.get(message.topic);
+                if (receivers) {
+                  receivers.forEach(receiver => send(receiver, message));
+                }
+              }
+              break;
+            case "ping":
+              send(conn, { type: "pong" });
+              break;
+            default:
+          }
+        }
+      }
+    );
   }
 }
 
