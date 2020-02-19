@@ -73,6 +73,7 @@ class Session extends Component<Props, State> {
       sessionName,
       userName,
       onJoin: () => {
+        this.sessionClient.setUsername(userName);
         this.setState({ showTextEditors: true });
       }
     });
