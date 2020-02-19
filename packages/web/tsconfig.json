@@ -13,12 +13,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "downlevelIteration": true,
-    "baseUrl": "./",
-    "paths": {
-      "y-protocols/*": ["../y-protocols/*"]
-    }
+    "downlevelIteration": true
   },
-  "exclude": ["../lib0/**/*", "node_modules"],
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"]
 }
