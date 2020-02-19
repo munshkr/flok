@@ -9,7 +9,7 @@
     "dev": "node index.js",
     "build": "next build",
     "start": "NODE_ENV=production node index.js",
-    "server": "PORT=3001 node ../../node_modules/y-webrtc/bin/server.js",
+    "server": "PORT=3001 node lib/signaling-server.js",
     "test": "exit 0",
     "prepare": "yarn build",
     "prepublishOnly": "yarn test"
