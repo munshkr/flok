@@ -10,6 +10,23 @@ html {
   background-color: $body-background-color;
 }
 
+body {
+  overflow: overlay;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(90, 90, 90, 0.4);
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+}
+
 .title {
   color: $strong-color;
 }
@@ -22,15 +39,6 @@ html {
   height: 400px;
 }
 
-// .editor .CodeMirror {
-//   position: absolute;
-//   top: 0;
-//   bottom: 0;
-//   left: 0;
-//   right: 0;
-//   height: 100%;
-// }
-
 // Transparent background
 .CodeMirror {
   background-color: rgba(0, 0, 0, 0) !important;
@@ -42,7 +50,7 @@ html {
 }
 
 .CodeMirror .CodeMirror-line span .flash-selection {
-  background-color: #ff7;
+  background-color: #ffff77cc;
   color: #000;
 }
 
