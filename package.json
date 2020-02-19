@@ -9,8 +9,7 @@
   "scripts": {
     "test": "lerna run test",
     "prepare": "lerna run prepare",
-    "prepublishOnly": "lerna run prepublishOnly",
-    "heroku-prebuild": "yarn add -W sharedb-mongo"
+    "prepublishOnly": "lerna run prepublishOnly"
   },
   "husky": {
     "hooks": {}
