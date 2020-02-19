@@ -91,6 +91,11 @@ class Session extends Component<Props, State> {
         // Subscribes to messages directed to ourselves
         this.pubsubClient.subscribe(`user:${clientId}`, this.handleMessageUser);
 
+        // Hydra: subscribe to code evaluations
+        this.pubsubClient.subscribe(`target:hydra:eval`, content =>
+          this.handleHydraEvaluation({ content })
+        );
+
         // Subscribe to messages directed to a specific target
         targets.forEach(target => {
           this.pubsubClient.subscribe(`target:${target}:out`, content =>
@@ -148,7 +153,8 @@ class Session extends Component<Props, State> {
     // this.setState({ showTargetMessagesPane: false });
 
     if (target === "hydra") {
-      this.setState({ hydraCode: body });
+      // this.setState({ hydraCode: body });
+      pubsubClient.publish(`target:hydra:eval`, { body });
     } else {
       pubsubClient.publish(`target:${target}:in`, { userName, body });
     }
@@ -160,6 +166,12 @@ class Session extends Component<Props, State> {
     if (target === "hydra") {
       this.setState({ hydraCode: body });
     }
+  };
+
+  handleHydraEvaluation = ({ content }) => {
+    const { body } = content;
+    console.debug(`[eval] [hydra] ${JSON.stringify(body)}`);
+    this.setState({ hydraCode: body });
   };
 
   handleMessageTarget = ({ target, content }) => {
