@@ -11,7 +11,6 @@ const { isDevelopment } = publicRuntimeConfig;
 
 interface Props {
   host: string;
-  protocol: string;
   wsServer: string;
   session: string;
   user: string;
@@ -40,19 +39,12 @@ class SessionPage extends Component<Props> {
     if (isDevelopment) {
       console.log("*** DEVELOPMENT MODE ***");
     }
-
-    // const isSecure = location.protocol === "https:";
-    const isSecure = true;
-    this.setState({ isSecure });
   }
 
   render() {
     const { host, wsServer, session, user } = this.props;
-    const { isSecure } = this.state;
 
-    const protocol = isSecure ? "wss:" : "ws:";
-    const pubsubServerUrl = `${protocol}//${host}/pubsub`;
-
+    const pubsubServerUrl = `wss://${host}/pubsub`;
     const signalingServerUrl = wsServer;
 
     return (
