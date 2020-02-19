@@ -18,8 +18,7 @@ type Message = {
 };
 
 type Props = {
-  signalingServerUrl: string;
-  pubsubServerUrl: string;
+  websocketsHost: string;
   sessionName: string;
   userName?: string;
   layout: {
@@ -56,19 +55,23 @@ class Session extends Component<Props, State> {
   };
 
   componentDidMount() {
-    const {
-      signalingServerUrl,
-      pubsubServerUrl,
-      sessionName,
-      userName,
-      layout
-    } = this.props;
+    const { sessionName, userName, layout } = this.props;
 
     const targets = [...new Set(layout.editors.map(({ target }) => target))];
     console.log("Targets:", targets);
 
+    const wsUrl: string = this.getWebsocketsUrl();
+
+    // const signalingServerUrl: string = `${wsUrl}/signal`;
+
+    // FIXME for now use port 3001
+    console.log("wsUrl", wsUrl);
+    const [wsProtocol, wsHostname, _port] = wsUrl.split(":");
+    const signalingServerUrl: string = `${wsProtocol}:${wsHostname}:3001`;
     console.log(`Signaling server URL: ${signalingServerUrl}`);
-    console.log(`Pub/Sub server URL: ${pubsubServerUrl}`);
+
+    const pubsubUrl: string = `${wsUrl}/pubsub`;
+    console.log(`Pub/Sub server URL: ${pubsubUrl}`);
 
     this.sessionClient = new SessionClient({
       signalingServerUrl,
@@ -81,7 +84,7 @@ class Session extends Component<Props, State> {
     });
     this.sessionClient.join();
 
-    this.pubsubClient = new PubSubClient(pubsubServerUrl, {
+    this.pubsubClient = new PubSubClient(pubsubUrl, {
       connect: true,
       reconnect: true,
       onMeMessage: (clientId: string) => {
@@ -134,6 +137,13 @@ class Session extends Component<Props, State> {
       this.pubsubClient.disconnect();
       this.pubsubClient = null;
     }
+  }
+
+  getWebsocketsUrl(): string {
+    const { websocketsHost } = this.props;
+
+    const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+    return `${protocol}//${websocketsHost}`;
   }
 
   handleEvaluateCode = ({ editorId, target, body, fromLine, toLine, user }) => {

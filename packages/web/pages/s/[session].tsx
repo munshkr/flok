@@ -11,7 +11,6 @@ const { isDevelopment } = publicRuntimeConfig;
 
 interface Props {
   host: string;
-  wsServer: string;
   session: string;
   user: string;
 }
@@ -21,18 +20,9 @@ class SessionPage extends Component<Props> {
     user: "anonymous"
   };
 
-  state = {
-    isSecure: null
-  };
-
   static async getInitialProps({ req, query }: NextPageContext) {
     const host = req && req.headers && req.headers.host;
-    return {
-      host,
-      session: query.session,
-      user: query.user,
-      wsServer: query.wsServer
-    };
+    return { host, session: query.session, user: query.user };
   }
 
   componentDidMount() {
@@ -42,19 +32,14 @@ class SessionPage extends Component<Props> {
   }
 
   render() {
-    const { host, wsServer, session, user } = this.props;
-
-    const pubsubServerUrl = `wss://${host}/pubsub`;
-    const signalingServerUrl = wsServer;
-
+    const { host, session, user } = this.props;
     return (
       <Layout>
         <Head>
           <title>{`${session} :: flok`}</title>
         </Head>
         <Session
-          pubsubServerUrl={pubsubServerUrl}
-          signalingServerUrl={signalingServerUrl}
+          websocketsHost={host}
           sessionName={session}
           userName={user}
           layout={{

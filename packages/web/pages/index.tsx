@@ -3,21 +3,14 @@ import React, { Component, ChangeEvent, FormEvent } from "react";
 import Layout from "../components/Layout";
 
 interface State {
-  wsServer: string;
   session: string;
   user: string;
 }
 
 class NewSessionForm extends Component<{}, State> {
   state = {
-    wsServer: "",
     session: "",
     user: ""
-  };
-
-  handleChangeServer = (e: ChangeEvent) => {
-    const target = e.target as HTMLInputElement;
-    this.setState({ wsServer: target.value });
   };
 
   handleChangeSession = (e: ChangeEvent) => {
@@ -31,36 +24,22 @@ class NewSessionForm extends Component<{}, State> {
   };
 
   handleSubmit = (e: FormEvent) => {
-    let { wsServer, session, user } = this.state;
+    let { session, user } = this.state;
 
     e.preventDefault();
 
     // Default values
-    if (!wsServer) wsServer = "ws://localhost:3001";
     if (!session) session = "default";
     if (!user) user = "anonymous";
 
-    Router.push(`/s/${session}?wsServer=${wsServer}&user=${user}`);
+    Router.push(`/s/${session}?user=${user}`);
   };
 
   render() {
-    const { wsServer, session, user } = this.state;
+    const { session, user } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <div className="field">
-          <div className="control">
-            <input
-              name="user"
-              onChange={this.handleChangeServer}
-              value={wsServer}
-              className="input is-large"
-              type="text"
-              placeholder="Type the WebSocket URL of your signaling server (e.g. ws://[ip]:3001)"
-            />
-          </div>
-        </div>
-
         <div className="field">
           <div className="control">
             <input
@@ -82,7 +61,7 @@ class NewSessionForm extends Component<{}, State> {
               value={user}
               className="input is-large"
               type="text"
-              placeholder="Type a nick name"
+              placeholder="Type a nick name and press Enter"
             />
           </div>
         </div>
