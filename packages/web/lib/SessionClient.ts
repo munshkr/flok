@@ -89,7 +89,6 @@ class SessionClient {
       this._provider.awareness
     );
     this._editorBindings[id] = binding;
-    editor.attach(this, id);
   }
 
   /**
