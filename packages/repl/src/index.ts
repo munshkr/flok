@@ -1,5 +1,4 @@
 import { ChildProcess, execSync, spawn } from 'child_process';
-import { sync as commandExistsSync } from 'command-exists';
 import { EventEmitter } from 'events';
 import { PubSubClient } from 'flok-core';
 import * as os from 'os';
@@ -70,7 +69,7 @@ class REPL {
 
     this.repl.on('close', (code: number) => {
       this.emitter.emit('close', { code });
-      console.log(`child process exited with code ${code}`);
+      console.log(`Child process exited with code ${code}`);
     });
 
     // Subscribe to pub sub
@@ -100,7 +99,6 @@ class REPL {
 
   _connectToPubSubServer() {
     const wsUrl = `${this.hub}${this.pubSubPath}`;
-    console.log(wsUrl);
 
     this.pubSub = new PubSubClient(wsUrl, {
       connect: true,
@@ -165,13 +163,18 @@ class TidalREPL extends REPL {
   constructor(ctx: REPLContext) {
     super(ctx);
 
-    this.command = `${this.commandPath('ghci')} -ghci-script ${this.defaultBootScript()}`;
+    this.command = `${this.commandPath('ghci')} -ghci-script ${this.bootScript()}`;
   }
 
   prepare(body: string): string {
     let newBody = super.prepare(body);
     newBody = `:{\n${newBody}\n:}`;
     return newBody;
+  }
+
+  bootScript(): string {
+    const { bootScript } = this.extraOptions;
+    return bootScript || this.defaultBootScript();
   }
 
   defaultBootScript(): string {
