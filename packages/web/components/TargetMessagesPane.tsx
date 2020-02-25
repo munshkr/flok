@@ -69,10 +69,10 @@ class TargetMessagesPane extends Component<Props, {}> {
           className="scrollable-content"
         >
           <ol>
-            {messages.map(({ target, content }, i) => (
+            {messages.map(({ _target, content }, i) => (
               <li key={i}>
                 <pre className={content.type === "stderr" ? "error" : ""}>
-                  {`[${target}] ${content.body.join("\n").trim()}`}
+                  {content.body.join("\n")}
                 </pre>
               </li>
             ))}
