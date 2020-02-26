@@ -151,7 +151,7 @@ class Session extends Component<Props, State> {
     this.setState({ showTargetMessagesPane: false });
 
     if (target === "hydra") {
-      // this.setState({ hydraCode: body });
+      this.setState({ hydraCode: body });
       pubsubClient.publish(`target:hydra:eval`, { body, ...content });
     } else {
       pubsubClient.publish(`target:${target}:eval`, content);
