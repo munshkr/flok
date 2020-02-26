@@ -162,6 +162,8 @@ class Session extends Component<Props, State> {
   handleEvaluateRemoteCode = ({ target, content }) => {
     const { editorId, fromLine, toLine } = content;
 
+    this.setState({ showTargetMessagesPane: false });
+
     // Evaluate Hydra code locally
     if (target === "hydra") {
       const { body } = content;
