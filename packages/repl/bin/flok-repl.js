@@ -10,13 +10,14 @@ program
   .version(packageInfo.version)
   .option('-t, --type <type>', 'Type of REPL', 'command')
   .option('-H, --hub <url>', 'Hub address', 'ws://localhost:3000')
+  .option('-s, --session-name <name>', 'Session name', 'default')
   .option('-n, --target-name <name>', 'Use the specified target name')
   .option('--path <path>', 'Evaluation WebSockets server path', '/pubsub')
   .option('--extra <options>', 'Extra options in JSON')
   .option('--list-types', 'List all known types of REPLs')
   .parse(process.argv);
 
-const { args, type, hub, targetName, path, listTypes, extra } = program;
+const { args, type, hub, sessionName, targetName, path, listTypes, extra } = program;
 const cmd = program.args[0];
 
 if (listTypes) {
@@ -53,6 +54,7 @@ if (extra) {
 // Start...
 
 console.log(`Hub address: ${hub}`);
+console.log(`Session name: ${sessionName}`);
 console.log(`Target name: ${target}`);
 console.log(`Extra options`, extraOptions);
 
@@ -61,6 +63,7 @@ if (useDefaultREPL) {
   replClient = new REPL({
     command: args.join(' '),
     target,
+    session: sessionName,
     hub,
     pubSubPath: path,
     extraOptions,
@@ -69,6 +72,7 @@ if (useDefaultREPL) {
   const replClass = replClasses[type];
   replClient = new replClass({
     target,
+    session: sessionName,
     hub: hub,
     pubSubPath: path,
     extraOptions,

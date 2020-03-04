@@ -12,6 +12,7 @@ type Message = {
 type REPLContext = {
   command: string;
   target: string;
+  session: string;
   hub: string;
   pubSubPath: string;
   extraOptions?: { [option: string]: any };
@@ -20,6 +21,7 @@ type REPLContext = {
 class REPL {
   command: string;
   target: string;
+  session: string;
   hub: string;
   pubSubPath: string;
   extraOptions: { [option: string]: any };
@@ -31,11 +33,12 @@ class REPL {
   _lastUserName: string;
 
   constructor(ctx: REPLContext) {
-    const { command, target, hub, pubSubPath, extraOptions } = ctx;
+    const { command, target, session, hub, pubSubPath, extraOptions } = ctx;
 
     this.command = command;
 
     this.target = target || 'default';
+    this.session = session || 'default';
     this.hub = hub || 'ws://localhost:3000';
     this.pubSubPath = pubSubPath || '/pubsub';
     this.extraOptions = extraOptions || {};
@@ -73,7 +76,8 @@ class REPL {
     });
 
     // Subscribe to pub sub
-    this.pubSub.subscribe(`target:${this.target}:in`, (message: Message) => {
+    const { target, session } = this;
+    this.pubSub.subscribe(`session:${session}:target:${target}:in`, (message: Message) => {
       const { body, userName } = message;
       this.write(body);
       this._lastUserName = userName;
@@ -107,6 +111,7 @@ class REPL {
   }
 
   _handleData(data: any, type: string) {
+    const { target, session } = this;
     const newBuffer = this._buffers[type].concat(data.toString());
     const lines = newBuffer.split('\n');
 
@@ -115,14 +120,14 @@ class REPL {
     this.emitter.emit('data', { type, lines });
 
     if (lines.length > 0) {
-      this.pubSub.publish(`target:${this.target}:out`, {
-        target: this.target,
+      this.pubSub.publish(`session:${session}:target:${target}:out`, {
+        target,
         type,
         body: lines,
       });
       if (this._lastUserName) {
         this.pubSub.publish(`user:${this._lastUserName}`, {
-          target: this.target,
+          target,
           type,
           body: lines,
         });

@@ -86,16 +86,21 @@ class Session extends Component<Props, State> {
       reconnect: true,
       onMeMessage: (clientId: string) => {
         // Subscribes to messages directed to ourselves
-        this.pubsubClient.subscribe(`user:${clientId}`, this.handleMessageUser);
+        this.pubsubClient.subscribe(
+          `session:${sessionName}:user:${clientId}`,
+          this.handleMessageUser
+        );
 
         // Subscribe to messages directed to a specific target
         targets.forEach(target => {
-          this.pubsubClient.subscribe(`target:${target}:eval`, content =>
-            this.handleEvaluateRemoteCode({ target, content })
+          this.pubsubClient.subscribe(
+            `session:${sessionName}:target:${target}:eval`,
+            content => this.handleEvaluateRemoteCode({ target, content })
           );
 
-          this.pubsubClient.subscribe(`target:${target}:out`, content =>
-            this.handleMessageTarget({ target, content })
+          this.pubsubClient.subscribe(
+            `session:${sessionName}:target:${target}:out`,
+            content => this.handleMessageTarget({ target, content })
           );
         });
       },
@@ -143,6 +148,7 @@ class Session extends Component<Props, State> {
   }
 
   handleEvaluateCode = ({ editorId, target, body, fromLine, toLine, user }) => {
+    const { sessionName } = this.props;
     const { pubsubClient } = this;
     const content = {
       editorId,
@@ -154,11 +160,20 @@ class Session extends Component<Props, State> {
 
     if (target === "hydra") {
       this.setState({ hydraCode: body });
-      pubsubClient.publish(`target:hydra:eval`, { body, ...content });
+      pubsubClient.publish(`session:${sessionName}:target:hydra:eval`, {
+        body,
+        ...content
+      });
     } else {
-      pubsubClient.publish(`target:${target}:eval`, content);
+      pubsubClient.publish(
+        `session:${sessionName}:target:${target}:eval`,
+        content
+      );
     }
-    pubsubClient.publish(`target:${target}:in`, { user, body });
+    pubsubClient.publish(`session:${sessionName}:target:${target}:in`, {
+      user,
+      body
+    });
   };
 
   handleEvaluateRemoteCode = ({ target, content }) => {
