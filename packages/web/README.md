@@ -2,7 +2,7 @@
 
 Web server for Flok.
 
-See [flok](https://github.com/munshkr/flok) for more.
+See [Flok](https://github.com/munshkr/flok) for more.
 
 *Work in progress*.
 
