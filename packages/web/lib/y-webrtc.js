@@ -535,6 +535,7 @@ export class WebrtcProvider extends Observable {
    * @param {Y.Doc} doc
    * @param {Object} [opts]
    * @param {Array<string>} [opts.signaling]
+   * @param {Array<IceServerType>} [opts.extraIceServers]
    * @param {string?} [opts.password]
    * @param {awarenessProtocol.Awareness} [opts.awareness]
    * @param {number} [opts.maxConns]
