@@ -22,6 +22,11 @@ import * as cryptoutils from './crypto.js'
 
 const log = logging.createModuleLogger('y-webrtc')
 
+const defaultIceServers = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:global.stun.twilio.com:3478?transport=udp' }
+];
+
 const messageSync = 0
 const messageQueryAwareness = 3
 const messageAwareness = 1
@@ -176,8 +181,9 @@ export class WebrtcConn {
    * @param {string} remotePeerId
    * @param {Room} room
    */
-  constructor (signalingConn, initiator, remotePeerId, room) {
+  constructor (signalingConn, initiator, remotePeerId, room, extraIceServers) {
     log('establishing connection to ', logging.BOLD, remotePeerId)
+    const iceServers = defaultIceServers + (extraIceServers || []);
     this.room = room
     this.remotePeerId = remotePeerId
     this.closed = false
@@ -455,7 +461,7 @@ const publishSignalingMessage = (conn, room, data) => {
 }
 
 export class SignalingConn extends ws.WebsocketClient {
-  constructor (url) {
+  constructor (url, extraIceServers) {
     super(url)
     /**
      * @type {Set<WebrtcProvider>}
@@ -494,13 +500,13 @@ export class SignalingConn extends ws.WebsocketClient {
             switch (data.type) {
               case 'announce':
                 if (webrtcConns.size < room.provider.maxConns) {
-                  map.setIfUndefined(webrtcConns, data.from, () => new WebrtcConn(this, true, data.from, room))
+                  map.setIfUndefined(webrtcConns, data.from, () => new WebrtcConn(this, true, data.from, room, extraIceServers))
                   emitPeerChange()
                 }
                 break
               case 'signal':
                 if (data.to === peerId) {
-                  map.setIfUndefined(webrtcConns, data.from, () => new WebrtcConn(this, false, data.from, room)).peer.signal(data.signal)
+                  map.setIfUndefined(webrtcConns, data.from, () => new WebrtcConn(this, false, data.from, room, extraIceServers)).peer.signal(data.signal)
                   emitPeerChange()
                 }
                 break
@@ -538,6 +544,7 @@ export class WebrtcProvider extends Observable {
     doc,
     {
       signaling = ['wss://signaling.yjs.dev', 'wss://y-webrtc-uchplqjsol.now.sh', 'wss://y-webrtc-signaling-eu.herokuapp.com', 'wss://y-webrtc-signaling-us.herokuapp.com'],
+      extraIceServers = [],
       password = null,
       awareness = new awarenessProtocol.Awareness(doc),
       maxConns = 20 + math.floor(random.rand() * 15) // just to prevent that exactly n clients form a cluster
@@ -553,6 +560,7 @@ export class WebrtcProvider extends Observable {
     this.shouldConnect = false
     this.signalingUrls = signaling
     this.signalingConns = []
+    this.extraIceServers = extraIceServers
     this.maxConns = maxConns
     /**
      * @type {PromiseLike<CryptoKey | null>}
@@ -581,7 +589,7 @@ export class WebrtcProvider extends Observable {
   connect () {
     this.shouldConnect = true
     this.signalingUrls.forEach(url => {
-      const signalingConn = map.setIfUndefined(signalingConns, url, () => new SignalingConn(url))
+      const signalingConn = map.setIfUndefined(signalingConns, url, () => new SignalingConn(url, this.extraIceServers))
       this.signalingConns.push(signalingConn)
       signalingConn.providers.add(this)
     })
