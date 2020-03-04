@@ -5,8 +5,15 @@ import CodeMirror from "codemirror";
 
 // FIXME Replace callbacks for Promises
 
+export type IceServerType = {
+  urls: string;
+  username?: string;
+  credential?: string;
+};
+
 type SessionClientContext = {
   signalingServerUrl: string;
+  extraIceServers?: IceServerType[];
   sessionName?: string;
   sessionPassword?: string;
   userName?: string;
@@ -18,6 +25,7 @@ class SessionClient {
   sessionName: string;
   sessionPassword: string;
   signalingServerUrl: string;
+  extraIceServers: IceServerType[];
   onJoin: Function;
 
   _doc: Y.Doc;
@@ -39,6 +47,7 @@ class SessionClient {
   constructor(ctx: SessionClientContext) {
     const {
       signalingServerUrl,
+      extraIceServers,
       sessionName,
       sessionPassword,
       userName,
@@ -46,6 +55,7 @@ class SessionClient {
     } = ctx;
 
     this.signalingServerUrl = signalingServerUrl;
+    this.extraIceServers = extraIceServers || [];
     this.userName = userName;
     this.sessionName = sessionName || "default";
     this.sessionPassword = sessionPassword;
@@ -57,10 +67,17 @@ class SessionClient {
   }
 
   join() {
-    const { signalingServerUrl, sessionName, sessionPassword } = this;
+    const {
+      signalingServerUrl,
+      extraIceServers,
+      sessionName,
+      sessionPassword
+    } = this;
+    console.debug("SessionClient iceServers:", extraIceServers);
     const provider = new WebrtcProvider(`flok:${sessionName}`, this._doc, {
       password: sessionPassword,
-      signaling: [signalingServerUrl]
+      signaling: [signalingServerUrl],
+      extraIceServers
     });
     this._provider = provider;
     this.onJoin();

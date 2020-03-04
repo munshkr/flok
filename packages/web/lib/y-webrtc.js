@@ -183,7 +183,7 @@ export class WebrtcConn {
    */
   constructor (signalingConn, initiator, remotePeerId, room, extraIceServers) {
     log('establishing connection to ', logging.BOLD, remotePeerId)
-    const iceServers = defaultIceServers + (extraIceServers || []);
+    const iceServers = [...defaultIceServers, ...extraIceServers];
     this.room = room
     this.remotePeerId = remotePeerId
     this.closed = false

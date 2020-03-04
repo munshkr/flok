@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 
 import { PubSubClient } from "flok-core";
 import TargetMessagesPane from "./TargetMessagesPane";
-import SessionClient from "../lib/SessionClient";
+import SessionClient, { IceServerType } from "../lib/SessionClient";
 import HydraCanvas from "./HydraCanvas";
 
 const MAX_LINES: number = 100;
@@ -21,6 +21,7 @@ type Props = {
   websocketsHost: string;
   sessionName: string;
   userName?: string;
+  extraIceServers?: IceServerType[];
   layout: {
     editors: {
       id: string;
@@ -55,7 +56,7 @@ class Session extends Component<Props, State> {
   };
 
   componentDidMount() {
-    const { sessionName, userName, layout } = this.props;
+    const { sessionName, userName, layout, extraIceServers } = this.props;
 
     const targets = [...new Set(layout.editors.map(({ target }) => target))];
     console.log("Targets:", targets);
@@ -70,6 +71,7 @@ class Session extends Component<Props, State> {
 
     this.sessionClient = new SessionClient({
       signalingServerUrl,
+      extraIceServers,
       sessionName,
       userName,
       onJoin: () => {

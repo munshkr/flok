@@ -9,7 +9,11 @@ module.exports = withTM(
   withCSS(
     withSass({
       publicRuntimeConfig: {
-        isDevelopment: process.env.NODE_ENV !== "production"
+        isDevelopment: process.env.NODE_ENV !== "production",
+        iceStunUrl: process.env.ICE_STUN_URL,
+        iceTurnUrl: process.env.ICE_TURN_URL,
+        iceStunCredentials: process.env.ICE_STUN_USERPASS,
+        iceTurnCredentials: process.env.ICE_TURN_USERPASS
       },
 
       webpack(config) {

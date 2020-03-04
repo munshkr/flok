@@ -5,9 +5,36 @@ import { NextPageContext } from "next";
 
 import Layout from "../../components/Layout";
 import Session from "../../components/Session";
+import { IceServerType } from "../../lib/SessionClient";
 
 const { publicRuntimeConfig } = getConfig();
-const { isDevelopment } = publicRuntimeConfig;
+const {
+  isDevelopment,
+  iceStunUrl,
+  iceTurnUrl,
+  iceStunCredentials,
+  iceTurnCredentials
+} = publicRuntimeConfig;
+
+const parseIceServerFromEnvVars = (url: string, userPass?: string) => {
+  if (!url) return;
+  let server: IceServerType = { urls: url };
+  if (userPass) {
+    const [username, credential] = userPass.split(":");
+    server = { ...server, username, credential };
+  }
+  return server;
+};
+
+const extraIceServers = (() => {
+  let res = [];
+  const stunUrl = parseIceServerFromEnvVars(iceStunUrl, iceStunCredentials);
+  if (stunUrl) res.push(stunUrl);
+  const turnUrl = parseIceServerFromEnvVars(iceTurnUrl, iceTurnCredentials);
+  if (turnUrl) res.push(turnUrl);
+  console.log("extraIceServers", res);
+  return res;
+})();
 
 interface Props {
   host: string;
@@ -42,6 +69,7 @@ class SessionPage extends Component<Props> {
           websocketsHost={host}
           sessionName={session}
           userName={user}
+          extraIceServers={extraIceServers}
           layout={{
             editors: [
               { id: "1", target: "tidal" },
