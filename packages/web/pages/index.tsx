@@ -2,21 +2,15 @@ import Router from "next/router";
 import React, { Component, ChangeEvent, FormEvent } from "react";
 import FlockScene from "../components/FlockScene";
 import Layout from "../components/Layout";
+import uuid from "uuid/v4";
 
 interface State {
-  session: string;
   user: string;
 }
 
 class NewSessionForm extends Component<{}, State> {
   state = {
-    session: "",
     user: ""
-  };
-
-  handleChangeSession = (e: ChangeEvent) => {
-    const target = e.target as HTMLInputElement;
-    this.setState({ session: target.value });
   };
 
   handleChangeUser = (e: ChangeEvent) => {
@@ -25,35 +19,21 @@ class NewSessionForm extends Component<{}, State> {
   };
 
   handleSubmit = (e: FormEvent) => {
-    let { session, user } = this.state;
-
     e.preventDefault();
 
-    // Default values
-    if (!session) session = "default";
+    let { user } = this.state;
     if (!user) user = "anonymous";
+
+    const session = uuid();
 
     Router.push(`/s/${session}?user=${user}`);
   };
 
   render() {
-    const { session, user } = this.state;
+    const { user } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <div className="field">
-          <div className="control">
-            <input
-              name="session"
-              onChange={this.handleChangeSession}
-              value={session}
-              className="input is-large"
-              type="text"
-              placeholder="Type a session name"
-            />
-          </div>
-        </div>
-
         <div className="field">
           <div className="control">
             <input
@@ -70,7 +50,7 @@ class NewSessionForm extends Component<{}, State> {
         <div className="field">
           <div className="control">
             <button type="submit" className="button is-link is-large">
-              Join!
+              Start!
             </button>
           </div>
         </div>
