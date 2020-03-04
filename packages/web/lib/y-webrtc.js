@@ -162,6 +162,13 @@ const broadcastWebrtcConn = (room, m) => {
   })
 }
 
+const iceServers = [
+  { urls: 'stun:stun.l.google.com:19302' },
+  { urls: 'stun:global.stun.twilio.com:3478?transport=udp' },
+  { urls: 'stun:stun.clic.cf:3478' },
+  { urls: 'turn:turn.clic.cf:3478' }
+]
+
 export class WebrtcConn {
   /**
    * @param {SignalingConn} signalingConn
@@ -179,7 +186,7 @@ export class WebrtcConn {
     /**
      * @type {any}
      */
-    this.peer = new Peer({ initiator })
+    this.peer = new Peer({ initiator, config: { iceServers } })
     this.peer.on('signal', signal => {
       publishSignalingMessage(signalingConn, room, { to: remotePeerId, from: room.peerId, type: 'signal', signal })
     })
