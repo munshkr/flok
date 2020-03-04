@@ -32,7 +32,6 @@ const extraIceServers = (() => {
   if (stunUrl) res.push(stunUrl);
   const turnUrl = parseIceServerFromEnvVars(iceTurnUrl, iceTurnCredentials);
   if (turnUrl) res.push(turnUrl);
-  console.log("extraIceServers", res);
   return res;
 })();
 

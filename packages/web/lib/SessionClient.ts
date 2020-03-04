@@ -73,7 +73,7 @@ class SessionClient {
       sessionName,
       sessionPassword
     } = this;
-    console.debug("SessionClient iceServers:", extraIceServers);
+    console.debug("[WebRTC] ICE servers:", extraIceServers);
     const provider = new WebrtcProvider(`flok:${sessionName}`, this._doc, {
       password: sessionPassword,
       signaling: [signalingServerUrl],
