@@ -170,7 +170,7 @@ class TextEditor extends Component<Props, {}> {
         <style jsx global>{`
           .CodeMirror {
             font-family: Monaco, monospace;
-            font-size: 20px;
+            font-size: 16px;
           }
           .remote-caret {
             position: absolute;
@@ -183,7 +183,7 @@ class TextEditor extends Component<Props, {}> {
             position: relative;
             top: 1.5em;
             left: -2px;
-            font-size: 16px;
+            font-size: 14px;
             background-color: rgb(250, 129, 0);
             font-family: Monaco, monospace;
             font-style: normal;

@@ -241,9 +241,9 @@ class Session extends Component<Props, State> {
         <HydraCanvas code={hydraCode} fullscreen />
         {showTextEditors && (
           <React.Fragment>
-            <div className="columns is-gapless is-multiline">
-              {layout.editors.slice(0, 3).map(({ id, target }) => (
-                <div key={id} className="column is-4">
+            <div className="columns is-multiline">
+              {layout.editors.slice(0, 4).map(({ id, target }) => (
+                <div key={id} className="column is-3">
                   <TextEditor
                     editorId={id}
                     target={target}
@@ -253,15 +253,17 @@ class Session extends Component<Props, State> {
                 </div>
               ))}
             </div>
-            <div className="columns is-gapless is-multiline">
-              <div className="column is-12">
-                <TextEditor
-                  editorId="4"
-                  target="hydra"
-                  sessionClient={sessionClient}
-                  onEvaluateCode={this.handleEvaluateCode}
-                />
-              </div>
+            <div className="columns is-multiline">
+              {layout.editors.slice(4, 8).map(({ id, target }) => (
+                <div key={id} className="column is-3">
+                  <TextEditor
+                    editorId={id}
+                    target={target}
+                    sessionClient={sessionClient}
+                    onEvaluateCode={this.handleEvaluateCode}
+                  />
+                </div>
+              ))}
             </div>
           </React.Fragment>
         )}
