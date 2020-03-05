@@ -24,7 +24,7 @@ class NewSessionForm extends Component<{}, State> {
     let { user } = this.state;
     if (!user) user = "anonymous";
 
-    const session = uuid();
+    const session = btoa(uuid());
 
     Router.push(`/s/${session}?user=${user}`);
   };

@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React, { Component, ChangeEvent, FormEvent } from "react";
+import Router from "next/router";
 import Head from "next/head";
 import getConfig from "next/config";
 import { NextPageContext } from "next";
@@ -41,9 +42,75 @@ interface Props {
   user: string;
 }
 
+class JoinSessionForm extends Component<{ session: string }> {
+  state = {
+    user: ""
+  };
+
+  handleChangeUser = (e: ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+    this.setState({ user: target.value });
+  };
+
+  handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    const { session } = this.props;
+    let { user } = this.state;
+
+    if (!user) user = "anonymous";
+
+    Router.push(`/s/${session}?user=${user}`);
+  };
+
+  render() {
+    const { user } = this.state;
+
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <div className="field">
+          <div className="control">
+            <input
+              name="user"
+              onChange={this.handleChangeUser}
+              value={user}
+              className="input is-large"
+              type="text"
+              placeholder="Type a nick name and press Enter"
+            />
+          </div>
+        </div>
+
+        <div className="field">
+          <div className="control">
+            <button type="submit" className="button is-link is-large">
+              Join!
+            </button>
+          </div>
+        </div>
+      </form>
+    );
+  }
+}
+
+const EmptySession = ({ session }) => (
+  <section className="section">
+    <div className="container">
+      <h1 className="title">flok</h1>
+      <h3 className="subtitle">
+        You are trying to join session <code>{session}</code>. Please enter your
+        nickname.
+      </h3>
+
+      {/* <SessionList /> */}
+      <JoinSessionForm session={session} />
+    </div>
+  </section>
+);
+
 class SessionPage extends Component<Props> {
   static defaultProps = {
-    user: "anonymous"
+    user: null
   };
 
   static async getInitialProps({ req, query }: NextPageContext) {
@@ -64,23 +131,24 @@ class SessionPage extends Component<Props> {
         <Head>
           <title>{`${session} :: flok`}</title>
         </Head>
-        <Session
-          websocketsHost={host}
-          sessionName={session}
-          userName={user}
-          extraIceServers={extraIceServers}
-          layout={{
-            editors: [
-              { id: "1", target: "foxdot" },
-              { id: "2", target: "foxdot" },
-              { id: "3", target: "sclang" },
-              { id: "4", target: "sclang" },
-              { id: "5", target: "hydra" },
-              { id: "6", target: "hydra" },
-              { id: "7", target: "hydra" }
-            ]
-          }}
-        />
+        {user ? (
+          <Session
+            websocketsHost={host}
+            sessionName={session}
+            userName={user}
+            extraIceServers={extraIceServers}
+            layout={{
+              editors: [
+                { id: "1", target: "tidal" },
+                { id: "2", target: "tidal" },
+                { id: "3", target: "tidal" },
+                { id: "4", target: "hydra" }
+              ]
+            }}
+          />
+        ) : (
+          <EmptySession session={session} />
+        )}
       </Layout>
     );
   }
