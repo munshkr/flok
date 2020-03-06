@@ -141,7 +141,28 @@ class TextEditor extends Component<Props, {}> {
     });
   };
 
+  scLangFreeAll = () => {
+    this.evaluate("s.freeAll", -1, -1);
+  };
+
   render() {
+    const { editorId, target } = this.props;
+
+    const defaultExtraKeys = {
+      "Shift-Enter": this.evaluateLine,
+      "Ctrl-Enter": this.evaluateParagraph,
+      "Cmd-Enter": this.evaluateParagraph
+    };
+
+    const extraKeys =
+      target === "sclang"
+        ? {
+            "Ctrl-.": this.scLangFreeAll,
+            "Cmd-.": this.scLangFreeAll,
+            ...defaultExtraKeys
+          }
+        : defaultExtraKeys;
+
     return (
       <div>
         <div className="evaluate">
@@ -160,11 +181,7 @@ class TextEditor extends Component<Props, {}> {
             theme: "material",
             lineNumbers: false,
             lineWrapping: true,
-            extraKeys: {
-              "Shift-Enter": this.evaluateLine,
-              "Ctrl-Enter": this.evaluateParagraph,
-              "Cmd-Enter": this.evaluateParagraph
-            }
+            extraKeys
           }}
         />
         <style jsx global>{`
