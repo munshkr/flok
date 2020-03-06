@@ -245,8 +245,8 @@ class Session extends Component<Props, State> {
         {showTextEditors && (
           <React.Fragment>
             <div className="columns is-multiline">
-              {layout.editors.slice(0, 4).map(({ id, target }) => (
-                <div key={id} className="column is-3">
+              {layout.editors.slice(0, 3).map(({ id, target }) => (
+                <div key={id} className="column is-4">
                   <TextEditor
                     editorId={id}
                     target={target}
@@ -257,8 +257,8 @@ class Session extends Component<Props, State> {
               ))}
             </div>
             <div className="columns is-multiline">
-              {layout.editors.slice(4, 8).map(({ id, target }) => (
-                <div key={id} className="column is-3">
+              {layout.editors.slice(3, 5).map(({ id, target }) => (
+                <div key={id} className="column is-6">
                   <TextEditor
                     editorId={id}
                     target={target}

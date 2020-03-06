@@ -71,14 +71,11 @@ class SessionPage extends Component<Props> {
           extraIceServers={extraIceServers}
           layout={{
             editors: [
-              { id: "1", target: "tidal" },
-              { id: "2", target: "tidal" },
-              { id: "3", target: "tidal" },
-              { id: "4", target: "tidal" },
-              { id: "5", target: "tidal" },
-              { id: "6", target: "tidal" },
-              { id: "7", target: "tidal" },
-              { id: "8", target: "hydra" }
+              { id: "1", target: "sclang" },
+              { id: "2", target: "sclang" },
+              { id: "3", target: "sclang" },
+              { id: "4", target: "sclang" },
+              { id: "5", target: "hydra" }
             ]
           }}
         />
