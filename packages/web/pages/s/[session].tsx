@@ -75,7 +75,8 @@ class SessionPage extends Component<Props> {
               { id: "2", target: "sclang" },
               { id: "3", target: "sclang" },
               { id: "4", target: "sclang" },
-              { id: "5", target: "hydra" }
+              { id: "5", target: "hydra" },
+              { id: "6", target: "hydra" }
             ]
           }}
         />

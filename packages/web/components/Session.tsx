@@ -257,8 +257,8 @@ class Session extends Component<Props, State> {
               ))}
             </div>
             <div className="columns is-multiline">
-              {layout.editors.slice(3, 5).map(({ id, target }) => (
-                <div key={id} className="column is-6">
+              {layout.editors.slice(3, 6).map(({ id, target }) => (
+                <div key={id} className="column is-4">
                   <TextEditor
                     editorId={id}
                     target={target}
