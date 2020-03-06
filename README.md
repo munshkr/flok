@@ -17,6 +17,7 @@ Web-based P2P collaborative editor for live coding music and graphics
   - ... any interpreter with a REPL (Python, Ruby, etc.)
 * Web Plugins, for languages embedded in editor (*not implemented yet*):
   - [Hydra](https://github.com/ojack/hydra)
+  - [VEDA.js](https://github.com/fand/vedajs)
   - [Tilt](https://github.com/munshkr/tilt)
 
 
