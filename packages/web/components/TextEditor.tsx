@@ -171,6 +171,7 @@ class TextEditor extends Component<Props, {}> {
             onClick={this.handleEvaluateButtonClick}
           />
         </div>
+        {/* <span className="desc">{`${editorId} ${target}`}</span> */}
         <CodeMirror
           className="editor"
           ref={el => {
@@ -184,6 +185,15 @@ class TextEditor extends Component<Props, {}> {
             extraKeys
           }}
         />
+        {/* <style jsx>
+          {`
+            .desc {
+              color: #333;
+              font-family: Monaco, monospace;
+              float: right;
+            }
+          `}
+        </style> */}
         <style jsx global>{`
           .CodeMirror {
             font-family: Monaco, monospace;
