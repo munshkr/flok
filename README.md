@@ -18,6 +18,7 @@ Web-based P2P collaborative editor for live coding music and graphics
 * Web Plugins, for languages embedded in editor (*not implemented yet*):
   - [Hydra](https://github.com/ojack/hydra)
   - [VEDA.js](https://github.com/fand/vedajs)
+  - [p5.js](https://p5js.org/)
   - [Tilt](https://github.com/munshkr/tilt)
 
 
