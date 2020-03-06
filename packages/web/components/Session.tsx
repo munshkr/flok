@@ -153,7 +153,8 @@ class Session extends Component<Props, State> {
     const content = {
       editorId,
       fromLine,
-      toLine
+      toLine,
+      user
     };
 
     this.setState({ messages: [], showTargetMessagesPane: false });
@@ -177,7 +178,7 @@ class Session extends Component<Props, State> {
   };
 
   handleEvaluateRemoteCode = ({ target, content }) => {
-    const { editorId, fromLine, toLine } = content;
+    const { editorId, user, fromLine, toLine } = content;
 
     this.setState({ showTargetMessagesPane: false });
 
@@ -187,8 +188,10 @@ class Session extends Component<Props, State> {
       this.setState({ hydraCode: body });
     }
 
-    // Flash selection on editor
-    this.sessionClient.flash(editorId, fromLine, toLine);
+    // Flash selection on editor when another user evaluates code
+    if (this.props.userName !== user) {
+      this.sessionClient.flash(editorId, fromLine, toLine);
+    }
   };
 
   handleMessageTarget = ({ target, content }) => {
