@@ -25,7 +25,8 @@
     "command-exists": "^1.2.8",
     "commander": "^2.20.0",
     "flok-core": "^0.3.6",
-    "glob": "^7.1.6"
+    "glob": "^7.1.6",
+    "osc": "^2.4.0"
   },
   "devDependencies": {
     "@types/node": "^13.7.1",
