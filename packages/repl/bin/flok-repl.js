@@ -57,9 +57,7 @@ console.log(`Hub address: ${hub}`);
 console.log(`Session name: ${sessionName}`);
 console.log(`Target name: ${target}`);
 console.log(`Type: ${type}`);
-if (extraOptions) {
-  console.log(`Extra options:`, extraOptions);
-}
+console.log(`Extra options:`, extraOptions);
 
 let replClient;
 if (useDefaultREPL) {
