@@ -1,14 +1,15 @@
-import REPL, { REPLContext } from './repl';
+import { BaseREPL, BaseREPLContext, CommandREPL, CommandREPLContext } from './repl';
 import TidalREPL from './repl/tidal';
-import SuperColliderREPL from './repl/sclang';
+import SclangREPL, { RemoteSclangREPL } from './repl/sclang';
 
 const replClasses = {
-  default: REPL,
+  default: CommandREPL,
   tidal: TidalREPL,
-  sclang: SuperColliderREPL,
+  sclang: SclangREPL,
+  remote_sclang: RemoteSclangREPL,
 };
 
-function createREPLFor(repl: string, ctx: REPLContext) {
+function createREPLFor(repl: string, ctx: CommandREPLContext) {
   if (replClasses[repl]) {
     return new replClasses[repl](ctx);
   }
@@ -17,5 +18,4 @@ function createREPLFor(repl: string, ctx: REPLContext) {
   return new replClass({ ...ctx, command: repl });
 }
 
-export { replClasses, createREPLFor, REPL, REPLContext };
-export default REPL;
+export { replClasses, createREPLFor, BaseREPL, BaseREPLContext, CommandREPL, CommandREPLContext };

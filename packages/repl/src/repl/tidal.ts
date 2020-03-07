@@ -1,9 +1,9 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
-import { REPL, REPLContext } from '../repl';
+import { CommandREPL, CommandREPLContext } from '../repl';
 
-class TidalREPL extends REPL {
-  constructor(ctx: REPLContext) {
+class TidalREPL extends CommandREPL {
+  constructor(ctx: CommandREPLContext) {
     super(ctx);
 
     this.command = this.commandPath('ghci');

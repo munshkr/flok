@@ -7,9 +7,7 @@ type Message = {
   userName: string;
 };
 
-type REPLContext = {
-  command: string;
-  args: string[];
+type BaseREPLContext = {
   target: string;
   session: string;
   hub: string;
@@ -17,26 +15,26 @@ type REPLContext = {
   extraOptions?: { [option: string]: any };
 };
 
-class REPL {
+type CommandREPLContext = BaseREPLContext & {
   command: string;
   args: string[];
+};
+
+abstract class BaseREPL {
   target: string;
   session: string;
   hub: string;
   pubSubPath: string;
   extraOptions: { [option: string]: any };
+
   emitter: EventEmitter;
-  repl: ChildProcess;
   pubSub: PubSubClient;
 
   _buffers: { stdout: string; stderr: string };
   _lastUserName: string;
 
-  constructor(ctx: REPLContext) {
-    const { command, args, target, session, hub, pubSubPath, extraOptions } = ctx;
-
-    this.command = command;
-    this.args = args;
+  constructor(ctx: BaseREPLContext) {
+    const { target, session, hub, pubSubPath, extraOptions } = ctx;
 
     this.target = target || 'default';
     this.session = session || 'default';
@@ -52,8 +50,50 @@ class REPL {
     this._lastUserName = null;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   start() {
+    // Subscribe to pub sub
+    const { target, session } = this;
+    this.pubSub.subscribe(`session:${session}:target:${target}:in`, (message: Message) => {
+      const { body, userName } = message;
+      this.write(body);
+      this._lastUserName = userName;
+    });
+  }
+
+  abstract write(body: string);
+
+  // eslint-disable-next-line class-methods-use-this
+  prepare(body: string): string {
+    return body.trim();
+  }
+
+  _connectToPubSubServer() {
+    const wsUrl = `${this.hub}${this.pubSubPath}`;
+
+    this.pubSub = new PubSubClient(wsUrl, {
+      connect: true,
+      reconnect: true,
+    });
+  }
+}
+
+class CommandREPL extends BaseREPL {
+  command: string;
+  args: string[];
+  repl: ChildProcess;
+
+  constructor(ctx: CommandREPLContext) {
+    const { target, session, hub, pubSubPath, extraOptions } = ctx;
+    super({ target, session, hub, pubSubPath, extraOptions });
+
+    const { command, args } = ctx;
+    this.command = command;
+    this.args = args;
+  }
+
+  start() {
+    super.start();
+
     // Spawn process
     const cmd = this.command;
     const args = this.args;
@@ -73,14 +113,6 @@ class REPL {
       this.emitter.emit('close', { code });
       console.log(`Child process exited with code ${code}`);
     });
-
-    // Subscribe to pub sub
-    const { target, session } = this;
-    this.pubSub.subscribe(`session:${session}:target:${target}:in`, (message: Message) => {
-      const { body, userName } = message;
-      this.write(body);
-      this._lastUserName = userName;
-    });
   }
 
   write(body: string) {
@@ -89,24 +121,6 @@ class REPL {
 
     const lines = newBody.split('\n');
     this.emitter.emit('data', { type: 'stdin', lines });
-  }
-
-  // eslint-disable-next-line class-methods-use-this
-  prepare(body: string): string {
-    return body.trim();
-  }
-
-  onData(callback) {
-    this.onData = callback;
-  }
-
-  _connectToPubSubServer() {
-    const wsUrl = `${this.hub}${this.pubSubPath}`;
-
-    this.pubSub = new PubSubClient(wsUrl, {
-      connect: true,
-      reconnect: true,
-    });
   }
 
   _handleData(data: any, type: string) {
@@ -135,5 +149,4 @@ class REPL {
   }
 }
 
-export { REPL, REPLContext, Message };
-export default REPL;
+export { BaseREPL, BaseREPLContext, CommandREPL, CommandREPLContext };

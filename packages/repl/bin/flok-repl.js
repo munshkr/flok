@@ -2,7 +2,7 @@
 
 const program = require('commander');
 const packageInfo = require('../package.json');
-const { REPL, replClasses } = require('../lib/index');
+const { CommandREPL, replClasses } = require('../lib/index');
 
 const knownTypes = Object.keys(replClasses).filter(repl => repl !== 'default');
 
@@ -56,11 +56,14 @@ if (extra) {
 console.log(`Hub address: ${hub}`);
 console.log(`Session name: ${sessionName}`);
 console.log(`Target name: ${target}`);
-console.log(`Extra options`, extraOptions);
+console.log(`Type: ${type}`);
+if (extraOptions) {
+  console.log(`Extra options:`, extraOptions);
+}
 
 let replClient;
 if (useDefaultREPL) {
-  replClient = new REPL({
+  replClient = new CommandREPL({
     command: args[0],
     args: args.slice(1),
     target,
@@ -74,7 +77,7 @@ if (useDefaultREPL) {
   replClient = new replClass({
     target,
     session: sessionName,
-    hub: hub,
+    hub,
     pubSubPath: path,
     extraOptions,
   });
