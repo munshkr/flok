@@ -61,7 +61,8 @@ console.log(`Extra options`, extraOptions);
 let replClient;
 if (useDefaultREPL) {
   replClient = new REPL({
-    command: args.join(' '),
+    command: args[0],
+    args: args.slice(1),
     target,
     session: sessionName,
     hub,

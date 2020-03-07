@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import { PubSubClient } from 'flok-core';
 import * as os from 'os';
 import * as path from 'path';
+import * as glob from 'glob';
 
 type Message = {
   body: string;
@@ -11,6 +12,7 @@ type Message = {
 
 type REPLContext = {
   command: string;
+  args: string[];
   target: string;
   session: string;
   hub: string;
@@ -20,6 +22,7 @@ type REPLContext = {
 
 class REPL {
   command: string;
+  args: string[];
   target: string;
   session: string;
   hub: string;
@@ -33,9 +36,11 @@ class REPL {
   _lastUserName: string;
 
   constructor(ctx: REPLContext) {
-    const { command, target, session, hub, pubSubPath, extraOptions } = ctx;
+    const { command, args, target, session, hub, pubSubPath, extraOptions } = ctx;
+
 
     this.command = command;
+    this.args = args;
 
     this.target = target || 'default';
     this.session = session || 'default';
@@ -54,12 +59,10 @@ class REPL {
   // eslint-disable-next-line class-methods-use-this
   start() {
     // Spawn process
-    const parts = this.command.split(' ');
-
-    const cmd = parts[0];
-    const args = parts.slice(1);
+    const cmd = this.command;
+    const args = this.args ;
     console.log(`Spawn '${cmd}' with args:`, args);
-    this.repl = spawn(cmd, args, { shell: true });
+    this.repl = spawn(JSON.stringify(cmd), args, { shell: true });
 
     // Handle stdout and stderr
     this.repl.stdout.on('data', (data: any) => {
@@ -158,8 +161,19 @@ class SuperColliderREPL extends REPL {
       case 'linux':
         // FIXME Fallback paths (/usr/local/bin/ -> /usr/bin)
         return '/usr/local/bin/sclang';
+      case 'win32':
+        const scPat = path.join(process.env['ProgramFiles'], "SuperCollider*");
+        const scPatX86 = path.join(process.env['ProgramFiles(x86)'], "SuperCollider*");
+        const scDirs = [...glob.sync(scPat), ...glob.sync(scPatX86)];
+        if (scDirs.length === 0) {
+          throw Error(`SuperCollider directory not found on ${process.env.ProgramFiles} nor on ${process.env.ProgramFilesX86}`);
+        }
+        const scDir = scDirs[0];
+        const sclangPath = path.normalize(path.join(scDir, 'sclang.exe'));
+        console.log(JSON.stringify(sclangPath))
+        return sclangPath;
       default:
-        throw Error('Unsupported platform');
+        throw 'Unsupported platform'
     }
   }
 }
@@ -168,7 +182,8 @@ class TidalREPL extends REPL {
   constructor(ctx: REPLContext) {
     super(ctx);
 
-    this.command = `${this.commandPath('ghci')} -ghci-script ${this.bootScript()}`;
+    this.command = this.commandPath('ghci');
+    this.args = ['-ghci-script', this.bootScript()];
   }
 
   prepare(body: string): string {
