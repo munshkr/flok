@@ -71,8 +71,8 @@ class SessionPage extends Component<Props> {
           extraIceServers={extraIceServers}
           layout={{
             editors: [
-              { id: "1", target: "sclang" },
-              { id: "2", target: "sclang" },
+              { id: "1", target: "foxdot" },
+              { id: "2", target: "foxdot" },
               { id: "3", target: "sclang" },
               { id: "4", target: "sclang" },
               { id: "5", target: "hydra" },
