@@ -1,4 +1,4 @@
-import { BaseREPL, BaseREPLContext, CommandREPL, CommandREPLContext } from './repl';
+import { BaseREPL, BaseREPLContext, CommandREPL, CommandREPLContext, FoxDotREPL } from './repl';
 import TidalREPL from './repl/tidal';
 import SclangREPL, { RemoteSclangREPL } from './repl/sclang';
 
@@ -7,6 +7,7 @@ const replClasses = {
   tidal: TidalREPL,
   sclang: SclangREPL,
   remote_sclang: RemoteSclangREPL,
+  foxdot: FoxDotREPL, 
 };
 
 function createREPLFor(repl: string, ctx: CommandREPLContext) {
