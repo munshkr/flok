@@ -270,7 +270,7 @@ class Session extends Component<Props, State> {
             </div>
           </React.Fragment>
         )}
-        {/*showTargetMessagesPane && messages && (
+        {showTargetMessagesPane && messages && (
           <TargetMessagesPane
             messages={messages}
             isTop={messagesPaneIsTop}
@@ -279,7 +279,7 @@ class Session extends Component<Props, State> {
             onToggleMaximize={this.handleTargetMessagesPaneToggleMaximize}
             onClose={this.handleTargetMessagesPaneClose}
           />
-        )*/}
+        )}
         <style jsx>
           {`
             .columns {
