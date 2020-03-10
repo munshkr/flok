@@ -1,6 +1,5 @@
-import { BaseREPL, CommandREPL, BaseREPLContext, CommandREPLContext } from '../repl';
+import { CommandREPL, CommandREPLContext } from '../repl';
 import * as os from 'os';
-import { UDPPort } from 'osc';
 
 class FoxDotREPL extends CommandREPL {
   constructor(ctx: CommandREPLContext) {
