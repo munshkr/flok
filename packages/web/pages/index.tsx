@@ -1,5 +1,6 @@
 import Router from "next/router";
 import React, { Component, ChangeEvent, FormEvent } from "react";
+import FlockScene from "../components/FlockScene";
 import Layout from "../components/Layout";
 
 interface State {
@@ -89,6 +90,8 @@ const IndexPage = () => (
         <NewSessionForm />
       </div>
     </section>
+
+    <FlockScene />
   </Layout>
 );
 
