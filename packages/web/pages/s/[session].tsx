@@ -36,35 +36,40 @@ const extraIceServers = (() => {
   return res;
 })();
 
-interface Props {
-  host: string;
-  session: string;
-  user: string;
-}
-
-class JoinSessionForm extends Component<{ session: string }> {
+class JoinSessionForm extends Component<{
+  username: string;
+  onSubmit: Function;
+}> {
   state = {
-    user: ""
+    username: null
   };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      username: props.username || ""
+    };
+  }
 
   handleChangeUser = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
-    this.setState({ user: target.value });
+    this.setState({ username: target.value });
   };
 
   handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    const { session } = this.props;
-    let { user } = this.state;
+    const { onSubmit } = this.props;
 
-    if (!user) user = "anonymous";
+    let { username } = this.state;
+    if (!username) username = "anonymous";
 
-    Router.push(`/s/${session}?user=${user}`);
+    onSubmit(username);
   };
 
   render() {
-    const { user } = this.state;
+    const { username } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
@@ -73,10 +78,11 @@ class JoinSessionForm extends Component<{ session: string }> {
             <input
               name="user"
               onChange={this.handleChangeUser}
-              value={user}
+              value={username}
               className="input is-large"
               type="text"
-              placeholder="Type a nick name and press Enter"
+              placeholder={"Type a nick name and press Enter"}
+              autoFocus
             />
           </div>
         </div>
@@ -93,49 +99,82 @@ class JoinSessionForm extends Component<{ session: string }> {
   }
 }
 
-const EmptySession = ({ session }) => (
+const EmptySession = ({ session, lastUsername, onSubmit }) => (
   <section className="section">
     <div className="container">
       <h1 className="title">flok</h1>
       <h3 className="subtitle">
-        You are trying to join session <code>{session}</code>. Please enter your
-        nickname.
+        You are trying to join session with token: <code>{session}</code>.<br />
+        Please enter your nickname.
       </h3>
-
-      {/* <SessionList /> */}
-      <JoinSessionForm session={session} />
+      <JoinSessionForm username={lastUsername} onSubmit={onSubmit} />
     </div>
   </section>
 );
 
-class SessionPage extends Component<Props> {
-  static defaultProps = {
-    user: null
+const LoadingSpinner = () => <h4>Loading...</h4>;
+
+interface Props {
+  host: string;
+  session: string;
+}
+
+interface State {
+  loading: boolean;
+  lastUsername: string;
+  username: string;
+}
+
+class SessionPage extends Component<Props, State> {
+  state = {
+    loading: true,
+    lastUsername: null,
+    username: null
   };
 
   static async getInitialProps({ req, query }: NextPageContext) {
     const host = req && req.headers && req.headers.host;
-    return { host, session: query.session, user: query.user };
+    return { host, session: query.session };
   }
 
   componentDidMount() {
     if (isDevelopment) {
       console.log("*** DEVELOPMENT MODE ***");
     }
+    this.fetchLastUsername();
   }
 
+  fetchLastUsername() {
+    // Get username from local storage
+    const username = window.localStorage.getItem("lastUsername");
+    if (username) {
+      this.setState({ lastUsername: username, loading: false });
+    } else {
+      this.setState({ loading: false });
+    }
+  }
+
+  handleUsernameSubmit = username => {
+    window.localStorage.setItem("lastUsername", username);
+    this.setState({ username });
+  };
+
   render() {
-    const { host, session, user } = this.props;
+    const { host, session } = this.props;
+    const { loading, username, lastUsername } = this.state;
+
     return (
       <Layout>
         <Head>
           <title>{`${session} :: flok`}</title>
         </Head>
-        {user ? (
+        {loading ? (
+          <LoadingSpinner />
+        ) : username ? (
           <Session
             websocketsHost={host}
             sessionName={session}
-            userName={user}
+            userName={username}
             extraIceServers={extraIceServers}
             layout={{
               editors: [
@@ -147,7 +186,11 @@ class SessionPage extends Component<Props> {
             }}
           />
         ) : (
-          <EmptySession session={session} />
+          <EmptySession
+            session={session}
+            lastUsername={lastUsername}
+            onSubmit={this.handleUsernameSubmit}
+          />
         )}
       </Layout>
     );
