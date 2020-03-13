@@ -1,5 +1,4 @@
 import React, { Component, ChangeEvent, FormEvent } from "react";
-import Router from "next/router";
 import Head from "next/head";
 import getConfig from "next/config";
 import { NextPageContext } from "next";
