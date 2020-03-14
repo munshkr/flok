@@ -8,10 +8,11 @@ $strong-color: #cccccc;
 
 html {
   background-color: $body-background-color;
+  overflow: hidden;
 }
 
 body {
-  overflow: overlay;
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar {
@@ -89,6 +90,10 @@ body {
 }
 
 @media only screen and (max-width: 600px) {
+  html {
+    overflow: scroll;
+  }
+
   .evaluate {
     float: right;
     display: block;

@@ -7,6 +7,8 @@ import Layout from "../../components/Layout";
 import Session from "../../components/Session";
 import { IceServerType } from "../../lib/SessionClient";
 
+const defaultLayoutList = ["tidal", "hydra"];
+
 const { publicRuntimeConfig } = getConfig();
 const {
   isDevelopment,
@@ -116,6 +118,7 @@ const LoadingSpinner = () => <h4>Loading...</h4>;
 interface Props {
   host: string;
   session: string;
+  layoutString: string;
 }
 
 interface State {
@@ -133,7 +136,7 @@ class SessionPage extends Component<Props, State> {
 
   static async getInitialProps({ req, query }: NextPageContext) {
     const host = req && req.headers && req.headers.host;
-    return { host, session: query.session };
+    return { host, session: query.session, layoutString: query.layout };
   }
 
   componentDidMount() {
@@ -153,19 +156,35 @@ class SessionPage extends Component<Props, State> {
     }
   }
 
-  handleUsernameSubmit = username => {
+  handleUsernameSubmit = (username: string) => {
     window.localStorage.setItem("lastUsername", username);
     this.setState({ username });
   };
 
+  generateLayoutFromList = (list: string[]) => {
+    return {
+      editors: list.map((target: string, i: number) => ({
+        id: String(i),
+        target
+      }))
+    };
+  };
+
   render() {
-    const { host, session } = this.props;
+    const { host, session, layoutString } = this.props;
     const { loading, username, lastUsername } = this.state;
+
+    let layoutList = defaultLayoutList;
+    if (layoutString) {
+      const layoutListFromString = layoutString.split(",");
+      layoutList = layoutListFromString;
+    }
+    const layout = this.generateLayoutFromList(layoutList);
 
     return (
       <Layout>
         <Head>
-          <title>{`${session} :: flok`}</title>
+          <title>Flok</title>
         </Head>
         {loading ? (
           <LoadingSpinner />
@@ -175,14 +194,7 @@ class SessionPage extends Component<Props, State> {
             sessionName={session}
             userName={username}
             extraIceServers={extraIceServers}
-            layout={{
-              editors: [
-                { id: "1", target: "tidal" },
-                { id: "2", target: "tidal" },
-                { id: "3", target: "tidal" },
-                { id: "4", target: "hydra" }
-              ]
-            }}
+            layout={layout}
           />
         ) : (
           <EmptySession

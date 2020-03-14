@@ -1,16 +1,12 @@
 import React, { Component } from "react";
-import dynamic from "next/dynamic";
 
 import { PubSubClient } from "flok-core";
 import TargetMessagesPane from "./TargetMessagesPane";
 import SessionClient, { IceServerType } from "../lib/SessionClient";
 import HydraCanvas from "./HydraCanvas";
+import Mosaic from "./Mosaic";
 
 const MAX_LINES: number = 100;
-
-const TextEditor = dynamic(() => import("./TextEditor"), {
-  ssr: false
-});
 
 type Message = {
   target: string;
@@ -243,32 +239,11 @@ class Session extends Component<Props, State> {
       <div>
         <HydraCanvas code={hydraCode} fullscreen />
         {showTextEditors && (
-          <React.Fragment>
-            <div className="columns is-multiline">
-              {layout.editors.slice(0, 4).map(({ id, target }) => (
-                <div key={id} className="column is-3">
-                  <TextEditor
-                    editorId={id}
-                    target={target}
-                    sessionClient={sessionClient}
-                    onEvaluateCode={this.handleEvaluateCode}
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="columns is-multiline">
-              {layout.editors.slice(4, 7).map(({ id, target }) => (
-                <div key={id} className="column is-4">
-                  <TextEditor
-                    editorId={id}
-                    target={target}
-                    sessionClient={sessionClient}
-                    onEvaluateCode={this.handleEvaluateCode}
-                  />
-                </div>
-              ))}
-            </div>
-          </React.Fragment>
+          <Mosaic
+            layout={layout}
+            sessionClient={sessionClient}
+            onEvaluateCode={this.handleEvaluateCode}
+          />
         )}
         {showTargetMessagesPane && messages && (
           <TargetMessagesPane
@@ -280,20 +255,6 @@ class Session extends Component<Props, State> {
             onClose={this.handleTargetMessagesPaneClose}
           />
         )}
-        <style jsx>
-          {`
-            .columns {
-              margin: 0;
-              padding: 0;
-              cursor: text;
-            }
-            .column {
-              margin: 0;
-              padding: 0;
-              box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
-            }
-          `}
-        </style>
       </div>
     );
   }
