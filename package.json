@@ -12,7 +12,7 @@
     "prepublishOnly": "lerna run prepublishOnly",
     "start": "cd packages/web && yarn start",
     "new-version": "lerna version --force-publish",
-    "publish-all": "lerna publish",
+    "publish-all": "lerna run publish",
     "release": "yarn new-version && yarn publish-all"
   },
   "husky": {
