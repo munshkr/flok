@@ -55,12 +55,13 @@ body {
     font-family: Monaco, monospace;
     font-size: 14px;
 
-    .CodeMirror-line span {
+    .CodeMirror-line > span {
+      border-radius: 4px;
+      padding: 1px;
       background-color: rgba(0, 0, 0, 0.6);
-      padding: 2px 0;
     }
 
-    .CodeMirror-line span .flash-selection {
+    .CodeMirror-line .flash-selection {
       background-color: #ffff77cc;
       color: #000;
     }
@@ -214,7 +215,11 @@ body {
 }
 
 .desc {
-  color: #333;
+  color: #888;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 4px;
   font-family: Monaco, monospace;
-  float: right;
+  font-size: 13px;
+  margin-left: 4px;
+  padding: 3px 5px;
 }

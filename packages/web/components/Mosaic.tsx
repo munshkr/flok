@@ -70,8 +70,9 @@ class Mosaic extends Component<Props> {
 
     return (
       <Fragment>
-        {rows.map(editors => (
+        {rows.map((editors, i) => (
           <Row
+            key={i}
             editors={editors}
             sessionClient={sessionClient}
             onEvaluateCode={onEvaluateCode}
