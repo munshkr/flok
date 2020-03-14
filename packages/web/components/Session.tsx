@@ -81,6 +81,8 @@ class Session extends Component<Props, State> {
       connect: true,
       reconnect: true,
       onMeMessage: (clientId: string) => {
+        if (!this.pubsubClient) return;
+
         // Subscribes to messages directed to ourselves
         this.pubsubClient.subscribe(
           `session:${sessionName}:user:${clientId}`,
