@@ -6,13 +6,14 @@ const TextEditor = dynamic(() => import("./TextEditor"), {
   ssr: false
 });
 
-const Row = ({ editors, sessionClient, onEvaluateCode }) => (
+const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode }) => (
   <div className="columns is-multiline">
     {editors.map(({ id, target }) => (
       <div key={id} className={`column is-${12 / editors.length}`}>
         <TextEditor
           editorId={id}
           target={target}
+          isHalfHeight={isHalfHeight}
           sessionClient={sessionClient}
           onEvaluateCode={onEvaluateCode}
         />
@@ -65,29 +66,18 @@ class Mosaic extends Component<Props> {
   render() {
     const { sessionClient, onEvaluateCode } = this.props;
 
+    const rows = this.editorsByRows();
+
     return (
       <Fragment>
-        {this.editorsByRows().map(editors => (
+        {rows.map(editors => (
           <Row
             editors={editors}
             sessionClient={sessionClient}
             onEvaluateCode={onEvaluateCode}
+            isHalfHeight={rows.length === 2}
           />
         ))}
-        <style jsx global>
-          {`
-            .columns {
-              margin: 0;
-              padding: 0;
-              cursor: text;
-            }
-            .column {
-              margin: 0;
-              padding: 0;
-              box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
-            }
-          `}
-        </style>
       </Fragment>
     );
   }

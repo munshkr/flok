@@ -36,23 +36,63 @@ body {
   color: $body-color;
 }
 
-.editor .CodeMirror {
-  height: 400px;
+.columns {
+  margin: 0;
+  padding: 0;
+  cursor: text;
+}
+.column {
+  margin: 0;
+  padding: 0;
+  box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
 }
 
-// Transparent background
-.CodeMirror {
-  background-color: rgba(0, 0, 0, 0) !important;
+.editor {
+  .CodeMirror {
+    // Transparent background
+    background-color: rgba(0, 0, 0, 0) !important;
+    height: 100vh;
+    font-family: Monaco, monospace;
+    font-size: 14px;
+
+    .CodeMirror-line span {
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 2px 0;
+    }
+
+    .CodeMirror-line span .flash-selection {
+      background-color: #ffff77cc;
+      color: #000;
+    }
+  }
+
+  &.is-half-height .CodeMirror {
+    height: 50vh;
+  }
 }
 
-.CodeMirror .CodeMirror-line span {
-  background-color: rgba(0, 0, 0, 0.6);
-  padding: 2px 0;
+.remote-caret {
+  position: absolute;
+  border-left: black;
+  border-left-style: solid;
+  border-left-width: 2px;
+  height: 1.1em;
 }
-
-.CodeMirror .CodeMirror-line span .flash-selection {
-  background-color: #ffff77cc;
-  color: #000;
+.remote-caret > div {
+  position: relative;
+  top: 1.5em;
+  left: -2px;
+  font-size: 14px;
+  background-color: rgb(250, 129, 0);
+  font-family: Monaco, monospace;
+  font-style: normal;
+  font-weight: normal;
+  line-height: normal;
+  user-select: none;
+  color: white;
+  padding-left: 2px;
+  padding-right: 2px;
+  z-index: 3;
 }
 
 .status {
@@ -171,4 +211,10 @@ body {
       }
     }
   }
+}
+
+.desc {
+  color: #333;
+  font-family: Monaco, monospace;
+  float: right;
 }

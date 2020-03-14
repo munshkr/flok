@@ -39,6 +39,7 @@ type Props = {
   sessionClient: SessionClient;
   editorId: string;
   target?: string;
+  isHalfHeight?: boolean;
   onEvaluateCode?: (args: EvaluateCodeArgs) => void;
   onEvaluateRemoteCode?: (args: EvaluateRemoteCodeArgs) => void;
   onCursorActivity?: (args: CursorActivityArgs) => void;
@@ -146,7 +147,7 @@ class TextEditor extends Component<Props, {}> {
   };
 
   render() {
-    const { editorId, target } = this.props;
+    const { editorId, isHalfHeight, target } = this.props;
 
     const defaultExtraKeys = {
       "Shift-Enter": this.evaluateLine,
@@ -171,9 +172,9 @@ class TextEditor extends Component<Props, {}> {
             onClick={this.handleEvaluateButtonClick}
           />
         </div>
-        {/* <span className="desc">{`${editorId} ${target}`}</span> */}
+        <span className="desc">{`${editorId} ${target}`}</span>
         <CodeMirror
-          className="editor"
+          className={`editor ${isHalfHeight && "is-half-height"}`}
           ref={el => {
             this.cm = el;
           }}
@@ -185,44 +186,6 @@ class TextEditor extends Component<Props, {}> {
             extraKeys
           }}
         />
-        {/* <style jsx>
-          {`
-            .desc {
-              color: #333;
-              font-family: Monaco, monospace;
-              float: right;
-            }
-          `}
-        </style> */}
-        <style jsx global>{`
-          .CodeMirror {
-            font-family: Monaco, monospace;
-            font-size: 14px;
-          }
-          .remote-caret {
-            position: absolute;
-            border-left: black;
-            border-left-style: solid;
-            border-left-width: 2px;
-            height: 1.1em;
-          }
-          .remote-caret > div {
-            position: relative;
-            top: 1.5em;
-            left: -2px;
-            font-size: 14px;
-            background-color: rgb(250, 129, 0);
-            font-family: Monaco, monospace;
-            font-style: normal;
-            font-weight: normal;
-            line-height: normal;
-            user-select: none;
-            color: white;
-            padding-left: 2px;
-            padding-right: 2px;
-            z-index: 3;
-          }
-        `}</style>
       </div>
     );
   }
