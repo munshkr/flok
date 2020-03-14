@@ -10,7 +10,10 @@
     "test": "lerna run test",
     "prepare": "lerna run prepare",
     "prepublishOnly": "lerna run prepublishOnly",
-    "start": "cd packages/web && yarn start"
+    "start": "cd packages/web && yarn start",
+    "new-version": "lerna version --force-publish",
+    "publish-all": "lerna publish",
+    "release": "yarn new-version && yarn publish-all"
   },
   "husky": {
     "hooks": {}
