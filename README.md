@@ -118,6 +118,8 @@ the `core` package is used both by `web` and `repl`, and even though they have
 the local `core` package automatically.  It also makes it easy to publish new
 versions by bumping them together.
 
+To bump a new version on all packages and release them together, run `yarn release`.
+
 
 ## Acknowledgments
 
