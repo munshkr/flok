@@ -24,13 +24,17 @@ Web-based P2P collaborative editor for live coding music and graphics
 
 ## Install
 
-Flok is written in TypeScript (currently migrating from JavaScript).  We
-recently started making (still experimental) releases on GitHub and NPM
-repositories. The easiest way to use Flok is to install the `web` and `repl`
-packages.
+Flok is written in TypeScript and Nodejs.  You will need to have installed Node
+versions 10 or 12.
+
+Go [here](https://nodejs.org/) to download Node.
+
+*Note*: Currently Node 13 is not supported because of a Hydra dependency.
+
+The easiest way to use Flok is to install the `repl` package.
 
 ```sh
-npm install -g flok-web flok-repl
+npm install -g flok-repl
 ```
 
 In the future there will also be a single portable [GUI
@@ -40,63 +44,84 @@ for now you'll have to use the terminal.
 
 ## Usage
 
+### Public server
+
+**WARNING - Please Read**: Using a public server can be dangerous as *anyone*
+can execute code on your computer via Flok, so *please* make sure you only
+share your session URL to trusted users and friends when you use a public
+server.  I will not be held responsible for any damaged caused by Flok.  You
+have been warned.  There is an
+[issue](https://github.com/munshkr/flok/issues/2) assigned to mitigate this
+security problem.
+
+This is a list of known public servers (up-to-date):
+
+* [flok.clic.cf](https://flok.clic.cf)
+* [flok-hub.herokuapp.com](https://flok-hub.herokuapp.com)
+
+#### Create a session
+
+When you enter a Flok server, you will be prompted to enter a list of targets.
+
+A target is the language or tool that Flok will communicate to create sound
+through `flok-repl`.  Enter the name of the targets, separated with commas.
+You can use a target multiple times and Flok will create that many number of
+slots to write code.  Currently the max. number of slots is 8.
+
+Examples:
+
+* `tidal,foxdot,hydra`: 3 slots, with tidal, foxdot and hydra respectively.
+* `sclang,sclang,sclang,hydra,hydra`: 5 slots total, the first 3 with `sclang`
+  and the last 2 with `hydra`.
+
+Now click on *Create session*.
+
+Next you will be shown a **token** and asked for a nickname. Take note of the
+token, as you will need it next.  Enter your nickname and click on *Join*.
+
+You are ready to start writing.
+
+#### Connect REPLs to Flok
+
+The last step is to start `flok-repl`, to connect Flok with your REPLs.
+
+You will need to specify the server where you created the session (or were
+invited to), the session *token* and the kind of REPL you want to start.
+
+For example, if your session token is `1a0c2df3-5931-46dd-9c7c-52932de15a5d`,
+to start a `tidal` REPL, run the following:
+
+```
+flok-repl -H wss://flok-hub.herokuapp.com -t tidal -s 1a0c2df3-5931-46dd-9c7c-52932de15a5d
+```
+
+If you need to start multiple REPLs, you will need to run them on separate
+terminals as currently `flok-repl` supports only one REPL at a time.
+
+
 ### Local server
 
-To start the server (hub), simply run:
+In case you don't have an Internet connection and/or you don't want to play
+Flok on a public server, you can easily start a local Flok server.
+
+Install `flok-web` package first:
+
+```sh
+npm install -g flok-web
+```
+
+To start the server, simply run:
 
 ```sh
 flok-web
 ```
 
-Then go to [http://localhost:3000](http://localhost:3000) and enter your
-nickname.  You will be redirected to another page with multiple editors. Copy
-the URL and send it to your friends.
+Your local server will be available on
+[http://localhost:3000](http://localhost:3000) from your computer.  To share
+the URL with your friends, change `localhost` with your local IP. See
+[how to find your local and external IP address](https://lifehacker.com/how-to-find-your-local-and-external-ip-address-5833108).
 
-You should now run a REPL for your language/interpreter. For example, to run
-`sclang` (SuperCollider interpreter) for session named `1a0c2df3-5931-46dd-9c7c-52932de15a5d`:
-
-```sh
-flok-repl -t sclang -s 1a0c2df3-5931-46dd-9c7c-52932de15a5d
-```
-
-This will start the sclang interpreter and connect it to Flok. Now, when you
-(or someone else) evaluates code in Flok, it will be sent to `sclang`.
-
-The default hub is your own computer (i.e. `ws://localhost:3000`).  If you want
-to connect to a remote hub on your LAN, for example to 192.168.0.5:
-
-```sh
-flok-repl -t sclang -s 1a0c2df3-5931-46dd-9c7c-52932de15a5d -H ws://192.168.0.5:3000
-```
-
-There is a list of known interpreters. Use `flok-repl --list-types` to list
-them.  You can run any command that accepts input from the standard input, like
-any language REPL.  For instance, to use with `cat`:
-
-```sh
-flok-repl cat
-```
-
-
-### Remote server
-
-**WARNING - Please Read**: As of today, using a public remote hub is extremely
-dangerous as *anyone* can evaluate code on your computer via Flok, to play
-sounds or writing files on your disk (any general purpose programming language
-can do that), so unless you made `flok-repl` run on a sandboxed environment,
-*please*, make sure only trusted users are using your session when you use a
-public hub.  I will not be held responsible for any damaged caused by Flok.
-You have been warned.  There is an
-[issue](https://github.com/munshkr/flok/issues/2) assigned to mitigate this
-security problem.
-
-There's currently a hub on `flok-hub.herokuapp.com`.  This public server runs
-on https, so you have to use `wss://` instead of `ws://` as you would normally
-on local servers.  For example, to start a `tidal` REPL, run the following:
-
-```
-flok-repl -H wss://flok-hub.herokuapp.com -t tidal -s 1a0c2df3-5931-46dd-9c7c-52932de15a5d
-```
+Follow the instructions on *Remote server - Create a session* section above.
 
 
 ## Development
