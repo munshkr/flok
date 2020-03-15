@@ -87,7 +87,7 @@ class TextEditor extends Component<Props, {}> {
     let end = null;
 
     for (let i = 0; i < lines.length; i += 1) {
-      const line = lines[i];
+      const line = lines[i].trimEnd();
       const lineLength = line.length;
       if (!start) {
         if (!lineLength) {
