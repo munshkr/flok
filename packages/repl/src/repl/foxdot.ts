@@ -12,7 +12,7 @@ class FoxDotREPL extends CommandREPL {
 
   // eslint-disable-next-line class-methods-use-this
   prepare(body: string): string {
-    return `${body.replace(/(\n)/gm, ' ').trim()}\n`;
+    return `execute\(\"${body.replace(/(\n)/gm, '\\n').replace(/(\")/gm, '\\"').trim()}\"\)\n`;
   }
 
   static commandPath(): string {
