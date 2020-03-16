@@ -142,8 +142,8 @@ class TextEditor extends Component<Props, {}> {
     });
   };
 
-  scLangFreeAll = () => {
-    this.evaluate("s.freeAll", -1, -1);
+scLangCmdPeriod = () => {
+    this.evaluate("CmdPeriod.run", -1, -1);
   };
 
   render() {
@@ -158,8 +158,8 @@ class TextEditor extends Component<Props, {}> {
     const extraKeys =
       target === "sclang"
         ? {
-            "Ctrl-.": this.scLangFreeAll,
-            "Cmd-.": this.scLangFreeAll,
+            "Ctrl-.": this.scLangCmdPeriod,
+            "Cmd-.": this.scLangCmdPeriod,
             ...defaultExtraKeys
           }
         : defaultExtraKeys;
