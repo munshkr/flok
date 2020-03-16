@@ -146,6 +146,10 @@ class TextEditor extends Component<Props, {}> {
     this.evaluate("s.freeAll", -1, -1);
   };
 
+  foxdotFreeAll = () => {
+    this.evaluate("Clock.clear()", -1, -1);
+  };
+
   render() {
     const { editorId, isHalfHeight, target } = this.props;
 
@@ -162,7 +166,11 @@ class TextEditor extends Component<Props, {}> {
             "Cmd-.": this.scLangFreeAll,
             ...defaultExtraKeys
           }
-        : defaultExtraKeys;
+        : target === "foxdot" ? {
+            "Ctrl-.": this.foxdotFreeAll,
+            "Cmd-.": this.foxdotFreeAll,
+            ...defaultExtraKeys          
+        } : defaultExtraKeys;
 
     return (
       <div>
