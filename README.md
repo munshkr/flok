@@ -1,5 +1,8 @@
 # Flok
 
+[![build status](https://img.shields.io/travis/munshkr/flok/master.svg?style=flat-square)](https://travis-ci.org/munshkr/flok)
+[![gitter chat](https://img.shields.io/gitter/room/munshkr/flok.svg?style=flat-square)](https://gitter.im/munshkr/flok)
+
 Web-based P2P collaborative editor for live coding music and graphics
 
 *Work in progress*
