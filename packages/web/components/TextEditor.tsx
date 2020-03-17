@@ -142,7 +142,7 @@ class TextEditor extends Component<Props, {}> {
     });
   };
 
-scLangCmdPeriod = () => {
+  scLangCmdPeriod = () => {
     this.evaluate("CmdPeriod.run", -1, -1);
   };
 
