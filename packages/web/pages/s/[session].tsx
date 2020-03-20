@@ -114,6 +114,15 @@ const EmptySession = ({ websocketsUrl, session, lastUsername, onSubmit }) => (
         <code>
           flok-repl -H {websocketsUrl} -s {session} -t tidal
         </code>
+        <br />
+        For more information, read{" "}
+        <a
+          target="_blank"
+          href="https://github.com/munshkr/flok#connect-repls-to-flok"
+        >
+          here
+        </a>
+        .
       </p>
       <JoinSessionForm username={lastUsername} onSubmit={onSubmit} />
     </div>
