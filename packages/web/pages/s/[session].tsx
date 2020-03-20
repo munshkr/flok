@@ -100,7 +100,7 @@ class JoinSessionForm extends Component<{
   }
 }
 
-const EmptySession = ({ session, lastUsername, onSubmit }) => (
+const EmptySession = ({ websocketsUrl, session, lastUsername, onSubmit }) => (
   <section className="section">
     <div className="container">
       <h1 className="title">flok</h1>
@@ -108,6 +108,13 @@ const EmptySession = ({ session, lastUsername, onSubmit }) => (
         You are trying to join session with token: <code>{session}</code>.<br />
         Please enter your nickname.
       </h3>
+      <p className="content">
+        To connect a REPL, for example, <code>tidal</code>, run on a terminal:
+        <br />
+        <code>
+          flok-repl -H {websocketsUrl} -s {session} -t tidal
+        </code>
+      </p>
       <JoinSessionForm username={lastUsername} onSubmit={onSubmit} />
     </div>
   </section>
@@ -125,13 +132,15 @@ interface State {
   loading: boolean;
   lastUsername: string;
   username: string;
+  websocketsUrl: string;
 }
 
 class SessionPage extends Component<Props, State> {
   state = {
     loading: true,
     lastUsername: null,
-    username: null
+    username: null,
+    websocketsUrl: null
   };
 
   static async getInitialProps({ req, query }: NextPageContext) {
@@ -143,6 +152,13 @@ class SessionPage extends Component<Props, State> {
     if (isDevelopment) {
       console.log("*** DEVELOPMENT MODE ***");
     }
+
+    // Set Websockets URL
+    const { host } = this.props;
+    const protocol = location.protocol === "https:" ? "wss:" : "ws:";
+    const websocketsUrl = `${protocol}//${host}`;
+    this.setState({ websocketsUrl });
+
     this.fetchLastUsername();
   }
 
@@ -172,7 +188,7 @@ class SessionPage extends Component<Props, State> {
 
   render() {
     const { host, session, layoutString } = this.props;
-    const { loading, username, lastUsername } = this.state;
+    const { loading, username, lastUsername, websocketsUrl } = this.state;
 
     let layoutList = defaultLayoutList;
     if (layoutString) {
@@ -198,6 +214,7 @@ class SessionPage extends Component<Props, State> {
           />
         ) : (
           <EmptySession
+            websocketsUrl={websocketsUrl}
             session={session}
             lastUsername={lastUsername}
             onSubmit={this.handleUsernameSubmit}
