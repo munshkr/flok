@@ -11,7 +11,7 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "server": "cross-env PORT=3001 node lib/signaling-server.js",
     "test": "exit 0",
-    "publish": "yarn publish",
+    "publish-current": "yarn publish --non-interactive",
     "prepare": "yarn build",
     "prepublishOnly": "yarn test"
   },

@@ -15,7 +15,7 @@
     "prepare": "yarn build",
     "prepublishOnly": "yarn test",
     "preversion": "exit 0",
-    "publish": "yarn publish",
+    "publish-current": "yarn publish --non-interactive",
     "test": "exit 0"
   },
   "dependencies": {
