@@ -84,7 +84,7 @@ if (useDefaultREPL) {
 replClient.start();
 
 replClient.emitter.on('data', data => {
-  const shortClientId = replClient.pubSub._id.slice(0, 7);
+  const shortClientId = replClient.pubSub._id ? replClient.pubSub._id.slice(0, 7) : 'unknown';
   const line = data.lines.join('\n> ');
   if (line) {
     if (data.type === 'stderr') {
