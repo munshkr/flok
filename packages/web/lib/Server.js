@@ -8,6 +8,8 @@ const path = require("path");
 const WebSocket = require("ws");
 const map = require("lib0/dist/map.cjs");
 const { PubSub } = require("flok-core");
+const process = require("process");
+const sslRedirect = require("./sslRedirect");
 
 const wsReadyStateConnecting = 0;
 const wsReadyStateOpen = 1;
@@ -36,11 +38,12 @@ const send = (conn, message) => {
 
 class Server {
   constructor(ctx) {
-    const { host, port, isDevelopment } = ctx;
+    const { host, port, isDevelopment, redirectHttps } = ctx;
 
     this.host = host || "0.0.0.0";
     this.port = port || 3000;
     this.isDevelopment = isDevelopment || false;
+    this.redirectHttps = redirectHttps || false;
 
     this.started = false;
     this._topics = new Map();
@@ -95,6 +98,15 @@ class Server {
       });
       // eslint-disable-next-line no-param-reassign
       app.pubsub = pubSubServer;
+
+      if (this.redirectHttps) {
+        console.log("> Going to redirect http to https");
+        app.use(
+          sslRedirect({
+            port: process.env.NODE_ENV === "production" ? null : this.port
+          })
+        );
+      }
 
       // Let Next to handle everything else
       app.get("*", (req, res) => {

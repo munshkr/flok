@@ -8,11 +8,17 @@ program
   .version(packageInfo.version)
   .option("-H, --host [HOST]", "Server host", "0.0.0.0")
   .option("-P, --port [PORT]", "Server port", 3000)
+  .option(
+    "--redirect-https",
+    "Automatically redirect to https (use SSL)",
+    false
+  )
   .parse(process.argv);
 
 const server = new Server({
   host: program.host,
-  port: program.port
+  port: program.port,
+  redirectHttps: program.redirectHttps
 });
 
 server.start();

@@ -9,10 +9,17 @@ if (require.main === module) {
   const process = require("process");
   const host = process.env.HOST;
   const port = process.env.PORT;
+  const redirectHttps = process.env.REDIRECT_HTTPS === "1";
   const isDevelopment = process.env.NODE_ENV !== "production";
 
   const mongoDbUri = process.env.MONGODB_URI;
 
-  const server = new Server({ host, port, isDevelopment, mongoDbUri });
+  const server = new Server({
+    host,
+    port,
+    isDevelopment,
+    redirectHttps,
+    mongoDbUri
+  });
   server.start();
 }
