@@ -161,6 +161,27 @@ body {
   height: 20em;
   width: 100%;
 
+  .tabs {
+    margin-bottom: 0.25em;
+
+    li.is-active a {
+      color: #4b8ffd;
+      border-bottom-color: #4b8ffd;
+    }
+    a {
+      color: #888;
+      border-bottom-color: #00000000;
+      padding: 0.1em 0.25em;
+    }
+    a:hover {
+      color: #fefefe;
+      border-bottom-color: #00000000;
+    }
+    ul {
+      border-bottom-color: #00000000;
+    }
+  }
+
   .scrollable-content {
     height: 100%;
     overflow: auto;

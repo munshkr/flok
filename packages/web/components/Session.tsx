@@ -1,17 +1,12 @@
 import React, { Component } from "react";
 
 import { PubSubClient } from "flok-core";
-import TargetMessagesPane from "./TargetMessagesPane";
+import TargetMessagesPane, { Message } from "./TargetMessagesPane";
 import SessionClient, { IceServerType } from "../lib/SessionClient";
 import HydraCanvas from "./HydraCanvas";
 import Mosaic from "./Mosaic";
 
 const MAX_LINES: number = 100;
-
-type Message = {
-  target: string;
-  content: string;
-};
 
 type Props = {
   websocketsHost: string;
@@ -29,7 +24,7 @@ type Props = {
 type State = {
   showTargetMessagesPane: boolean;
   showTextEditors: boolean;
-  messages: Message[];
+  messagesByClientId: { [clientId: string]: Message[] };
   messagesPaneIsTop: boolean;
   messagesPaneIsMaximized: boolean;
   hydraCode: string;
@@ -39,7 +34,7 @@ class Session extends Component<Props, State> {
   state: State = {
     showTargetMessagesPane: false,
     showTextEditors: false,
-    messages: [],
+    messagesByClientId: {},
     messagesPaneIsTop: false,
     messagesPaneIsMaximized: false,
     hydraCode: ""
@@ -149,7 +144,7 @@ class Session extends Component<Props, State> {
       user
     };
 
-    this.setState({ messages: [], showTargetMessagesPane: false });
+    this.setState({ messagesByClientId: {}, showTargetMessagesPane: false });
 
     if (target === "hydra") {
       this.setState({ hydraCode: body });
@@ -188,10 +183,17 @@ class Session extends Component<Props, State> {
 
   handleMessageTarget = ({ target, content }) => {
     console.debug(`[message] [target=${target}] ${JSON.stringify(content)}`);
+
     this.setState(prevState => {
-      const allMessages = [...prevState.messages, { target, content }];
+      const clientId = content.clientId || "default";
+      const prevMessages = prevState.messagesByClientId[clientId] || [];
+      const allMessages = [...prevMessages, { target, content }];
+
       return {
-        messages: allMessages.slice(-MAX_LINES, allMessages.length),
+        messagesByClientId: {
+          ...prevState.messagesByClientId,
+          [clientId]: allMessages.slice(-MAX_LINES, allMessages.length)
+        },
         showTargetMessagesPane: true
       };
     });
@@ -219,7 +221,7 @@ class Session extends Component<Props, State> {
 
   render() {
     const {
-      messages,
+      messagesByClientId,
       showTextEditors,
       showTargetMessagesPane,
       messagesPaneIsTop,
@@ -241,9 +243,9 @@ class Session extends Component<Props, State> {
             onEvaluateCode={this.handleEvaluateCode}
           />
         )}
-        {showTargetMessagesPane && messages && (
+        {showTargetMessagesPane && messagesByClientId && (
           <TargetMessagesPane
-            messages={messages}
+            messagesByClientId={messagesByClientId}
             isTop={messagesPaneIsTop}
             isMaximized={messagesPaneIsMaximized}
             onTogglePosition={this.handleTargetMessagesPaneTogglePosition}
