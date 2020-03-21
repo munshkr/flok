@@ -84,16 +84,17 @@ if (useDefaultREPL) {
 replClient.start();
 
 replClient.emitter.on('data', data => {
+  const shortClientId = replClient.pubSub._id.slice(0, 7);
   const line = data.lines.join('\n> ');
   if (line) {
     if (data.type === 'stderr') {
-      process.stderr.write(`> ${line}\n`);
+      process.stderr.write(`[${shortClientId} err] ${line}\n`);
     } else if (data.type === 'stdout') {
-      process.stdout.write(`> ${line}\n`);
+      process.stdout.write(`[${shortClientId} out] ${line}\n`);
     } else if (data.type === 'stdin') {
-      process.stdout.write(`< ${line}\n`);
+      process.stdout.write(`[${shortClientId} in ] ${line}\n`);
     } else {
-      process.stdout.write(`[data] ${JSON.stringify(data)}\n`);
+      process.stdout.write(`[${shortClientId} ???] ${JSON.stringify(data)}\n`);
     }
   }
 });

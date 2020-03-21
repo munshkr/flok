@@ -125,6 +125,7 @@ class CommandREPL extends BaseREPL {
 
   _handleData(data: any, type: string) {
     const { target, session } = this;
+    const clientId = this.pubSub._id;
     const newBuffer = this._buffers[type].concat(data.toString());
     const lines = newBuffer.split('\n');
 
@@ -134,12 +135,14 @@ class CommandREPL extends BaseREPL {
 
     if (lines.length > 0) {
       this.pubSub.publish(`session:${session}:target:${target}:out`, {
+        clientId,
         target,
         type,
         body: lines,
       });
       if (this._lastUserName) {
         this.pubSub.publish(`user:${this._lastUserName}`, {
+          clientId,
           target,
           type,
           body: lines,
