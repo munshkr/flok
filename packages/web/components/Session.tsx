@@ -27,6 +27,7 @@ type Props = {
 };
 
 type State = {
+  pubsubClientId: string;
   showTargetMessagesPane: boolean;
   showTextEditors: boolean;
   messages: Message[];
@@ -37,6 +38,7 @@ type State = {
 
 class Session extends Component<Props, State> {
   state: State = {
+    pubsubClientId: null,
     showTargetMessagesPane: false,
     showTextEditors: false,
     messages: [],
@@ -83,6 +85,8 @@ class Session extends Component<Props, State> {
       onMeMessage: (clientId: string) => {
         if (!this.pubsubClient) return;
 
+        this.setState({ pubsubClientId: clientId });
+
         // Subscribes to messages directed to ourselves
         this.pubsubClient.subscribe(
           `session:${sessionName}:user:${clientId}`,
@@ -103,7 +107,19 @@ class Session extends Component<Props, State> {
         });
       },
       onClose: () => {
-        // TODO Try to reconnect...
+        const clientId = this.state.pubsubClientId;
+        this.pubsubClient.unsubscribe(
+          `session:${sessionName}:user:${clientId}`
+        );
+
+        targets.forEach(target => {
+          this.pubsubClient.unsubscribe(
+            `session:${sessionName}:target:${target}:eval`
+          );
+          this.pubsubClient.unsubscribe(
+            `session:${sessionName}:target:${target}:out`
+          );
+        });
       }
     });
   }
