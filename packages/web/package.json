@@ -1,7 +1,7 @@
 {
   "name": "flok-web",
   "description": "Web server for Flok",
-  "version": "0.3.10",
+  "version": "0.3.11",
   "main": "index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
@@ -29,7 +29,7 @@
     "core-js": "^2.6.11",
     "cross-env": "^7.0.0",
     "express": "^4.17.1",
-    "flok-core": "^0.3.10",
+    "flok-core": "^0.3.11",
     "gpucomputationrender-three": "^2.0.0",
     "hydra-synth": "^1.0.27",
     "lib0": "^0.2.12",
