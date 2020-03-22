@@ -107,6 +107,31 @@ flok-repl -H wss://flok-hub.herokuapp.com -t tidal -s 1a0c2df3-5931-46dd-9c7c-52
 If you need to start multiple REPLs, you will need to run them on separate
 terminals as currently `flok-repl` supports only one REPL at a time.
 
+#### SuperCollider
+
+In the case of SuperCollider, there are two types of REPLs: `sclang` and
+`remote_sclang`. The first one tries to run a `sclang` process and interact
+with it, while the second one uses
+[FlokQuark](https://github.com/munshkr/FlokQuark) to communicate with SC.  Read
+[more](https://github.com/munshkr/FlokQuark/blob/master/README.md) for
+installing and using it.
+
+
+##### `sclang` vs. `remote_sclang`
+
+* As of today `sclang` does not currently work on Windows, you will have to use
+`remote_sclang`.
+
+* `remote_sclang` needs SC IDE to be running, and you need FlokQuark installed
+  and running there.
+
+* If you use `remote_sclang`, you won't see Post messages from Flok, because
+  FlokQuark does not currently capture Post messages and errors.  It is
+  recommended to deattach the Post window and have it visible while using Flok.
+
+* `sclang` can't use any GUI object (like Scopes, Proxy mixers, etc.). You will
+* need to use `remote_sclang` + SC IDE for this.
+
 
 ### Local server
 
