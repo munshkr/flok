@@ -8,7 +8,7 @@ Web-based P2P collaborative editor for live coding music and graphics
 *Work in progress*
 
 
-## Features / Ideas
+## Features
 
 * Similar to Etherpad, but focused on code evaluation for livecoding.
 * REPL plugins: allows user to locally evaluate code from interpreters (like
@@ -16,13 +16,13 @@ Web-based P2P collaborative editor for live coding music and graphics
   - [TidalCycles](https://tidalcycles.org/)
   - [SuperCollider](https://supercollider.github.io/) (sclang)
   - [FoxDot](https://foxdot.org/)
-  - [SonicPi](https://sonic-pi.net/)
+  - [SonicPi](https://sonic-pi.net/) (not implemented yet)
   - ... any interpreter with a REPL (Python, Ruby, etc.)
 * Web Plugins, for languages embedded in editor (*not implemented yet*):
   - [Hydra](https://github.com/ojack/hydra)
-  - [VEDA.js](https://github.com/fand/vedajs)
-  - [p5.js](https://p5js.org/)
-  - [Tilt](https://github.com/munshkr/tilt)
+  - [VEDA.js](https://github.com/fand/vedajs) (not implemented yet)
+  - [p5.js](https://p5js.org/) (not implemented yet)
+  - [Tilt](https://github.com/munshkr/tilt) (not implemented yet)
 
 
 ## Install
@@ -107,32 +107,6 @@ flok-repl -H wss://flok-hub.herokuapp.com -t tidal -s 1a0c2df3-5931-46dd-9c7c-52
 If you need to start multiple REPLs, you will need to run them on separate
 terminals as currently `flok-repl` supports only one REPL at a time.
 
-#### SuperCollider
-
-In the case of SuperCollider, there are two types of REPLs: `sclang` and
-`remote_sclang`. The first one tries to run a `sclang` process and interact
-with it, while the second one uses
-[FlokQuark](https://github.com/munshkr/FlokQuark) to communicate with SC.  Read
-[more](https://github.com/munshkr/FlokQuark/blob/master/README.md) for
-installing and using it.
-
-
-##### `sclang` vs. `remote_sclang`
-
-* As of today `sclang` does not currently work on Windows, you will have to use
-`remote_sclang`.
-
-* `remote_sclang` needs SC IDE to be running, and you need FlokQuark installed
-  and running there.
-
-* If you use `remote_sclang`, you won't see Post messages from Flok, because
-  FlokQuark does not currently capture Post messages and errors.  It is
-  recommended to deattach the Post window and have it visible while using Flok.
-
-* `sclang` can't use any GUI object (like Scopes, Proxy mixers, etc.). You will
-* need to use `remote_sclang` + SC IDE for this.
-
-
 ### Local server
 
 In case you don't have an Internet connection and/or you don't want to play
@@ -166,6 +140,71 @@ then they should run:
 ```sh
 flok-repl -h ws://192.168.0.5:3000 -t tidal -s 1a0c2df3-5931-46dd-9c7c-52932de15a5d
 ```
+
+### Supported REPL targets
+
+#### TidalCycles
+
+Use `flok-repl` with the `-t tidal` parameter.
+
+You can specify custom options with the `--extra` parameter, by passing a JSON object, like this:
+
+`--extra '{ "bootScript": "/path/to/my/boot.hs", "useStack": true }'`
+
+##### Extra options
+
+* `bootScript`: Path to a custom initialization script.
+
+* `useStack`: Uses `stack exec -- ghci` instead of plain `ghci`. Use this if
+  you installed Tidal using Stack.
+
+
+#### FoxDot
+
+Use `flok-repl` with the `-t foxdot` parameter.
+
+
+#### SuperCollider
+
+In the case of SuperCollider, there are two types of REPLs: `sclang` and
+`remote_sclang`. The first one tries to run a `sclang` process and interact
+with it, while the second one uses
+[FlokQuark](https://github.com/munshkr/FlokQuark) to communicate with SC.  Read
+[more](https://github.com/munshkr/FlokQuark/blob/master/README.md) for
+installing and using it.
+
+
+##### `sclang` vs. `remote_sclang`
+
+* As of today `sclang` does not currently work on Windows, you will have to use
+`remote_sclang`.
+
+* `remote_sclang` needs SC IDE to be running, and you need FlokQuark installed
+  and running there.
+
+* If you use `remote_sclang`, you won't see Post messages from Flok, because
+  FlokQuark does not currently capture Post messages and errors.  It is
+  recommended to deattach the Post window and have it visible while using Flok.
+
+* `sclang` can't use any GUI object (like Scopes, Proxy mixers, etc.). You will
+* need to use `remote_sclang` + SC IDE for this.
+
+
+
+#### Hydra
+
+Hydra is already included in the web App. You don't need to install anything as
+it runs on the browser.  Just use the `hydra` target to execute Hydra code.
+
+If you want to use the screen capturing feature, you will need to install a
+specific [Chrome
+extension](https://github.com/munshkr/flok-hydra-chrome-extension) for Flok,
+that gives permissions to capture the desktop screen from within the current
+public servers.
+
+Read
+[more](https://github.com/munshkr/flok-hydra-chrome-extension/blob/master/README.md)
+on how to install the extension.
 
 
 ## Development
