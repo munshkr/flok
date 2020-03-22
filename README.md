@@ -187,8 +187,7 @@ installing and using it.
   recommended to deattach the Post window and have it visible while using Flok.
 
 * `sclang` can't use any GUI object (like Scopes, Proxy mixers, etc.). You will
-* need to use `remote_sclang` + SC IDE for this.
-
+  need to use `remote_sclang` + SC IDE for this.
 
 
 #### Hydra
