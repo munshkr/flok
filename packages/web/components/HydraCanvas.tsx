@@ -40,6 +40,11 @@ class HydraCanvas extends Component<Props, State> {
     // eslint-disable-next-line global-require
     const Hydra = require("hydra-synth");
 
+    // eslint-disable-next-line global-require
+    const P5 = require("p5");
+
+    window.P5 = P5
+
     // For some reason on Android mobile, Chrome has this object undefined:
     if (!window.navigator.mediaDevices) return;
 
