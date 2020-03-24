@@ -35,7 +35,7 @@ type CursorActivityArgs = {
   column: number;
 };
 
-type Props = {
+interface Props {
   sessionClient: SessionClient;
   editorId: string;
   target?: string;
@@ -43,7 +43,17 @@ type Props = {
   onEvaluateCode?: (args: EvaluateCodeArgs) => void;
   onEvaluateRemoteCode?: (args: EvaluateRemoteCodeArgs) => void;
   onCursorActivity?: (args: CursorActivityArgs) => void;
-};
+}
+
+const EvaluateButton = ({ onClick }) => (
+  <div className="evaluate">
+    <Button icon={faPlayCircle} onClick={onClick} />
+  </div>
+);
+
+const Description = ({ editorId, target }) => (
+  <span className="desc">{`${editorId} ${target}`}</span>
+);
 
 class TextEditor extends Component<Props, {}> {
   static defaultProps = {
@@ -87,7 +97,7 @@ class TextEditor extends Component<Props, {}> {
     let end = null;
 
     for (let i = 0; i < lines.length; i += 1) {
-      const line = lines[i].replace(/\t/g, '    ').trimEnd();
+      const line = lines[i].replace(/\t/g, "    ").trimEnd();
       const lineLength = line.length;
       if (!start) {
         if (!lineLength) {
@@ -129,7 +139,7 @@ class TextEditor extends Component<Props, {}> {
     return onEvaluateRemoteCode({ editorId, target, body });
   };
 
-  handleEvaluateButtonClick = () => {
+  handleEvaluateButtonClick = (e: MouseEvent) => {
     const { editorId, target, onEvaluateCode } = this.props;
     const { editor } = this.cm;
 
@@ -166,33 +176,32 @@ class TextEditor extends Component<Props, {}> {
             "Cmd-.": this.scLangCmdPeriod,
             ...defaultExtraKeys
           }
-        : target === "foxdot" ? {
+        : target === "foxdot"
+        ? {
             "Ctrl-.": this.foxdotFreeAll,
             "Cmd-.": this.foxdotFreeAll,
-            ...defaultExtraKeys          
-        } : defaultExtraKeys;
+            ...defaultExtraKeys
+          }
+        : defaultExtraKeys;
+
+    const options = {
+      mode: "haskell",
+      theme: "material",
+      lineNumbers: false,
+      lineWrapping: true,
+      extraKeys
+    };
 
     return (
       <div>
-        <div className="evaluate">
-          <Button
-            icon={faPlayCircle}
-            onClick={this.handleEvaluateButtonClick}
-          />
-        </div>
-        <span className="desc">{`${editorId} ${target}`}</span>
+        <EvaluateButton onClick={this.handleEvaluateButtonClick} />
+        <Description editorId={editorId} target={target} />
         <CodeMirror
           className={`editor ${isHalfHeight && "is-half-height"}`}
           ref={el => {
             this.cm = el;
           }}
-          options={{
-            mode: "haskell",
-            theme: "material",
-            lineNumbers: false,
-            lineWrapping: true,
-            extraKeys
-          }}
+          options={options}
         />
       </div>
     );

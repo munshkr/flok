@@ -2,10 +2,10 @@ import React, { MouseEvent } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
-type Props = {
+interface Props {
   icon: IconProp;
   onClick: (e: MouseEvent) => void;
-};
+}
 
 const Button = ({ icon, onClick }: Props) => (
   <a onClick={onClick}>
