@@ -39,11 +39,10 @@ class HydraCanvas extends Component<Props, State> {
 
     // eslint-disable-next-line global-require
     const Hydra = require("hydra-synth");
-
     // eslint-disable-next-line global-require
-    const P5 = require("p5");
+    const P5 = require("../lib/p5-wrapper");
 
-    window.P5 = P5
+    window.P5 = P5;
 
     // For some reason on Android mobile, Chrome has this object undefined:
     if (!window.navigator.mediaDevices) return;
@@ -88,8 +87,9 @@ class HydraCanvas extends Component<Props, State> {
     console.debug(evalCode);
     window.H = this.hydra;
     try {
+      // eval(evalCode);
       // eslint-disable-next-line no-eval
-      eval(evalCode);
+      eval.call(window, evalCode);
       this.setState({ error: null });
     } catch (error) {
       this.setState({ error: String(error) });
