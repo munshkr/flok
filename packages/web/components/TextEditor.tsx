@@ -7,8 +7,12 @@ import SessionClient from "../lib/SessionClient";
 import Button from "./Button";
 
 import "codemirror/lib/codemirror.css";
-import "codemirror/mode/haskell/haskell";
+
 import "codemirror/mode/javascript/javascript";
+import "codemirror/mode/python/python";
+import "codemirror/mode/haskell/haskell";
+import "codemirror/mode/smalltalk/smalltalk";
+
 import "codemirror/theme/material.css";
 import "codemirror/addon/scroll/simplescrollbars";
 import "codemirror/addon/scroll/simplescrollbars.css";
@@ -44,6 +48,13 @@ interface Props {
   onEvaluateRemoteCode?: (args: EvaluateRemoteCodeArgs) => void;
   onCursorActivity?: (args: CursorActivityArgs) => void;
 }
+
+const modesByTarget = {
+  tidal: "haskell",
+  foxdot: "python",
+  sclang: "smalltalk",
+  hydra: "javascript"
+};
 
 const EvaluateButton = ({ onClick }) => (
   <div className="evaluate">
@@ -184,8 +195,10 @@ class TextEditor extends Component<Props, {}> {
           }
         : defaultExtraKeys;
 
+    const mode = modesByTarget[target] || "javascript";
+
     const options = {
-      mode: "haskell",
+      mode,
       theme: "material",
       lineNumbers: false,
       lineWrapping: true,
