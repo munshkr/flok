@@ -16,13 +16,13 @@ Web-based P2P collaborative editor for live coding music and graphics
   - [TidalCycles](https://tidalcycles.org/)
   - [SuperCollider](https://supercollider.github.io/) (sclang)
   - [FoxDot](https://foxdot.org/)
-  - [SonicPi](https://sonic-pi.net/) (not implemented yet)
+  - [SonicPi](https://sonic-pi.net/) (*not implemented yet*)
   - ... any interpreter with a REPL (Python, Ruby, etc.)
-* Web Plugins, for languages embedded in editor (*not implemented yet*):
+* Web Plugins, for languages embedded in editor:
   - [Hydra](https://github.com/ojack/hydra)
-  - [VEDA.js](https://github.com/fand/vedajs) (not implemented yet)
-  - [p5.js](https://p5js.org/) (not implemented yet)
-  - [Tilt](https://github.com/munshkr/tilt) (not implemented yet)
+  - [p5.js](https://p5js.org/)
+  - [VEDA.js](https://github.com/fand/vedajs) (*not implemented yet*)
+  - [Tilt](https://github.com/munshkr/tilt) (*not implemented yet*)
 
 
 ## Install
