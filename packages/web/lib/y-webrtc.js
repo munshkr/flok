@@ -287,16 +287,17 @@ export class WebrtcConn {
    */
   constructor(signalingConn, initiator, remotePeerId, room, extraIceServers) {
     log("establishing connection to ", logging.BOLD, remotePeerId);
+
     const iceServers = [...defaultIceServers, ...extraIceServers];
+
     this.room = room;
     this.remotePeerId = remotePeerId;
     this.closed = false;
     this.connected = false;
     this.synced = false;
-    /**
-     * @type {any}
-     */
+
     this.peer = new Peer({ initiator, config: { iceServers } });
+
     this.peer.on("signal", signal => {
       publishSignalingMessage(signalingConn, room, {
         to: remotePeerId,
@@ -305,6 +306,7 @@ export class WebrtcConn {
         signal
       });
     });
+
     this.peer.on("connect", () => {
       log("connected to ", logging.BOLD, remotePeerId);
       this.connected = true;
@@ -330,6 +332,7 @@ export class WebrtcConn {
         sendWebrtcConn(this, enc);
       }
     });
+
     this.peer.on("close", () => {
       this.connected = false;
       this.closed = true;
@@ -348,10 +351,12 @@ export class WebrtcConn {
       this.peer.destroy();
       log("closed connection to ", logging.BOLD, remotePeerId);
     });
+
     this.peer.on("error", err => {
       announceSignalingInfo(room);
       log("error in connection to ", logging.BOLD, remotePeerId, ": ", err);
     });
+
     this.peer.on("data", data => {
       const answer = readPeerMessage(this, data);
       if (answer !== null) {
