@@ -1,25 +1,25 @@
 import { CommandREPL, CommandREPLContext } from '../repl';
-import * as os from 'os';
 
 class FoxDotREPL extends CommandREPL {
   constructor(ctx: CommandREPLContext) {
-    super({
-      ...ctx,
-      command: FoxDotREPL.commandPath(),
-      args: ['-i', '-c', '"from FoxDot import *"']
-    });
+    super(ctx);
+
+    this.command = this.commandPath();
+    this.args = ['-i', '-c', '"from FoxDot import *"'];
   }
 
   // eslint-disable-next-line class-methods-use-this
   prepare(body: string): string {
-    return `execute\(\"${body.replace(/(\n)/gm, '\\n').replace(/(\")/gm, '\\"').trim()}\"\)\n`;
+    return `execute\(\"${body
+      .replace(/(\n)/gm, '\\n')
+      .replace(/(\")/gm, '\\"')
+      .trim()}\"\)\n`;
   }
 
-  static commandPath(): string {
-    // FIXME: On Linux and Darwin, it should try to run `which`, and if it
-    // fails, use default paths like these.
-    return 'python3';
+  commandPath(): string {
+    const { python } = this.extraOptions;
+    return python || 'python';
   }
 }
 
-export default FoxDotREPL
+export default FoxDotREPL;
