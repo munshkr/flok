@@ -163,12 +163,19 @@ class TextEditor extends Component<Props, {}> {
     });
   };
 
-  scLangCmdPeriod = () => {
-    this.evaluate("CmdPeriod.run", -1, -1);
-  };
+  freeAllSoundCode() {
+    const { target } = this.props;
+    if (target === "tidal") {
+      return "hush";
+    } else if (target === "sclang" || target === "remote_sclang") {
+      return "CmdPeriod.run";
+    } else if (target === "foxdot") {
+      return "Clock.clear()";
+    }
+  }
 
-  foxdotFreeAll = () => {
-    this.evaluate("Clock.clear()", -1, -1);
+  freeAllSound = () => {
+    this.evaluate(this.freeAllSoundCode(), -1, -1);
   };
 
   render() {
@@ -180,20 +187,11 @@ class TextEditor extends Component<Props, {}> {
       "Cmd-Enter": this.evaluateParagraph
     };
 
-    const extraKeys =
-      target === "sclang"
-        ? {
-            "Ctrl-.": this.scLangCmdPeriod,
-            "Cmd-.": this.scLangCmdPeriod,
-            ...defaultExtraKeys
-          }
-        : target === "foxdot"
-        ? {
-            "Ctrl-.": this.foxdotFreeAll,
-            "Cmd-.": this.foxdotFreeAll,
-            ...defaultExtraKeys
-          }
-        : defaultExtraKeys;
+    const extraKeys = {
+      "Ctrl-.": this.freeAllSound,
+      "Cmd-.": this.freeAllSound,
+      ...defaultExtraKeys
+    };
 
     const mode = modesByTarget[target] || "javascript";
 
