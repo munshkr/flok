@@ -34,8 +34,10 @@ class TidalREPL extends CommandREPL {
       const firstLine = dataDir.split('\n')[0];
       return firstLine.substring(firstLine.indexOf(' ') + 1);
     } catch (err) {
-      console.error(`Error get tidal data-dir: ${err}`);
-      return '';
+      console.error(`Failed to get tidal data-dir`);
+      console.error("You will need to specify location of TidalCycles bootloading script.\n" +
+        "Read more: https://github.com/munshkr/flok/wiki/Failed-to-get-tidal-data-dir");
+      throw err;
     }
   }
 
