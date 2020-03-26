@@ -30,7 +30,7 @@ class SclangREPL extends CommandREPL {
   }
 }
 
-class RemoteSclangREPL extends BaseREPL {
+class SclangOscREPL extends BaseREPL {
   udpPort: UDPPort;
   port: number;
   started: boolean;
@@ -92,5 +92,5 @@ class RemoteSclangREPL extends BaseREPL {
   }
 }
 
-export { SclangREPL, RemoteSclangREPL };
+export { SclangREPL, SclangOscREPL };
 export default SclangREPL;

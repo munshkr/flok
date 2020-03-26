@@ -1,13 +1,13 @@
 import { BaseREPL, BaseREPLContext, CommandREPL, CommandREPLContext } from './repl';
 import TidalREPL from './repl/tidal';
-import SclangREPL, { RemoteSclangREPL } from './repl/sclang';
+import SclangREPL, { SclangOscREPL } from './repl/sclang';
 import FoxDotREPL from './repl/foxdot';
 
 const replClasses = {
   default: CommandREPL,
   tidal: TidalREPL,
   sclang: SclangREPL,
-  remote_sclang: RemoteSclangREPL,
+  sclang_osc: SclangOscREPL,
   foxdot: FoxDotREPL, 
 };
 
