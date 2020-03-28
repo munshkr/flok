@@ -95,7 +95,7 @@ class TextEditor extends Component<Props, {}> {
     }
   };
 
-  evaluateParagraph = () => {
+  evaluateBlock = () => {
     const { editor } = this.cm;
     const currentLine = editor.getCursor().line;
     const content = `${editor.getValue()}\n`;
@@ -183,8 +183,8 @@ class TextEditor extends Component<Props, {}> {
 
     const defaultExtraKeys = {
       "Shift-Enter": this.evaluateLine,
-      "Ctrl-Enter": this.evaluateParagraph,
-      "Cmd-Enter": this.evaluateParagraph
+      "Ctrl-Enter": this.evaluateBlock,
+      "Cmd-Enter": this.evaluateBlock
     };
 
     const extraKeys = {
