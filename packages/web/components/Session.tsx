@@ -8,6 +8,8 @@ import Mosaic from "./Mosaic";
 
 const MAX_LINES: number = 100;
 
+const LOCAL_TARGETS = ["hydra"];
+
 type Props = {
   websocketsHost: string;
   sessionName: string;
@@ -134,6 +136,16 @@ class Session extends Component<Props, State> {
     return `${protocol}//${websocketsHost}`;
   }
 
+  evaluateLocalCode({ target, body }) {
+    switch (target) {
+      case "hydra":
+        this.setState({ hydraCode: body });
+        break;
+      default:
+        console.error("Unhandle local target:", target);
+    }
+  }
+
   handleEvaluateCode = ({ editorId, target, body, fromLine, toLine, user }) => {
     const { sessionName } = this.props;
     const { pubsubClient } = this;
@@ -146,9 +158,9 @@ class Session extends Component<Props, State> {
 
     this.setState({ messagesByClientId: {}, showTargetMessagesPane: false });
 
-    if (target === "hydra") {
-      this.setState({ hydraCode: body });
-      pubsubClient.publish(`session:${sessionName}:target:hydra:eval`, {
+    if (LOCAL_TARGETS.includes(target)) {
+      this.evaluateLocalCode({ target, body });
+      pubsubClient.publish(`session:${sessionName}:target:${target}:eval`, {
         body,
         ...content
       });
@@ -169,10 +181,10 @@ class Session extends Component<Props, State> {
 
     this.setState({ showTargetMessagesPane: false });
 
-    // Evaluate Hydra code locally
-    if (target === "hydra") {
+    // If target is "local", evaluate code locally
+    if (LOCAL_TARGETS.includes(target)) {
       const { body } = content;
-      this.setState({ hydraCode: body });
+      this.evaluateLocalCode({ target, body });
     }
 
     // Flash selection on editor when another user evaluates code
