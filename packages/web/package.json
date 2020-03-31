@@ -33,7 +33,7 @@
     "gpucomputationrender-three": "^2.0.0",
     "hydra-synth": "^1.0.27",
     "lib0": "^0.2.12",
-    "next": "^9.2.1",
+    "next": "^9.3.2",
     "next-transpile-modules": "^3.0.2",
     "p5": "^1.0.0",
     "prop-types": "^15.7.2",
