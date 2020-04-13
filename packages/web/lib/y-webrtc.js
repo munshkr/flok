@@ -71,12 +71,14 @@ const broadcastBcMessage = (room, m) =>
     .then(data => room.mux(() => bc.publish(room.name, data)));
 
 const broadcastBcPeerId = room => {
-  // broadcast peerId via broadcastchannel
-  const encoderPeerIdBc = encoding.createEncoder();
-  encoding.writeVarUint(encoderPeerIdBc, messageBcPeerId);
-  encoding.writeUint8(encoderPeerIdBc, 1);
-  encoding.writeVarString(encoderPeerIdBc, room.peerId);
-  broadcastBcMessage(room, encoding.toUint8Array(encoderPeerIdBc));
+  if (room.provider.filterBcConns) {
+    // broadcast peerId via broadcastchannel
+    const encoderPeerIdBc = encoding.createEncoder()
+    encoding.writeVarUint(encoderPeerIdBc, messageBcPeerId)
+    encoding.writeUint8(encoderPeerIdBc, 1)
+    encoding.writeVarString(encoderPeerIdBc, room.peerId)
+    broadcastBcMessage(room, encoding.toUint8Array(encoderPeerIdBc))
+  }
 };
 
 /**
@@ -382,8 +384,9 @@ export class Room {
    * @param {WebrtcProvider} provider
    * @param {string} name
    * @param {CryptoKey|null} key
+   * @param {bool} enableBroadcastChannels
    */
-  constructor(doc, provider, name, key) {
+  constructor(doc, provider, name, key, enableBroadcastChannels) {
     /**
      * Do not assume that peerId is unique. This is only meant for sending signaling messages.
      *
@@ -391,6 +394,7 @@ export class Room {
      */
     this.peerId = random.uuidv4();
     this.doc = doc;
+    this.enableBroadcastChannels = enableBroadcastChannels;
     /**
      * @type {awarenessProtocol.Awareness}
      */
@@ -469,6 +473,11 @@ export class Room {
   connect() {
     // signal through all available signaling connections
     announceSignalingInfo(this);
+
+    // do not subscribe to broadcastchannel if not enabled
+    if(!this.enableBroadcastChannels)
+      return
+
     const roomName = this.name;
     bc.subscribe(roomName, this._bcSubscriber);
     this.bcconnected = true;
@@ -512,15 +521,19 @@ export class Room {
       [this.doc.clientID],
       "disconnect"
     );
-    // broadcast peerId removal via broadcastchannel
-    const encoderPeerIdBc = encoding.createEncoder();
-    encoding.writeVarUint(encoderPeerIdBc, messageBcPeerId);
-    encoding.writeUint8(encoderPeerIdBc, 0); // remove peerId from other bc peers
-    encoding.writeVarString(encoderPeerIdBc, this.peerId);
-    broadcastBcMessage(this, encoding.toUint8Array(encoderPeerIdBc));
 
-    bc.unsubscribe(this.name, this._bcSubscriber);
-    this.bcconnected = false;
+    if(this.enableBroadcastChannels){
+      // broadcast peerId removal via broadcastchannel
+      const encoderPeerIdBc = encoding.createEncoder();
+      encoding.writeVarUint(encoderPeerIdBc, messageBcPeerId);
+      encoding.writeUint8(encoderPeerIdBc, 0); // remove peerId from other bc peers
+      encoding.writeVarString(encoderPeerIdBc, this.peerId);
+      broadcastBcMessage(this, encoding.toUint8Array(encoderPeerIdBc));
+
+      bc.unsubscribe(this.name, this._bcSubscriber);
+      this.bcconnected = false;
+    }
+
     this.doc.off("update", this._docUpdateHandler);
     this.awareness.off("change", this._awarenessUpdateHandler);
     this.webrtcConns.forEach(conn => conn.destroy());
@@ -538,12 +551,12 @@ export class Room {
  * @param {CryptoKey|null} key
  * @return {Room}
  */
-const openRoom = (doc, provider, name, key) => {
+const openRoom = (doc, provider, name, key, enableBroadcastChannels) => {
   // there must only be one room
   if (rooms.has(name)) {
     throw error.create(`A Yjs Doc connected to room "${name}" already exists!`);
   }
-  const room = new Room(doc, provider, name, key);
+  const room = new Room(doc, provider, name, key, enableBroadcastChannels);
   rooms.set(name, /** @type {Room} */ (room));
   return room;
 };
@@ -674,6 +687,7 @@ export class WebrtcProvider extends Observable {
    * @param {Array<IceServerType>} [opts.extraIceServers]
    * @param {string?} [opts.password]
    * @param {awarenessProtocol.Awareness} [opts.awareness]
+   * @param {bool} [opts.enableBroadcastChannels]
    * @param {number} [opts.maxConns]
    */
   constructor(
@@ -689,12 +703,14 @@ export class WebrtcProvider extends Observable {
       extraIceServers = [],
       password = null,
       awareness = new awarenessProtocol.Awareness(doc),
+      enableBroadcastChannels = false,
       maxConns = 20 + math.floor(random.rand() * 15) // just to prevent that exactly n clients form a cluster
     } = {}
   ) {
     super();
     this.roomName = roomName;
     this.doc = doc;
+    this.enableBroadcastChannels = enableBroadcastChannels
     /**
      * @type {awarenessProtocol.Awareness}
      */
@@ -715,7 +731,7 @@ export class WebrtcProvider extends Observable {
      */
     this.room = null;
     this.key.then(key => {
-      this.room = openRoom(doc, this, roomName, key);
+      this.room = openRoom(doc, this, roomName, key, enableBroadcastChannels);
       if (this.shouldConnect) {
         this.room.connect();
       } else {
