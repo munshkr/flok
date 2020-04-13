@@ -6,6 +6,7 @@ import TargetMessagesPane, { Message } from "./TargetMessagesPane";
 import SessionClient, { IceServerType } from "../lib/SessionClient";
 import HydraCanvas from "./HydraCanvas";
 import Mosaic from "./Mosaic";
+import Audio from "./Audio";
 
 const MAX_LINES: number = 100;
 
@@ -280,6 +281,7 @@ class Session extends Component<Props, State> {
             onClose={this.handleTargetMessagesPaneClose}
           />
         )}
+        <Audio sessionClient={this.sessionClient} />
       </div>
     );
   }

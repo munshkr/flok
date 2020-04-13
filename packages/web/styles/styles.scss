@@ -243,3 +243,17 @@ body {
   margin-left: 4px;
   padding: 3px 5px;
 }
+
+.audio{
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  right: 0;
+  canvas {
+    margin: 0.3em;
+  }
+  svg{
+    margin: 0.3em;
+    cursor: pointer;
+  }
+}
