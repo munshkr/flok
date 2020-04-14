@@ -2,7 +2,6 @@
 /* eslint-disable global-require */
 const express = require("express");
 const next = require("next");
-const http = require("http");
 const url = require("url");
 const path = require("path");
 const WebSocket = require("ws");
@@ -10,6 +9,7 @@ const map = require("lib0/dist/map.cjs");
 const { PubSub } = require("flok-core");
 const process = require("process");
 const sslRedirect = require("./sslRedirect");
+const configurServer = require("./configureServer");
 
 const wsReadyStateConnecting = 0;
 const wsReadyStateOpen = 1;
@@ -70,7 +70,8 @@ class Server {
       const app = express();
       const wss = new WebSocket.Server({ noServer: true });
       const pubsubWss = new WebSocket.Server({ noServer: true });
-      const server = http.createServer(app);
+      const secure = !this.isDevelopment
+      const server = configurServer(app,secure)
 
       server.on("upgrade", (request, socket, head) => {
         const { pathname } = url.parse(request.url);
