@@ -117,7 +117,7 @@ class CommandREPL extends BaseREPL {
 
   write(body: string) {
     const newBody = this.prepare(body);
-    this.repl.stdin.write(`${newBody}\n`);
+    this.repl.stdin.write(`${newBody}\n\n`);
 
     const lines = newBody.split('\n');
     this.emitter.emit('data', { type: 'stdin', lines });
