@@ -3,11 +3,12 @@ import React, { Component, ChangeEvent, FormEvent } from "react";
 import FlockScene from "../components/FlockScene";
 import Layout from "../components/Layout";
 import uuid from "uuid/v4";
+import hasWebgl from "../lib/webgl-detector";
 
 class NewSessionForm extends Component<{}, { user: string; targets: string }> {
   state = {
     user: "",
-    targets: ""
+    targets: "",
   };
 
   handleChangeUser = (e: ChangeEvent) => {
@@ -18,7 +19,7 @@ class NewSessionForm extends Component<{}, { user: string; targets: string }> {
   handleChangeTargets = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
     this.setState({
-      targets: target.value
+      targets: target.value,
     });
   };
 
@@ -28,7 +29,7 @@ class NewSessionForm extends Component<{}, { user: string; targets: string }> {
     const { targets } = this.state;
     const layout = targets
       .split(",")
-      .map(s => s.trim())
+      .map((s) => s.trim())
       .join(",");
     Router.push(`/s/${session}?layout=${layout}`);
   };
@@ -76,7 +77,7 @@ const IndexPage = () => (
       </div>
     </section>
 
-    <FlockScene />
+    {hasWebgl() && <FlockScene />}
   </Layout>
 );
 

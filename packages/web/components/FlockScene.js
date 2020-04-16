@@ -427,11 +427,11 @@ class FlockScene extends React.Component {
 
     this.gpuCompute.setVariableDependencies(this.velocityVariable, [
       this.positionVariable,
-      this.velocityVariable
+      this.velocityVariable,
     ]);
     this.gpuCompute.setVariableDependencies(this.positionVariable, [
       this.positionVariable,
-      this.velocityVariable
+      this.velocityVariable,
     ]);
 
     this.positionUniforms = this.positionVariable.material.uniforms;
@@ -470,7 +470,7 @@ class FlockScene extends React.Component {
       texturePosition: { value: null },
       textureVelocity: { value: null },
       time: { value: 1.0 },
-      delta: { value: 0.0 }
+      delta: { value: 0.0 },
     };
 
     // THREE.ShaderMaterial
@@ -478,7 +478,7 @@ class FlockScene extends React.Component {
       uniforms: this.birdUniforms,
       vertexShader: birdVS,
       fragmentShader: birdFS,
-      side: THREE.DoubleSide
+      side: THREE.DoubleSide,
     });
 
     const birdMesh = new THREE.Mesh(geometry, material);
@@ -542,7 +542,7 @@ class FlockScene extends React.Component {
 
     return (
       <div
-        ref={mount => {
+        ref={(mount) => {
           this.container = mount;
         }}
         style={{ position: "absolute", top: 0, left: 0, zIndex: -1 }}

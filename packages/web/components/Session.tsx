@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import hasWebgl from "../lib/webgl-detector";
 
 import { PubSubClient } from "flok-core";
 import TargetMessagesPane, { Message } from "./TargetMessagesPane";
@@ -39,13 +40,13 @@ class Session extends Component<Props, State> {
     messagesByClientId: {},
     messagesPaneIsTop: false,
     messagesPaneIsMaximized: false,
-    hydraCode: ""
+    hydraCode: "",
   };
   pubsubClient: PubSubClient;
   sessionClient: SessionClient;
 
   static defaultProps = {
-    userName: "anonymous"
+    userName: "anonymous",
   };
 
   componentDidMount() {
@@ -70,13 +71,13 @@ class Session extends Component<Props, State> {
       onJoin: () => {
         this.sessionClient.setUsername(userName);
         this.setState({ showTextEditors: true });
-      }
+      },
     });
     this.sessionClient.join();
 
     this.pubsubClient = new PubSubClient(pubsubUrl, {
       connect: true,
-      reconnect: true
+      reconnect: true,
     });
 
     // Subscribes to messages directed to ourselves
@@ -86,17 +87,23 @@ class Session extends Component<Props, State> {
     );
 
     // Subscribe to messages directed to a specific target
-    targets.forEach(target => {
+    targets.forEach((target) => {
       this.pubsubClient.subscribe(
         `session:${sessionName}:target:${target}:eval`,
-        content => this.handleEvaluateRemoteCode({ target, content })
+        (content) => this.handleEvaluateRemoteCode({ target, content })
       );
 
       this.pubsubClient.subscribe(
         `session:${sessionName}:target:${target}:out`,
-        content => this.handleMessageTarget({ target, content })
+        (content) => this.handleMessageTarget({ target, content })
       );
     });
+
+    if (this.hydraEnabled() && !hasWebgl()) {
+      alert(
+        "This session uses Hydra, but WebGL is not supported in this browser."
+      );
+    }
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
@@ -153,7 +160,7 @@ class Session extends Component<Props, State> {
       editorId,
       fromLine,
       toLine,
-      user
+      user,
     };
 
     this.setState({ messagesByClientId: {}, showTargetMessagesPane: false });
@@ -162,7 +169,7 @@ class Session extends Component<Props, State> {
       this.evaluateLocalCode({ target, body });
       pubsubClient.publish(`session:${sessionName}:target:${target}:eval`, {
         body,
-        ...content
+        ...content,
       });
     } else {
       pubsubClient.publish(
@@ -172,7 +179,7 @@ class Session extends Component<Props, State> {
     }
     pubsubClient.publish(`session:${sessionName}:target:${target}:in`, {
       user,
-      body
+      body,
     });
   };
 
@@ -196,7 +203,7 @@ class Session extends Component<Props, State> {
   handleMessageTarget = ({ target, content }) => {
     console.debug(`[message] [target=${target}] ${JSON.stringify(content)}`);
 
-    this.setState(prevState => {
+    this.setState((prevState) => {
       const clientId = content.clientId || "default";
       const prevMessages = prevState.messagesByClientId[clientId] || [];
       const allMessages = [...prevMessages, { target, content }];
@@ -204,9 +211,9 @@ class Session extends Component<Props, State> {
       return {
         messagesByClientId: {
           ...prevState.messagesByClientId,
-          [clientId]: allMessages.slice(-MAX_LINES, allMessages.length)
+          [clientId]: allMessages.slice(-MAX_LINES, allMessages.length),
         },
-        showTargetMessagesPane: true
+        showTargetMessagesPane: true,
       };
     });
   };
@@ -217,19 +224,25 @@ class Session extends Component<Props, State> {
 
   handleTargetMessagesPaneTogglePosition = () => {
     this.setState((prevState: State) => ({
-      messagesPaneIsTop: !prevState.messagesPaneIsTop
+      messagesPaneIsTop: !prevState.messagesPaneIsTop,
     }));
   };
 
   handleTargetMessagesPaneToggleMaximize = () => {
     this.setState((prevState: State) => ({
-      messagesPaneIsMaximized: !prevState.messagesPaneIsMaximized
+      messagesPaneIsMaximized: !prevState.messagesPaneIsMaximized,
     }));
   };
 
   handleTargetMessagesPaneClose = () => {
     this.setState({ showTargetMessagesPane: false });
   };
+
+  hydraEnabled() {
+    const { layout } = this.props;
+    // Hydra is enabled if one of the editors in layout is "hydra"
+    return layout.editors.some((editor) => editor.target === "hydra");
+  }
 
   render() {
     const {
@@ -238,7 +251,7 @@ class Session extends Component<Props, State> {
       showTargetMessagesPane,
       messagesPaneIsTop,
       messagesPaneIsMaximized,
-      hydraCode
+      hydraCode,
     } = this.state;
     const { layout } = this.props;
 
@@ -247,7 +260,9 @@ class Session extends Component<Props, State> {
     return (
       // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
       <div>
-        <HydraCanvas code={hydraCode} fullscreen />
+        {hasWebgl() && this.hydraEnabled() && (
+          <HydraCanvas code={hydraCode} fullscreen />
+        )}
         {showTextEditors && (
           <Mosaic
             layout={layout}
