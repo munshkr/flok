@@ -4,10 +4,9 @@ import { UDPPort } from 'osc';
 
 class SclangREPL extends CommandREPL {
   constructor(ctx: CommandREPLContext) {
-    super({
-      ...ctx,
-      command: SclangREPL.commandPath(),
-    });
+    super(ctx);
+
+    this.command = this.commandPath();
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -15,15 +14,17 @@ class SclangREPL extends CommandREPL {
     return `${body.replace(/(\n)/gm, ' ').trim()}\n`;
   }
 
-  static commandPath(): string {
-    // FIXME: On Linux and Darwin, it should try to run `which`, and if it
-    // fails, use default paths like these.
+  commandPath(): string {
+    const { sclang } = this.extraOptions;
+    return sclang || SclangREPL.defaultCommandPath();
+  }
+
+  static defaultCommandPath(): string {
     switch (os.platform()) {
       case 'darwin':
         return '/Applications/SuperCollider.app/Contents/MacOS/sclang';
       case 'linux':
-        // FIXME Fallback paths (/usr/local/bin/ -> /usr/bin)
-        return '/usr/local/bin/sclang';
+        return 'sclang';
       default:
         throw 'Unsupported platform';
     }
