@@ -9,16 +9,16 @@ if (require.main === module) {
   const process = require("process");
   const host = process.env.HOST;
   const port = process.env.PORT;
+  const secure = process.env.SECURE === "1";
   const isDevelopment = process.env.NODE_ENV !== "production";
-  const secure = process.env.SECURE !== "1";
 
   const mongoDbUri = process.env.MONGODB_URI;
 
   const server = new Server({
     host,
     port,
-    isDevelopment,
     secure,
+    isDevelopment,
     mongoDbUri
   });
   server.start();
