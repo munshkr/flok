@@ -60,8 +60,8 @@ class PubSubClient {
     this._url = url;
     this._options = options;
 
-    this.onMeMessage = options.onMeMessage || (() => {});
-    this.onClose = options.onClose || (() => {});
+    this.onMeMessage = options.onMeMessage || (() => { });
+    this.onClose = options.onClose || (() => { });
 
     if (this._options && this._options.connect) {
       // auto connect
@@ -248,7 +248,9 @@ class PubSubClient {
    * @param cb
    */
   connect() {
-    const ws = new WebSocket(this._url);
+    const ws = new WebSocket(this._url, {
+      rejectUnauthorized: false
+    });
     this._ws = ws;
 
     // clear timeout of reconnect
