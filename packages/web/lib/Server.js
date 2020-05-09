@@ -2,21 +2,38 @@
 /* eslint-disable global-require */
 const express = require("express");
 const next = require("next");
-const http = require("http");
 const url = require("url");
 const path = require("path");
+const fs = require("fs");
 const WebSocket = require("ws");
+const process = require("process");
 const map = require("lib0/dist/map.cjs");
 const { PubSub } = require("flok-core");
-const process = require("process");
 const sslRedirect = require("./sslRedirect");
 
 const wsReadyStateConnecting = 0;
 const wsReadyStateOpen = 1;
-const wsReadyStateClosing = 2; // eslint-disable-line
-const wsReadyStateClosed = 3; // eslint-disable-line
+// const wsReadyStateClosing = 2; // eslint-disable-line
+// const wsReadyStateClosed = 3; // eslint-disable-line
 
 const pingTimeout = 30000;
+
+const sslCertPath = path.resolve(__dirname, "cert", "localhost.crt");
+const sslKeyPath = path.resolve(__dirname, "cert", "localhost.key");
+
+const createServer = (app, secure) => {
+  if (secure) {
+    return require("https").createServer(
+      {
+        key: fs.readFileSync(sslKeyPath, "utf8"),
+        cert: fs.readFileSync(sslCertPath, "utf8")
+      },
+      app
+    );
+  }
+
+  return require("http").createServer(app);
+}
 
 /**
  * @param {any} conn
@@ -38,11 +55,12 @@ const send = (conn, message) => {
 
 class Server {
   constructor(ctx) {
-    const { host, port, isDevelopment, redirectHttps } = ctx;
+    const { host, port, isDevelopment, secure, redirectHttps } = ctx;
 
     this.host = host || "0.0.0.0";
     this.port = port || 3000;
     this.isDevelopment = isDevelopment || false;
+    this.secure = secure || false;
     this.redirectHttps = redirectHttps || false;
 
     this.started = false;
@@ -68,9 +86,10 @@ class Server {
 
     nextApp.prepare().then(() => {
       const app = express();
+
       const wss = new WebSocket.Server({ noServer: true });
       const pubsubWss = new WebSocket.Server({ noServer: true });
-      const server = http.createServer(app);
+      const server = createServer(app, this.secure);
 
       server.on("upgrade", (request, socket, head) => {
         const { pathname } = url.parse(request.url);
@@ -113,9 +132,10 @@ class Server {
         return handle(req, res);
       });
 
+      const scheme = this.secure ? "https" : "http";
       server.listen(this.port, this.host, err => {
         if (err) throw err;
-        console.log(`> Listening on http://${this.host}:${this.port}`);
+        console.log(`> Listening on ${scheme}://${this.host}:${this.port}`);
       });
     });
 
@@ -171,30 +191,30 @@ class Server {
           switch (message.type) {
             case "subscribe":
               /** @type {Array<string>} */ (message.topics || []).forEach(
-                topicName => {
-                  if (typeof topicName === "string") {
-                    // add conn to topic
-                    const topic = map.setIfUndefined(
-                      this._topics,
-                      topicName,
-                      () => new Set()
-                    );
-                    topic.add(conn);
-                    // add topic to conn
-                    subscribedTopics.add(topicName);
-                  }
+              topicName => {
+                if (typeof topicName === "string") {
+                  // add conn to topic
+                  const topic = map.setIfUndefined(
+                    this._topics,
+                    topicName,
+                    () => new Set()
+                  );
+                  topic.add(conn);
+                  // add topic to conn
+                  subscribedTopics.add(topicName);
                 }
-              );
+              }
+            );
               break;
             case "unsubscribe":
               /** @type {Array<string>} */ (message.topics || []).forEach(
-                topicName => {
-                  const subs = this._topics.get(topicName);
-                  if (subs) {
-                    subs.delete(conn);
-                  }
+              topicName => {
+                const subs = this._topics.get(topicName);
+                if (subs) {
+                  subs.delete(conn);
                 }
-              );
+              }
+            );
               break;
             case "publish":
               if (message.topic) {
