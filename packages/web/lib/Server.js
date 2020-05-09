@@ -17,8 +17,8 @@ const wsReadyStateOpen = 1;
 
 const pingTimeout = 30000;
 
-const sslCertPath = path.resolve(__dirname, "cert", "localhost.crt");
-const sslKeyPath = path.resolve(__dirname, "cert", "localhost.key");
+const sslCertPath = path.resolve(__dirname, "..", "cert", "localhost.crt");
+const sslKeyPath = path.resolve(__dirname, "..", "cert", "localhost.key");
 
 const createServer = (app, secure) => {
   if (secure) {
