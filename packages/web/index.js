@@ -9,8 +9,8 @@ if (require.main === module) {
   const process = require("process");
   const host = process.env.HOST;
   const port = process.env.PORT;
-  const redirectHttps = process.env.REDIRECT_HTTPS === "1";
   const isDevelopment = process.env.NODE_ENV !== "production";
+  const secure = process.env.SECURE !== "1";
 
   const mongoDbUri = process.env.MONGODB_URI;
 
@@ -18,7 +18,7 @@ if (require.main === module) {
     host,
     port,
     isDevelopment,
-    redirectHttps,
+    secure,
     mongoDbUri
   });
   server.start();
