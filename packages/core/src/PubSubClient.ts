@@ -248,10 +248,22 @@ class PubSubClient {
    * @param cb
    */
   connect() {
-    const ws = new WebSocket(this._url, {
-      rejectUnauthorized: false
-    });
-    this._ws = ws;
+    try {
+      // Try to connect allowing unauthorized connections
+      this._ws = new WebSocket(this._url, {
+        rejectUnauthorized: false
+      });
+    } catch (err) {
+      // In browser, WebSockets class does not support extra options, so create
+      // again WebSocket without options object.
+      if (err.name === "SyntaxError") {
+        this._ws = new WebSocket(this._url);
+      } else {
+        throw err;
+      }
+    }
+
+    const ws = this._ws;
 
     // clear timeout of reconnect
     if (this._reconnectTimeout) {
