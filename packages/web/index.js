@@ -12,14 +12,11 @@ if (require.main === module) {
   const secure = process.env.SECURE === "1";
   const isDevelopment = process.env.NODE_ENV !== "production";
 
-  const mongoDbUri = process.env.MONGODB_URI;
-
   const server = new Server({
     host,
     port,
     secure,
     isDevelopment,
-    mongoDbUri
   });
   server.start();
 }
