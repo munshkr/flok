@@ -635,6 +635,9 @@ export class SignalingConn extends ws.WebsocketClient {
                     emitPeerChange();
                   }
                   break;
+                case "pong":
+                  // do nothing
+                  break;
                 default:
                   // eslint-disable-next-line no-console
                   console.error(`Unknown type: ${data.type}`);
