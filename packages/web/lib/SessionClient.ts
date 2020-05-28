@@ -59,7 +59,7 @@ class SessionClient {
     this.userName = userName;
     this.sessionName = sessionName || "default";
     this.sessionPassword = sessionPassword;
-    this.onJoin = onJoin || (() => { });
+    this.onJoin = onJoin || (() => {});
 
     // Create document and provider
     this._doc = new Y.Doc();
@@ -100,23 +100,11 @@ class SessionClient {
   attachEditor(id: string, editor: CodeMirror) {
     // Bind text with CodeMirror editor
     const text = this._doc.getText(`editors:${id}`);
-
     const binding = new CodeMirrorBinding(
       text,
       editor,
       this._provider.awareness
     );
-
-    // Save editor content on local storage whenever it changes
-    editor.on('change', (cm) => {
-      this._setLocalStorage(id, cm.getValue());
-    });
-
-    // If text is empty, try to load buffer from localStorage
-    if (text.toString() === "") {
-      editor.setValue(this._getLocalStorage(id) || "");
-    }
-
     this._editorBindings[id] = binding;
   }
 
@@ -155,21 +143,6 @@ class SessionClient {
     setTimeout(() => {
       marker.clear();
     }, 150);
-  }
-
-  _getLocalStorage(editorId: string) {
-    const key = this._localStorageKey(editorId);
-    return localStorage.getItem(key);
-  }
-
-  _setLocalStorage(editorId: string, value: string) {
-    const key = this._localStorageKey(editorId)
-    return localStorage.setItem(key, value);
-  }
-
-  _localStorageKey(editorId: string) {
-    const { sessionName } = this;
-    return `session:${sessionName}:editor:${editorId}`;
   }
 }
 
