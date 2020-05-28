@@ -24,15 +24,21 @@ const createServer = (app, secure) => {
   if (secure) {
     return require("https").createServer(
       {
-        key: fs.readFileSync(process.env.SSL_KEY ? process.env.SSL_KEY : sslKeyPath, "utf8"),
-        cert: fs.readFileSync(process.env.SSL_CERT ? process.env.SSL_CERT : sslCertPath, "utf8")
+        key: fs.readFileSync(
+          process.env.SSL_KEY ? process.env.SSL_KEY : sslKeyPath,
+          "utf8"
+        ),
+        cert: fs.readFileSync(
+          process.env.SSL_CERT ? process.env.SSL_CERT : sslCertPath,
+          "utf8"
+        )
       },
       app
     );
   }
 
   return require("http").createServer(app);
-}
+};
 
 /**
  * @param {any} conn
