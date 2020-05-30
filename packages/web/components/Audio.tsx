@@ -5,6 +5,7 @@ import SessionClient from "../lib/SessionClient";
 
 type Props = {
   sessionClient: SessionClient;
+  constraints?: MediaTrackConstraints;
 };
 
 const peers = new Map()
@@ -167,8 +168,19 @@ const Audio = (props: Props) => {
     startAudioContext()
     const awareness = sessionClient._provider.awareness
     const peerId = sessionClient._provider.room.peerId
-    const constraints = { audio: true };
-    const stream = await navigator.mediaDevices.getUserMedia(constraints)
+    const constraints = {
+      autoGainControl: false,
+      echoCancellation: false,
+      noiseSuppression: false,
+      latency: 0,
+      channelCount: 2, // stereo
+      // sampleRate: 48000,
+      // sampleSize: 16,
+      volume: 1.0,
+      ...props.constraints
+    };
+    console.log("Audio constraints:", constraints);
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: constraints })
     streamRef.current = stream
     awareness.setLocalStateField("streaming", { peerId, producer: true, consumer: false });
     connectStream()
