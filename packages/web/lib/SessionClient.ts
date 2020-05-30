@@ -96,7 +96,7 @@ class SessionClient {
     // this allows you to instantly get the (cached) documents data
     const idbProvider = new IndexeddbPersistence(roomName, this._doc);
     idbProvider.whenSynced.then(() => {
-      console.log('loaded data from indexed db')
+      console.log('Loaded data from IndexedDB')
     })
     this._indexedDbProvider = idbProvider;
 
