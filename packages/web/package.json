@@ -26,7 +26,7 @@
     "commander": "^2.20.0",
     "express": "^4.17.1",
     "flok-core": "^0.3.14",
-    "lib0": "^0.2.12",
+    "lib0": "^0.2.26",
     "next": "^9.3.2",
     "next-transpile-modules": "^3.0.2",
     "react": "^16.12.0",
