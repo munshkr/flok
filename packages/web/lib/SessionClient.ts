@@ -1,5 +1,6 @@
 import * as Y from "yjs";
 import { WebrtcProvider } from "./y-webrtc";
+import { WebsocketProvider } from "./y-websocket";
 import { IndexeddbPersistence } from './y-indexeddb'
 import { CodeMirrorBinding } from "./y-codemirror";
 import CodeMirror from "codemirror";
@@ -31,6 +32,7 @@ class SessionClient {
 
   _doc: Y.Doc;
   _provider: any;
+  _websocketProvider: any;
   _indexedDbProvider: any;
   _editorBindings: {
     [editorId: string]: CodeMirrorBinding;
@@ -86,6 +88,11 @@ class SessionClient {
     });
     this._provider = provider;
 
+    const websocketProvider = new WebsocketProvider(
+      'wss://demos.yjs.dev', roomName, this._doc
+    )
+    this._websocketProvider = websocketProvider;
+
     // this allows you to instantly get the (cached) documents data
     const idbProvider = new IndexeddbPersistence(roomName, this._doc);
     idbProvider.whenSynced.then(() => {
@@ -133,7 +140,9 @@ class SessionClient {
     if (this._provider) {
       this._provider.destroy();
     }
-
+    if (this._websocketProvider) {
+      this._websocketProvider.destroy();
+    }
     if (this._indexedDbProvider) {
       this._indexedDbProvider.destroy();
     }
@@ -142,6 +151,9 @@ class SessionClient {
   setUsername(newName: string) {
     if (this._provider) {
       this._provider.awareness.setLocalStateField("user", { name: newName });
+    }
+    if (this._websocketProvider) {
+      this._websocketProvider.awareness.setLocalStateField("user", { name: newName });
     }
   }
 
