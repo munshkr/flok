@@ -1,6 +1,6 @@
-import { Component, Fragment, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircle, faPlay, faVolumeUp, faVolumeMute, faMicrophone,faStop} from "@fortawesome/free-solid-svg-icons";
+import { faCircle, faPlay, faVolumeUp, faVolumeMute } from "@fortawesome/free-solid-svg-icons";
 import SessionClient from "../lib/SessionClient";
 
 type Props = {
@@ -11,8 +11,7 @@ const peers = new Map()
 const consumers = new Set()
 
 const Audio = (props: Props) => {
-
-  const { sessionClient} = props
+  const { sessionClient } = props
 
   const [producing, setProducing] = useState(false)
   const [consuming, setConsuming] = useState(false)
@@ -39,7 +38,7 @@ const Audio = (props: Props) => {
     const analyser = analyserRef.current
 
     //update buffer with analyser
-    if(analyser)
+    if (analyser)
       analyser.getByteTimeDomainData(buffer)
 
     const ctx = canvas.getContext('2d')
@@ -57,7 +56,7 @@ const Audio = (props: Props) => {
       let v = buffer[i] / 128.0
       let y = v * canvas.height / 2
 
-      if (i === 0) 
+      if (i === 0)
         ctx.moveTo(x, y)
       else
         ctx.lineTo(x, y)
@@ -77,12 +76,12 @@ const Audio = (props: Props) => {
 
   // hook on awareness changes
   useEffect(() => {
-    if(!sessionClient)
+    if (!sessionClient)
       return
 
     peers.clear()
     consumers.clear()
-    const awareness = sessionClient._provider.awareness   
+    const awareness = sessionClient._provider.awareness
     awareness.on('change', awarenessListener)
     return () => {
       awareness.off('change', awarenessListener)
@@ -91,19 +90,19 @@ const Audio = (props: Props) => {
     }
   }, [sessionClient])
 
-  const awarenessListener = ({added, removed, updated}) => {
+  const awarenessListener = ({ added, removed, updated }) => {
     const awareness = sessionClient._provider.awareness
     const pId = sessionClient._provider.room.peerId
     const f = clientID => {
       const state = awareness.getStates().get(clientID)
-      if(!state){
-        console.log(`no state for ${clientID}`, peers,consumers)
-      }else{
-        const {streaming} = state
-        if(streaming && streaming.peerId!==pId){
+      if (!state) {
+        console.log(`no state for ${clientID}`, peers, consumers)
+      } else {
+        const { streaming } = state
+        if (streaming && streaming.peerId !== pId) {
           const prevStreaming = peers.get(clientID)
-          if(JSON.stringify(prevStreaming) !== JSON.stringify(streaming))
-            updatePeers(clientID,prevStreaming,streaming)
+          if (JSON.stringify(prevStreaming) !== JSON.stringify(streaming))
+            updatePeers(clientID, prevStreaming, streaming)
         }
       }
     }
@@ -114,30 +113,30 @@ const Audio = (props: Props) => {
 
   }
 
-  const updatePeers = (clientID, prevStreaming,streaming) => {
+  const updatePeers = (clientID, prevStreaming, streaming) => {
     const pId = sessionClient._provider.room.peerId
     peers.set(clientID, streaming)
     setProducers([...peers].filter(e => e[1].producer).map(e => e[0]))
     // remove unwanted streams
-    if(prevStreaming && 
-       prevStreaming.consumer && 
-       prevStreaming.requestedPeerId===pId && 
-       consumers.has(clientID) && 
-       (!streaming.consumer || streaming.requestedPeerId!==pId)){
+    if (prevStreaming &&
+      prevStreaming.consumer &&
+      prevStreaming.requestedPeerId === pId &&
+      consumers.has(clientID) &&
+      (!streaming.consumer || streaming.requestedPeerId !== pId)) {
       consumers.delete(clientID)
-      sessionClient._provider.room.webrtcConns.forEach( conn =>{
-        if(conn.remotePeerId===prevStreaming.peerId){
-          conn.peer.removeTrack(streamRef.current.getTracks()[0],streamRef.current)
+      sessionClient._provider.room.webrtcConns.forEach(conn => {
+        if (conn.remotePeerId === prevStreaming.peerId) {
+          conn.peer.removeTrack(streamRef.current.getTracks()[0], streamRef.current)
         }
       })
     }
     // add requested streams
-    if(streaming.consumer && streaming.requestedPeerId===pId && !consumers.has(clientID)){
-      sessionClient._provider.room.webrtcConns.forEach( conn =>{
-        if(conn.remotePeerId===streaming.peerId){
+    if (streaming.consumer && streaming.requestedPeerId === pId && !consumers.has(clientID)) {
+      sessionClient._provider.room.webrtcConns.forEach(conn => {
+        if (conn.remotePeerId === streaming.peerId) {
           // keep track of already added consumers
           consumers.add(clientID)
-          conn.peer.addTrack(streamRef.current.getTracks()[0],streamRef.current)
+          conn.peer.addTrack(streamRef.current.getTracks()[0], streamRef.current)
         }
       })
     }
@@ -145,7 +144,7 @@ const Audio = (props: Props) => {
 
   const startAudioContext = () => {
     //run only once
-    if(audioContextRef.current !== null)
+    if (audioContextRef.current !== null)
       return
 
     // start audio context and analyser
@@ -154,11 +153,11 @@ const Audio = (props: Props) => {
     const gain = audioContext.createGain()
     analyser.fftSize = 2048
     gain.connect(audioContext.destination)
-    if(muted)
+    if (muted)
       gain.gain.value = 0.0
     // set up references
     audioContextRef.current = audioContext
-    analyserRef.current = analyser 
+    analyserRef.current = analyser
     gainNodeRef.current = gain
     bufRef.current = new Uint8Array(analyser.frequencyBinCount)
   }
@@ -168,10 +167,10 @@ const Audio = (props: Props) => {
     startAudioContext()
     const awareness = sessionClient._provider.awareness
     const peerId = sessionClient._provider.room.peerId
-    const constraints = {audio: true};
+    const constraints = { audio: true };
     const stream = await navigator.mediaDevices.getUserMedia(constraints)
     streamRef.current = stream
-    awareness.setLocalStateField("streaming", {peerId,producer:true, consumer: false});
+    awareness.setLocalStateField("streaming", { peerId, producer: true, consumer: false });
     connectStream()
   }
 
@@ -180,7 +179,7 @@ const Audio = (props: Props) => {
     const analyser = analyserRef.current
     const stream = streamRef.current
     const gain = gainNodeRef.current
-    
+
     const source = audioContext.createMediaStreamSource(stream)
     source.connect(analyser)
     source.connect(gain)
@@ -203,9 +202,9 @@ const Audio = (props: Props) => {
     const peer = peers.get(clientID)
 
     // make producer aware that we want his stream
-    awareness.setLocalStateField("streaming", {peerId,consumer: true,producer: false, requestedPeerId: peer.peerId});
-    sessionClient._provider.room.webrtcConns.forEach( conn => {
-      if(conn.remotePeerId===peer.peerId)
+    awareness.setLocalStateField("streaming", { peerId, consumer: true, producer: false, requestedPeerId: peer.peerId });
+    sessionClient._provider.room.webrtcConns.forEach(conn => {
+      if (conn.remotePeerId === peer.peerId)
         conn.peer.on("stream", handleOnStream)
     })
   }
@@ -215,7 +214,7 @@ const Audio = (props: Props) => {
     const awareness = sessionClient._provider.awareness
     const peerId = sessionClient._provider.room.peerId
     // make everyone aware that we dont stream anymore
-    awareness.setLocalStateField("streaming", {peerId,producer:false, consumer: false});
+    awareness.setLocalStateField("streaming", { peerId, producer: false, consumer: false });
     removeStream()
   }
 
@@ -224,24 +223,24 @@ const Audio = (props: Props) => {
     const awareness = sessionClient._provider.awareness
     const peerId = sessionClient._provider.room.peerId
     // make producer aware that we dont want his stream anymore
-    awareness.setLocalStateField("streaming", {peerId,producer:false, consumer: false});
+    awareness.setLocalStateField("streaming", { peerId, producer: false, consumer: false });
   }
 
   const onToggleMutedClick = () => {
     const m = !muted
-    if(audioContextRef.current)
-      gainNodeRef.current.gain.setValueAtTime((m?0:1), audioContextRef.current.currentTime)
+    if (audioContextRef.current)
+      gainNodeRef.current.gain.setValueAtTime((m ? 0 : 1), audioContextRef.current.currentTime)
     setMuted(m)
   }
 
   const removeStream = () => {
-    if(!streamRef.current)
+    if (!streamRef.current)
       return
 
     //audioRef.current.srcObject = null
     //mediaSourceRef.current.disconnect()
     //mediaSourceRef.current = null
-    streamRef.current.getTracks().forEach( t => {
+    streamRef.current.getTracks().forEach(t => {
       //t.stop()
       //streamRef.current.removeTrack(t)
       t.enabled = false
@@ -254,15 +253,15 @@ const Audio = (props: Props) => {
   */
   return (
     <div className="audio">
-      {!producing && !consuming && producers.map( p =>  
-        <FontAwesomeIcon key={p} onClick={()=> onConsumeClick(p)} icon={faPlay} title={`Consume audio from ${p}`} size={"2x"} />
+      {!producing && !consuming && producers.map(p =>
+        <FontAwesomeIcon key={p} onClick={() => onConsumeClick(p)} icon={faPlay} title={`Consume audio from ${p}`} size={"2x"} />
       )}
       {// consuming && <FontAwesomeIcon onClick={onStopConsumingClick} icon={faStop} title={`Stop consuming  audio`} size={"2x"} />
       }
-      {!producing && !consuming && producers.length===0 && <FontAwesomeIcon onClick={onProduceClick} icon={faCircle} title={`Produce  audio`} size={"2x"} />}
+      {!producing && !consuming && producers.length === 0 && <FontAwesomeIcon onClick={onProduceClick} icon={faCircle} title={`Produce  audio`} size={"2x"} />}
       {//producing && <FontAwesomeIcon onClick={onStopProducingClick} icon={faStop} title={`Stop producing  audio`} size={"2x"} />
       }
-      {(producing || consuming) && <FontAwesomeIcon onClick={onToggleMutedClick} icon={muted ? faVolumeMute: faVolumeUp} size={"2x"} />}
+      {(producing || consuming) && <FontAwesomeIcon onClick={onToggleMutedClick} icon={muted ? faVolumeMute : faVolumeUp} size={"2x"} />}
       <canvas ref={canvasRef} width={60} height={40} />
       <audio ref={audioRef} ></audio>
     </div>
