@@ -1,5 +1,6 @@
 import * as Y from "yjs";
 import { WebrtcProvider } from "./y-webrtc";
+import { IndexeddbPersistence } from './y-indexeddb'
 import { CodeMirrorBinding } from "./y-codemirror";
 import CodeMirror from "codemirror";
 
@@ -30,6 +31,7 @@ class SessionClient {
 
   _doc: Y.Doc;
   _provider: any;
+  _indexedDbProvider: any;
   _editorBindings: {
     [editorId: string]: CodeMirrorBinding;
   };
@@ -59,7 +61,7 @@ class SessionClient {
     this.userName = userName;
     this.sessionName = sessionName || "default";
     this.sessionPassword = sessionPassword;
-    this.onJoin = onJoin || (() => {});
+    this.onJoin = onJoin || (() => { });
 
     // Create document and provider
     this._doc = new Y.Doc();
@@ -74,12 +76,23 @@ class SessionClient {
       sessionPassword
     } = this;
     console.debug("[WebRTC] ICE servers:", extraIceServers);
-    const provider = new WebrtcProvider(`flok:${sessionName}`, this._doc, {
+
+    const roomName = `flok:${sessionName}`;
+
+    const provider = new WebrtcProvider(roomName, this._doc, {
       password: sessionPassword,
       signaling: [signalingServerUrl],
       extraIceServers
     });
     this._provider = provider;
+
+    // this allows you to instantly get the (cached) documents data
+    const idbProvider = new IndexeddbPersistence(roomName, this._doc);
+    idbProvider.whenSynced.then(() => {
+      console.log('loaded data from indexed db')
+    })
+    this._indexedDbProvider = idbProvider;
+
     this.onJoin();
   }
 
@@ -119,6 +132,10 @@ class SessionClient {
 
     if (this._provider) {
       this._provider.destroy();
+    }
+
+    if (this._indexedDbProvider) {
+      this._indexedDbProvider.destroy();
     }
   }
 

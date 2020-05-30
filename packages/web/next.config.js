@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 // next.config.js
-const withTM = require("next-transpile-modules")(['lib0', 'y-protocols']);
+const withTM = require("next-transpile-modules")(['lib0', 'y-protocols', 'y-indexeddb']);
 const withCSS = require("@zeit/next-css");
 const withSass = require("@zeit/next-sass");
 const process = require("process");
