@@ -18,30 +18,28 @@
     "flok-web": "./bin/flok-web.js"
   },
   "dependencies": {
+    "commander": "^2.20.0",
+    "cross-env": "^7.0.0",
+    "express": "^4.17.1",
+    "flok-core": "^0.3.14",
     "@fortawesome/fontawesome-svg-core": "^1.2.26",
     "@fortawesome/free-solid-svg-icons": "^5.12.0",
     "@fortawesome/react-fontawesome": "^0.1.8",
-    "@zeit/next-css": "^1.0.1",
-    "@zeit/next-sass": "^1.0.1",
-    "commander": "^2.20.0",
-    "express": "^4.17.1",
-    "flok-core": "^0.3.14",
     "lib0": "^0.2.26",
     "next": "^9.3.2",
     "next-transpile-modules": "^3.0.2",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "simple-peer": "^9.6.2",
-    "ws": "^7.0.1"
+    "ws": "^7.0.1",
+    "@zeit/next-css": "^1.0.1",
+    "@zeit/next-sass": "^1.0.1"
   },
   "devDependencies": {
-    "@teamwork/websocket-json-stream": "^2.0.0",
-    "@types/react": "^16.9.19",
     "babel-eslint": "^10.0.2",
     "bulma": "^0.8.0",
     "codemirror": "^5.51.0",
     "core-js": "^2.6.11",
-    "cross-env": "^7.0.0",
     "eslint": "^6.0.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-config-prettier": "^6.0.0",
@@ -57,10 +55,12 @@
     "prop-types": "^15.7.2",
     "react-codemirror2": "^6.0.0",
     "reconnecting-websocket": "^4.1.10",
+    "@teamwork/websocket-json-stream": "^2.0.0",
     "three": "^0.101.0",
     "typescript": "^3.7.5",
+    "@types/react": "^16.9.19",
     "uuid": "^3.3.2",
-    "y-protocols": "^0.2.0",
-    "yjs": "^13.0.4"
+    "yjs": "^13.0.4",
+    "y-protocols": "^0.2.0"
   }
 }
