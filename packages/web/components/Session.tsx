@@ -17,6 +17,7 @@ type Props = {
   sessionName: string;
   userName?: string;
   hydraEnabled: boolean;
+  audioStreamingEnabled: boolean;
   extraIceServers?: IceServerType[];
   layout: {
     editors: {
@@ -255,12 +256,11 @@ class Session extends Component<Props, State> {
       messagesPaneIsMaximized,
       hydraCode,
     } = this.state;
-    const { layout } = this.props;
+    const { layout, audioStreamingEnabled } = this.props;
 
     const { sessionClient } = this;
 
     const hydraEnabled = this.hydraEnabled();
-    console.log("this.hydraEnabled:", hydraEnabled);
 
     return (
       // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
@@ -285,7 +285,7 @@ class Session extends Component<Props, State> {
             onClose={this.handleTargetMessagesPaneClose}
           />
         )}
-        <Audio sessionClient={this.sessionClient} />
+        {audioStreamingEnabled && <Audio sessionClient={this.sessionClient} />}
       </div>
     );
   }

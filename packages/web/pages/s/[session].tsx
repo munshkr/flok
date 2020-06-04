@@ -44,6 +44,7 @@ class JoinSessionForm extends Component<{
   state = {
     username: null,
     hydraEnabled: true,
+    audioStreamingEnabled: false,
   };
 
   constructor(props) {
@@ -65,19 +66,24 @@ class JoinSessionForm extends Component<{
     this.setState({ hydraEnabled: target.checked })
   }
 
+  handleChangeAudioStreamingCheckbox = (e: ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+    this.setState({ audioStreamingEnabled: target.checked })
+  }
+
   handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     const { onSubmit } = this.props;
 
-    let { username, hydraEnabled } = this.state;
+    let { username, hydraEnabled, audioStreamingEnabled } = this.state;
     if (!username) username = "anonymous";
 
-    onSubmit({ username, hydraEnabled });
+    onSubmit({ username, hydraEnabled, audioStreamingEnabled });
   };
 
   render() {
-    const { username, hydraEnabled } = this.state;
+    const { username, hydraEnabled, audioStreamingEnabled } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
@@ -105,6 +111,20 @@ class JoinSessionForm extends Component<{
                 type="checkbox"
               />
               Enable Hydra
+            </label>
+          </div>
+        </div>
+
+        <div className="field">
+          <div className="control">
+            <label className="checkbox">
+              <input
+                className="is-large"
+                onChange={this.handleChangeAudioStreamingCheckbox}
+                checked={audioStreamingEnabled}
+                type="checkbox"
+              />
+              Enable Audio Streaming (experimental!)
             </label>
           </div>
         </div>
@@ -159,13 +179,13 @@ interface Props {
   host: string;
   session: string;
   layoutParam: string;
-  disableHydraParam: string;
 }
 
 interface State {
   loading: boolean;
   lastUsername: string;
   hydraEnabled: boolean;
+  audioStreamingEnabled: boolean;
   username: string;
   websocketsUrl: string;
 }
@@ -175,6 +195,7 @@ class SessionPage extends Component<Props, State> {
     loading: true,
     lastUsername: null,
     hydraEnabled: true,
+    audioStreamingEnabled: false,
     username: null,
     websocketsUrl: null
   };
@@ -211,11 +232,10 @@ class SessionPage extends Component<Props, State> {
     }
   }
 
-  handleJoinSubmit = ({ username, hydraEnabled }: { username: string, hydraEnabled: boolean }) => {
+  handleJoinSubmit = ({ username, hydraEnabled, audioStreamingEnabled }: { username: string, hydraEnabled: boolean, audioStreamingEnabled: boolean }) => {
     window.localStorage.setItem("lastUsername", username);
-    window.localStorage.setItem("hydraEnabled", hydraEnabled ? 'true' : 'false');
 
-    this.setState({ username, hydraEnabled });
+    this.setState({ username, hydraEnabled, audioStreamingEnabled });
   };
 
   generateLayoutFromList = (list: string[]) => {
@@ -233,6 +253,7 @@ class SessionPage extends Component<Props, State> {
       loading,
       username,
       hydraEnabled,
+      audioStreamingEnabled,
       lastUsername,
       websocketsUrl
     } = this.state;
@@ -258,6 +279,7 @@ class SessionPage extends Component<Props, State> {
             extraIceServers={extraIceServers}
             layout={layout}
             hydraEnabled={hydraEnabled}
+            audioStreamingEnabled={audioStreamingEnabled}
           />
         ) : (
               <EmptySession
