@@ -16,6 +16,7 @@ type Props = {
   websocketsHost: string;
   sessionName: string;
   userName?: string;
+  hydraEnabled: boolean;
   extraIceServers?: IceServerType[];
   layout: {
     editors: {
@@ -240,9 +241,9 @@ class Session extends Component<Props, State> {
   };
 
   hydraEnabled() {
-    const { layout } = this.props;
+    const { layout, hydraEnabled } = this.props;
     // Hydra is enabled if one of the editors in layout is "hydra"
-    return layout.editors.some((editor) => editor.target === "hydra");
+    return hydraEnabled && layout.editors.some((editor) => editor.target === "hydra");
   }
 
   render() {
@@ -258,10 +259,13 @@ class Session extends Component<Props, State> {
 
     const { sessionClient } = this;
 
+    const hydraEnabled = this.hydraEnabled();
+    console.log("this.hydraEnabled:", hydraEnabled);
+
     return (
       // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
       <div>
-        {hasWebgl() && this.hydraEnabled() && (
+        {hasWebgl() && hydraEnabled && (
           <HydraCanvas code={hydraCode} fullscreen />
         )}
         {showTextEditors && (

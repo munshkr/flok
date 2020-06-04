@@ -42,14 +42,16 @@ class JoinSessionForm extends Component<{
   onSubmit: Function;
 }> {
   state = {
-    username: null
+    username: null,
+    hydraEnabled: true,
   };
 
   constructor(props) {
     super(props);
 
     this.state = {
-      username: props.username || ""
+      ...this.state,
+      username: props.username || "",
     };
   }
 
@@ -58,19 +60,24 @@ class JoinSessionForm extends Component<{
     this.setState({ username: target.value });
   };
 
+  handleChangeHydraCheckbox = (e: ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+    this.setState({ hydraEnabled: target.checked })
+  }
+
   handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     const { onSubmit } = this.props;
 
-    let { username } = this.state;
+    let { username, hydraEnabled } = this.state;
     if (!username) username = "anonymous";
 
-    onSubmit(username);
+    onSubmit({ username, hydraEnabled });
   };
 
   render() {
-    const { username } = this.state;
+    const { username, hydraEnabled } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
@@ -85,6 +92,20 @@ class JoinSessionForm extends Component<{
               placeholder={"Type a nick name and press Enter"}
               autoFocus
             />
+          </div>
+        </div>
+
+        <div className="field">
+          <div className="control">
+            <label className="checkbox">
+              <input
+                className="is-large"
+                onChange={this.handleChangeHydraCheckbox}
+                checked={hydraEnabled}
+                type="checkbox"
+              />
+              Enable Hydra
+            </label>
           </div>
         </div>
 
@@ -124,7 +145,10 @@ const EmptySession = ({ websocketsUrl, session, lastUsername, onSubmit }) => (
         </a>
         .
       </p>
-      <JoinSessionForm username={lastUsername} onSubmit={onSubmit} />
+      <JoinSessionForm
+        username={lastUsername}
+        onSubmit={onSubmit}
+      />
     </div>
   </section>
 );
@@ -134,12 +158,14 @@ const LoadingSpinner = () => <h4>Loading...</h4>;
 interface Props {
   host: string;
   session: string;
-  layoutString: string;
+  layoutParam: string;
+  disableHydraParam: string;
 }
 
 interface State {
   loading: boolean;
   lastUsername: string;
+  hydraEnabled: boolean;
   username: string;
   websocketsUrl: string;
 }
@@ -148,13 +174,18 @@ class SessionPage extends Component<Props, State> {
   state = {
     loading: true,
     lastUsername: null,
+    hydraEnabled: true,
     username: null,
     websocketsUrl: null
   };
 
   static async getInitialProps({ req, query }: NextPageContext) {
     const host = req && req.headers && req.headers.host;
-    return { host, session: query.session, layoutString: query.layout };
+    return {
+      host,
+      session: query.session,
+      layoutParam: query.layout,
+    };
   }
 
   componentDidMount() {
@@ -168,11 +199,10 @@ class SessionPage extends Component<Props, State> {
     const websocketsUrl = `${protocol}//${host}`;
     this.setState({ websocketsUrl });
 
-    this.fetchLastUsername();
+    this.fetchLastUserName();
   }
 
-  fetchLastUsername() {
-    // Get username from local storage
+  fetchLastUserName() {
     const username = window.localStorage.getItem("lastUsername");
     if (username) {
       this.setState({ lastUsername: username, loading: false });
@@ -181,9 +211,11 @@ class SessionPage extends Component<Props, State> {
     }
   }
 
-  handleUsernameSubmit = (username: string) => {
+  handleJoinSubmit = ({ username, hydraEnabled }: { username: string, hydraEnabled: boolean }) => {
     window.localStorage.setItem("lastUsername", username);
-    this.setState({ username });
+    window.localStorage.setItem("hydraEnabled", hydraEnabled ? 'true' : 'false');
+
+    this.setState({ username, hydraEnabled });
   };
 
   generateLayoutFromList = (list: string[]) => {
@@ -196,13 +228,18 @@ class SessionPage extends Component<Props, State> {
   };
 
   render() {
-    const { host, session, layoutString } = this.props;
-    const { loading, username, lastUsername, websocketsUrl } = this.state;
+    const { host, session, layoutParam } = this.props;
+    const {
+      loading,
+      username,
+      hydraEnabled,
+      lastUsername,
+      websocketsUrl
+    } = this.state;
 
     let layoutList = defaultLayoutList;
-    if (layoutString) {
-      const layoutListFromString = layoutString.split(",");
-      layoutList = layoutListFromString;
+    if (layoutParam) {
+      layoutList = layoutParam.split(",");
     }
     const layout = this.generateLayoutFromList(layoutList);
 
@@ -220,15 +257,16 @@ class SessionPage extends Component<Props, State> {
             userName={username}
             extraIceServers={extraIceServers}
             layout={layout}
+            hydraEnabled={hydraEnabled}
           />
         ) : (
-          <EmptySession
-            websocketsUrl={websocketsUrl}
-            session={session}
-            lastUsername={lastUsername}
-            onSubmit={this.handleUsernameSubmit}
-          />
-        )}
+              <EmptySession
+                websocketsUrl={websocketsUrl}
+                session={session}
+                lastUsername={lastUsername}
+                onSubmit={this.handleJoinSubmit}
+              />
+            )}
       </Layout>
     );
   }
