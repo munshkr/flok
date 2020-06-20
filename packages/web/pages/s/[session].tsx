@@ -40,7 +40,6 @@ const extraIceServers = (() => {
 class JoinSessionForm extends Component<{
   username: string;
   onSubmit: Function;
-  hydraVisible: boolean;
 }> {
   state = {
     username: null,
@@ -84,7 +83,6 @@ class JoinSessionForm extends Component<{
   };
 
   render() {
-    const { hydraVisible } = this.props;
     const { username, hydraEnabled, audioStreamingEnabled } = this.state;
 
     return (
@@ -103,7 +101,7 @@ class JoinSessionForm extends Component<{
           </div>
         </div>
 
-        {hydraVisible && <div className="field">
+        <div className="field">
           <div className="control">
             <label className="checkbox">
               <input
@@ -115,7 +113,7 @@ class JoinSessionForm extends Component<{
               Enable Hydra
             </label>
           </div>
-        </div>}
+        </div>
 
         <div className="field">
           <div className="control">
@@ -143,7 +141,7 @@ class JoinSessionForm extends Component<{
   }
 }
 
-const EmptySession = ({ websocketsUrl, session, lastUsername, hasHydraSlot, onSubmit }) => (
+const EmptySession = ({ websocketsUrl, session, lastUsername, onSubmit }) => (
   <section className="section">
     <div className="container">
       <h1 className="title">flok</h1>
@@ -168,7 +166,6 @@ const EmptySession = ({ websocketsUrl, session, lastUsername, hasHydraSlot, onSu
         .
       </p>
       <JoinSessionForm
-        hydraVisible={hasHydraSlot}
         username={lastUsername}
         onSubmit={onSubmit}
       />
@@ -265,7 +262,6 @@ class SessionPage extends Component<Props, State> {
     if (layoutParam) {
       layoutList = layoutParam.split(",");
     }
-    const hasHydraSlot = layoutList.includes("hydra");
     const layout = this.generateLayoutFromList(layoutList);
 
     return (
@@ -291,7 +287,6 @@ class SessionPage extends Component<Props, State> {
                 session={session}
                 lastUsername={lastUsername}
                 onSubmit={this.handleJoinSubmit}
-                hasHydraSlot={hasHydraSlot}
               />
             )}
       </Layout>
