@@ -9,6 +9,7 @@ import Session from "../../components/Session";
 import { IceServerType } from "../../lib/SessionClient";
 import HydraWrapper from "../../lib/HydraWrapper";
 import HydraCanvas from "../../components/HydraCanvas";
+import HydraError from "../../components/HydraError";
 
 const defaultLayoutList = ["tidal", "hydra"];
 
@@ -45,6 +46,7 @@ class JoinSessionForm extends Component<{
   username: string;
   onSubmit: Function;
   hydraVisible: boolean;
+  hasWebGl: boolean;
 }> {
   state = {
     username: null,
@@ -88,7 +90,7 @@ class JoinSessionForm extends Component<{
   };
 
   render() {
-    const { hydraVisible } = this.props;
+    const { hydraVisible, hasWebGl } = this.props;
     const { username, hydraEnabled, audioStreamingEnabled } = this.state;
 
     return (
@@ -113,10 +115,12 @@ class JoinSessionForm extends Component<{
               <input
                 className="is-large"
                 onChange={this.handleChangeHydraCheckbox}
-                checked={hydraEnabled}
+                checked={hasWebGl && hydraEnabled}
                 type="checkbox"
+                disabled={!hasWebGl}
               />
-              Enable Hydra
+              Enable Hydra{' '}
+              {!hasWebGl && <span>(WebGL is disabled or not supported on this browser!)</span>}
             </label>
           </div>
         </div>}
@@ -147,7 +151,7 @@ class JoinSessionForm extends Component<{
   }
 }
 
-const EmptySession = ({ websocketsUrl, session, lastUsername, hasHydraSlot, onSubmit }) => (
+const EmptySession = ({ websocketsUrl, session, lastUsername, hasWebGl, hasHydraSlot, onSubmit }) => (
   <section className="section">
     <div className="container">
       <h1 className="title">flok</h1>
@@ -173,6 +177,7 @@ const EmptySession = ({ websocketsUrl, session, lastUsername, hasHydraSlot, onSu
       </p>
       <JoinSessionForm
         hydraVisible={hasHydraSlot}
+        hasWebGl={hasWebGl}
         username={lastUsername}
         onSubmit={onSubmit}
       />
@@ -191,6 +196,7 @@ interface Props {
 interface State {
   loading: boolean;
   lastUsername: string;
+  hasWebGl: boolean;
   hydraEnabled: boolean;
   hydraError: string;
   audioStreamingEnabled: boolean;
@@ -205,6 +211,7 @@ class SessionPage extends Component<Props, State> {
   state = {
     loading: true,
     lastUsername: null,
+    hasWebGl: true,
     hydraEnabled: true,
     hydraError: "",
     audioStreamingEnabled: false,
@@ -224,6 +231,11 @@ class SessionPage extends Component<Props, State> {
   constructor(props) {
     super(props);
 
+    this.state = {
+      ...this.state,
+      hasWebGl: hasWebgl()
+    };
+
     this.hydraCanvas = React.createRef();
     this.hydra = null;
   }
@@ -233,8 +245,12 @@ class SessionPage extends Component<Props, State> {
       console.log("*** DEVELOPMENT MODE ***");
     }
 
-    this.hydra = new HydraWrapper(this.hydraCanvas.current, this.handleHydraError);
-    console.log("Hydra wrapper created");
+    if (this.state.hasWebGl) {
+      this.hydra = new HydraWrapper(this.hydraCanvas.current, this.handleHydraError);
+      console.log("Hydra wrapper created");
+    } else {
+      console.warn("WebGL is disabled or not supported in this browser")
+    }
 
     // Set Websockets URL
     const { host } = this.props;
@@ -260,11 +276,11 @@ class SessionPage extends Component<Props, State> {
     this.setState({ username, hydraEnabled, audioStreamingEnabled });
   };
 
-  handleHydraEvaluation = (code) => {
-    const { hydraEnabled } = this.state;
-    if (!hydraEnabled) return;
-
-    this.hydra.tryEval(code);
+  handleHydraEvaluation = (code: string) => {
+    const { hydraEnabled, hasWebGl } = this.state;
+    if (hasWebGl && hydraEnabled) {
+      this.hydra.tryEval(code);
+    }
   }
 
   handleHydraError = (error: string) => {
@@ -285,6 +301,7 @@ class SessionPage extends Component<Props, State> {
     const {
       loading,
       username,
+      hasWebGl,
       hydraError,
       audioStreamingEnabled,
       lastUsername,
@@ -322,13 +339,16 @@ class SessionPage extends Component<Props, State> {
                 lastUsername={lastUsername}
                 onSubmit={this.handleJoinSubmit}
                 hasHydraSlot={hasHydraSlot}
+                hasWebGl={hasWebGl}
               />
             )}
-        {hasWebgl() && <HydraCanvas
-          ref={this.hydraCanvas}
-          error={hydraError}
-          fullscreen
-        />}
+        {hasWebgl && <>
+          <HydraCanvas
+            ref={this.hydraCanvas}
+            fullscreen
+          />
+          {hydraError && <HydraError>{hydraError}</HydraError>}
+        </>}
       </Layout>
     );
   }

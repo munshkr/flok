@@ -31,7 +31,6 @@ class HydraWrapper {
       this.onError(null);
     } catch (error) {
       this.onError(String(error));
-      console.error(`Failed to execute Hydra code: ${error}`);
     }
   }
 }
