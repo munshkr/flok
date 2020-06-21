@@ -2,10 +2,13 @@ import React, { Component, ChangeEvent, FormEvent } from "react";
 import Head from "next/head";
 import getConfig from "next/config";
 import { NextPageContext } from "next";
+import hasWebgl from "../../lib/webgl-detector";
 
 import Layout from "../../components/Layout";
 import Session from "../../components/Session";
 import { IceServerType } from "../../lib/SessionClient";
+import HydraWrapper from "../../lib/HydraWrapper";
+import HydraCanvas from "../../components/HydraCanvas";
 
 const defaultLayoutList = ["tidal", "hydra"];
 
@@ -36,6 +39,7 @@ const extraIceServers = (() => {
   if (turnUrl) res.push(turnUrl);
   return res;
 })();
+
 
 class JoinSessionForm extends Component<{
   username: string;
@@ -188,16 +192,21 @@ interface State {
   loading: boolean;
   lastUsername: string;
   hydraEnabled: boolean;
+  hydraError: string;
   audioStreamingEnabled: boolean;
   username: string;
   websocketsUrl: string;
 }
 
 class SessionPage extends Component<Props, State> {
+  hydraCanvas: React.RefObject<HTMLCanvasElement>;
+  hydra: HydraWrapper;
+
   state = {
     loading: true,
     lastUsername: null,
     hydraEnabled: true,
+    hydraError: "",
     audioStreamingEnabled: false,
     username: null,
     websocketsUrl: null
@@ -212,10 +221,20 @@ class SessionPage extends Component<Props, State> {
     };
   }
 
+  constructor(props) {
+    super(props);
+
+    this.hydraCanvas = React.createRef();
+    this.hydra = null;
+  }
+
   componentDidMount() {
     if (isDevelopment) {
       console.log("*** DEVELOPMENT MODE ***");
     }
+
+    this.hydra = new HydraWrapper(this.hydraCanvas.current, this.handleHydraError);
+    console.log("Hydra wrapper created");
 
     // Set Websockets URL
     const { host } = this.props;
@@ -241,6 +260,17 @@ class SessionPage extends Component<Props, State> {
     this.setState({ username, hydraEnabled, audioStreamingEnabled });
   };
 
+  handleHydraEvaluation = (code) => {
+    const { hydraEnabled } = this.state;
+    if (!hydraEnabled) return;
+
+    this.hydra.tryEval(code);
+  }
+
+  handleHydraError = (error: string) => {
+    this.setState({ hydraError: error });
+  }
+
   generateLayoutFromList = (list: string[]) => {
     return {
       editors: list.map((target: string, i: number) => ({
@@ -255,7 +285,7 @@ class SessionPage extends Component<Props, State> {
     const {
       loading,
       username,
-      hydraEnabled,
+      hydraError,
       audioStreamingEnabled,
       lastUsername,
       websocketsUrl
@@ -282,8 +312,8 @@ class SessionPage extends Component<Props, State> {
             userName={username}
             extraIceServers={extraIceServers}
             layout={layout}
-            hydraEnabled={hydraEnabled}
             audioStreamingEnabled={audioStreamingEnabled}
+            onHydraEvaluation={this.handleHydraEvaluation}
           />
         ) : (
               <EmptySession
@@ -294,6 +324,11 @@ class SessionPage extends Component<Props, State> {
                 hasHydraSlot={hasHydraSlot}
               />
             )}
+        {hasWebgl() && <HydraCanvas
+          ref={this.hydraCanvas}
+          error={hydraError}
+          fullscreen
+        />}
       </Layout>
     );
   }

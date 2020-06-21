@@ -1,147 +1,52 @@
-import React, { Component } from "react";
-
-const GLOBAL_VARS_RE: RegExp = /\b(o0|o1|o2|o3|s0|s1|s2|s3|time|a)\b/g;
-const GLOBAL_FUNCS_RE: RegExp = /\b(gradient|osc|shape|noise|solid|voronoi|src|render)\b\(/g;
-
-const localizeHydraCode = (code: string): string => {
-  const replaceFunc = (func: string): string => `H.${func}`;
-  return code
-    .replace(GLOBAL_FUNCS_RE, replaceFunc)
-    .replace(GLOBAL_VARS_RE, replaceFunc);
-};
+import React, { memo } from "react";
 
 type Props = {
-  code?: string;
   fullscreen?: boolean;
-  local?: boolean;
+  error?: string;
 };
 
-type State = {
-  error: string;
-};
+const HydraCanvas = React.forwardRef((props: Props, ref: React.RefObject<HTMLCanvasElement>) => {
+  const { fullscreen, error } = props;
+  const className: string = fullscreen ? "fullscreen" : "";
 
-class HydraCanvas extends Component<Props, State> {
-  state: State = {
-    error: null
-  };
-  hydra: any;
-  canvas: any;
+  console.log("Hydra canvas rendered");
 
-  static defaultProps = {
-    code: "",
-    fullscreen: false,
-    local: false
-  };
+  return (
+    <div>
+      <canvas
+        ref={ref}
+        className={className}
+        width={1280}
+        height={720}
+      />
+      {error && <span className="error">{error}</span>}
+      <style jsx>
+        {`
+          canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+          }
+          .fullscreen {
+            height: 100%;
+            width: 100%;
+            display: block;
+            overflow: hidden;
+          }
+          .error {
+            font-family: monospace;
+            position: absolute;
+            bottom: 1em;
+            left: 1em;
+            background-color: #ff0000;
+            color: #ffffff;
+            padding: 2px 5px;
+          }
+        `}
+      </style>
+    </div>
+  );
+});
 
-  componentDidMount() {
-    const { code, local } = this.props;
-    const makeGlobal: boolean = !local;
-
-    // eslint-disable-next-line global-require
-    const Hydra = require("hydra-synth");
-    // eslint-disable-next-line global-require
-    const P5 = require("../lib/p5-wrapper");
-
-    window.P5 = P5;
-
-    // For some reason on Android mobile, Chrome has this object undefined:
-    if (!window.navigator.mediaDevices) return;
-
-    this.hydra = new Hydra({ canvas: this.canvas, makeGlobal });
-
-    if (local) {
-      // Define functions for outputs and sources
-      for (let i = 0; i < 4; i++) {
-        this.hydra[`o${i}`] = this.hydra.o[i];
-        this.hydra[`s${i}`] = this.hydra.s[i];
-      }
-
-      // Workaround: This function expects a window.src() function to be defined. See
-      // https://github.com/ojack/hydra-synth/blob/7eb0dde5175e2a6ce417e9f16d7e88fe1d750133/src/GeneratorFactory.js#L92
-      window.src = this.hydra.src;
-    }
-
-    this.tryEval(code);
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { code } = this.props;
-
-    if (!code) return;
-
-    if (code !== prevProps.code) {
-      this.tryEval(code);
-    }
-  }
-
-  componentWillUnmount() {
-    delete this.hydra;
-  }
-
-  tryEval(code: string) {
-    const { local } = this.props;
-
-    let evalCode: string = code;
-    if (local) evalCode = localizeHydraCode(code);
-
-    console.debug(evalCode);
-    window.H = this.hydra;
-    try {
-      // eval(evalCode);
-      // eslint-disable-next-line no-eval
-      eval.call(window, evalCode);
-      this.setState({ error: null });
-    } catch (error) {
-      this.setState({ error: String(error) });
-      console.error(`Failed to execute Hydra code: ${error}`);
-    }
-  }
-
-  render() {
-    const { fullscreen } = this.props;
-    const { error } = this.state;
-
-    const className: string = fullscreen ? "fullscreen" : "";
-
-    return (
-      <div>
-        <canvas
-          ref={e => {
-            this.canvas = e;
-          }}
-          className={className}
-          width={1280}
-          height={720}
-        />
-        {error && <span className="error">{error}</span>}
-        <style jsx>
-          {`
-            canvas {
-              position: absolute;
-              top: 0;
-              left: 0;
-              z-index: -1;
-            }
-            .fullscreen {
-              height: 100%;
-              width: 100%;
-              display: block;
-              overflow: hidden;
-            }
-            .error {
-              font-family: monospace;
-              position: absolute;
-              bottom: 1em;
-              left: 1em;
-              background-color: #ff0000;
-              color: #ffffff;
-              padding: 2px 5px;
-            }
-          `}
-        </style>
-      </div>
-    );
-  }
-}
-
-export default HydraCanvas;
+export default memo(HydraCanvas);

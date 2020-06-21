@@ -1,22 +1,19 @@
 import React, { Component } from "react";
-import hasWebgl from "../lib/webgl-detector";
 
 import { PubSubClient } from "flok-core";
 import TargetMessagesPane, { Message } from "./TargetMessagesPane";
 import SessionClient, { IceServerType } from "../lib/SessionClient";
-import HydraCanvas from "./HydraCanvas";
 import Mosaic from "./Mosaic";
 import Audio from "./Audio";
 
 const MAX_LINES: number = 100;
-
 const LOCAL_TARGETS = ["hydra"];
 
 type Props = {
   websocketsHost: string;
   sessionName: string;
   userName?: string;
-  hydraEnabled: boolean;
+  onHydraEvaluation: (code: string) => void;
   audioStreamingEnabled: boolean;
   extraIceServers?: IceServerType[];
   layout: {
@@ -33,7 +30,6 @@ type State = {
   messagesByClientId: { [clientId: string]: Message[] };
   messagesPaneIsTop: boolean;
   messagesPaneIsMaximized: boolean;
-  hydraCode: string;
 };
 
 class Session extends Component<Props, State> {
@@ -43,13 +39,13 @@ class Session extends Component<Props, State> {
     messagesByClientId: {},
     messagesPaneIsTop: false,
     messagesPaneIsMaximized: false,
-    hydraCode: "",
   };
   pubsubClient: PubSubClient;
   sessionClient: SessionClient;
 
   static defaultProps = {
     userName: "anonymous",
+    onHydraEvaluation: () => { },
   };
 
   componentDidMount() {
@@ -101,15 +97,9 @@ class Session extends Component<Props, State> {
         (content) => this.handleMessageTarget({ target, content })
       );
     });
-
-    if (this.hydraEnabled() && !hasWebgl()) {
-      alert(
-        "This session uses Hydra, but WebGL is not supported in this browser."
-      );
-    }
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps: Props, _prevState: State) {
     if (this.sessionClient) {
       const { userName } = this.props;
       // const { target } = this.state;
@@ -149,7 +139,7 @@ class Session extends Component<Props, State> {
   evaluateLocalCode({ target, body }) {
     switch (target) {
       case "hydra":
-        this.setState({ hydraCode: body });
+        this.props.onHydraEvaluation(body);
         break;
       default:
         console.error("Unhandle local target:", target);
@@ -241,12 +231,6 @@ class Session extends Component<Props, State> {
     this.setState({ showTargetMessagesPane: false });
   };
 
-  hydraEnabled() {
-    const { layout, hydraEnabled } = this.props;
-    // Hydra is enabled if one of the editors in layout is "hydra"
-    return hydraEnabled && layout.editors.some((editor) => editor.target === "hydra");
-  }
-
   render() {
     const {
       messagesByClientId,
@@ -254,20 +238,14 @@ class Session extends Component<Props, State> {
       showTargetMessagesPane,
       messagesPaneIsTop,
       messagesPaneIsMaximized,
-      hydraCode,
     } = this.state;
     const { layout, audioStreamingEnabled } = this.props;
 
     const { sessionClient } = this;
 
-    const hydraEnabled = this.hydraEnabled();
-
     return (
       // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
       <div>
-        {hasWebgl() && hydraEnabled && (
-          <HydraCanvas code={hydraCode} fullscreen />
-        )}
         {showTextEditors && (
           <Mosaic
             layout={layout}
