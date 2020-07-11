@@ -216,16 +216,6 @@ export default ({ children }: { children: any }) => (
       .target-messages-pane ol li pre.error {
         color: #f14668;
       }
-
-      .desc {
-        color: #888;
-        background-color: rgba(0, 0, 0, 0.6);
-        border-radius: 4px;
-        font-family: Monaco, monospace;
-        font-size: 13px;
-        margin-left: 4px;
-        padding: 3px 5px;
-      }
     `}
     </style>
   </div>

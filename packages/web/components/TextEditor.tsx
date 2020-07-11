@@ -58,7 +58,20 @@ const EvaluateButton = ({ onClick }) => (
 );
 
 const Description = ({ editorId, target }) => (
-  <span className="desc">{`${editorId} ${target}`}</span>
+  <span>
+    {`${editorId} ${target}`}
+    <style jsx>{`
+      span {
+        color: #888;
+        background-color: rgba(0, 0, 0, 0.6);
+        border-radius: 4px;
+        font-family: Monaco, monospace;
+        font-size: 13px;
+        margin-left: 4px;
+        padding: 3px 5px;
+      }
+    `}</style>
+  </span>
 );
 
 class TextEditor extends Component<Props, {}> {
