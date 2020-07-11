@@ -6,6 +6,7 @@ export default ({ children }: { children: any }) => (
     <Head>
       <title>flok</title>
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css" /> */}
     </Head>
     {children}
     <style global jsx>{`
@@ -29,14 +30,6 @@ export default ({ children }: { children: any }) => (
 
       ::-webkit-scrollbar-track {
         background: rgba(0, 0, 0, 0.2);
-      }
-
-      .title {
-        color: #cccccc;
-      }
-
-      .subtitle {
-        color: #bbbbbb;
       }
 
       .columns {
@@ -145,6 +138,7 @@ export default ({ children }: { children: any }) => (
           color: #fefefe;
         }
       }
+
       .target-messages-pane {
         position: absolute;
         left: 0;

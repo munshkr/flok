@@ -5,6 +5,27 @@ import Layout from "../components/Layout";
 import uuid from "uuid/v4";
 import hasWebgl from "../lib/webgl-detector";
 
+const Button = props => (<>
+  <button {...props} />
+  <style jsx>{`
+    button {
+      font-size: 1.25em;
+      padding: 0.5em 0.75em;
+    }
+  `}</style>
+</>);
+
+const TextInput = props => (<>
+  <input type="text" {...props} />
+  <style jsx>{`
+    input {
+      font-size: 1.25em;
+      padding: 0.5em 0.75em;
+      width: 40em;
+    }
+  `}</style>
+</>)
+
 class NewSessionForm extends Component<{}, { user: string; targets: string }> {
   state = {
     user: "",
@@ -39,45 +60,52 @@ class NewSessionForm extends Component<{}, { user: string; targets: string }> {
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <div className="field">
-          <div className="control">
-            <input
-              name="user"
-              onChange={this.handleChangeTargets}
-              value={targets}
-              className="input is-large"
-              type="text"
-              placeholder={
-                "Enter the list of targets the session will use, separated by commas (e.g. tidal,foxdot,hydra)"
-              }
-              autoFocus
-            />
-          </div>
-        </div>
-
-        <div className="field">
-          <div className="control">
-            <button type="submit" className="button is-link is-large">
-              Create session
-            </button>
-          </div>
-        </div>
+        <TextInput
+          name="user"
+          value={targets}
+          placeholder={
+            `Enter the list of targets the session will use, separated by commas (e.g. tidal,foxdot,hydra)`
+          }
+          autoFocus
+          onChange={this.handleChangeTargets}
+        />
+        <Button type="submit">
+          Create session
+        </Button>
       </form>
     );
   }
 }
 
+const Title = () => (<>
+  <h1>flok</h1>
+  <h2>collaborative live coding editor</h2>
+  <style jsx>{`
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #cccccc;
+    }
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 400;
+      color: #bbbbbb;
+    }
+  `}</style>
+</>);
+
 const IndexPage = () => (
   <Layout>
-    <section className="section">
-      <div className="container">
-        <h1 className="title">flok</h1>
-        <h3 className="subtitle">collaborative live coding editor</h3>
-        <NewSessionForm />
-      </div>
-    </section>
-
-    {hasWebgl() && <FlockScene />}
+    <div>
+      <Title />
+      <NewSessionForm />
+      {hasWebgl() && <FlockScene />}
+    </div>
+    <style jsx>{`
+      div {
+        margin: 2em;
+      }
+    `}</style>
   </Layout>
 );
 
