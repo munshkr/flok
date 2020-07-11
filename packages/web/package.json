@@ -39,7 +39,6 @@
     "@teamwork/websocket-json-stream": "^2.0.0",
     "@types/react": "^16.9.19",
     "babel-eslint": "^10.0.2",
-    "bulma": "^0.8.0",
     "codemirror": "^5.51.0",
     "core-js": "^2.6.11",
     "eslint": "^6.0.1",
