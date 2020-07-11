@@ -329,6 +329,21 @@ const Audio = (props: Props) => {
       )}
       <canvas ref={canvasRef} width={60} height={40} />
       <audio ref={audioRef}></audio>
+      <style jsx>{`
+        .audio {
+          position: fixed;
+          top: 0;
+          z-index: 100;
+          right: 0;
+        }
+        canvas {
+          margin: 0.3em;
+        }
+        svg {
+          margin: 0.3em;
+          cursor: pointer;
+        }
+      `}</style>
     </div>
   );
 };

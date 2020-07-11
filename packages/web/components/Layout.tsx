@@ -226,20 +226,6 @@ export default ({ children }: { children: any }) => (
         margin-left: 4px;
         padding: 3px 5px;
       }
-
-      .audio {
-        position: fixed;
-        top: 0;
-        z-index: 100;
-        right: 0;
-      }
-      .audio canvas {
-        margin: 0.3em;
-      }
-      .audio svg {
-        margin: 0.3em;
-        cursor: pointer;
-      }
     `}
     </style>
   </div>
