@@ -5,37 +5,34 @@ const withTM = require("next-transpile-modules")([
   "y-protocols",
   "y-indexeddb"
 ]);
-const withCSS = require("@zeit/next-css");
 const process = require("process");
 
-module.exports = withTM(
-  withCSS({
-    publicRuntimeConfig: {
-      isDevelopment: process.env.NODE_ENV !== "production",
-      iceStunUrl: process.env.ICE_STUN_URL,
-      iceTurnUrl: process.env.ICE_TURN_URL,
-      iceStunCredentials: process.env.ICE_STUN_USERPASS,
-      iceTurnCredentials: process.env.ICE_TURN_USERPASS
-    },
+module.exports = withTM({
+  publicRuntimeConfig: {
+    isDevelopment: process.env.NODE_ENV !== "production",
+    iceStunUrl: process.env.ICE_STUN_URL,
+    iceTurnUrl: process.env.ICE_TURN_URL,
+    iceStunCredentials: process.env.ICE_STUN_USERPASS,
+    iceTurnCredentials: process.env.ICE_TURN_USERPASS
+  },
 
-    webpack(config) {
-      // Fixes npm packages that depend on `fs` module
-      config.node = {
-        fs: "empty"
-      };
+  webpack(config) {
+    // Fixes npm packages that depend on `fs` module
+    config.node = {
+      fs: "empty"
+    };
 
-      config.module.rules.push({
-        test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)$/,
-        use: {
-          loader: "url-loader",
-          options: {
-            limit: 100000,
-            name: "[name].[ext]"
-          }
+    config.module.rules.push({
+      test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)$/,
+      use: {
+        loader: "url-loader",
+        options: {
+          limit: 100000,
+          name: "[name].[ext]"
         }
-      });
+      }
+    });
 
-      return config;
-    }
-  })
-);
+    return config;
+  }
+});
