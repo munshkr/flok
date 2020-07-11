@@ -6,16 +6,11 @@ import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
 import SessionClient from "../lib/SessionClient";
 import Button from "./Button";
 
-import "codemirror/lib/codemirror.css";
-
 import "codemirror/mode/javascript/javascript";
 import "codemirror/mode/python/python";
 import "codemirror/mode/haskell/haskell";
 import "codemirror/mode/smalltalk/smalltalk";
-
-import "codemirror/theme/material.css";
 import "codemirror/addon/scroll/simplescrollbars";
-import "codemirror/addon/scroll/simplescrollbars.css";
 import "codemirror/addon/selection/mark-selection";
 
 type EvaluateCodeArgs = {
