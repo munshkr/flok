@@ -1,13 +1,5 @@
 import Head from "next/head";
 import React from "react";
-import "../styles/styles.scss";
-
-const theme = {
-  red: 'hsl(348, 86%, 61%)',
-  bodyBackgroundColor: '#101010',
-  bodyColor: '#bbbbbb',
-  strongColor: '#cccccc',
-}
 
 export default ({ children }: { children: any }) => (
   <div>
@@ -16,9 +8,9 @@ export default ({ children }: { children: any }) => (
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
     </Head>
     {children}
-    <style jsx global>{`
+    <style global jsx>{`
       html {
-        background-color: ${theme.bodyBackgroundColor};
+        background-color: #101010;
         overflow: hidden;
       }
 
@@ -40,11 +32,11 @@ export default ({ children }: { children: any }) => (
       }
 
       .title {
-        color: ${theme.strongColor};
+        color: #cccccc;
       }
 
       .subtitle {
-        color: ${theme.bodyColor};
+        color: #bbbbbb;
       }
 
       .columns {
@@ -52,34 +44,29 @@ export default ({ children }: { children: any }) => (
         padding: 0;
         cursor: text;
       }
+
       .column {
         margin: 0;
         padding: 0;
       }
 
-      .editor {
-        .CodeMirror {
-          // Transparent background
-          background-color: rgba(0, 0, 0, 0) !important;
-          height: 100vh;
-          font-family: Monaco, monospace;
-          font-size: 14px;
-
-          .CodeMirror-line > span {
-            border-radius: 4px;
-            padding: 1px;
-            background-color: rgba(0, 0, 0, 0.6);
-          }
-
-          .CodeMirror-line .flash-selection {
-            background-color: #ffff77cc;
-            color: #000;
-          }
-        }
-
-        &.is-half-height .CodeMirror {
-          height: 50vh;
-        }
+      .editor .CodeMirror {
+        background-color: rgba(0, 0, 0, 0) !important;
+        height: 100vh;
+        font-family: Monaco, monospace;
+        font-size: 14px;
+      }
+      .editor .CodeMirror .CodeMirror-line > span {
+        border-radius: 4px;
+        padding: 1px;
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+      .editor .CodeMirror .CodeMirror-line .flash-selection {
+        background-color: #ffff77cc;
+        color: #000;
+      }
+      .editor.is-half-height .CodeMirror {
+        height: 50vh;
       }
 
       .remote-caret {
@@ -89,12 +76,13 @@ export default ({ children }: { children: any }) => (
         border-left-width: 2px;
         height: 1.1em;
       }
+
       .remote-caret > div {
         position: relative;
         top: 1.5em;
         left: -2px;
         font-size: 14px;
-        background-color: rgb(250, 129, 0);
+        background-color: #fa8100;
         font-family: Monaco, monospace;
         font-style: normal;
         font-weight: normal;
@@ -129,11 +117,10 @@ export default ({ children }: { children: any }) => (
         z-index: 1000;
         font-family: monospace;
         font-style: italic;
-
-        ul {
-          list-style-type: none;
-          margin: 0;
-        }
+      }
+      .users-list ul {
+        list-style-type: none;
+        margin: 0;
       }
 
       .evaluate {
@@ -148,18 +135,16 @@ export default ({ children }: { children: any }) => (
         .evaluate {
           float: right;
           display: block;
-
-          a {
-            font-size: 2em;
-            margin: 0 0.125em;
-            color: #888;
-          }
-          a:hover {
-            color: #fefefe;
-          }
+        }
+        .evaluate a {
+          font-size: 2em;
+          margin: 0 0.125em;
+          color: #888;
+        }
+        .evaluate a:hover {
+          color: #fefefe;
         }
       }
-
       .target-messages-pane {
         position: absolute;
         left: 0;
@@ -170,79 +155,72 @@ export default ({ children }: { children: any }) => (
         font-size: 0.8em;
         height: 20em;
         width: 100%;
-
-        .tabs {
-          margin-bottom: 0.25em;
-
-          li.is-active a {
-            color: #4b8ffd;
-            border-bottom-color: #4b8ffd;
-          }
-          a {
-            color: #888;
-            border-bottom-color: #00000000;
-            padding: 0.1em 0.25em;
-          }
-          a:hover {
-            color: #fefefe;
-            border-bottom-color: #00000000;
-          }
-          ul {
-            border-bottom-color: #00000000;
-          }
-        }
-
-        .scrollable-content {
-          height: 100%;
-          overflow: auto;
-        }
-
-        &.top {
-          top: 0;
-        }
-        &.bottom {
-          bottom: 0;
-        }
-        &.maximized {
-          height: 100%;
-        }
-
-        .button-group {
-          float: right;
-
-          a {
-            font-size: 16px;
-            margin: 0 0.125em;
-            color: #888;
-          }
-
-          a:hover {
-            color: #fefefe;
-          }
-
-          margin-right: 0.125em;
-        }
-
-        ol {
-          list-style: none;
-          padding: 0;
-
-          li {
-            pre {
-              padding: 0;
-              background-color: transparent;
-              color: ${theme.bodyColor};
-              white-space: pre-wrap; /* css-3 */
-              white-space: -moz-pre-wrap; /* Mozilla, since 1999 */
-              white-space: -pre-wrap; /* Opera 4-6 */
-              white-space: -o-pre-wrap; /* Opera 7 */
-              word-wrap: break-word; /* Internet Explorer 5.5+ */
-            }
-            pre.error {
-              color: ${theme.red};
-            }
-          }
-        }
+      }
+      .target-messages-pane .tabs {
+        margin-bottom: 0.25em;
+      }
+      .target-messages-pane .tabs li.is-active a {
+        color: #4b8ffd;
+        border-bottom-color: #4b8ffd;
+      }
+      .target-messages-pane .tabs a {
+        color: #888;
+        border-bottom-color: #00000000;
+        padding: 0.1em 0.25em;
+      }
+      .target-messages-pane .tabs a:hover {
+        color: #fefefe;
+        border-bottom-color: #00000000;
+      }
+      .target-messages-pane .tabs ul {
+        border-bottom-color: #00000000;
+      }
+      .target-messages-pane .scrollable-content {
+        height: 100%;
+        overflow: auto;
+      }
+      .target-messages-pane.top {
+        top: 0;
+      }
+      .target-messages-pane.bottom {
+        bottom: 0;
+      }
+      .target-messages-pane.maximized {
+        height: 100%;
+      }
+      .target-messages-pane .button-group {
+        float: right;
+        margin-right: 0.125em;
+      }
+      .target-messages-pane .button-group a {
+        font-size: 16px;
+        margin: 0 0.125em;
+        color: #888;
+      }
+      .target-messages-pane .button-group a:hover {
+        color: #fefefe;
+      }
+      .target-messages-pane ol {
+        list-style: none;
+        padding: 0;
+      }
+      .target-messages-pane ol li pre {
+        padding: 0;
+        background-color: transparent;
+        color: #bbbbbb;
+        white-space: pre-wrap;
+        /* css-3 */
+        white-space: -moz-pre-wrap;
+        /* Mozilla, since 1999 */
+        white-space: -pre-wrap;
+        /* Opera 4-6 */
+        white-space: -o-pre-wrap;
+        /* Opera 7 */
+        word-wrap: break-word;
+        /* Internet Explorer 5.5+ */
+      }
+      .target-messages-pane ol li pre.error {
+        color: #f14668;
       }
 
       .desc {
@@ -255,18 +233,18 @@ export default ({ children }: { children: any }) => (
         padding: 3px 5px;
       }
 
-      .audio{
+      .audio {
         position: fixed;
         top: 0;
         z-index: 100;
         right: 0;
-        canvas {
-          margin: 0.3em;
-        }
-        svg{
-          margin: 0.3em;
-          cursor: pointer;
-        }
+      }
+      .audio canvas {
+        margin: 0.3em;
+      }
+      .audio svg {
+        margin: 0.3em;
+        cursor: pointer;
       }
     `}
     </style>
