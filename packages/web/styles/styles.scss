@@ -1,10 +1,9 @@
 @charset "utf-8";
 
+$red: hsl(348, 86%, 61%) !default
 $body-background-color: #101010;
 $body-color: #bbbbbb;
 $strong-color: #cccccc;
-
-@import "../../node_modules/bulma/bulma.sass";
 
 html {
   background-color: $body-background-color;
