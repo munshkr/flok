@@ -82,14 +82,14 @@ const Title = () => (<>
   <h2>collaborative live coding editor</h2>
   <style jsx>{`
     h1 {
-      font-size: 2rem;
-      font-weight: 600;
-      color: #cccccc;
+      font-size: 40px;
+      font-weight: 400;
+      color: #fff;
     }
     h2 {
-      font-size: 1.25rem;
+      font-size: 1.17em;
       font-weight: 400;
-      color: #bbbbbb;
+      color: #eee;
     }
   `}</style>
 </>);

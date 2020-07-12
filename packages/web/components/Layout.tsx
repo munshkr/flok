@@ -6,16 +6,16 @@ export default ({ children }: { children: any }) => (
     <Head>
       <title>flok</title>
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-      <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Roboto:wght@400;500&display=swap" rel="stylesheet"></link>
+      <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Chivo:wght@300;400;700&display=swap" rel="stylesheet"></link>
       {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css" /> */}
     </Head>
     {children}
     <style global jsx>{`
       html {
         background-color: #101010;
-        color: #ccc;
+        color: #efefef;
         overflow: hidden;
-        font-family: 'Roboto', sans-serif;
+        font-family: 'Chivo', sans-serif;
       }
 
       body {
