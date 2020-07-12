@@ -32,17 +32,6 @@ export default ({ children }: { children: any }) => (
         background: rgba(0, 0, 0, 0.2);
       }
 
-      .columns {
-        margin: 0;
-        padding: 0;
-        cursor: text;
-      }
-
-      .column {
-        margin: 0;
-        padding: 0;
-      }
-
       .editor .CodeMirror {
         background-color: rgba(0, 0, 0, 0) !important;
         height: 100vh;
