@@ -87,39 +87,6 @@ export default ({ children }: { children: any }) => (
         z-index: 3;
       }
 
-      .status {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        background: transparent;
-        text-align: right;
-        color: #fefefe;
-        z-index: 1000;
-        font-family: monospace;
-        font-weight: bold;
-      }
-
-      .users-list {
-        position: absolute;
-        top: 0;
-        right: 0;
-        background: transparent;
-        font-size: 0.9em;
-        text-align: right;
-        color: #fefefe;
-        z-index: 1000;
-        font-family: monospace;
-        font-style: italic;
-      }
-      .users-list ul {
-        list-style-type: none;
-        margin: 0;
-      }
-
-      .evaluate {
-        display: none;
-      }
-
       @media only screen and (max-width: 600px) {
         html {
           overflow: scroll;
