@@ -6,17 +6,24 @@ export default ({ children }: { children: any }) => (
     <Head>
       <title>flok</title>
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Roboto:wght@400;500&display=swap" rel="stylesheet"></link>
       {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css" /> */}
     </Head>
     {children}
     <style global jsx>{`
       html {
         background-color: #101010;
+        color: #ccc;
         overflow: hidden;
+        font-family: 'Roboto', sans-serif;
       }
 
       body {
         overflow: hidden;
+      }
+
+      pre {
+        font-family: 'Roboto Mono', monospace;
       }
 
       ::-webkit-scrollbar {
