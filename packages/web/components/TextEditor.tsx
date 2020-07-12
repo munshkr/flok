@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
-import css from 'styled-jsx/css'
+import css from "styled-jsx/css";
 
 import SessionClient from "../lib/SessionClient";
 import Button from "./Button";
@@ -66,22 +66,24 @@ const EvaluateButton = ({ onClick }) => {
     }
   `;
 
-  return (<div>
-    <Button className={className} icon={faPlayCircle} onClick={onClick} />
-    <style jsx>{`
-      div {
-        display: none;
-      }
-
-      @media only screen and (max-width: 600px) {
+  return (
+    <div>
+      <Button className={className} icon={faPlayCircle} onClick={onClick} />
+      <style jsx>{`
         div {
-          float: right;
-          display: block;
+          display: none;
         }
-      }
-    `}</style>
-    {styles}
-  </div>);
+
+        @media only screen and (max-width: 600px) {
+          div {
+            float: right;
+            display: block;
+          }
+        }
+      `}</style>
+      {styles}
+    </div>
+  );
 };
 
 const Description = ({ editorId, target }) => (
@@ -238,17 +240,39 @@ class TextEditor extends Component<Props, {}> {
       extraKeys,
     };
 
+    // const { className: heightClassName, styles: heightStyles } = css.resolve`
+    //   .CodeMirror {
+    //     height: ${isHalfHeight ? '50vh' : '100vh'};
+    //   }
+    // `;
+
     return (
       <div>
         <EvaluateButton onClick={this.handleEvaluateButtonClick} />
         <Description editorId={editorId} target={target} />
         <CodeMirror
-          className={`editor ${isHalfHeight && "is-half-height"}`}
+          className="editor"
           ref={(el) => {
             this.cm = el;
           }}
           options={options}
         />
+        <style jsx global>{`
+          .editor > .CodeMirror {
+            background-color: rgba(0, 0, 0, 0) !important;
+            font-family: Monaco, monospace;
+            font-size: 14px;
+          }
+          .editor > .CodeMirror .CodeMirror-line > span {
+            border-radius: 4px;
+            padding: 1px;
+            background-color: rgba(0, 0, 0, 0.6);
+          }
+          .editor > .CodeMirror .CodeMirror-line .flash-selection {
+            background-color: #ffff77cc;
+            color: #000;
+          }
+        `}</style>
       </div>
     );
   }
