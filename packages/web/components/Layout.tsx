@@ -32,25 +32,6 @@ export default ({ children }: { children: any }) => (
         background: rgba(0, 0, 0, 0.2);
       }
 
-      .editor .CodeMirror {
-        background-color: rgba(0, 0, 0, 0) !important;
-        height: 100vh;
-        font-family: Monaco, monospace;
-        font-size: 14px;
-      }
-      .editor .CodeMirror .CodeMirror-line > span {
-        border-radius: 4px;
-        padding: 1px;
-        background-color: rgba(0, 0, 0, 0.6);
-      }
-      .editor .CodeMirror .CodeMirror-line .flash-selection {
-        background-color: #ffff77cc;
-        color: #000;
-      }
-      .editor.is-half-height .CodeMirror {
-        height: 50vh;
-      }
-
       .remote-caret {
         position: absolute;
         border-left: black;
