@@ -254,14 +254,16 @@ void main() {
 }
 `;
 
-const WIDTH = 32;
+const UPSCALE = 2;
+
+const WIDTH = 16;
 const BIRDS = WIDTH * WIDTH;
 const BOUNDS = 800;
 const BOUNDS_HALF = BOUNDS / 2;
 
 // Custom Geometry - using 3 triangles each. No UVs, no normals currently.
 // eslint-disable-next-line func-names
-const BirdGeometry = function() {
+const BirdGeometry = function () {
   const triangles = BIRDS * 3;
   const points = triangles * 3;
 
@@ -369,7 +371,7 @@ class FlockScene extends React.Component {
 
     // Add Renderer
     this.renderer = new THREE.WebGLRenderer({ antialias: true });
-    this.renderer.setPixelRatio(window.devicePixelRatio / 4);
+    this.renderer.setPixelRatio(window.devicePixelRatio / UPSCALE);
     this.renderer.setSize(width, height);
 
     this.container.appendChild(this.renderer.domElement);
@@ -529,7 +531,7 @@ class FlockScene extends React.Component {
     this.windowHalfY = window.innerHeight / 2;
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
-    this.renderer.setSize(window.innerWidth / 8, window.innerHeight / 8);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
   handleDocumentMouseMove(event) {

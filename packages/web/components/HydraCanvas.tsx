@@ -9,8 +9,6 @@ const HydraCanvas = React.forwardRef(
     const { fullscreen } = props;
     const className: string = fullscreen ? "fullscreen" : "";
 
-    console.log("Hydra canvas rendered");
-
     return (
       <>
         <canvas ref={ref} className={className} width={1280} height={720} />
