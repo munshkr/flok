@@ -4,12 +4,18 @@ import { IconProp } from "@fortawesome/fontawesome-svg-core";
 
 interface Props {
   icon: IconProp;
+  className?: string;
   onClick: (e: MouseEvent) => void;
 }
 
-const Button = ({ icon, onClick }: Props) => (
-  <a onClick={onClick}>
+const Button = ({ icon, className, onClick }: Props) => (
+  <a className={className} onClick={onClick}>
     <FontAwesomeIcon icon={icon} />
+    <style jsx>{`
+      a {
+        cursor: pointer;
+      }
+    `}</style>
   </a>
 );
 
