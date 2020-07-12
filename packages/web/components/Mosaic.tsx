@@ -19,6 +19,17 @@ const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode }) => (
         />
       </div>
     ))}
+    <style jsx>{`
+      .columns {
+        margin: 0;
+        padding: 0;
+        cursor: text;
+      }
+      .column {
+        margin: 0;
+        padding: 0;
+      }
+    `}</style>
   </div>
 );
 
