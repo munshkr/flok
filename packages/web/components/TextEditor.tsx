@@ -2,6 +2,7 @@
 import React, { Component } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
+import css from 'styled-jsx/css'
 
 import SessionClient from "../lib/SessionClient";
 import Button from "./Button";
@@ -51,11 +52,37 @@ const modesByTarget = {
   hydra: "javascript",
 };
 
-const EvaluateButton = ({ onClick }) => (
-  <div className="evaluate">
-    <Button icon={faPlayCircle} onClick={onClick} />
-  </div>
-);
+const EvaluateButton = ({ onClick }) => {
+  const { className, styles } = css.resolve`
+    @media only screen and (max-width: 600px) {
+      a {
+        font-size: 2em;
+        margin: 0 0.125em;
+        color: #888;
+      }
+      a:hover {
+        color: #fefefe;
+      }
+    }
+  `;
+
+  return (<div>
+    <Button className={className} icon={faPlayCircle} onClick={onClick} />
+    <style jsx>{`
+      div {
+        display: none;
+      }
+
+      @media only screen and (max-width: 600px) {
+        div {
+          float: right;
+          display: block;
+        }
+      }
+    `}</style>
+    {styles}
+  </div>);
+};
 
 const Description = ({ editorId, target }) => (
   <span>

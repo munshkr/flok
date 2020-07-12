@@ -124,19 +124,6 @@ export default ({ children }: { children: any }) => (
         html {
           overflow: scroll;
         }
-
-        .evaluate {
-          float: right;
-          display: block;
-        }
-        .evaluate a {
-          font-size: 2em;
-          margin: 0 0.125em;
-          color: #888;
-        }
-        .evaluate a:hover {
-          color: #fefefe;
-        }
       }
     `}
     </style>
