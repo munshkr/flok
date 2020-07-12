@@ -6,7 +6,7 @@ import "codemirror/lib/codemirror.css";
 import "codemirror/theme/material.css";
 import "codemirror/addon/scroll/simplescrollbars.css";
 
-import "../lib/y-codemirror.css";
+import "../styles/y-codemirror.css";
 
 export default function CustomApp({ Component, pageProps }) {
   return <Component {...pageProps} />
