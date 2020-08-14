@@ -19,7 +19,7 @@ const {
   iceStunUrl,
   iceTurnUrl,
   iceStunCredentials,
-  iceTurnCredentials
+  iceTurnCredentials,
 } = publicRuntimeConfig;
 
 const parseIceServerFromEnvVars = (url: string, userPass?: string) => {
@@ -40,7 +40,6 @@ const extraIceServers = (() => {
   if (turnUrl) res.push(turnUrl);
   return res;
 })();
-
 
 class JoinSessionForm extends Component<{
   username: string;
@@ -70,13 +69,13 @@ class JoinSessionForm extends Component<{
 
   handleChangeHydraCheckbox = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
-    this.setState({ hydraEnabled: target.checked })
-  }
+    this.setState({ hydraEnabled: target.checked });
+  };
 
   handleChangeAudioStreamingCheckbox = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
-    this.setState({ audioStreamingEnabled: target.checked })
-  }
+    this.setState({ audioStreamingEnabled: target.checked });
+  };
 
   handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -109,21 +108,27 @@ class JoinSessionForm extends Component<{
           </div>
         </div>
 
-        {hydraVisible && <div className="field">
-          <div className="control">
-            <label className="checkbox">
-              <input
-                className="is-large"
-                onChange={this.handleChangeHydraCheckbox}
-                checked={hasWebGl && hydraEnabled}
-                type="checkbox"
-                disabled={!hasWebGl}
-              />
-              Enable Hydra{' '}
-              {!hasWebGl && <span>(WebGL is disabled or not supported on this browser!)</span>}
-            </label>
+        {hydraVisible && (
+          <div className="field">
+            <div className="control">
+              <label className="checkbox">
+                <input
+                  className="is-large"
+                  onChange={this.handleChangeHydraCheckbox}
+                  checked={hasWebGl && hydraEnabled}
+                  type="checkbox"
+                  disabled={!hasWebGl}
+                />
+                Enable Hydra{" "}
+                {!hasWebGl && (
+                  <span>
+                    (WebGL is disabled or not supported on this browser!)
+                  </span>
+                )}
+              </label>
+            </div>
           </div>
-        </div>}
+        )}
 
         <div className="field">
           <div className="control">
@@ -151,7 +156,14 @@ class JoinSessionForm extends Component<{
   }
 }
 
-const EmptySession = ({ websocketsUrl, session, lastUsername, hasWebGl, hasHydraSlot, onSubmit }) => (
+const EmptySession = ({
+  websocketsUrl,
+  session,
+  lastUsername,
+  hasWebGl,
+  hasHydraSlot,
+  onSubmit,
+}) => (
   <section className="section">
     <div className="container">
       <h1 className="title">flok</h1>
@@ -216,7 +228,7 @@ class SessionPage extends Component<Props, State> {
     hydraError: "",
     audioStreamingEnabled: false,
     username: null,
-    websocketsUrl: null
+    websocketsUrl: null,
   };
 
   static async getInitialProps({ req, query }: NextPageContext) {
@@ -233,7 +245,7 @@ class SessionPage extends Component<Props, State> {
 
     this.state = {
       ...this.state,
-      hasWebGl: hasWebgl()
+      hasWebGl: hasWebgl(),
     };
 
     this.hydraCanvas = React.createRef();
@@ -246,10 +258,13 @@ class SessionPage extends Component<Props, State> {
     }
 
     if (this.state.hasWebGl) {
-      this.hydra = new HydraWrapper(this.hydraCanvas.current, this.handleHydraError);
+      this.hydra = new HydraWrapper(
+        this.hydraCanvas.current,
+        this.handleHydraError
+      );
       console.log("Hydra wrapper created");
     } else {
-      console.warn("WebGL is disabled or not supported in this browser")
+      console.warn("WebGL is disabled or not supported in this browser");
     }
 
     // Set Websockets URL
@@ -270,7 +285,15 @@ class SessionPage extends Component<Props, State> {
     }
   }
 
-  handleJoinSubmit = ({ username, hydraEnabled, audioStreamingEnabled }: { username: string, hydraEnabled: boolean, audioStreamingEnabled: boolean }) => {
+  handleJoinSubmit = ({
+    username,
+    hydraEnabled,
+    audioStreamingEnabled,
+  }: {
+    username: string;
+    hydraEnabled: boolean;
+    audioStreamingEnabled: boolean;
+  }) => {
     window.localStorage.setItem("lastUsername", username);
 
     this.setState({ username, hydraEnabled, audioStreamingEnabled });
@@ -281,18 +304,18 @@ class SessionPage extends Component<Props, State> {
     if (hasWebGl && hydraEnabled) {
       this.hydra.tryEval(code);
     }
-  }
+  };
 
   handleHydraError = (error: string) => {
     this.setState({ hydraError: error });
-  }
+  };
 
   generateLayoutFromList = (list: string[]) => {
     return {
       editors: list.map((target: string, i: number) => ({
         id: String(i),
-        target
-      }))
+        target,
+      })),
     };
   };
 
@@ -305,7 +328,7 @@ class SessionPage extends Component<Props, State> {
       hydraError,
       audioStreamingEnabled,
       lastUsername,
-      websocketsUrl
+      websocketsUrl,
     } = this.state;
 
     let layoutList = defaultLayoutList;
@@ -333,22 +356,21 @@ class SessionPage extends Component<Props, State> {
             onHydraEvaluation={this.handleHydraEvaluation}
           />
         ) : (
-              <EmptySession
-                websocketsUrl={websocketsUrl}
-                session={session}
-                lastUsername={lastUsername}
-                onSubmit={this.handleJoinSubmit}
-                hasHydraSlot={hasHydraSlot}
-                hasWebGl={hasWebGl}
-              />
-            )}
-        {hasWebgl && <>
-          <HydraCanvas
-            ref={this.hydraCanvas}
-            fullscreen
+          <EmptySession
+            websocketsUrl={websocketsUrl}
+            session={session}
+            lastUsername={lastUsername}
+            onSubmit={this.handleJoinSubmit}
+            hasHydraSlot={hasHydraSlot}
+            hasWebGl={hasWebGl}
           />
-          {hydraError && <HydraError>{hydraError}</HydraError>}
-        </>}
+        )}
+        {hasWebgl && (
+          <>
+            <HydraCanvas ref={this.hydraCanvas} fullscreen />
+            {hydraError && <HydraError>{hydraError}</HydraError>}
+          </>
+        )}
       </Layout>
     );
   }

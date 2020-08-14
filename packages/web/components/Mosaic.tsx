@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import SessionClient from "../lib/SessionClient";
 
 const TextEditor = dynamic(() => import("./TextEditor"), {
-  ssr: false
+  ssr: false,
 });
 
 const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode }) => (

@@ -4,7 +4,7 @@ import {
   faCaretSquareUp,
   faWindowRestore,
   faWindowMaximize,
-  faWindowClose
+  faWindowClose,
 } from "@fortawesome/free-solid-svg-icons";
 import Button from "./Button";
 
@@ -33,7 +33,7 @@ class TargetMessagesPane extends Component<Props, State> {
     isMaximized: false,
     onTogglePosition: () => {},
     onToggleMaximize: () => {},
-    onClose: () => {}
+    onClose: () => {},
   };
   container: HTMLElement;
 
@@ -42,7 +42,7 @@ class TargetMessagesPane extends Component<Props, State> {
 
     const clientIds = Object.keys(this.props.messagesByClientId);
     this.state = {
-      currentClientId: clientIds.length > 0 ? clientIds[0] : null
+      currentClientId: clientIds.length > 0 ? clientIds[0] : null,
     };
   }
 
@@ -53,7 +53,7 @@ class TargetMessagesPane extends Component<Props, State> {
     }
   }
 
-  handleTabClick = e => {
+  handleTabClick = (e) => {
     const clientId = e.target.attributes["data-id"].value;
     this.setState({ currentClientId: clientId });
   };
@@ -65,7 +65,7 @@ class TargetMessagesPane extends Component<Props, State> {
       isMaximized,
       onTogglePosition,
       onToggleMaximize,
-      onClose
+      onClose,
     } = this.props;
     const { currentClientId } = this.state;
 
@@ -98,7 +98,7 @@ class TargetMessagesPane extends Component<Props, State> {
           </ul>
         </div>
         <div
-          ref={e => {
+          ref={(e) => {
             this.container = e;
           }}
           className="scrollable-content"

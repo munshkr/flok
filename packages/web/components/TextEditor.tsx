@@ -53,7 +53,7 @@ const modesByTarget = {
   tidal: "haskell",
   foxdot: "python",
   sclang: "smalltalk",
-  hydra: "javascript"
+  hydra: "javascript",
 };
 
 const EvaluateButton = ({ onClick }) => (
@@ -71,7 +71,7 @@ class TextEditor extends Component<Props, {}> {
     target: "default",
     onEvaluateCode: () => {},
     onEvaluateRemoteCode: () => {},
-    onCursorActivity: () => {}
+    onCursorActivity: () => {},
   };
 
   cm: any;
@@ -159,7 +159,7 @@ class TextEditor extends Component<Props, {}> {
       target,
       body: editor.getValue(),
       fromLine: 0,
-      toLine: editor.lineCount()
+      toLine: editor.lineCount(),
     });
   };
 
@@ -184,13 +184,13 @@ class TextEditor extends Component<Props, {}> {
     const defaultExtraKeys = {
       "Shift-Enter": this.evaluateLine,
       "Ctrl-Enter": this.evaluateBlock,
-      "Cmd-Enter": this.evaluateBlock
+      "Cmd-Enter": this.evaluateBlock,
     };
 
     const extraKeys = {
       "Ctrl-.": this.freeAllSound,
       "Cmd-.": this.freeAllSound,
-      ...defaultExtraKeys
+      ...defaultExtraKeys,
     };
 
     const mode = modesByTarget[target] || "javascript";
@@ -200,7 +200,7 @@ class TextEditor extends Component<Props, {}> {
       theme: "material",
       lineNumbers: false,
       lineWrapping: true,
-      extraKeys
+      extraKeys,
     };
 
     return (
@@ -209,7 +209,7 @@ class TextEditor extends Component<Props, {}> {
         <Description editorId={editorId} target={target} />
         <CodeMirror
           className={`editor ${isHalfHeight && "is-half-height"}`}
-          ref={el => {
+          ref={(el) => {
             this.cm = el;
           }}
           options={options}

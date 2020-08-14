@@ -45,7 +45,7 @@ class Session extends Component<Props, State> {
 
   static defaultProps = {
     userName: "anonymous",
-    onHydraEvaluation: () => { },
+    onHydraEvaluation: () => {},
   };
 
   componentDidMount() {
