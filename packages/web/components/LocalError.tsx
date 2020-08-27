@@ -1,4 +1,4 @@
-const HydraError = ({ children }) => (
+const LocalError = ({ children }) => (
   <>
     <span className="error">{children}</span>
     <style jsx>
@@ -17,4 +17,4 @@ const HydraError = ({ children }) => (
   </>
 );
 
-export default HydraError;
+export default LocalError;

@@ -9,7 +9,7 @@ import Session from "../../components/Session";
 import { IceServerType } from "../../lib/SessionClient";
 import HydraWrapper from "../../lib/HydraWrapper";
 import VedaWrapper from "../../lib/VedaWrapper";
-import HydraError from "../../components/HydraError";
+import LocalError from "../../components/HydraError";
 
 const defaultLayoutList = ["tidal", "hydra"];
 
@@ -258,8 +258,8 @@ interface State {
   lastUsername: string;
   hasWebGl: boolean;
   hydraEnabled: boolean;
-  hydraError: string;
   vedaEnabled: boolean;
+  localError: string;
   audioStreamingEnabled: boolean;
   username: string;
   websocketsUrl: string;
@@ -275,7 +275,7 @@ class SessionPage extends Component<Props, State> {
     lastUsername: null,
     hasWebGl: true,
     hydraEnabled: false,
-    hydraError: "",
+    localError: "",
     vedaEnabled: false,
     audioStreamingEnabled: false,
     username: null,
@@ -335,7 +335,7 @@ class SessionPage extends Component<Props, State> {
       if (hydraEnabled) {
         this.hydra = new HydraWrapper(
           this.canvas.current,
-          this.handleHydraError
+          this.handleLocalError
         );
         console.log("Hydra wrapper created");
       } else if (vedaEnabled) {
@@ -393,8 +393,8 @@ class SessionPage extends Component<Props, State> {
     }
   };
 
-  handleHydraError = (error: string) => {
-    this.setState({ hydraError: error });
+  handleLocalError = (error: string) => {
+    this.setState({ localError: error });
   };
 
   generateLayoutFromList = (list: string[]) => {
@@ -412,7 +412,7 @@ class SessionPage extends Component<Props, State> {
       loading,
       username,
       hasWebGl,
-      hydraError,
+      localError,
       audioStreamingEnabled,
       lastUsername,
       websocketsUrl,
@@ -458,7 +458,7 @@ class SessionPage extends Component<Props, State> {
         {hasWebgl && (
           <>
             <canvas ref={this.canvas} width={1280} height={720}></canvas>
-            {hydraError && <HydraError>{hydraError}</HydraError>}
+            {localError && <LocalError>{localError}</LocalError>}
           </>
         )}
         <style jsx>
