@@ -9,7 +9,7 @@ import Session from "../../components/Session";
 import { IceServerType } from "../../lib/SessionClient";
 import HydraWrapper from "../../lib/HydraWrapper";
 import VedaWrapper from "../../lib/VedaWrapper";
-import LocalError from "../../components/HydraError";
+import LocalError from "../../components/LocalError";
 
 const defaultLayoutList = ["tidal", "hydra"];
 
