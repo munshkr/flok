@@ -365,7 +365,7 @@ class SessionPage extends Component<Props, State> {
             hasWebGl={hasWebGl}
           />
         )}
-        {hasWebgl && (
+        {hasWebgl && hasHydraSlot && (
           <>
             <HydraCanvas ref={this.hydraCanvas} fullscreen />
             {hydraError && <HydraError>{hydraError}</HydraError>}
