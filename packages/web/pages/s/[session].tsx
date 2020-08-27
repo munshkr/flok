@@ -339,7 +339,7 @@ class SessionPage extends Component<Props, State> {
         );
         console.log("Hydra wrapper created");
       } else if (vedaEnabled) {
-        this.veda = new VedaWrapper(this.canvas.current);
+        this.veda = new VedaWrapper(this.canvas.current, this.handleLocalError);
         console.log("Veda wrapper created");
       }
     } else {
