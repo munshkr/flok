@@ -995,6 +995,11 @@
     unique-filename "^1.1.1"
     which "^1.3.1"
 
+"@fand/gifuct-js@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@fand/gifuct-js/-/gifuct-js-1.0.0.tgz#8e001acdc20b74222805360d42c702409b9e0321"
+  integrity sha512-8jduCVQcvK7L9O+1q/DL/AYPW+PYm4glkS7hkLE9+GSUABfVj62MJv6EbHY6PNbbvyYx8voDLmvB5ppQoIyF9g==
+
 "@fortawesome/fontawesome-common-types@^0.2.27":
   version "0.2.27"
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-0.2.27.tgz#19706345859fc46adf3684ed01d11b40903b87e9"
@@ -3175,6 +3180,11 @@ class-utils@^0.3.5:
     define-property "^0.2.5"
     isobject "^3.0.0"
     static-extend "^0.1.1"
+
+classnames@^2.2.6:
+  version "2.2.6"
+  resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
+  integrity sha512-JR/iSQOSt+LQIWwrwEzJ9uk0xfN3mTVYMwt1Ir5mUcSN6pU+V4zQFFaJsclJbPuAUQH+yfWef6tm7l1quW3C8Q==
 
 cli-cursor@^2.1.0:
   version "2.1.0"
@@ -6069,6 +6079,13 @@ is-utf8@^0.2.0:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/is-utf8/-/is-utf8-0.2.1.tgz#4b0da1442104d1b336340e80797e865cf39f7d72"
   integrity sha1-Sw2hRCEE0bM2NA6AeX6GXPOffXI=
+
+is-video@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/is-video/-/is-video-1.0.1.tgz#7bc67760b0103d402bc1f10bb542f16a3687773b"
+  integrity sha1-e8Z3YLAQPUArwfELtULxajaHdzs=
+  dependencies:
+    video-extensions "^1.0.0"
 
 is-windows@^1.0.0, is-windows@^1.0.2:
   version "1.0.2"
@@ -10350,10 +10367,32 @@ thread-loader@2.1.3:
     loader-utils "^1.1.0"
     neo-async "^2.6.0"
 
+three-mtl-loader@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/three-mtl-loader/-/three-mtl-loader-1.0.2.tgz#d0060f1afb8bc2c166ea56cebad250d73da18563"
+  integrity sha512-GqDrWC5rbi+0/gp999S4lpCSHroBEfe9NqmH165orG0QhXeknL/eSNVMJUWBNgg2sBW7vlqVNWD/P0kdHeGC9g==
+  dependencies:
+    three "^0.87.1"
+
+three-obj-loader@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/three-obj-loader/-/three-obj-loader-1.1.3.tgz#4d540a256fcf2a59a6c6e0cd51a623efd76fd87d"
+  integrity sha512-usuOOTAqeM7J7dyae/I9ltFnfy1g47Hsr3byTvBTeH9LYz5vb2i8rLd2Hi1HEr0MbB5H4p9YrqFaDGcijXEVNw==
+
+three@^0.100.0:
+  version "0.100.0"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.100.0.tgz#262841c0b7d88ebd62af73f28d9f578963b3aa00"
+  integrity sha512-/lN2rdE1OqIwJr4/HcSaOisiCY0uVA0sqPpbCG5nil2uICEdS0LfGwSVYTtZDsIpR76r3++h5H3Hzg5D+SJBRQ==
+
 three@^0.101.0:
   version "0.101.1"
   resolved "https://registry.yarnpkg.com/three/-/three-0.101.1.tgz#e7681ef52f4e572cb84f307f16f540c457030ec6"
   integrity sha512-8ufimUVmRLtH+BTpEIbDjdGEKQOVWLMLgGynaKin1KbYTE136ZNOepJ8EgByi0tN43dQ7B1YrKLCJgXGy4bLmw==
+
+three@^0.87.1:
+  version "0.87.1"
+  resolved "https://registry.yarnpkg.com/three/-/three-0.87.1.tgz#466a34edc4543459ced9b9d7d276b65216fe2ba8"
+  integrity sha1-Rmo07cRUNFnO2bnX0na2Uhb+K6g=
 
 through2@^2.0.0, through2@^2.0.2:
   version "2.0.5"
@@ -10794,6 +10833,17 @@ vary@~1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=
 
+vedajs@^0.15.0:
+  version "0.15.0"
+  resolved "https://registry.yarnpkg.com/vedajs/-/vedajs-0.15.0.tgz#28af980567994eda2ea9a8cdacea6c04246fffa1"
+  integrity sha512-PH5iYqX1gFtAyD8IKh8mBHe3QkgbBNeJdOx3pUXmrGdFULRcFXuAHHen1CTwD/4QvLcziJDy/8AYbN2jkHyB0A==
+  dependencies:
+    "@fand/gifuct-js" "^1.0.0"
+    is-video "^1.0.1"
+    three "^0.100.0"
+    three-mtl-loader "^1.0.2"
+    three-obj-loader "^1.1.3"
+
 verror@1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/verror/-/verror-1.10.0.tgz#3a105ca17053af55d6e270c1f8288682e18da400"
@@ -10802,6 +10852,11 @@ verror@1.10.0:
     assert-plus "^1.0.0"
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
+
+video-extensions@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/video-extensions/-/video-extensions-1.1.0.tgz#eaa86b45f29a853c2b873e9d8e23b513712997d6"
+  integrity sha1-6qhrRfKahTwrhz6djiO1E3Epl9Y=
 
 vm-browserify@^1.0.1:
   version "1.1.2"

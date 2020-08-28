@@ -54,6 +54,7 @@ const modesByTarget = {
   foxdot: "python",
   sclang: "smalltalk",
   hydra: "javascript",
+  veda: "javascript",
 };
 
 const EvaluateButton = ({ onClick }) => (

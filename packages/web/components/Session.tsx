@@ -7,13 +7,14 @@ import Mosaic from "./Mosaic";
 import Audio from "./Audio";
 
 const MAX_LINES: number = 100;
-const LOCAL_TARGETS = ["hydra"];
+const LOCAL_TARGETS = ["hydra", "veda"];
 
 type Props = {
   websocketsHost: string;
   sessionName: string;
   userName?: string;
   onHydraEvaluation: (code: string) => void;
+  onVedaEvaluation: (code: string) => void;
   audioStreamingEnabled: boolean;
   extraIceServers?: IceServerType[];
   layout: {
@@ -46,6 +47,7 @@ class Session extends Component<Props, State> {
   static defaultProps = {
     userName: "anonymous",
     onHydraEvaluation: () => {},
+    onVedaEvaluation: () => {},
   };
 
   componentDidMount() {
@@ -140,6 +142,9 @@ class Session extends Component<Props, State> {
     switch (target) {
       case "hydra":
         this.props.onHydraEvaluation(body);
+        break;
+      case "veda":
+        this.props.onVedaEvaluation(body);
         break;
       default:
         console.error("Unhandle local target:", target);

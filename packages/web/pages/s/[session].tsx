@@ -8,8 +8,8 @@ import Layout from "../../components/Layout";
 import Session from "../../components/Session";
 import { IceServerType } from "../../lib/SessionClient";
 import HydraWrapper from "../../lib/HydraWrapper";
-import HydraCanvas from "../../components/HydraCanvas";
-import HydraError from "../../components/HydraError";
+import VedaWrapper from "../../lib/VedaWrapper";
+import LocalError from "../../components/LocalError";
 
 const defaultLayoutList = ["tidal", "hydra"];
 
@@ -41,23 +41,32 @@ const extraIceServers = (() => {
   return res;
 })();
 
-class JoinSessionForm extends Component<{
+interface JoinSessionFormProps {
   username: string;
   onSubmit: Function;
   hydraVisible: boolean;
+  vedaVisible: boolean;
   hasWebGl: boolean;
-}> {
-  state = {
-    username: null,
-    hydraEnabled: true,
-    audioStreamingEnabled: false,
-  };
+}
 
+interface JoinSessionFormState {
+  hydraEnabled: boolean;
+  vedaEnabled: boolean;
+  audioStreamingEnabled: boolean;
+  username: string;
+}
+
+class JoinSessionForm extends Component<
+  JoinSessionFormProps,
+  JoinSessionFormState
+> {
   constructor(props) {
     super(props);
 
     this.state = {
-      ...this.state,
+      hydraEnabled: props.hydraVisible,
+      vedaEnabled: props.vedaVisible,
+      audioStreamingEnabled: false,
       username: props.username || "",
     };
   }
@@ -72,6 +81,11 @@ class JoinSessionForm extends Component<{
     this.setState({ hydraEnabled: target.checked });
   };
 
+  handleChangeVedaCheckbox = (e: ChangeEvent) => {
+    const target = e.target as HTMLInputElement;
+    this.setState({ vedaEnabled: target.checked });
+  };
+
   handleChangeAudioStreamingCheckbox = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
     this.setState({ audioStreamingEnabled: target.checked });
@@ -82,15 +96,25 @@ class JoinSessionForm extends Component<{
 
     const { onSubmit } = this.props;
 
-    let { username, hydraEnabled, audioStreamingEnabled } = this.state;
+    let {
+      username,
+      hydraEnabled,
+      vedaEnabled,
+      audioStreamingEnabled,
+    } = this.state;
     if (!username) username = "anonymous";
 
-    onSubmit({ username, hydraEnabled, audioStreamingEnabled });
+    onSubmit({ username, hydraEnabled, vedaEnabled, audioStreamingEnabled });
   };
 
   render() {
-    const { hydraVisible, hasWebGl } = this.props;
-    const { username, hydraEnabled, audioStreamingEnabled } = this.state;
+    const { hydraVisible, vedaVisible, hasWebGl } = this.props;
+    const {
+      username,
+      hydraEnabled,
+      vedaEnabled,
+      audioStreamingEnabled,
+    } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
@@ -130,6 +154,28 @@ class JoinSessionForm extends Component<{
           </div>
         )}
 
+        {vedaVisible && (
+          <div className="field">
+            <div className="control">
+              <label className="checkbox">
+                <input
+                  className="is-large"
+                  onChange={this.handleChangeHydraCheckbox}
+                  checked={hasWebGl && vedaEnabled}
+                  type="checkbox"
+                  disabled={!hasWebGl}
+                />
+                Enable VEDA.js{" "}
+                {!hasWebGl && (
+                  <span>
+                    (WebGL is disabled or not supported on this browser!)
+                  </span>
+                )}
+              </label>
+            </div>
+          </div>
+        )}
+
         <div className="field">
           <div className="control">
             <label className="checkbox">
@@ -156,12 +202,13 @@ class JoinSessionForm extends Component<{
   }
 }
 
-const EmptySession = ({
+const JoinSession = ({
   websocketsUrl,
   session,
   lastUsername,
   hasWebGl,
   hasHydraSlot,
+  hasVedaSlot,
   onSubmit,
 }) => (
   <section className="section">
@@ -189,6 +236,7 @@ const EmptySession = ({
       </p>
       <JoinSessionForm
         hydraVisible={hasHydraSlot}
+        vedaVisible={hasVedaSlot}
         hasWebGl={hasWebGl}
         username={lastUsername}
         onSubmit={onSubmit}
@@ -210,22 +258,25 @@ interface State {
   lastUsername: string;
   hasWebGl: boolean;
   hydraEnabled: boolean;
-  hydraError: string;
+  vedaEnabled: boolean;
+  localError: string;
   audioStreamingEnabled: boolean;
   username: string;
   websocketsUrl: string;
 }
 
 class SessionPage extends Component<Props, State> {
-  hydraCanvas: React.RefObject<HTMLCanvasElement>;
+  canvas: React.RefObject<HTMLCanvasElement>;
   hydra: HydraWrapper;
+  veda: VedaWrapper;
 
   state = {
     loading: true,
     lastUsername: null,
     hasWebGl: true,
-    hydraEnabled: true,
-    hydraError: "",
+    hydraEnabled: false,
+    localError: "",
+    vedaEnabled: false,
     audioStreamingEnabled: false,
     username: null,
     websocketsUrl: null,
@@ -248,23 +299,14 @@ class SessionPage extends Component<Props, State> {
       hasWebGl: hasWebgl(),
     };
 
-    this.hydraCanvas = React.createRef();
+    this.canvas = React.createRef();
     this.hydra = null;
+    this.veda = null;
   }
 
   componentDidMount() {
     if (isDevelopment) {
       console.log("*** DEVELOPMENT MODE ***");
-    }
-
-    if (this.state.hasWebGl) {
-      this.hydra = new HydraWrapper(
-        this.hydraCanvas.current,
-        this.handleHydraError
-      );
-      console.log("Hydra wrapper created");
-    } else {
-      console.warn("WebGL is disabled or not supported in this browser");
     }
 
     // Set Websockets URL
@@ -274,6 +316,35 @@ class SessionPage extends Component<Props, State> {
     this.setState({ websocketsUrl });
 
     this.fetchLastUserName();
+  }
+
+  componentDidUpdate(_prevProps: Props, prevState: State) {
+    if (
+      this.state.hydraEnabled !== prevState.hydraEnabled ||
+      this.state.vedaEnabled !== prevState.vedaEnabled
+    ) {
+      // Set up Hydra or Veda canvas if state changed
+      this.setUpGLCanvas();
+    }
+  }
+
+  setUpGLCanvas() {
+    const { hasWebGl, hydraEnabled, vedaEnabled } = this.state;
+
+    if (hasWebGl) {
+      if (hydraEnabled) {
+        this.hydra = new HydraWrapper(
+          this.canvas.current,
+          this.handleLocalError
+        );
+        console.log("Hydra wrapper created");
+      } else if (vedaEnabled) {
+        this.veda = new VedaWrapper(this.canvas.current, this.handleLocalError);
+        console.log("Veda wrapper created");
+      }
+    } else {
+      console.warn("WebGL is disabled or not supported in this browser");
+    }
   }
 
   fetchLastUserName() {
@@ -288,15 +359,22 @@ class SessionPage extends Component<Props, State> {
   handleJoinSubmit = ({
     username,
     hydraEnabled,
+    vedaEnabled,
     audioStreamingEnabled,
   }: {
     username: string;
     hydraEnabled: boolean;
+    vedaEnabled: boolean;
     audioStreamingEnabled: boolean;
   }) => {
     window.localStorage.setItem("lastUsername", username);
 
-    this.setState({ username, hydraEnabled, audioStreamingEnabled });
+    this.setState({
+      username,
+      hydraEnabled,
+      vedaEnabled,
+      audioStreamingEnabled,
+    });
   };
 
   handleHydraEvaluation = (code: string) => {
@@ -306,8 +384,16 @@ class SessionPage extends Component<Props, State> {
     }
   };
 
-  handleHydraError = (error: string) => {
-    this.setState({ hydraError: error });
+  handleVedaEvaluation = (code: string) => {
+    const { vedaEnabled, hasWebGl } = this.state;
+    if (hasWebGl && vedaEnabled) {
+      // TODO Handle fragment and vertex shader programs
+      this.veda.evalFragment(code);
+    }
+  };
+
+  handleLocalError = (error: string) => {
+    this.setState({ localError: error });
   };
 
   generateLayoutFromList = (list: string[]) => {
@@ -325,7 +411,7 @@ class SessionPage extends Component<Props, State> {
       loading,
       username,
       hasWebGl,
-      hydraError,
+      localError,
       audioStreamingEnabled,
       lastUsername,
       websocketsUrl,
@@ -336,6 +422,7 @@ class SessionPage extends Component<Props, State> {
       layoutList = layoutParam.split(",");
     }
     const hasHydraSlot = layoutList.includes("hydra");
+    const hasVedaSlot = layoutList.includes("veda");
     const layout = this.generateLayoutFromList(layoutList);
 
     return (
@@ -354,23 +441,39 @@ class SessionPage extends Component<Props, State> {
             layout={layout}
             audioStreamingEnabled={audioStreamingEnabled}
             onHydraEvaluation={this.handleHydraEvaluation}
+            onVedaEvaluation={this.handleVedaEvaluation}
           />
         ) : (
-          <EmptySession
+          <JoinSession
             websocketsUrl={websocketsUrl}
             session={session}
             lastUsername={lastUsername}
             onSubmit={this.handleJoinSubmit}
             hasHydraSlot={hasHydraSlot}
+            hasVedaSlot={hasVedaSlot}
             hasWebGl={hasWebGl}
           />
         )}
         {hasWebgl && (
           <>
-            <HydraCanvas ref={this.hydraCanvas} fullscreen />
-            {hydraError && <HydraError>{hydraError}</HydraError>}
+            <canvas ref={this.canvas} width={1280} height={720}></canvas>
+            {localError && <LocalError>{localError}</LocalError>}
           </>
         )}
+        <style jsx>
+          {`
+            canvas {
+              position: absolute;
+              top: 0;
+              left: 0;
+              z-index: -1;
+              height: 100%;
+              width: 100%;
+              display: block;
+              overflow: hidden;
+            }
+          `}
+        </style>
       </Layout>
     );
   }
