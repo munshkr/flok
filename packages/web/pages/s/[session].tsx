@@ -388,7 +388,6 @@ class SessionPage extends Component<Props, State> {
     const { vedaEnabled, hasWebGl } = this.state;
     if (hasWebGl && vedaEnabled) {
       // TODO Handle fragment and vertex shader programs
-      console.log("Eval Veda fragment code");
       this.veda.evalFragment(code);
     }
   };

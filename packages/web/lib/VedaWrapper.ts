@@ -1,34 +1,46 @@
+import Veda from "vedajs";
+
 export type ErrorHandler = (error: string) => void;
 
 class VedaWrapper {
   veda: any;
+  playing: boolean;
   onError: ErrorHandler;
 
   constructor(canvas: HTMLCanvasElement, onError: ErrorHandler) {
-    const Veda = require("vedajs");
+    this.onError = onError || (() => {});
+    this.playing = false;
 
     this.veda = new Veda();
     this.veda.setCanvas(canvas);
 
-    this.onError = onError || (() => {});
+    // Wrap around Veda.render() function with a try/catch
+    // to gracefully handle shader program exceptions.
+    const vedaRender = this.veda.render;
+    this.veda.render = () => {
+      try {
+        vedaRender.apply(this.veda);
+      } catch (err) {
+        console.warn("VEDA ERROR", err);
+        // this.onError(err);
+      }
+    };
   }
 
   evalFragment(code: string) {
-    try {
-      this.veda.loadFragmentShader(code);
-    } catch (err) {
-      this.onError(err);
-    }
-    this.veda.play();
+    this.veda.loadFragmentShader(code);
+    this.play();
   }
 
   evalVertex(code: string) {
-    try {
-      this.veda.loadVertexShader(code);
-    } catch (err) {
-      this.onError(err);
-    }
+    this.veda.loadVertexShader(code);
+    this.play();
+  }
+
+  play() {
+    if (this.playing) return;
     this.veda.play();
+    this.playing = true;
   }
 }
 
