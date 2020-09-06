@@ -8,7 +8,7 @@ interface Props {
   onClick: (e: MouseEvent) => void;
 }
 
-const Button = ({ icon, className, onClick }: Props) => (
+const IconButton = ({ icon, className, onClick }: Props) => (
   <a className={className} onClick={onClick}>
     <FontAwesomeIcon icon={icon} />
     <style jsx>{`
@@ -19,4 +19,4 @@ const Button = ({ icon, className, onClick }: Props) => (
   </a>
 );
 
-export default Button;
+export default IconButton;

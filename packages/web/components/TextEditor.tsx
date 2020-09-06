@@ -5,7 +5,7 @@ import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
 import css from "styled-jsx/css";
 
 import SessionClient from "../lib/SessionClient";
-import Button from "./Button";
+import IconButton from "./IconButton";
 
 import "codemirror/mode/javascript/javascript";
 import "codemirror/mode/python/python";
@@ -68,7 +68,7 @@ const EvaluateButton = ({ onClick }) => {
 
   return (
     <div>
-      <Button className={className} icon={faPlayCircle} onClick={onClick} />
+      <IconButton className={className} icon={faPlayCircle} onClick={onClick} />
       <style jsx>{`
         div {
           display: none;

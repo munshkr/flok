@@ -7,7 +7,7 @@ import {
   faWindowMaximize,
   faWindowClose,
 } from "@fortawesome/free-solid-svg-icons";
-import Button from "./Button";
+import IconButton from "./IconButton";
 
 export type Message = {
   target: string;
@@ -206,15 +206,15 @@ class TargetMessagesPane extends Component<Props, State> {
         }`}
       >
         <ButtonGroup>
-          <Button
+          <IconButton
             icon={isTop ? faCaretSquareDown : faCaretSquareUp}
             onClick={onTogglePosition}
           />
-          <Button
+          <IconButton
             icon={isMaximized ? faWindowRestore : faWindowMaximize}
             onClick={onToggleMaximize}
           />
-          <Button icon={faWindowClose} onClick={onClose} />
+          <IconButton icon={faWindowClose} onClick={onClose} />
         </ButtonGroup>
         <Tabs value={clientIds.indexOf(currentClientId)}>
           {clientIds.map((clientId, i) => (
