@@ -7,9 +7,9 @@ const TextEditor = dynamic(() => import("./TextEditor"), {
 });
 
 const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode }) => (
-  <div className="columns is-multiline">
+  <div className="container">
     {editors.map(({ id, target }) => (
-      <div key={id} className={`column is-${12 / editors.length}`}>
+      <div key={id} className={`slot is-${12 / editors.length}`}>
         <TextEditor
           editorId={id}
           target={target}
@@ -20,14 +20,36 @@ const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode }) => (
       </div>
     ))}
     <style jsx>{`
-      .columns {
+      .container {
         margin: 0;
         padding: 0;
         cursor: text;
+        display: flex;
+        flex-wrap: wrap;
+        overflow-y: scroll;
       }
-      .column {
-        margin: 0;
-        padding: 0;
+      .slot {
+        flex: 0 0 100%;
+        height: 100%;
+      }
+      .is-12 {
+        flex-basis: 100%;
+      }
+      .is-6 {
+        flex-basis: 50%;
+      }
+      .is-4 {
+        flex-basis: 33.33%;
+      }
+      .is-3 {
+        flex-basis: 25%;
+      }
+
+      @media screen and (max-width: 800px) {
+        .slot {
+          flex-grow: 1 !important;
+          flex-basis: auto !important;
+        }
       }
     `}</style>
   </div>
