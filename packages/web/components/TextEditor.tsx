@@ -259,9 +259,10 @@ class TextEditor extends Component<Props, {}> {
         />
         <style jsx global>{`
           .editor > .CodeMirror {
+            height: ${isHalfHeight ? "50vh" : "100vh"};
             background-color: rgba(0, 0, 0, 0) !important;
             font-family: "Roboto Mono", monospace;
-            font-size: 14px;
+            font-size: 16px;
           }
           .editor > .CodeMirror .CodeMirror-line > span {
             border-radius: 4px;

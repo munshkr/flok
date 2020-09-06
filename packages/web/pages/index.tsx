@@ -68,7 +68,7 @@ const Title = () => (
         font-weight: 400;
         color: #fff;
         margin-top: 0;
-        margin-bottom: 0.125rem;
+        margin-bottom: 0.25em;
       }
       h2 {
         font-size: 1.17em;
