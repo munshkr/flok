@@ -8,8 +8,8 @@ const TextInput = (props) => (
         box-shadow: inset 0 0.0625em 0.125em rgba(10, 10, 10, 0.05);
         border-radius: 4px;
         border-color: #dbdbdb;
-        max-width: 100%;
-        width: 100%;
+        max-width: 95%;
+        width: 95%;
         margin-bottom: 0.75rem;
       }
 
