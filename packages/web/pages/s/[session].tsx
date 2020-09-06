@@ -5,11 +5,15 @@ import { NextPageContext } from "next";
 import hasWebgl from "../../lib/webgl-detector";
 
 import Layout from "../../components/Layout";
+import Container from "../../components/Container";
 import Session from "../../components/Session";
 import { IceServerType } from "../../lib/SessionClient";
 import HydraWrapper from "../../lib/HydraWrapper";
 import HydraCanvas from "../../components/HydraCanvas";
 import HydraError from "../../components/HydraError";
+import TextInput from "../../components/TextInput";
+import Button from "../../components/Button";
+import Checkbox from "../../components/Checkbox";
 
 const defaultLayoutList = ["tidal", "hydra"];
 
@@ -94,63 +98,33 @@ class JoinSessionForm extends Component<{
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <div className="field">
-          <div className="control">
-            <input
-              name="user"
-              onChange={this.handleChangeUser}
-              value={username}
-              className="input is-large"
-              type="text"
-              placeholder={"Type a nick name and press Enter"}
-              autoFocus
-            />
-          </div>
-        </div>
-
+        <TextInput
+          name="user"
+          onChange={this.handleChangeUser}
+          value={username}
+          type="text"
+          placeholder={"Type a nick name and press Enter"}
+          autoFocus
+        />
         {hydraVisible && (
-          <div className="field">
-            <div className="control">
-              <label className="checkbox">
-                <input
-                  className="is-large"
-                  onChange={this.handleChangeHydraCheckbox}
-                  checked={hasWebGl && hydraEnabled}
-                  type="checkbox"
-                  disabled={!hasWebGl}
-                />
-                Enable Hydra{" "}
-                {!hasWebGl && (
-                  <span>
-                    (WebGL is disabled or not supported on this browser!)
-                  </span>
-                )}
-              </label>
-            </div>
-          </div>
+          <Checkbox
+            onChange={this.handleChangeHydraCheckbox}
+            checked={hasWebGl && hydraEnabled}
+            disabled={!hasWebGl}
+          >
+            Enable Hydra{" "}
+            {!hasWebGl && (
+              <span>(WebGL is disabled or not supported on this browser!)</span>
+            )}
+          </Checkbox>
         )}
-
-        <div className="field">
-          <div className="control">
-            <label className="checkbox">
-              <input
-                className="is-large"
-                onChange={this.handleChangeAudioStreamingCheckbox}
-                checked={audioStreamingEnabled}
-                type="checkbox"
-              />
-              Enable Audio Streaming (experimental!)
-            </label>
-          </div>
-        </div>
-
-        <div className="field">
-          <div className="control">
-            <button type="submit" className="button is-link is-large">
-              Join!
-            </button>
-          </div>
-        </div>
+        <Checkbox
+          onChange={this.handleChangeAudioStreamingCheckbox}
+          checked={audioStreamingEnabled}
+        >
+          Enable Audio Streaming (experimental!)
+        </Checkbox>
+        <Button type="submit">Join!</Button>
       </form>
     );
   }
@@ -164,40 +138,72 @@ const EmptySession = ({
   hasHydraSlot,
   onSubmit,
 }) => (
-  <section className="section">
-    <div className="container">
-      <h1 className="title">flok</h1>
-      <h3 className="subtitle">
-        You are trying to join session with token: <code>{session}</code>.<br />
-        Please enter your nickname.
-      </h3>
-      <p className="content">
-        To connect a REPL, for example, <code>tidal</code>, run on a terminal:
-        <br />
+  <Container>
+    <section className="section">
+      <div className="container">
+        <h1 className="title">flok</h1>
+        <p>
+          You are trying to join session with token: <code>{session}</code>.
+          <br />
+          Please enter your nickname.
+        </p>
+
+        <JoinSessionForm
+          hydraVisible={hasHydraSlot}
+          hasWebGl={hasWebGl}
+          username={lastUsername}
+          onSubmit={onSubmit}
+        />
+        <p>
+          To connect a REPL, for example, <code>tidal</code>, run on a terminal:
+        </p>
         <code>
           flok-repl -H {websocketsUrl} -s {session} -t tidal
         </code>
-        <br />
-        For more information, read{" "}
-        <a
-          target="_blank"
-          href="https://github.com/munshkr/flok#connect-repls-to-flok"
-        >
-          here
-        </a>
-        .
-      </p>
-      <JoinSessionForm
-        hydraVisible={hasHydraSlot}
-        hasWebGl={hasWebGl}
-        username={lastUsername}
-        onSubmit={onSubmit}
-      />
-    </div>
-  </section>
+        <p>
+          For more information, read{" "}
+          <a
+            target="_blank"
+            href="https://github.com/munshkr/flok#connect-repls-to-flok"
+          >
+            here
+          </a>
+          .
+        </p>
+      </div>
+    </section>
+    <style jsx>{`
+      code {
+        margin-bottom: 0.25rem;
+        background-color: #333;
+        color: #eee;
+        font-family: monospace;
+        padding: 0.25em 0.5em;
+        border-radius: 2px;
+      }
+      .content {
+        margin-bottom: 1rem;
+      }
+    `}</style>
+  </Container>
 );
 
-const LoadingSpinner = () => <h4>Loading...</h4>;
+const LoadingSpinner = () => (
+  <h1>
+    Loading...
+    <style jsx>{`
+      h1 {
+        color: #333;
+        font-size: 4rem;
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+      }
+    `}</style>
+  </h1>
+);
 
 interface Props {
   host: string;
