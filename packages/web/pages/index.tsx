@@ -4,6 +4,7 @@ import FlockScene from "../components/FlockScene";
 import Layout from "../components/Layout";
 import uuid from "uuid/v4";
 import hasWebgl from "../lib/webgl-detector";
+import Container from "../components/Container";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
 
@@ -81,31 +82,11 @@ const Title = () => (
 
 const IndexPage = () => (
   <Layout>
-    <div>
+    <Container>
       <Title />
       <NewSessionForm />
       {hasWebgl() && <FlockScene />}
-    </div>
-    <style jsx>{`
-      div {
-        flex-grow: 1;
-        margin: 0 auto;
-        width: auto;
-        padding: 3rem 1.5rem;
-      }
-
-      @media screen and (min-width: 1216px) {
-        div {
-          max-width: 1152px;
-        }
-      }
-
-      @media screen and (min-width: 1024px) {
-        div {
-          max-width: 960px;
-        }
-      }
-    `}</style>
+    </Container>
   </Layout>
 );
 
