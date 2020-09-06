@@ -4,27 +4,8 @@ import FlockScene from "../components/FlockScene";
 import Layout from "../components/Layout";
 import uuid from "uuid/v4";
 import hasWebgl from "../lib/webgl-detector";
-
-const Button = props => (<>
-  <button {...props} />
-  <style jsx>{`
-    button {
-      font-size: 1.25em;
-      padding: 0.5em 0.75em;
-    }
-  `}</style>
-</>);
-
-const TextInput = props => (<>
-  <input type="text" {...props} />
-  <style jsx>{`
-    input {
-      font-size: 1.25em;
-      padding: 0.5em 0.75em;
-      width: 40em;
-    }
-  `}</style>
-</>)
+import TextInput from "../components/TextInput";
+import Button from "../components/Button";
 
 class NewSessionForm extends Component<{}, { user: string; targets: string }> {
   state = {
@@ -63,36 +44,40 @@ class NewSessionForm extends Component<{}, { user: string; targets: string }> {
         <TextInput
           name="user"
           value={targets}
-          placeholder={
-            `Enter the list of targets the session will use, separated by commas (e.g. tidal,foxdot,hydra)`
-          }
+          placeholder={`Enter the list of targets the session will use, separated by commas (e.g. tidal,foxdot,hydra)`}
           autoFocus
           onChange={this.handleChangeTargets}
         />
-        <Button type="submit">
-          Create session
-        </Button>
+        <Button type="submit">Create session</Button>
       </form>
     );
   }
 }
 
-const Title = () => (<>
-  <h1>flok</h1>
-  <h2>collaborative live coding editor</h2>
-  <style jsx>{`
-    h1 {
-      font-size: 40px;
-      font-weight: 400;
-      color: #fff;
-    }
-    h2 {
-      font-size: 1.17em;
-      font-weight: 400;
-      color: #eee;
-    }
-  `}</style>
-</>);
+const Title = () => (
+  <header>
+    <h1>flok</h1>
+    <h2>collaborative live coding editor</h2>
+    <style jsx>{`
+      header {
+        margin-bottom: 3rem;
+      }
+      h1 {
+        font-size: 40px;
+        font-weight: 400;
+        color: #fff;
+        margin-top: 0;
+        margin-bottom: 0.125rem;
+      }
+      h2 {
+        font-size: 1.17em;
+        font-weight: 400;
+        color: #eee;
+        margin-top: 0;
+      }
+    `}</style>
+  </header>
+);
 
 const IndexPage = () => (
   <Layout>
@@ -103,7 +88,22 @@ const IndexPage = () => (
     </div>
     <style jsx>{`
       div {
-        margin: 2em;
+        flex-grow: 1;
+        margin: 0 auto;
+        width: auto;
+        padding: 3rem 1.5rem;
+      }
+
+      @media screen and (min-width: 1216px) {
+        div {
+          max-width: 1152px;
+        }
+      }
+
+      @media screen and (min-width: 1024px) {
+        div {
+          max-width: 960px;
+        }
       }
     `}</style>
   </Layout>

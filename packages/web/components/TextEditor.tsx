@@ -260,7 +260,7 @@ class TextEditor extends Component<Props, {}> {
         <style jsx global>{`
           .editor > .CodeMirror {
             background-color: rgba(0, 0, 0, 0) !important;
-            font-family: 'Roboto Mono', monospace;
+            font-family: "Roboto Mono", monospace;
             font-size: 14px;
           }
           .editor > .CodeMirror .CodeMirror-line > span {
