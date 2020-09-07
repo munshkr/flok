@@ -17,9 +17,9 @@ export type Message = {
 const ButtonGroup = ({ children }) => {
   const { className, styles } = css.resolve`
     a {
-      font-size: 16px;
+      font-size: 1rem;
       margin: 0 0.125em;
-      color: #888;
+      color: #444;
     }
     a:hover {
       color: #fefefe;
@@ -33,8 +33,10 @@ const ButtonGroup = ({ children }) => {
       )}
       <style jsx>{`
         .button-group {
-          float: right;
-          margin-right: 0.125em;
+          position: absolute;
+          top: 0.25em;
+          right: 0.5em;
+          width: 1rem;
         }
       `}</style>
       {styles}
@@ -56,6 +58,11 @@ const Tabs = ({ children, value }) => (
       ul {
         border-bottom-color: #00000000;
         list-style: none;
+        margin: 0;
+        padding-left: 0.125em;
+      }
+      li {
+        display: inline-block;
       }
     `}</style>
   </div>
@@ -106,6 +113,7 @@ const MessageListItem = ({ type, body }) => {
       <style jsx>{`
         pre {
           padding: 0;
+          margin: 0;
           background-color: transparent;
           white-space: pre-wrap;
           white-space: -moz-pre-wrap;
@@ -134,6 +142,10 @@ const MessagesList = ({ children }) => (
       ol {
         list-style: none;
         padding: 0;
+        margin: 0 0.5em 0.5em 0.5em;
+      }
+      li {
+        line-height: 0.95rem;
       }
     `}</style>
   </ol>
@@ -224,7 +236,9 @@ class TargetMessagesPane extends Component<Props, State> {
           ))}
         </Tabs>
         <TabsContent ref={this.containerRef}>
-          <MessagesList>{messagesByClientId[currentClientId]}</MessagesList>
+          <MessagesList>
+            {messagesByClientId[currentClientId] || []}
+          </MessagesList>
         </TabsContent>
 
         <style jsx>{`
