@@ -26,7 +26,7 @@ const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode }) => (
         cursor: text;
         display: flex;
         flex-wrap: wrap;
-        overflow-y: scroll;
+        height: ${isHalfHeight ? "50vh" : "100vh"};
       }
       .slot {
         flex: 0 0 100%;
@@ -46,9 +46,13 @@ const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode }) => (
       }
 
       @media screen and (max-width: 800px) {
+        .container {
+          height: 100vh;
+          display: static;
+        }
         .slot {
-          flex-grow: 1 !important;
-          flex-basis: auto !important;
+          width: 100vw;
+          flex: 1 0 100%;
         }
       }
     `}</style>

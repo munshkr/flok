@@ -54,11 +54,15 @@ const modesByTarget = {
 
 const EvaluateButton = ({ onClick }) => {
   const { className, styles } = css.resolve`
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: 800px) {
       a {
+        position: absolute;
+        top: 10px;
+        right: 15px;
         font-size: 2em;
         margin: 0 0.125em;
         color: #888;
+        z-index: 999;
       }
       a:hover {
         color: #fefefe;
@@ -74,9 +78,9 @@ const EvaluateButton = ({ onClick }) => {
           display: none;
         }
 
-        @media only screen and (max-width: 600px) {
+        @media only screen and (max-width: 800px) {
           div {
-            float: right;
+            position: relative;
             display: block;
           }
         }
@@ -247,7 +251,7 @@ class TextEditor extends Component<Props, {}> {
     // `;
 
     return (
-      <div>
+      <div className="editor-container">
         <EvaluateButton onClick={this.handleEvaluateButtonClick} />
         <Description editorId={editorId} target={target} />
         <CodeMirror
@@ -259,10 +263,11 @@ class TextEditor extends Component<Props, {}> {
         />
         <style jsx global>{`
           .editor > .CodeMirror {
-            height: ${isHalfHeight ? "50vh" : "100vh"};
             background-color: rgba(0, 0, 0, 0) !important;
             font-family: "Roboto Mono", monospace;
             font-size: 16px;
+            overflow: y-scroll;
+            height: ${isHalfHeight ? "46vh" : "97vh"};
           }
           .editor > .CodeMirror .CodeMirror-line > span {
             border-radius: 4px;
@@ -272,6 +277,12 @@ class TextEditor extends Component<Props, {}> {
           .editor > .CodeMirror .CodeMirror-line .flash-selection {
             background-color: #ffff77cc;
             color: #000;
+          }
+
+          @media only screen and (max-width: 800px) {
+            .editor > .CodeMirror {
+              height: 97vh;
+            }
           }
         `}</style>
       </div>

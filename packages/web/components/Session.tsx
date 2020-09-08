@@ -245,7 +245,7 @@ class Session extends Component<Props, State> {
 
     return (
       // eslint-disable-next-line jsx-a11y/mouse-events-have-key-events
-      <div>
+      <div className="container">
         {showTextEditors && (
           <Mosaic
             layout={layout}
@@ -264,6 +264,11 @@ class Session extends Component<Props, State> {
           />
         )}
         {audioStreamingEnabled && <Audio sessionClient={this.sessionClient} />}
+        <style jsx>{`
+          .container {
+            height: 100vh;
+          }
+        `}</style>
       </div>
     );
   }
