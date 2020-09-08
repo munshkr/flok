@@ -7,10 +7,9 @@ export default ({ children }: { children: any }) => (
       <title>flok</title>
       <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       <link
-        href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&family=Chivo:wght@300;400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500&display=swap"
         rel="stylesheet"
       ></link>
-      {/* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css" /> */}
     </Head>
     {children}
     <style global jsx>
