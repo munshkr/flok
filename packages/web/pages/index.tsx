@@ -45,7 +45,7 @@ class NewSessionForm extends Component<{}, { user: string; targets: string }> {
         <TextInput
           name="user"
           value={targets}
-          placeholder={`Enter the list of targets the session will use, separated by commas (e.g. tidal,foxdot,hydra)`}
+          placeholder={`Enter targets separated by commas (e.g. tidal,foxdot,hydra)`}
           autoFocus
           onChange={this.handleChangeTargets}
         />
