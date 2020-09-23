@@ -274,9 +274,21 @@ class TextEditor extends Component<Props, {}> {
             padding: 1px;
             background-color: rgba(0, 0, 0, 0.6);
           }
+
+          @keyframes flash {
+            0% {
+              color: #000;
+              background-color: #ffff77cc;
+            }
+            100% {
+              color: auto;
+              background-color: auto;
+            }
+          }
+
           .editor > .CodeMirror .CodeMirror-line .flash-selection {
-            background-color: #ffff77cc;
-            color: #000;
+            animation: flash 0.4s linear;
+            background-color: #000;
           }
 
           @media only screen and (max-width: 800px) {

@@ -1,7 +1,7 @@
 import * as Y from "yjs";
 import { WebrtcProvider } from "./y-webrtc";
 import { WebsocketProvider } from "./y-websocket";
-import { IndexeddbPersistence } from './y-indexeddb'
+import { IndexeddbPersistence } from "./y-indexeddb";
 import { CodeMirrorBinding } from "./y-codemirror";
 import CodeMirror from "codemirror";
 
@@ -55,7 +55,7 @@ class SessionClient {
       sessionName,
       sessionPassword,
       userName,
-      onJoin
+      onJoin,
     } = ctx;
 
     this.signalingServerUrl = signalingServerUrl;
@@ -63,7 +63,7 @@ class SessionClient {
     this.userName = userName;
     this.sessionName = sessionName || "default";
     this.sessionPassword = sessionPassword;
-    this.onJoin = onJoin || (() => { });
+    this.onJoin = onJoin || (() => {});
 
     // Create document and provider
     this._doc = new Y.Doc();
@@ -75,7 +75,7 @@ class SessionClient {
       signalingServerUrl,
       extraIceServers,
       sessionName,
-      sessionPassword
+      sessionPassword,
     } = this;
     console.debug("[WebRTC] ICE servers:", extraIceServers);
 
@@ -84,20 +84,22 @@ class SessionClient {
     const provider = new WebrtcProvider(roomName, this._doc, {
       password: sessionPassword,
       signaling: [signalingServerUrl],
-      extraIceServers
+      extraIceServers,
     });
     this._provider = provider;
 
     const websocketProvider = new WebsocketProvider(
-      'wss://demos.yjs.dev', roomName, this._doc
-    )
+      "wss://demos.yjs.dev",
+      roomName,
+      this._doc
+    );
     this._websocketProvider = websocketProvider;
 
     // this allows you to instantly get the (cached) documents data
     const idbProvider = new IndexeddbPersistence(roomName, this._doc);
     idbProvider.whenSynced.then(() => {
-      console.log('Loaded data from IndexedDB')
-    })
+      console.log("Loaded data from IndexedDB");
+    });
     this._indexedDbProvider = idbProvider;
 
     this.onJoin();
@@ -153,7 +155,9 @@ class SessionClient {
       this._provider.awareness.setLocalStateField("user", { name: newName });
     }
     if (this._websocketProvider) {
-      this._websocketProvider.awareness.setLocalStateField("user", { name: newName });
+      this._websocketProvider.awareness.setLocalStateField("user", {
+        name: newName,
+      });
     }
   }
 
@@ -167,11 +171,12 @@ class SessionClient {
       { line: toLine + 1, ch: 0 },
       { className: "flash-selection" }
     );
+    marker.className = "";
 
     // Clear marker after timeout
     setTimeout(() => {
       marker.clear();
-    }, 150);
+    }, 600);
   }
 }
 
