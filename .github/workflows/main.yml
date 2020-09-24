@@ -26,7 +26,7 @@ jobs:
         run: yarn
 
       - name: Install pkg
-        run: npm i -g pkg
+        run: yarn add -D pkg
 
       - name: Package flok-repl
         run: |
