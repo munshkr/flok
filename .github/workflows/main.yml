@@ -25,13 +25,10 @@ jobs:
       - name: Install and build
         run: yarn
 
-      - name: Install pkg
-        run: yarn add -D pkg
-
       - name: Package flok-repl
         run: |
-          cd packages/repl && pkg .
+          cd packages/repl && npx pkg .
 
       - name: Package flok-web
         run: |
-          cd packages/web && pkg .
+          cd packages/web && npx pkg .
