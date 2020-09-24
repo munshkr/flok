@@ -24,9 +24,9 @@ jobs:
       - name: Package flok-repl
         run: |
           cd packages/repl && npx pkg .
-      - name: Package flok-web
-        run: |
-          cd packages/web && npx pkg .
+      # - name: Package flok-web
+      #   run: |
+      #     cd packages/web && npx pkg .
       - name: Create Draft Release
         id: create_release
         uses: actions/create-release@v1
@@ -37,13 +37,34 @@ jobs:
           release_name: Release ${{ github.ref }}
           draft: true
           prerelease: false
-      - name: Upload flok-web-linux Release Asset
+
+      - name: Upload flok-repl-linux Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: packages/web/flok-web-linux
-          asset_name: flok-web-linux
+          asset_path: packages/repl/flok-repl-linux
+          asset_name: flok-repl-linux
+          asset_content_type: application/octet-stream
+      - name: Upload flok-repl-macos Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: packages/repl/flok-repl-macos
+          asset_name: flok-repl-macos
+          asset_content_type: application/octet-stream
+      - name: Upload flok-repl-win Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: packages/repl/flok-repl-win.exe
+          asset_name: flok-repl-win.exe
           asset_content_type: application/octet-stream
