@@ -17,6 +17,10 @@
   "bin": {
     "flok-web": "./bin/flok-web.js"
   },
+  "pkg": {
+    "scripts": ".next/**/*.js",
+    "assets": [".next/**", "cert/**"]
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.26",
     "@fortawesome/free-solid-svg-icons": "^5.12.0",
