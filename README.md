@@ -25,7 +25,7 @@ Web-based P2P collaborative editor for live coding music and graphics
   - [Tilt](https://github.com/munshkr/tilt) (*not implemented yet*)
 
 
-## Install
+## Requirements
 
 Flok is written in TypeScript and Nodejs.  You will need to have installed Node
 versions 10 or 12.
@@ -35,6 +35,9 @@ Go [here](https://nodejs.org/) to download Node.
 *Note*: Currently Node 13 is not supported because of a Hydra dependency that
 does not support that version.
 
+
+## Install
+
 Right now, the easiest way to use Flok is to install the `repl` and `web`
 packages.
 
@@ -42,13 +45,13 @@ packages.
 npm install -g flok-repl flok-web
 ```
 
-If this command fails with permission errors (known to happen on Debian/Ubuntu
-when using apt-get), you should follow [this
+If this command fails with permission errors (known issue on some Debian/Ubuntu
+installs), you should follow [this
 guide](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally).
 
 In the future there will also be a single portable [GUI
-application](https://github.com/munshkr/flok-gui) that will run everything, but
-for now you'll have to use the terminal.
+application](https://github.com/munshkr/flok-gui) that will contain everything,
+but for now you'll have to use the terminal.
 
 
 ## Usage
@@ -166,6 +169,11 @@ You can specify custom options with the `--extra` parameter, by passing a JSON o
 #### FoxDot
 
 Use `flok-repl` with the `-t foxdot` parameter.
+
+##### Extra options
+
+* `python`: Path to Python binary. Use this if you need to use a custom Python
+  version.
 
 
 #### SuperCollider
