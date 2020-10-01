@@ -1,7 +1,7 @@
 {
   "name": "flok-repl",
   "description": "REPL client for Flok",
-  "version": "0.3.15",
+  "version": "0.3.16",
   "main": "./lib/index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
@@ -25,7 +25,7 @@
   "dependencies": {
     "command-exists": "^1.2.8",
     "commander": "^2.20.0",
-    "flok-core": "^0.3.15",
+    "flok-core": "^0.3.16",
     "glob": "^7.1.6",
     "osc": "^2.4.0"
   },
