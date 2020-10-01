@@ -42,6 +42,10 @@ packages.
 npm install -g flok-repl flok-web
 ```
 
+If this command fails with permission errors (known to happen on Debian/Ubuntu
+when using apt-get), you should follow [this
+guide](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally).
+
 In the future there will also be a single portable [GUI
 application](https://github.com/munshkr/flok-gui) that will run everything, but
 for now you'll have to use the terminal.
