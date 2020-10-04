@@ -353,7 +353,7 @@ class SessionPage extends Component<Props, State> {
           <LoadingSpinner />
         ) : username ? (
           <Session
-            websocketsHost={host}
+            websocketsHost={host || location.host}
             sessionName={session}
             userName={username}
             extraIceServers={extraIceServers}
