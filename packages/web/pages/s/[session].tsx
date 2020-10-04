@@ -276,7 +276,7 @@ class SessionPage extends Component<Props, State> {
     // Set Websockets URL
     const { host } = this.props;
     const protocol = location.protocol === "https:" ? "wss:" : "ws:";
-    const websocketsUrl = `${protocol}//${host}`;
+    const websocketsUrl = `${protocol}//${host || location.host}`;
     this.setState({ websocketsUrl });
 
     this.fetchLastUserName();
