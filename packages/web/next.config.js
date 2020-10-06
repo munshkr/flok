@@ -3,23 +3,30 @@
 const withTM = require("next-transpile-modules")([
   "lib0",
   "y-protocols",
-  "y-indexeddb"
+  "y-indexeddb",
 ]);
 const process = require("process");
+const path = require("path");
+const fs = require("fs");
+
+const packageConfig = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, "package.json"))
+);
 
 module.exports = withTM({
   publicRuntimeConfig: {
+    flokVersion: packageConfig.version,
     isDevelopment: process.env.NODE_ENV !== "production",
     iceStunUrl: process.env.ICE_STUN_URL,
     iceTurnUrl: process.env.ICE_TURN_URL,
     iceStunCredentials: process.env.ICE_STUN_USERPASS,
-    iceTurnCredentials: process.env.ICE_TURN_USERPASS
+    iceTurnCredentials: process.env.ICE_TURN_USERPASS,
   },
 
   webpack(config) {
     // Fixes npm packages that depend on `fs` module
     config.node = {
-      fs: "empty"
+      fs: "empty",
     };
 
     config.module.rules.push({
@@ -28,11 +35,11 @@ module.exports = withTM({
         loader: "url-loader",
         options: {
           limit: 100000,
-          name: "[name].[ext]"
-        }
-      }
+          name: "[name].[ext]",
+        },
+      },
     });
 
     return config;
-  }
+  },
 });

@@ -19,6 +19,7 @@ const defaultLayoutList = ["tidal", "hydra"];
 
 const { publicRuntimeConfig } = getConfig();
 const {
+  flokVersion,
   isDevelopment,
   iceStunUrl,
   iceTurnUrl,
@@ -137,7 +138,9 @@ const EmptySession = ({
     <Container>
       <section className="section">
         <div className="container">
-          <h1 className="title">flok</h1>
+          <h1 className="title">
+            flok <span>v{flokVersion} </span>
+          </h1>
           <p>
             You are trying to join session with token: <code>{session}</code>.
             <br />
@@ -182,6 +185,9 @@ const EmptySession = ({
         }
         .content {
           margin-bottom: 1rem;
+        }
+        h1 span {
+          font-size: 0.5em;
         }
       `}</style>
     </Container>
