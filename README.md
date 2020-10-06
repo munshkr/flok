@@ -165,6 +165,8 @@ You can specify custom options with the `--extra` parameter, by passing a JSON o
 * `useStack`: Uses `stack exec -- ghci` instead of plain `ghci`. Use this if
   you installed Tidal using Stack.
 
+* `ghci`: Use a specific Ghci command instead of plain `ghci`.
+  This overrides `useStack` option, if used too.
 
 #### FoxDot
 

@@ -35,14 +35,17 @@ class TidalREPL extends CommandREPL {
       return firstLine.substring(firstLine.indexOf(' ') + 1);
     } catch (err) {
       console.error(`Failed to get tidal data-dir`);
-      console.error("You will need to specify location of TidalCycles bootloading script.\n" +
-        "Read more: https://github.com/munshkr/flok/wiki/Failed-to-get-tidal-data-dir");
+      console.error(
+        'You will need to specify location of TidalCycles bootloading script.\n' +
+          'Read more: https://github.com/munshkr/flok/wiki/Failed-to-get-tidal-data-dir',
+      );
       throw err;
     }
   }
 
   commandPath(cmd: string): string {
-    const { useStack } = this.extraOptions;
+    const { ghci, useStack } = this.extraOptions;
+    if (ghci) return ghci;
     return useStack ? `stack exec -- ${cmd}` : cmd;
   }
 }
