@@ -127,7 +127,7 @@ class CommandREPL extends BaseREPL {
   }
 
   _handleData(data: any, type: string) {
-    const { target, session } = this;
+    const { target, session, nickname, notifyToAll } = this;
     const clientId = this.pubSub._id;
     const newBuffer = this._buffers[type].concat(data.toString());
     const lines = newBuffer.split('\n');
@@ -138,8 +138,10 @@ class CommandREPL extends BaseREPL {
 
     this.emitter.emit('data', { type, lines });
 
-    if (lines.length > 0) {
-      const path = this.nickname ? `${basePath}:user:${this.nickname}:out` : `${basePath}:out`;
+    const mustPublish = lines.length > 0 && (notifyToAll || nickname);
+
+    if (mustPublish) {
+      const path = notifyToAll ? `${basePath}:out` : `${basePath}:user:${nickname}:out`;
       this.pubSub.publish(path, {
         clientId,
         target,
