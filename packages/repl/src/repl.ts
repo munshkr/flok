@@ -12,6 +12,8 @@ type BaseREPLContext = {
   session: string;
   hub: string;
   pubSubPath: string;
+  nickname: string;
+  notifyToAll: boolean;
   extraOptions?: { [option: string]: any };
 };
 
@@ -25,21 +27,24 @@ abstract class BaseREPL {
   session: string;
   hub: string;
   pubSubPath: string;
+  nickname: string;
+  notifyToAll: boolean;
   extraOptions: { [option: string]: any };
 
   emitter: EventEmitter;
   pubSub: PubSubClient;
 
   _buffers: { stdout: string; stderr: string };
-  _lastUserName: string;
 
   constructor(ctx: BaseREPLContext) {
-    const { target, session, hub, pubSubPath, extraOptions } = ctx;
+    const { target, session, hub, pubSubPath, nickname, notifyToAll, extraOptions } = ctx;
 
     this.target = target || 'default';
     this.session = session || 'default';
     this.hub = hub || 'ws://localhost:3000';
     this.pubSubPath = pubSubPath || '/pubsub';
+    this.nickname = nickname;
+    this.notifyToAll = notifyToAll;
     this.extraOptions = extraOptions || {};
 
     this.emitter = new EventEmitter();
@@ -47,16 +52,14 @@ abstract class BaseREPL {
     this._connectToPubSubServer();
 
     this._buffers = { stdout: '', stderr: '' };
-    this._lastUserName = null;
   }
 
   start() {
     // Subscribe to pub sub
     const { target, session } = this;
     this.pubSub.subscribe(`session:${session}:target:${target}:in`, (message: Message) => {
-      const { body, userName } = message;
+      const { body } = message;
       this.write(body);
-      this._lastUserName = userName;
     });
   }
 
@@ -83,8 +86,8 @@ class CommandREPL extends BaseREPL {
   repl: ChildProcess;
 
   constructor(ctx: CommandREPLContext) {
-    const { target, session, hub, pubSubPath, extraOptions } = ctx;
-    super({ target, session, hub, pubSubPath, extraOptions });
+    const { target, session, hub, pubSubPath, nickname, notifyToAll, extraOptions } = ctx;
+    super({ target, session, hub, pubSubPath, nickname, notifyToAll, extraOptions });
 
     const { command, args } = ctx;
     this.command = command;
@@ -129,25 +132,20 @@ class CommandREPL extends BaseREPL {
     const newBuffer = this._buffers[type].concat(data.toString());
     const lines = newBuffer.split('\n');
 
+    const basePath = `session:${session}:target:${target}`;
+
     this._buffers[type] = lines.pop();
 
     this.emitter.emit('data', { type, lines });
 
     if (lines.length > 0) {
-      this.pubSub.publish(`session:${session}:target:${target}:out`, {
+      const path = this.nickname ? `${basePath}:user:${this.nickname}:out` : `${basePath}:out`;
+      this.pubSub.publish(path, {
         clientId,
         target,
         type,
         body: lines,
       });
-      if (this._lastUserName) {
-        this.pubSub.publish(`user:${this._lastUserName}`, {
-          clientId,
-          target,
-          type,
-          body: lines,
-        });
-      }
     }
   }
 }

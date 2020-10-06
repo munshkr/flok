@@ -21,6 +21,8 @@ program
   .option('-H, --hub <url>', 'Hub address', 'ws://localhost:3000')
   .option('-s, --session-name <name>', 'Session name', 'default')
   .option('-n, --target-name <name>', 'Use the specified target name')
+  .option('-N, --nickname <nickname>', 'Send output/error messages to named user')
+  .option('--notify-to-all', 'Notify output/error messages to all connected users')
   .option('--path <path>', 'Evaluation WebSockets server path', '/pubsub')
   .option('--list-types', 'List all known types of REPLs')
   .option('--config <configfile>', 'JSON configuration file')
@@ -32,13 +34,13 @@ const configPath = program.config || process.env.FLOK_CONFIG;
 const config = configPath ? readConfig(configPath) : {};
 
 // Override config with command line options
-const options = ['type', 'hub', 'sessionName', 'targetName', 'path'];
+const options = ['type', 'hub', 'sessionName', 'targetName', 'path', 'nickname', 'notifyToAll'];
 for (let i = 0; i < options.length; i++) {
   const opt = options[i];
   config[opt] = config[opt] || program[opt];
 }
 
-const { type, hub, sessionName, targetName, path } = config;
+const { type, hub, sessionName, targetName, path, nickname, notifyToAll } = config;
 
 // Prepare command and arguments
 const cmd = program.args[0];
@@ -85,6 +87,12 @@ console.log(`Hub address: ${hub}`);
 console.log(`Session name: ${sessionName}`);
 console.log(`Target name: ${target}`);
 console.log(`Type: ${type}`);
+if (notifyToAll) {
+  console.log(`Notify messages to all users`);
+}
+if (nickname) {
+  console.log(`Notify messages to user named "${nickname}"`);
+}
 console.log(`Extra options:`, extraOptions);
 
 let replClient;
@@ -96,6 +104,8 @@ if (useDefaultREPL) {
     session: sessionName,
     hub,
     pubSubPath: path,
+    nickname,
+    notifyToAll,
     extraOptions,
   });
 } else {
@@ -105,6 +115,8 @@ if (useDefaultREPL) {
     session: sessionName,
     hub,
     pubSubPath: path,
+    nickname,
+    notifyToAll,
     extraOptions,
   });
 }
