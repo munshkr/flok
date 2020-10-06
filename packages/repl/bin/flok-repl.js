@@ -1,8 +1,17 @@
 #!/usr/bin/env node
 
+require('dotenv').config();
+
+const process = require('process');
+const fs = require('fs');
 const program = require('commander');
 const packageInfo = require('../package.json');
 const { CommandREPL, replClasses } = require('../lib/index');
+
+const readConfig = path => {
+  const raw = fs.readFileSync(path);
+  return JSON.parse(raw);
+};
 
 const knownTypes = Object.keys(replClasses).filter(repl => repl !== 'default');
 
@@ -13,38 +22,58 @@ program
   .option('-s, --session-name <name>', 'Session name', 'default')
   .option('-n, --target-name <name>', 'Use the specified target name')
   .option('--path <path>', 'Evaluation WebSockets server path', '/pubsub')
-  .option('--extra <options>', 'Extra options in JSON')
   .option('--list-types', 'List all known types of REPLs')
+  .option('--config <configfile>', 'JSON configuration file')
+  .option('--extra <options>', 'Extra options in JSON')
   .parse(process.argv);
 
-const { args, type, hub, sessionName, targetName, path, listTypes, extra } = program;
-const cmd = program.args[0];
+// Try to read config file (if --config was provided, or FLOK_CONFIG env var is defined)
+const configPath = program.config || process.env.FLOK_CONFIG;
+const config = configPath ? readConfig(configPath) : {};
 
-if (listTypes) {
+// Override config with command line options
+const options = ['type', 'hub', 'sessionName', 'targetName', 'path'];
+for (let i = 0; i < options.length; i++) {
+  const opt = options[i];
+  config[opt] = config[opt] || program[opt];
+}
+
+const { type, hub, sessionName, targetName, path } = config;
+
+// Prepare command and arguments
+const cmd = program.args[0];
+const args = program.args.slice(1);
+
+// If asked to list type, print and exit
+if (program.listTypes) {
   console.log('Known types:', knownTypes);
   process.exit(0);
 }
 
 const useDefaultREPL = type === 'command';
 
+// If using default REPL and no command was specified, throw error
 if (useDefaultREPL && !cmd) {
   console.error('Missing REPL command (e.g.: flok-repl -- cat)');
   program.outputHelp();
   process.exit(1);
 }
 
-// TODO Check if type is one of knownTypes
+// Check if type is one of knownTypes
 if (!useDefaultREPL && !knownTypes.includes(type)) {
   console.error(`Unknown type ${type}. Must be one of:`, knownTypes);
   process.exit(1);
 }
 
+// Set target based on name or type
 const target = targetName || (useDefaultREPL ? 'default' : type);
 
-let extraOptions = {};
+// Extra options
+const { extra } = program;
+let extraOptions = config.extra || {};
 if (extra) {
   try {
-    extraOptions = JSON.parse(extra);
+    extraOptions = Object.assign(extraOptions, JSON.parse(extra));
   } catch {
     console.error('Invalid extra options JSON object:', extra);
     process.exit(1);
@@ -52,7 +81,6 @@ if (extra) {
 }
 
 // Start...
-
 console.log(`Hub address: ${hub}`);
 console.log(`Session name: ${sessionName}`);
 console.log(`Target name: ${target}`);
