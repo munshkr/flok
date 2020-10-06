@@ -79,12 +79,6 @@ class Session extends Component<Props, State> {
       reconnect: true,
     });
 
-    // Subscribes to messages directed to ourselves
-    this.pubsubClient.subscribe(
-      `session:${sessionName}:user:${userName}`,
-      this.handleMessageUser
-    );
-
     // Subscribe to messages directed to a specific target
     targets.forEach((target) => {
       this.pubsubClient.subscribe(
@@ -94,6 +88,12 @@ class Session extends Component<Props, State> {
 
       this.pubsubClient.subscribe(
         `session:${sessionName}:target:${target}:out`,
+        (content) => this.handleMessageTarget({ target, content })
+      );
+
+      // Subscribes to messages directed to ourselves
+      this.pubsubClient.subscribe(
+        `session:${sessionName}:target:${target}:user:${userName}:out`,
         (content) => this.handleMessageTarget({ target, content })
       );
     });
@@ -209,10 +209,6 @@ class Session extends Component<Props, State> {
         showTargetMessagesPane: true,
       };
     });
-  };
-
-  handleMessageUser = (message: string) => {
-    console.debug(`[message] user: ${JSON.stringify(message)}`);
   };
 
   handleTargetMessagesPaneTogglePosition = () => {

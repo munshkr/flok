@@ -1,4 +1,4 @@
-import React, { Component, ChangeEvent, FormEvent } from "react";
+import React, { Component, ChangeEvent, FormEvent, useState } from "react";
 import Head from "next/head";
 import getConfig from "next/config";
 import { NextPageContext } from "next";
@@ -48,27 +48,19 @@ const extraIceServers = (() => {
 class JoinSessionForm extends Component<{
   username: string;
   onSubmit: Function;
+  onUsernameChange: Function;
   hydraVisible: boolean;
   hasWebGl: boolean;
 }> {
   state = {
-    username: null,
     hydraEnabled: true,
     audioStreamingEnabled: false,
   };
 
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      ...this.state,
-      username: props.username || "",
-    };
-  }
-
   handleChangeUser = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
-    this.setState({ username: target.value });
+    const username = target.value;
+    this.props.onUsernameChange(username);
   };
 
   handleChangeHydraCheckbox = (e: ChangeEvent) => {
@@ -86,15 +78,16 @@ class JoinSessionForm extends Component<{
 
     const { onSubmit } = this.props;
 
-    let { username, hydraEnabled, audioStreamingEnabled } = this.state;
+    let { username } = this.props;
+    const { hydraEnabled, audioStreamingEnabled } = this.state;
     if (!username) username = "anonymous";
 
     onSubmit({ username, hydraEnabled, audioStreamingEnabled });
   };
 
   render() {
-    const { hydraVisible, hasWebGl } = this.props;
-    const { username, hydraEnabled, audioStreamingEnabled } = this.state;
+    const { username, hydraVisible, hasWebGl } = this.props;
+    const { hydraEnabled, audioStreamingEnabled } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
@@ -137,56 +130,63 @@ const EmptySession = ({
   hasWebGl,
   hasHydraSlot,
   onSubmit,
-}) => (
-  <Container>
-    <section className="section">
-      <div className="container">
-        <h1 className="title">flok</h1>
-        <p>
-          You are trying to join session with token: <code>{session}</code>.
-          <br />
-          Please enter your nickname.
-        </p>
+}) => {
+  const [username, setUsername] = useState(lastUsername);
 
-        <JoinSessionForm
-          hydraVisible={hasHydraSlot}
-          hasWebGl={hasWebGl}
-          username={lastUsername}
-          onSubmit={onSubmit}
-        />
-        <p>
-          To connect a REPL, for example, <code>tidal</code>, run on a terminal:
-        </p>
-        <code>
-          flok-repl -H {websocketsUrl} -s {session} -t tidal
-        </code>
-        <p>
-          For more information, read{" "}
-          <a
-            target="_blank"
-            href="https://github.com/munshkr/flok#connect-repls-to-flok"
-          >
-            here
-          </a>
-          .
-        </p>
-      </div>
-    </section>
-    <style jsx>{`
-      code {
-        margin-bottom: 0.25rem;
-        background-color: #333;
-        color: #eee;
-        font-family: monospace;
-        padding: 0.25em 0.5em;
-        border-radius: 2px;
-      }
-      .content {
-        margin-bottom: 1rem;
-      }
-    `}</style>
-  </Container>
-);
+  return (
+    <Container>
+      <section className="section">
+        <div className="container">
+          <h1 className="title">flok</h1>
+          <p>
+            You are trying to join session with token: <code>{session}</code>.
+            <br />
+            Please enter your nickname.
+          </p>
+
+          <JoinSessionForm
+            hydraVisible={hasHydraSlot}
+            hasWebGl={hasWebGl}
+            username={username}
+            onUsernameChange={(name) => setUsername(name)}
+            onSubmit={onSubmit}
+          />
+          <p>
+            To connect a REPL, for example, <code>tidal</code>, run on a
+            terminal:
+          </p>
+          <code>
+            flok-repl -H {websocketsUrl} -s {session} -t tidal
+            {username ? ` -N ${username}` : ""}
+          </code>
+          <p>
+            For more information, read{" "}
+            <a
+              target="_blank"
+              href="https://github.com/munshkr/flok#connect-repls-to-flok"
+            >
+              here
+            </a>
+            .
+          </p>
+        </div>
+      </section>
+      <style jsx>{`
+        code {
+          margin-bottom: 0.25rem;
+          background-color: #333;
+          color: #eee;
+          font-family: monospace;
+          padding: 0.25em 0.5em;
+          border-radius: 2px;
+        }
+        .content {
+          margin-bottom: 1rem;
+        }
+      `}</style>
+    </Container>
+  );
+};
 
 const LoadingSpinner = () => (
   <h1>
