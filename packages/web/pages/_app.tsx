@@ -9,5 +9,5 @@ import "codemirror/addon/scroll/simplescrollbars.css";
 import "../styles/y-codemirror.css";
 
 export default function CustomApp({ Component, pageProps }) {
-  return <Component {...pageProps} />
+  return <Component {...pageProps} />;
 }

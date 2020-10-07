@@ -3,6 +3,7 @@ import Head from "next/head";
 import getConfig from "next/config";
 import { NextPageContext } from "next";
 import hasWebgl from "../../lib/webgl-detector";
+import css from "styled-jsx/css";
 
 import Layout from "../../components/Layout";
 import Container from "../../components/Container";
@@ -124,6 +125,21 @@ class JoinSessionForm extends Component<{
   }
 }
 
+const CopyButton = (props) => {
+  const { className, styles } = css.resolve`
+    button {
+      font-size: 0.875rem;
+    }
+  `;
+
+  return (
+    <>
+      <Button className={className} {...props} />
+      {styles}
+    </>
+  );
+};
+
 const EmptySession = ({
   websocketsUrl,
   session,
@@ -133,6 +149,17 @@ const EmptySession = ({
   onSubmit,
 }) => {
   const [username, setUsername] = useState(lastUsername);
+  const [copied, setCopied] = useState(false);
+
+  const replExample = `flok-repl -H ${websocketsUrl} -s ${session} -t tidal${
+    username ? ` -N ${username}` : ""
+  }`;
+
+  const copyToClipboard = () => {
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1000);
+    navigator.clipboard.writeText(replExample);
+  };
 
   return (
     <Container>
@@ -143,9 +170,8 @@ const EmptySession = ({
           </h1>
           <p>
             You are trying to join session with token: <code>{session}</code>.
-            <br />
-            Please enter your nickname.
           </p>
+          <p>Please enter your nickname.</p>
 
           <JoinSessionForm
             hydraVisible={hasHydraSlot}
@@ -158,10 +184,14 @@ const EmptySession = ({
             To connect a REPL, for example, <code>tidal</code>, run on a
             terminal:
           </p>
-          <code>
-            flok-repl -H {websocketsUrl} -s {session} -t tidal
-            {username ? ` -N ${username}` : ""}
-          </code>
+          <div className="example">
+            <code>{replExample}</code>
+            <div>
+              <CopyButton onClick={copyToClipboard}>
+                {copied ? "Copied!" : "Copy"}
+              </CopyButton>
+            </div>
+          </div>
           <p>
             For more information, read{" "}
             <a
@@ -180,14 +210,26 @@ const EmptySession = ({
           background-color: #333;
           color: #eee;
           font-family: monospace;
-          padding: 0.25em 0.5em;
-          border-radius: 2px;
+          padding: 0.35em 0.5em;
+          border-radius: 3px;
         }
         .content {
           margin-bottom: 1rem;
         }
         h1 span {
           font-size: 0.5em;
+        }
+        .example {
+          display: flex;
+        }
+        a {
+          color: #2366d1;
+        }
+        a:hover {
+          color: #276cda;
+        }
+        .example code {
+          margin-right: 0.875rem;
         }
       `}</style>
     </Container>
