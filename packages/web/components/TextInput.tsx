@@ -12,12 +12,16 @@ const TextInput = (props) => (
         width: 95%;
         margin-bottom: 0.75rem;
       }
-
       input:active,
       input:focus {
         border-color: #3273dc;
         box-shadow: 0 0 0 0.125em rgba(50, 115, 220, 0.25);
         outline: none;
+      }
+      input:disabled {
+        color: #aaa;
+        border-color: #dbdbdb;
+        box-shadow: none;
       }
     `}</style>
   </>

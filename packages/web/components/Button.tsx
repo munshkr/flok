@@ -15,6 +15,11 @@ const Button = (props) => (
       button:hover {
         background-color: #276cda;
       }
+      button:disabled {
+        background-color: #777;
+        cursor: default;
+        color: #ccc;
+      }
     `}</style>
   </>
 );

@@ -8,10 +8,14 @@ import Container from "../components/Container";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
 
-class NewSessionForm extends Component<{}, { user: string; targets: string }> {
+class NewSessionForm extends Component<
+  {},
+  { user: string; targets: string; submitting: boolean }
+> {
   state = {
     user: "",
     targets: "",
+    submitting: false,
   };
 
   handleChangeUser = (e: ChangeEvent) => {
@@ -28,6 +32,8 @@ class NewSessionForm extends Component<{}, { user: string; targets: string }> {
 
   handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    this.setState({ submitting: true });
+
     const session = btoa(uuid());
     const { targets } = this.state;
     const layout = targets
@@ -38,7 +44,7 @@ class NewSessionForm extends Component<{}, { user: string; targets: string }> {
   };
 
   render() {
-    const { targets } = this.state;
+    const { targets, submitting } = this.state;
 
     return (
       <form onSubmit={this.handleSubmit}>
@@ -48,8 +54,11 @@ class NewSessionForm extends Component<{}, { user: string; targets: string }> {
           placeholder={`Enter targets separated by commas (e.g. tidal,foxdot,hydra)`}
           autoFocus
           onChange={this.handleChangeTargets}
+          disabled={submitting}
         />
-        <Button type="submit">Create session</Button>
+        <Button type="submit" disabled={submitting}>
+          {submitting ? "Creating..." : "Create session"}
+        </Button>
       </form>
     );
   }

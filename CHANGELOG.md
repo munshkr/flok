@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * web: Copy button for copying flok-repl example when joining session
 
+### Changed
+
+* web: Disable form when creating session, while session page loads
+
 ## [0.4.0] - 2020-10-06
 
 ### Added
