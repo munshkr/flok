@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
 import * as path from 'path';
 import { CommandREPL, CommandREPLContext } from '../repl';
+import { readPackageMetadata } from "../index";
 
 class TidalREPL extends CommandREPL {
   constructor(ctx: CommandREPLContext) {
@@ -34,12 +35,25 @@ class TidalREPL extends CommandREPL {
       const firstLine = dataDir.split('\n')[0];
       return firstLine.substring(firstLine.indexOf(' ') + 1);
     } catch (err) {
-      console.error(`Failed to get tidal data-dir`);
-      console.error(
-        'You will need to specify location of TidalCycles bootloading script.\n' +
-          'Read more: https://github.com/munshkr/flok/wiki/Failed-to-get-tidal-data-dir',
-      );
-      throw err;
+      console.warn(`Failed to get tidal data-dir`);
+
+      const metadata = readPackageMetadata();
+      const tidalMetadata = metadata['tidal'];
+      if (tidalMetadata) {
+        const { bootScript, version } = tidalMetadata
+        console.warn(
+          `Going to fallback to embedded BootTidal.hs, for TidalCycles ${version}`);
+        console.warn(
+          `If you have a different TidalCycles version installed, you may want to ` +
+          `specify the location of your TidalCycles bootloading script.\n` +
+          `Read more: https://github.com/munshkr/flok/wiki/Failed-to-get-tidal-data-dir`);
+        return path.resolve(__dirname, path.join('..', '..', bootScript));
+      } else {
+        console.warn(
+          `You will need to specify the location of your TidalCycles bootloading script.\n` +
+          `Read more: https://github.com/munshkr/flok/wiki/Failed-to-get-tidal-data-dir`);
+        throw err;
+      }
     }
   }
 

@@ -3,12 +3,15 @@ import TidalREPL from './repl/tidal';
 import SclangREPL, { RemoteSclangREPL } from './repl/sclang';
 import FoxDotREPL from './repl/foxdot';
 
+const path = require("path");
+const fs = require("fs");
+
 const replClasses = {
   default: CommandREPL,
   tidal: TidalREPL,
   sclang: SclangREPL,
   remote_sclang: RemoteSclangREPL,
-  foxdot: FoxDotREPL, 
+  foxdot: FoxDotREPL,
 };
 
 function createREPLFor(repl: string, ctx: CommandREPLContext) {
@@ -20,4 +23,14 @@ function createREPLFor(repl: string, ctx: CommandREPLContext) {
   return new replClass({ ...ctx, command: repl });
 }
 
-export { replClasses, createREPLFor, BaseREPL, BaseREPLContext, CommandREPL, CommandREPLContext };
+function readPackageMetadata() {
+  const packageJsonPath = path.resolve(__dirname, path.join('..', 'package.json'));
+  const body = JSON.parse(fs.readFileSync(packageJsonPath));
+  return body['flok'];
+}
+
+export {
+  replClasses, createREPLFor, readPackageMetadata,
+  BaseREPL, BaseREPLContext,
+  CommandREPL, CommandREPLContext,
+};
