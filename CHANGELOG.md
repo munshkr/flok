@@ -7,13 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.1] - 2020-10-11
+
 ### Added
 
 * web: Copy button for copying flok-repl example when joining session
+* repl: Add package metadata and data dir, which includes a Tidal bootScript
+  file.
 
 ### Changed
 
 * web: Disable form when creating session, while session page loads
+* repl: If ghc-pkg fails to get tidal data dir, fallback to embedded bootScript
+  file.
 
 ## [0.4.0] - 2020-10-06
 
