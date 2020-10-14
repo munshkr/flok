@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* web: Better styles for selected text and remote caret
+
 ## [0.4.1] - 2020-10-11
 
 ### Added

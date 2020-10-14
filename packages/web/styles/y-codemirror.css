@@ -10,15 +10,15 @@
   position: relative;
   top: 1.5em;
   left: -2px;
-  font-size: 14px;
-  background-color: #fa8100;
+  font-size: 1rem;
+  background-color: #c76700;
+  color: #fff;
   font-family: Monaco, monospace;
   font-style: normal;
   font-weight: normal;
   line-height: normal;
   user-select: none;
-  color: white;
-  padding-left: 2px;
-  padding-right: 2px;
+  padding: 0.125em 0.25em;
+  border-radius: 3px;
   z-index: 3;
 }

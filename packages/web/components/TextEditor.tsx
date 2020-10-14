@@ -270,9 +270,10 @@ class TextEditor extends Component<Props, {}> {
             height: ${isHalfHeight ? "46vh" : "97vh"};
           }
           .editor > .CodeMirror .CodeMirror-line > span {
-            border-radius: 4px;
-            padding: 1px;
-            background-color: rgba(0, 0, 0, 0.6);
+            text-shadow: 2px 2px 4px #000000;
+          }
+          .editor > .CodeMirror .CodeMirror-selected {
+            background-color: #f0717850 !important;
           }
 
           @keyframes flash {
@@ -282,13 +283,13 @@ class TextEditor extends Component<Props, {}> {
             }
             100% {
               color: auto;
-              background-color: auto;
+              background-color: #00000000;
             }
           }
 
           .editor > .CodeMirror .CodeMirror-line .flash-selection {
             animation: flash 0.4s linear;
-            background-color: #000;
+            background-color: #00000000;
           }
 
           @media only screen and (max-width: 800px) {
