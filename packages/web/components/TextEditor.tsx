@@ -271,6 +271,7 @@ class TextEditor extends Component<Props, {}> {
           }
           .editor > .CodeMirror .CodeMirror-line > span {
             text-shadow: 2px 2px 4px #000000;
+            background-color: #000000;
           }
           .editor > .CodeMirror .CodeMirror-selected {
             background-color: #f0717850 !important;
