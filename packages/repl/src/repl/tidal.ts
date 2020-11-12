@@ -40,14 +40,14 @@ class TidalREPL extends CommandREPL {
       const metadata = readPackageMetadata();
       const tidalMetadata = metadata['tidal'];
       if (tidalMetadata) {
-        const { bootScript, version } = tidalMetadata
+        const { version } = tidalMetadata
         console.warn(
           `Going to fallback to embedded BootTidal.hs, for TidalCycles ${version}`);
         console.warn(
           `If you have a different TidalCycles version installed, you may want to ` +
           `specify the location of your TidalCycles bootloading script.\n` +
           `Read more: https://github.com/munshkr/flok/wiki/Failed-to-get-tidal-data-dir`);
-        return path.resolve(__dirname, path.join('..', '..', bootScript));
+        return path.resolve(__dirname, path.join('..', '..', 'data'));
       } else {
         console.warn(
           `You will need to specify the location of your TidalCycles bootloading script.\n` +

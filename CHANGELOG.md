@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * web: Better styles for selected text and remote caret
+* repl: Fix path to embedded BootTidal.hs when using fallback
 
 ## [0.4.1] - 2020-10-11
 
