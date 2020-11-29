@@ -21,6 +21,7 @@ type EvaluateCodeArgs = {
   fromLine: number;
   toLine: number;
   user?: string;
+  locally?: boolean;
 };
 
 type EvaluateRemoteCodeArgs = {
@@ -110,9 +111,9 @@ const Description = ({ editorId, target }) => (
 class TextEditor extends Component<Props, {}> {
   static defaultProps = {
     target: "default",
-    onEvaluateCode: () => {},
-    onEvaluateRemoteCode: () => {},
-    onCursorActivity: () => {},
+    onEvaluateCode: () => { },
+    onEvaluateRemoteCode: () => { },
+    onCursorActivity: () => { },
   };
 
   cm: any;
@@ -124,7 +125,7 @@ class TextEditor extends Component<Props, {}> {
     sessionClient.attachEditor(editorId, editor);
   }
 
-  evaluateLine = () => {
+  evaluateLine = (locally: boolean = false) => {
     const { editor } = this.cm;
 
     const currentLine = editor.getCursor().line;
@@ -132,15 +133,15 @@ class TextEditor extends Component<Props, {}> {
     const code = lines[currentLine].trim();
 
     if (code !== "") {
-      this.evaluate(code, currentLine, currentLine);
+      this.evaluate(code, currentLine, currentLine, locally);
     }
   };
 
-  evaluateBlock = () => {
+  evaluateBlock = (locally: boolean = false) => {
     const { editor } = this.cm;
     const currentLine = editor.getCursor().line;
     const content = `${editor.getValue()}\n`;
-    const lines = content.split("\n");
+    const lines = content.split("\n")
 
     let code = "";
     let start = false;
@@ -170,26 +171,17 @@ class TextEditor extends Component<Props, {}> {
     }
 
     if (code !== "") {
-      this.evaluate(code, begin, end);
+      this.evaluate(code, begin, end, locally);
     }
   };
 
-  evaluate(body: string, fromLine: number, toLine: number) {
+  evaluate(body: string, fromLine: number = -1, toLine: number = -1, locally: boolean = false) {
     const { editorId, target, onEvaluateCode, sessionClient } = this.props;
 
-    onEvaluateCode({ editorId, target, body, fromLine, toLine });
+    console.log("texteitor.evalute: locally = ", locally)
+    onEvaluateCode({ editorId, target, body, fromLine, toLine, locally });
     sessionClient.flash(editorId, fromLine, toLine);
   }
-
-  handleEvaluateCode = ({ body, fromLine, toLine, user }) => {
-    const { editorId, target, onEvaluateCode } = this.props;
-    return onEvaluateCode({ editorId, target, body, fromLine, toLine, user });
-  };
-
-  handleEvaluateRemoteCode = ({ body }) => {
-    const { editorId, target, onEvaluateRemoteCode } = this.props;
-    return onEvaluateRemoteCode({ editorId, target, body });
-  };
 
   handleEvaluateButtonClick = (e: MouseEvent) => {
     const { editorId, target, onEvaluateCode } = this.props;
@@ -216,16 +208,19 @@ class TextEditor extends Component<Props, {}> {
   }
 
   freeAllSound = () => {
-    this.evaluate(this.freeAllSoundCode(), -1, -1);
+    this.evaluate(this.freeAllSoundCode());
   };
 
   render() {
     const { editorId, isHalfHeight, target } = this.props;
 
     const defaultExtraKeys = {
-      "Shift-Enter": this.evaluateLine,
-      "Ctrl-Enter": this.evaluateBlock,
-      "Cmd-Enter": this.evaluateBlock,
+      "Shift-Enter": () => this.evaluateLine(false),
+      "Ctrl-Enter": () => this.evaluateBlock(false),
+      "Cmd-Enter": () => this.evaluateBlock(false),
+      "Shift-Alt-Enter": () => this.evaluateLine(true),
+      "Ctrl-Alt-Enter": () => this.evaluateBlock(true),
+      "Cmd-Alt-Enter": () => this.evaluateBlock(true),
     };
 
     const extraKeys = {
