@@ -174,6 +174,14 @@ class TextEditor extends Component<Props, {}> {
     }
   };
 
+  // evaluate the full page of code
+  evaluateAll = () => {
+    const { editor } = this.cm;
+    const content = `${editor.getValue()}\n`;
+
+    this.evaluate(content, 0, content.length);
+  };
+
   evaluate(body: string, fromLine: number, toLine: number) {
     const { editorId, target, onEvaluateCode, sessionClient } = this.props;
 
@@ -226,6 +234,8 @@ class TextEditor extends Component<Props, {}> {
       "Shift-Enter": this.evaluateLine,
       "Ctrl-Enter": this.evaluateBlock,
       "Cmd-Enter": this.evaluateBlock,
+      // Included for Mercury that always executes full code page
+      "Alt-Enter": this.evaluateAll,
     };
 
     const extraKeys = {
