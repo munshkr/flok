@@ -16,6 +16,7 @@ Web-based P2P collaborative editor for live coding music and graphics
   - [TidalCycles](https://tidalcycles.org/)
   - [SuperCollider](https://supercollider.github.io/) (sclang)
   - [FoxDot](https://foxdot.org/)
+  - [Mercury](#mercury)
   - [SonicPi](https://sonic-pi.net/) (*not implemented yet*)
   - ... any interpreter with a REPL (Python, Ruby, etc.)
 * Web Plugins, for languages embedded in editor:
@@ -86,11 +87,12 @@ Examples:
 * `tidal,foxdot,hydra`: 3 slots, with tidal, foxdot and hydra respectively.
 * `sclang,sclang,sclang,hydra,hydra`: 5 slots total, the first 3 with `sclang`
   and the last 2 with `hydra`.
+* `mercury, hydra`: 2 slots total, one with Mercury and one with Hydra.
 
 Now click on *Create session*.
 
 You will now be shown a **token** and asked for a nickname. Save the token, as
-you will need it next for starting the REPL.  Enter your nickname and click on
+you will need it next for starting the REPL. Optionally copy the repl-code to easily paste in the terminal and hook up your repl. Enter your nickname and click on
 *Join*.
 
 You are ready to start writing.  Share the URL to your friends so they can join
@@ -219,6 +221,27 @@ Read
 [more](https://github.com/munshkr/flok-hydra-chrome-extension/blob/master/README.md)
 on how to install the extension.
 
+#### Mercury
+
+[Mercury](https://github.com/tmhglnd/mercury) is a minimal and human readable language for livecoding of algorithmic electronic music. Follow these steps to connect Flok to the Mercury livecoding environment:
+
+First make sure you have installed `Mercury` and `flok-repl` properly.
+1. [quick start quide](https://github.com/tmhglnd/mercury/blob/master/docs/quick-start.md) to install Mercury. 
+2. Install the `flok-repl` globally with `npm install -g flok-repl`
+
+Now follow these steps for a succesful setup.
+1. Setup Flok with target `mercury` and click **create**.
+3. Copy the `flok-repl -H xxx -s xxx -t mercury` command to run in the terminal.
+3. **join** the Flok with your *nickname*
+4. Run the copied `flok-repl` command in the terminal. Or manually set it up with argument `-t mercury`
+5. Enable *Audio* and optionally *Visuals* in Mercury to hear sound
+
+Now start typing some code! 🎵
+
+- `Ctrl/Alt + Return` to evaluate
+- `Ctrl/Alt + .` to silence
+
+Flok will send the entire code via OSC messaging to port 4880. Mercury should be listening to this port automatically. Bug reports are welcome in the issues.
 
 ## Development
 
