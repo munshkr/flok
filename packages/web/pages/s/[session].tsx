@@ -147,13 +147,15 @@ const EmptySession = ({
   hasWebGl,
   hasHydraSlot,
   onSubmit,
+  layout,
 }) => {
   const [username, setUsername] = useState(lastUsername);
   const [copied, setCopied] = useState(false);
 
-  const replExample = `flok-repl -H ${websocketsUrl} -s ${session} -t tidal${
-    username ? ` -N ${username}` : ""
-  }`;
+  // pick the first target as example for the repl
+  const targetExample = layout[0];
+  // apply websocket, session, targetexample and username to string
+  const replExample = `flok-repl -H ${websocketsUrl} -s ${session} -t ${targetExample}${ username ? ` -N ${username}` : "" }`;
 
   const copyToClipboard = () => {
     setCopied(true);
@@ -181,7 +183,7 @@ const EmptySession = ({
             onSubmit={onSubmit}
           />
           <p>
-            To connect a REPL, for example, <code>tidal</code>, run on a
+            To connect a REPL, for example <code>{targetExample}</code>, run on a
             terminal:
           </p>
           <div className="example">
@@ -417,6 +419,7 @@ class SessionPage extends Component<Props, State> {
             onSubmit={this.handleJoinSubmit}
             hasHydraSlot={hasHydraSlot}
             hasWebGl={hasWebGl}
+            layout={layoutList}
           />
         )}
         {hasWebgl && (

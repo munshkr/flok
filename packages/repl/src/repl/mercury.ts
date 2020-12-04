@@ -2,6 +2,18 @@ import { BaseREPL, BaseREPLContext } from '../repl';
 // import * as os from 'os';
 import { UDPPort } from 'osc';
 
+// The Mercury REPL
+// $ flok-repl -t mercury
+// 
+// Sends the code over OSC to port 4880 on localhost
+// Start the mercury_ide.maxproj in Max8
+// Turn on the audio if you want to code sound only
+// Turn on the visuals if you want to code visuals as well
+// 
+// When executing code it should automatically receive and parse
+// Mercury only runs full pages of code (previous code is deleted)
+// So always execute full page instead of per-line
+// 
 class MercuryREPL extends BaseREPL {
   udpPort: UDPPort;
   port: number;

@@ -220,6 +220,8 @@ class TextEditor extends Component<Props, {}> {
       return "CmdPeriod.run";
     } else if (target === "foxdot") {
       return "Clock.clear()";
+    } else if (target === "mercury") {
+      return "silence";
     }
   }
 
@@ -230,17 +232,28 @@ class TextEditor extends Component<Props, {}> {
   render() {
     const { editorId, isHalfHeight, target } = this.props;
 
-    const defaultExtraKeys = {
+    let defaultExtraKeys = {
       "Shift-Enter": this.evaluateLine,
       "Ctrl-Enter": this.evaluateBlock,
       "Cmd-Enter": this.evaluateBlock,
-      // Included for Mercury that always executes full code page
-      "Alt-Enter": this.evaluateAll,
     };
+    
+    // Repalce shortkeys when using Mercury
+    // Because Mercury always replaces the entire code with the newly
+    // executed page. No per-line evaluation
+    if (target === 'mercury'){
+      defaultExtraKeys = { ...{
+        "Shift-Enter": this.evaluateAll,
+        "Ctrl-Enter": this.evaluateAll,
+        "Cmd-Enter": this.evaluateAll,
+        "Alt-Enter": this.evaluateAll,
+      } };
+    }
 
     const extraKeys = {
       "Ctrl-.": this.freeAllSound,
       "Cmd-.": this.freeAllSound,
+      "Alt-.": this.freeAllSound,
       ...defaultExtraKeys,
     };
 
