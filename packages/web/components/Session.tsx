@@ -45,7 +45,7 @@ class Session extends Component<Props, State> {
 
   static defaultProps = {
     userName: "anonymous",
-    onHydraEvaluation: () => {},
+    onHydraEvaluation: () => { },
   };
 
   componentDidMount() {
@@ -146,7 +146,7 @@ class Session extends Component<Props, State> {
     }
   }
 
-  handleEvaluateCode = ({ editorId, target, body, fromLine, toLine, user }) => {
+  handleEvaluateCode = ({ editorId, target, body, fromLine, toLine, user, locally = false }) => {
     const { sessionName } = this.props;
     const { pubsubClient } = this;
     const content = {
@@ -156,20 +156,27 @@ class Session extends Component<Props, State> {
       user,
     };
 
+    console.log("evaluate code: locally = ", locally)
+
     this.setState({ messagesByClientId: {}, showTargetMessagesPane: false });
 
     if (LOCAL_TARGETS.includes(target)) {
       this.evaluateLocalCode({ target, body });
-      pubsubClient.publish(`session:${sessionName}:target:${target}:eval`, {
-        body,
-        ...content,
-      });
+      if (locally == false) {
+        pubsubClient.publish(`session:${sessionName}:target:${target}:eval`, {
+          body,
+          ...content,
+        });
+      }
     } else {
-      pubsubClient.publish(
-        `session:${sessionName}:target:${target}:eval`,
-        content
-      );
+      if (locally === false) {
+        pubsubClient.publish(
+          `session:${sessionName}:target:${target}:eval`,
+          content
+        );
+      }
     }
+
     pubsubClient.publish(`session:${sessionName}:target:${target}:in`, {
       user,
       body,
