@@ -51,7 +51,7 @@ class NewSessionForm extends Component<
         <TextInput
           name="user"
           value={targets}
-          placeholder={`Enter targets separated by commas (e.g. tidal,foxdot,hydra)`}
+          placeholder={`Enter targets separated by commas (e.g. tidal,foxdot,etc.)`}
           autoFocus
           onChange={this.handleChangeTargets}
           disabled={submitting}
@@ -89,11 +89,37 @@ const Title = () => (
   </header>
 );
 
+// The supported targets that can be entered in the form
+const SupportedTargets = () => (
+  <body>
+    <h3>currently supported targets:</h3>
+    <p>
+      <li>tidal</li>
+      <li>foxdot</li>
+      <li>hydra</li>
+      <li>sclang</li>
+      <li>remote_sclang</li>
+      <li>mercury</li>
+    </p>
+    <style jsx>{`
+      h3 {
+        font-size: 1 em;
+        color: #ffffff75
+      }
+      p {
+        font-size: 0.8 em;
+        color: #ffffff75
+      }
+    `}</style>
+  </body>
+);
+
 const IndexPage = () => (
   <Layout>
     <Container>
       <Title />
       <NewSessionForm />
+      <SupportedTargets />
       {hasWebgl() && <FlockScene />}
     </Container>
   </Layout>

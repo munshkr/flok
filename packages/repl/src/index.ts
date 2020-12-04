@@ -2,6 +2,7 @@ import { BaseREPL, BaseREPLContext, CommandREPL, CommandREPLContext } from './re
 import TidalREPL from './repl/tidal';
 import SclangREPL, { RemoteSclangREPL } from './repl/sclang';
 import FoxDotREPL from './repl/foxdot';
+import MercuryREPL from './repl/mercury';
 
 const path = require("path");
 const fs = require("fs");
@@ -12,6 +13,7 @@ const replClasses = {
   sclang: SclangREPL,
   remote_sclang: RemoteSclangREPL,
   foxdot: FoxDotREPL,
+  mercury: MercuryREPL,
 };
 
 function createREPLFor(repl: string, ctx: CommandREPLContext) {

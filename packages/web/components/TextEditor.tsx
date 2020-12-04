@@ -175,6 +175,14 @@ class TextEditor extends Component<Props, {}> {
     }
   };
 
+  // evaluate the full page of code
+  evaluateAll = (locally: boolean = false) => {
+    const { editor } = this.cm;
+    const content = `${editor.getValue()}\n`;
+
+    this.evaluate(content, 0, content.length, locally);
+  };
+  
   evaluate(body: string, fromLine: number = -1, toLine: number = -1, locally: boolean = false) {
     const { editorId, target, onEvaluateCode, sessionClient } = this.props;
 
@@ -204,6 +212,8 @@ class TextEditor extends Component<Props, {}> {
       return "CmdPeriod.run";
     } else if (target === "foxdot") {
       return "Clock.clear()";
+    } else if (target === "mercury") {
+      return "silence";
     }
   }
 
@@ -214,7 +224,7 @@ class TextEditor extends Component<Props, {}> {
   render() {
     const { editorId, isHalfHeight, target } = this.props;
 
-    const defaultExtraKeys = {
+    let defaultExtraKeys = {
       "Shift-Enter": () => this.evaluateLine(false),
       "Ctrl-Enter": () => this.evaluateBlock(false),
       "Cmd-Enter": () => this.evaluateBlock(false),
@@ -222,10 +232,26 @@ class TextEditor extends Component<Props, {}> {
       "Ctrl-Alt-Enter": () => this.evaluateBlock(true),
       "Cmd-Alt-Enter": () => this.evaluateBlock(true),
     };
+    
+    // Repalce shortkeys when using Mercury
+    // Because Mercury always replaces the entire code with the newly
+    // executed page. No per-line evaluation
+    if (target === 'mercury'){
+      defaultExtraKeys = { ...{
+        "Shift-Enter": () => this.evaluateAll(false),
+        "Ctrl-Enter": () => this.evaluateAll(false),
+        "Cmd-Enter": () => this.evaluateAll(false),
+        "Alt-Enter": () => this.evaluateAll(false),
+        "Shift-Alt-Enter": () => this.evaluateAll(true),
+        "Ctrl-Alt-Enter": () => this.evaluateAll(true),
+        "Cmd-Alt-Enter": () => this.evaluateAll(true),
+      } };
+    }
 
     const extraKeys = {
       "Ctrl-.": this.freeAllSound,
       "Cmd-.": this.freeAllSound,
+      "Alt-.": this.freeAllSound,
       ...defaultExtraKeys,
     };
 
