@@ -5,17 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.3] - 2020-12-04
+
+### Added
+
+* repl, web: Support for Mercury
+* web: When joining session, show flok-repl example based on first target in
+  layout.
+* web: New shortcut for evaluating web-target (e.g. Hydra) code only on local
+  client (Ctrl-Alt-Enter for block execution, Shift-Alt-Enter for line
+  execution).
 
 ### Changed
 
 * web: Upgrade to Hydra 1.3.4
-
-### Added
-
-* web: New shortcut for evaluating web-target (e.g. Hydra) code only on local
-  client (Ctrl-Alt-Enter for block execution, Shift-Alt-Enter for line
-  execution).
 
 ## [0.4.2] - 2020-11-12
 
