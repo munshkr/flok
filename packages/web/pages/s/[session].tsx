@@ -17,6 +17,7 @@ import Button from "../../components/Button";
 import Checkbox from "../../components/Checkbox";
 
 const defaultLayoutList = ["tidal", "hydra"];
+const webTargets = ["hydra"];
 
 const { publicRuntimeConfig } = getConfig();
 const {
@@ -152,10 +153,12 @@ const EmptySession = ({
   const [username, setUsername] = useState(lastUsername);
   const [copied, setCopied] = useState(false);
 
-  // pick the first target as example for the repl
-  const targetExample = layout[0];
-  // apply websocket, session, targetexample and username to string
-  const replExample = `flok-repl -H ${websocketsUrl} -s ${session} -t ${targetExample}${ username ? ` -N ${username}` : "" }`;
+  // Pick the first target as example for flok-repl
+  const isReplTarget = (target: string) => !webTargets.includes(target);
+  const targetExample = layout.find(target => isReplTarget(target));
+  const replExample = `flok-repl -H ${websocketsUrl} ` +
+    `-s ${session} ` +
+    `-t ${targetExample}${username ? ` -N ${username}` : ""}`;
 
   const copyToClipboard = () => {
     setCopied(true);
@@ -182,28 +185,30 @@ const EmptySession = ({
             onUsernameChange={(name) => setUsername(name)}
             onSubmit={onSubmit}
           />
-          <p>
-            To connect a REPL, for example <code>{targetExample}</code>, run on a
+          {targetExample && (<>
+            <p>
+              To connect a REPL, for example <code>{targetExample}</code>, run on a
             terminal:
           </p>
-          <div className="example">
-            <code>{replExample}</code>
-            <div>
-              <CopyButton onClick={copyToClipboard}>
-                {copied ? "Copied!" : "Copy"}
-              </CopyButton>
+            <div className="example">
+              <code>{replExample}</code>
+              <div>
+                <CopyButton onClick={copyToClipboard}>
+                  {copied ? "Copied!" : "Copy"}
+                </CopyButton>
+              </div>
             </div>
-          </div>
-          <p>
-            For more information, read{" "}
-            <a
-              target="_blank"
-              href="https://github.com/munshkr/flok#connect-repls-to-flok"
-            >
-              here
+            <p>
+              For more information, read{" "}
+              <a
+                target="_blank"
+                href="https://github.com/munshkr/flok#connect-repls-to-flok"
+              >
+                here
             </a>
             .
           </p>
+          </>)}
         </div>
       </section>
       <style jsx>{`
@@ -412,16 +417,16 @@ class SessionPage extends Component<Props, State> {
             onHydraEvaluation={this.handleHydraEvaluation}
           />
         ) : (
-          <EmptySession
-            websocketsUrl={websocketsUrl}
-            session={session}
-            lastUsername={lastUsername}
-            onSubmit={this.handleJoinSubmit}
-            hasHydraSlot={hasHydraSlot}
-            hasWebGl={hasWebGl}
-            layout={layoutList}
-          />
-        )}
+              <EmptySession
+                websocketsUrl={websocketsUrl}
+                session={session}
+                lastUsername={lastUsername}
+                onSubmit={this.handleJoinSubmit}
+                hasHydraSlot={hasHydraSlot}
+                hasWebGl={hasWebGl}
+                layout={layoutList}
+              />
+            )}
         {hasWebgl && (
           <>
             <HydraCanvas ref={this.hydraCanvas} fullscreen />
