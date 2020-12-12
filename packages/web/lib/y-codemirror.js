@@ -54,6 +54,12 @@ const createRemoteCaret = (username, color) => {
   return caret
 }
 
+const jumpToLine = (cm, i) => {
+  const t = cm.charCoords({ line: i, ch: 0 }, "local").top;
+  const middleHeight = cm.getScrollerElement().offsetHeight / 2;
+  cm.scrollTo(null, t - middleHeight - 5);
+};
+
 const updateRemoteSelection = (y, cm, type, cursors, clientId, awareness) => {
   // destroy current text mark
   const m = cursors.get(clientId)
@@ -100,6 +106,11 @@ const updateRemoteSelection = (y, cm, type, cursors, clientId, awareness) => {
       sel = cm.markText(from, to, { css: `background-color: ${user.color}70`, inclusiveRight: true, inclusiveLeft: false })
     }
     cursors.set(clientId, { caret, sel })
+
+    // Only jump if this editor is blurred
+    if (cm.hasFocus() !== true) {
+      jumpToLine(cm, headpos.line);
+    }
   }
 }
 
@@ -174,14 +185,14 @@ export class CodeMirrorBinding {
       event.updated.forEach(f)
     }
     this._cursorListener = () => codemirrorCursorActivity(doc, codeMirror, textType, awareness)
-    this._blurListeer = () => awareness.setLocalStateField('cursor', null)
+    this._blurListener = () => awareness.setLocalStateField('cursor', null)
 
     textType.observe(this._typeObserver)
     codeMirror.on('change', this._targetObserver)
     if (awareness) {
       awareness.on('change', this._awarenessListener)
       codeMirror.on('cursorActivity', this._cursorListener)
-      codeMirror.on('blur', this._blurListeer)
+      codeMirror.on('blur', this._blurListener)
       codeMirror.on('focus', this._cursorListener)
     }
   }
@@ -190,7 +201,7 @@ export class CodeMirrorBinding {
     this.target.off('change', this._targetObserver)
     this.target.off('cursorActivity', this._cursorListener)
     this.target.off('focus', this._cursorListener)
-    this.target.off('blur', this._blurListeer)
+    this.target.off('blur', this._blurListener)
     this.awareness.off('change', this._awarenessListener)
     this.type = null
     this.target = null
