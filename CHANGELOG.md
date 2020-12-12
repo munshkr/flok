@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+* web: Follow remote cursors when moving (jump to line), but only if editor is
+  blurred.
+
 ### Changed
 
 * web: Skip 'hydra' as a flok-repl example when joining a session
+
 
 ## [0.4.3] - 2020-12-04
 
