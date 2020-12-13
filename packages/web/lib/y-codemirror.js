@@ -43,7 +43,7 @@ const targetObserver = (binding, change) => {
   })
 }
 
-const createRemoteCaret = (username, color) => {
+const createCaret = (username, color) => {
   const caret = document.createElement('span')
   caret.classList.add('remote-caret')
   caret.setAttribute('style', `border-color: ${color}`)
@@ -99,7 +99,7 @@ const updateRemoteSelection = (y, cm, type, cursors, clientId, awareness) => {
       from = anchorpos
       to = headpos
     }
-    const caretEl = createRemoteCaret(user.name, user.color)
+    const caretEl = createCaret(user.name, user.color)
     const caret = cm.setBookmark(headpos, { widget: caretEl, insertLeft: true })
     let sel = null
     if (head.index !== anchor.index) {
@@ -114,10 +114,18 @@ const updateRemoteSelection = (y, cm, type, cursors, clientId, awareness) => {
   }
 }
 
-const codemirrorCursorActivity = (y, cm, type, awareness) => {
+const codemirrorCursorActivity = (y, cm, type, cursors, username, awareness) => {
+  // delete caret
+  const m = cursors.get("current")
+  if (m !== undefined) {
+    m.caret.clear()
+    cursors.delete("current")
+  }
+
   if (!cm.hasFocus()) {
     return
   }
+
   const newAnchor = Y.createRelativePositionFromTypeIndex(type, cm.indexFromPos(cm.getCursor('anchor')))
   const newHead = Y.createRelativePositionFromTypeIndex(type, cm.indexFromPos(cm.getCursor('head')))
   const aw = awareness.getLocalState()
@@ -132,6 +140,15 @@ const codemirrorCursorActivity = (y, cm, type, awareness) => {
       anchor: JSON.stringify(newAnchor),
       head: JSON.stringify(newHead)
     })
+
+    // update caret
+    const pos = cm.getCursor();
+    const caretEl = createCaret(username, "#ffa500");
+    const caret = cm.setBookmark(pos, {
+      widget: caretEl,
+      insertLeft: true
+    });
+    cursors.set("current", { caret });
   }
 }
 
@@ -157,10 +174,11 @@ export class CodeMirrorBinding {
    * @param {CodeMirror} codeMirror
    * @param {any} [awareness]
    */
-  constructor (textType, codeMirror, awareness) {
+  constructor (textType, codeMirror, username, awareness) {
     const doc = textType.doc
     this.type = textType
     this.target = codeMirror
+    this.username = username
     this.awareness = awareness
 
     /**
@@ -184,8 +202,15 @@ export class CodeMirrorBinding {
       event.removed.forEach(f)
       event.updated.forEach(f)
     }
-    this._cursorListener = () => codemirrorCursorActivity(doc, codeMirror, textType, awareness)
-    this._blurListener = () => awareness.setLocalStateField('cursor', null)
+    this._cursorListener = () => codemirrorCursorActivity(doc, codeMirror, textType, this._cursors, this.username, awareness)
+    this._blurListener = () => {
+      const m = this._cursors.get("current");
+      if (m !== undefined) {
+        m.caret.clear()
+        this._cursors.delete("current");
+      }
+      awareness.setLocalStateField('cursor', null);
+    }
 
     textType.observe(this._typeObserver)
     codeMirror.on('change', this._targetObserver)

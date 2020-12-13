@@ -125,6 +125,7 @@ class SessionClient {
     const binding = new CodeMirrorBinding(
       text,
       editor,
+      this.userName,
       this._provider.awareness
     );
     this._editorBindings[id] = binding;
