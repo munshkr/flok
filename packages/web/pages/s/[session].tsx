@@ -15,9 +15,9 @@ import HydraError from "../../components/HydraError";
 import TextInput from "../../components/TextInput";
 import Button from "../../components/Button";
 import Checkbox from "../../components/Checkbox";
+import { webTargets } from "flok-core";
 
 const defaultLayoutList = ["tidal", "hydra"];
-const webTargets = ["hydra"];
 
 const { publicRuntimeConfig } = getConfig();
 const {

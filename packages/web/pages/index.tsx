@@ -7,11 +7,12 @@ import hasWebgl from "../lib/webgl-detector";
 import Container from "../components/Container";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
+import { allTargets } from "flok-core"
 
 class NewSessionForm extends Component<
   {},
   { user: string; targets: string; submitting: boolean }
-> {
+  > {
   state = {
     user: "",
     targets: "",
@@ -93,22 +94,17 @@ const Title = () => (
 const SupportedTargets = () => (
   <body>
     <h3>currently supported targets:</h3>
-    <p>
-      <li>tidal</li>
-      <li>foxdot</li>
-      <li>hydra</li>
-      <li>sclang</li>
-      <li>remote_sclang</li>
-      <li>mercury</li>
-    </p>
+    <ul>
+      {allTargets.sort().map(target => (<li key={target}>{target}</li>))}
+    </ul>
     <style jsx>{`
       h3 {
         font-size: 1 em;
-        color: #ffffff75
+        color: #aaa;
       }
-      p {
+      li {
         font-size: 0.8 em;
-        color: #ffffff75
+        color: #aaa;
       }
     `}</style>
   </body>
