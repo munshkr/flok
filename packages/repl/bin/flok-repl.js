@@ -98,8 +98,8 @@ console.log(`Extra options:`, extraOptions);
 let replClient;
 if (useDefaultREPL) {
   replClient = new CommandREPL({
-    command: args[0],
-    args: args.slice(1),
+    command: cmd,
+    args: args,
     target,
     session: sessionName,
     hub,
