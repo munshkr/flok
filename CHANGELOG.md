@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * web: Skip 'hydra' as a flok-repl example when joining a session
 * repl: Bugfix when using custom REPL command
+* repl: On sclang targets, add semicolons after closing parens
 
 
 ## [0.4.3] - 2020-12-04

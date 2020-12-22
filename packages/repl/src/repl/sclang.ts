@@ -11,7 +11,11 @@ class SclangREPL extends CommandREPL {
 
   // eslint-disable-next-line class-methods-use-this
   prepare(body: string): string {
-    return `${body.replace(/(\n)/gm, ' ').trim()}\n`;
+    const fixedBody = body
+      .replace(/(\n\s*\)\s*\n)/gm, "\n);\n")
+      .replace(/(\n)/gm, ' ')
+      .trim();
+    return `${fixedBody}\n`;
   }
 
   commandPath(): string {
