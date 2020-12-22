@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * web: Follow remote cursors when moving (jump to line), but only if editor is
   blurred.
 * web: Make remote caret visible to current user too.
+* web: Properly support block evaluation with parens for
+  `sclang`/`remote_sclang` targets.
 
 ### Changed
 

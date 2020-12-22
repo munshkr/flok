@@ -137,7 +137,15 @@ class TextEditor extends Component<Props, {}> {
     }
   };
 
-  evaluateBlock = (locally: boolean = false) => {
+  getCurrentBlock = () => {
+    const { target } = this.props;
+    if (["sclang", "remote_sclang"].indexOf(target) >= 0) {
+      return this.getCurrentBlockSclang();
+    }
+    return this.getCurrentBlockNewlines();
+  };
+
+  getCurrentBlockNewlines = () => {
     const { editor } = this.cm;
     const currentLine = editor.getCursor().line;
     const content = `${editor.getValue()}\n`;
@@ -170,6 +178,71 @@ class TextEditor extends Component<Props, {}> {
       }
     }
 
+    return [code, begin, end];
+  };
+
+  getCurrentBlockSclang = () => {
+    const { editor } = this.cm;
+    const blocks = this.getBlocksSclang();
+    // console.debug("Blocks:", blocks);
+    const curLine = editor.getCursor().line;
+
+    // Get blocks that contain current line
+    const curBlocks = blocks.filter(([s, e]) => curLine >= s && curLine <= e);
+    // console.debug("Current blocks:", curBlocks);
+
+    // Keep only the largest enclosing block (i.e. start pos is smallest)
+    const curBlock =
+      curBlocks.length > 0 &&
+      curBlocks.reduce((prev, curr) => {
+      return prev[0] < curr[0] ? prev : curr;
+    });
+    // console.log("Current block:", curBlock);
+
+    if (curBlock) {
+      const [start, end] = curBlock;
+      const content = editor
+        .getValue()
+        .split("\n")
+        .slice(start, end + 1)
+        .join("\n");
+      return [content, start, end];
+    }
+
+    // If there is no current block, just evaluate current line
+    const lines = editor.getValue().split("\n");
+    return [lines[curLine], curLine, curLine];
+  };
+
+  getBlocksSclang = () => {
+    const { editor } = this.cm;
+    const content = editor.getValue();
+
+    const blocks = [];
+    const parensStack = [];
+    const lines = content.split("\n");
+
+    for (let i = 0; i < lines.length; i += 1) {
+      const line = lines[i].trim();
+      if (line !== "") {
+        const firstChar = line[0];
+        if (firstChar === "(") {
+          parensStack.push(i);
+        } else if (firstChar === ")") {
+          const start = parensStack.pop();
+          if (start !== undefined) {
+            const end = i;
+            blocks.push([start, end]);
+          }
+        }
+      }
+    }
+
+    return blocks;
+  };
+
+  evaluateBlock = (locally: boolean = false) => {
+    const [code, begin, end] = this.getCurrentBlock();
     if (code !== "") {
       this.evaluate(code, begin, end, locally);
     }
@@ -186,7 +259,7 @@ class TextEditor extends Component<Props, {}> {
   evaluate(body: string, fromLine: number = -1, toLine: number = -1, locally: boolean = false) {
     const { editorId, target, onEvaluateCode, sessionClient } = this.props;
 
-    console.log("texteitor.evalute: locally = ", locally)
+    // console.debug("texteitor.evalute: locally = ", locally)
     onEvaluateCode({ editorId, target, body, fromLine, toLine, locally });
     sessionClient.flash(editorId, fromLine, toLine);
   }
