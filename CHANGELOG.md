@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+* repl: Sonic Pi support (`sonicpi` target)
 * web: Follow remote cursors when moving (jump to line), but only if editor is
   blurred.
 * web: Make remote caret visible to current user too.
