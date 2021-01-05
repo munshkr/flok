@@ -6,8 +6,9 @@
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "files": [
-    "lib/**/*",
-    "bin/*"
+    "bin/*",
+    "data/*",
+    "lib/**/*"
   ],
   "scripts": {
     "build": "tsc",
