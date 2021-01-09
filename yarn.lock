@@ -5486,10 +5486,10 @@ husky@^3.1.0:
     run-node "^1.0.0"
     slash "^3.0.0"
 
-hydra-synth@^1.3.4:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/hydra-synth/-/hydra-synth-1.3.4.tgz#588cf8367df70ad562b0ff18875335bbd0001883"
-  integrity sha512-Gn4PSEVFy6S5ssxbTJ7R+q4s6Io4s5Jwlv6lUg1NHLqJ9ubkHZ7vfVA9cC5Q21quwUBG4E2ZisLZlgUDe6nCUA==
+hydra-synth@^1.3.6:
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/hydra-synth/-/hydra-synth-1.3.6.tgz#cf0bd171e16845980eedc274b5ef357073da7493"
+  integrity sha512-UQRBYuzDKkNCqYUnO/K72FR1qIRM/p1Di65N1uqyFv6ok+TuQ7iVSpX3Wh9vPX5gJ89xImyDFzwFSCNwp/jDDA==
   dependencies:
     meyda "^4.1.3"
     mouse-change "^1.4.0"
