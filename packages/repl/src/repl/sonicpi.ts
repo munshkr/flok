@@ -1,19 +1,26 @@
 import { BaseREPL, BaseREPLContext } from '../repl';
 import * as os from 'os';
+import * as path from 'path';
+import * as fs from 'fs';
 import { UDPPort } from 'osc';
+
+const DEFAULT_PORT = 4557;
+const PORT_LOG_REGEX = new RegExp(/Listen port:\s+(\d+)/);
 
 class SonicPiREPL extends BaseREPL {
   udpPort: UDPPort;
-  port: number;
   started: boolean;
   portReady: boolean;
+  port: number;
 
   constructor(ctx: BaseREPLContext) {
     super(ctx);
 
-    this.port = 4560;
     this.started = false;
     this.portReady = false;
+    this.port = this.findPortFromLogs()
+
+    console.log("SonicPi OSC port:", this.port);
   }
 
   start() {
@@ -61,6 +68,35 @@ class SonicPiREPL extends BaseREPL {
 
     const lines = newBody.split('\n');
     this.emitter.emit('data', { type: 'stdin', lines });
+  }
+
+  get logPath(): string {
+    return path.join(os.homedir(), ".sonic-pi", "log", "server-output.log")
+  }
+
+  findPortFromLogs() {
+    let lines: Array<string>;
+    try {
+      lines = fs.readFileSync(this.logPath, 'utf-8').split("\n");
+    } catch {
+      console.warn(`Failed to read SonicPi logs at ${this.logPath}.`)
+      return DEFAULT_PORT;
+    }
+
+    let port;
+    lines.forEach(line => {
+      const match = line.match(PORT_LOG_REGEX);
+      if (match) {
+        port = parseInt(match[1]);
+      }
+    })
+
+    if (!port) {
+      console.warn(`Failed to find listening port on logs at ${this.logPath}`)
+      port = DEFAULT_PORT;
+    }
+
+    return port;
   }
 }
 
