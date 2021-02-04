@@ -5,7 +5,7 @@ class FoxDotREPL extends CommandREPL {
     super(ctx);
 
     this.command = this.commandPath();
-    this.args = ['-i', '-c', '"from FoxDot import *"'];
+    this.args = ['-i', '-c', '"from FoxDot import *\nload_startup_file()"'];
   }
 
   // eslint-disable-next-line class-methods-use-this
