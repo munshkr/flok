@@ -29,12 +29,10 @@ Web-based P2P collaborative editor for live coding music and graphics
 ## Requirements
 
 Flok is written in TypeScript and Nodejs.  You will need to have installed Node
-versions 10 or 12.
+versions 10+.  The LTS version (currently 14) is recommended.
 
 Go [here](https://nodejs.org/) to download Node.
 
-*Note*: Currently Node 13 is not supported because of a Hydra dependency that
-does not support that version.
 
 
 ## Install
@@ -92,8 +90,9 @@ Examples:
 Now click on *Create session*.
 
 You will now be shown a **token** and asked for a nickname. Save the token, as
-you will need it next for starting the REPL. Optionally copy the repl-code to easily paste in the terminal and hook up your repl. Enter your nickname and click on
-*Join*.
+you will need it next for starting the REPL. Optionally copy the repl-code to
+easily paste in the terminal and hook up your repl. Enter your nickname and
+click on *Join*.
 
 You are ready to start writing.  Share the URL to your friends so they can join
 the session! :-)
@@ -156,7 +155,8 @@ flok-repl -h ws://192.168.0.5:3000 -t tidal -s 1a0c2df3-5931-46dd-9c7c-52932de15
 
 Use `flok-repl` with the `-t tidal` parameter.
 
-You can specify custom options with the `--extra` parameter, by passing a JSON object, like this:
+You can specify custom options with the `--extra` parameter, by passing a JSON
+object, like this:
 
 `--extra '{ "bootScript": "/path/to/my/boot.hs", "useStack": true }'`
 
@@ -223,17 +223,22 @@ on how to install the extension.
 
 #### Mercury
 
-[Mercury](https://github.com/tmhglnd/mercury) is a minimal and human readable language for livecoding of algorithmic electronic music. Follow these steps to connect Flok to the Mercury livecoding environment:
+[Mercury](https://github.com/tmhglnd/mercury) is a minimal and human readable
+language for livecoding of algorithmic electronic music. Follow these steps to
+connect Flok to the Mercury livecoding environment:
 
 First make sure you have installed `Mercury` and `flok-repl` properly.
-1. Install Mercury via the [quick start quide](https://github.com/tmhglnd/mercury/blob/master/docs/quick-start.md). 
+1. Install Mercury via the 
+   [quick start quide](https://github.com/tmhglnd/mercury/blob/master/docs/quick-start.md). 
 2. Install the `flok-repl` globally with `npm install -g flok-repl`.
 
 Now follow these steps for a succesful setup.
 1. Setup Flok with target `mercury` and click **Create session**.
-3. Copy the `flok-repl -H xxx -s xxx -t mercury` command to run in the terminal at step 4.
+3. Copy the `flok-repl -H xxx -s xxx -t mercury` command to run in the terminal
+   at step 4.
 3. **Join** the Flok with your nickname.
-4. Run the copied `flok-repl` command in the terminal. Or manually set it up with argument `-t mercury`.
+4. Run the copied `flok-repl` command in the terminal. Or manually set it up
+   with argument `-t mercury`.
 5. Enable *Audio* and optionally *Visuals* in Mercury to hear sound.
 
 Now start typing some code! 🎵
@@ -241,7 +246,10 @@ Now start typing some code! 🎵
 - `Ctrl/Alt + Return` to evaluate
 - `Ctrl/Alt + .` to silence
 
-Flok will send the entire code via OSC messaging to port 4880. Mercury should be listening to this port automatically. Bug reports are welcome in the issues. If the issue is more Mercury than Flok related please report [here](https://github.com/tmhglnd/mercury/issues/new)
+Flok will send the entire code via OSC messaging to port 4880. Mercury should
+be listening to this port automatically. Bug reports are welcome in the issues.
+If the issue is more Mercury than Flok related please report
+[here](https://github.com/tmhglnd/mercury/issues/new)
 
 ## Development
 
@@ -253,6 +261,9 @@ yarn
 
 This will install dependencies from all packages, and prepare (build) packages.
 
+If you have Node 13+, you might have an error about an incompatible package
+(`meyda`).  Try running `yarn --ignore-engines` to skip that check.
+
 `web`, `repl` and `core` packages are stored on the `packages/` directory, and
 there is a root packaged managed by [Lerna](https://github.com/lerna/lerna).
 
@@ -262,7 +273,8 @@ the `core` package is used both by `web` and `repl`, and even though they have
 the local `core` package automatically.  It also makes it easy to publish new
 versions by bumping them together.
 
-To bump a new version on all packages and release them together, run `yarn release`.
+To bump a new version on all packages and release them together, run `yarn
+release`.
 
 
 ## Acknowledgments
