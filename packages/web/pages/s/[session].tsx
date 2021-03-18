@@ -264,6 +264,7 @@ interface Props {
   host: string;
   session: string;
   layoutParam: string;
+  readonly: boolean;
 }
 
 interface State {
@@ -298,6 +299,7 @@ class SessionPage extends Component<Props, State> {
       host,
       session: query.session,
       layoutParam: query.layout,
+      readonly: query.readonly == "1",
     };
   }
 
@@ -381,7 +383,7 @@ class SessionPage extends Component<Props, State> {
   };
 
   render() {
-    const { host, session, layoutParam } = this.props;
+    const { host, session, layoutParam, readonly } = this.props;
     const {
       loading,
       username,
@@ -406,7 +408,7 @@ class SessionPage extends Component<Props, State> {
         </Head>
         {loading ? (
           <LoadingSpinner />
-        ) : username ? (
+        ) : (username || readonly) ? (
           <Session
             websocketsHost={host || location.host}
             sessionName={session}
@@ -415,6 +417,7 @@ class SessionPage extends Component<Props, State> {
             layout={layout}
             audioStreamingEnabled={audioStreamingEnabled}
             onHydraEvaluation={this.handleHydraEvaluation}
+              readonly={readonly}
           />
         ) : (
               <EmptySession

@@ -15,6 +15,7 @@ type Props = {
   userName?: string;
   onHydraEvaluation: (code: string) => void;
   audioStreamingEnabled: boolean;
+  readonly: boolean;
   extraIceServers?: IceServerType[];
   layout: {
     editors: {
@@ -46,6 +47,7 @@ class Session extends Component<Props, State> {
   static defaultProps = {
     userName: "anonymous",
     onHydraEvaluation: () => { },
+    readonly: false
   };
 
   componentDidMount() {
