@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+* web: Read-only mode by adding a `readonly=1` query parameter to a session URL
+* repl: In `foxdot` REPL, call `load_startup_file()` after loading Foxdot package.
+
+### Changed
+
+* web: Upgrade hydra-synth to 1.3.6
+
 ## [0.4.4] - 2020-12-23
 
 ### Added
@@ -20,7 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * web: Skip 'hydra' as a flok-repl example when joining a session
 * repl: Bugfix when using custom REPL command
 * repl: On sclang targets, add semicolons after closing parens
-
 
 ## [0.4.3] - 2020-12-04
 
