@@ -41,6 +41,7 @@ interface Props {
   editorId: string;
   target?: string;
   isHalfHeight?: boolean;
+  readonly?: boolean;
   onEvaluateCode?: (args: EvaluateCodeArgs) => void;
   onEvaluateRemoteCode?: (args: EvaluateRemoteCodeArgs) => void;
   onCursorActivity?: (args: CursorActivityArgs) => void;
@@ -295,7 +296,7 @@ class TextEditor extends Component<Props, {}> {
   };
 
   render() {
-    const { editorId, isHalfHeight, target } = this.props;
+    const { editorId, isHalfHeight, target, readonly } = this.props;
 
     let defaultExtraKeys = {
       "Shift-Enter": () => this.evaluateLine(false),
@@ -332,13 +333,17 @@ class TextEditor extends Component<Props, {}> {
 
     const mode = modesByTarget[target] || "javascript";
 
-    const options = {
+    let options = {
       mode,
       theme: "material",
       lineNumbers: false,
       lineWrapping: true,
       extraKeys,
     };
+
+    if (readonly) {
+      options['readOnly'] = "nocursor"
+    }
 
     // const { className: heightClassName, styles: heightStyles } = css.resolve`
     //   .CodeMirror {

@@ -244,7 +244,7 @@ class Session extends Component<Props, State> {
       messagesPaneIsTop,
       messagesPaneIsMaximized,
     } = this.state;
-    const { layout, audioStreamingEnabled } = this.props;
+    const { layout, audioStreamingEnabled, readonly } = this.props;
 
     const { sessionClient } = this;
 
@@ -256,6 +256,7 @@ class Session extends Component<Props, State> {
             layout={layout}
             sessionClient={sessionClient}
             onEvaluateCode={this.handleEvaluateCode}
+            readonly={readonly}
           />
         )}
         {showTargetMessagesPane && messagesByClientId && (

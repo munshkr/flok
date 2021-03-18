@@ -6,7 +6,7 @@ const TextEditor = dynamic(() => import("./TextEditor"), {
   ssr: false,
 });
 
-const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode }) => (
+const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode, readonly }) => (
   <div className="container">
     {editors.map(({ id, target }) => (
       <div key={id} className={`slot is-${12 / editors.length}`}>
@@ -16,6 +16,7 @@ const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode }) => (
           isHalfHeight={isHalfHeight}
           sessionClient={sessionClient}
           onEvaluateCode={onEvaluateCode}
+          readonly={readonly}
         />
       </div>
     ))}
@@ -63,6 +64,7 @@ type Props = {
   layout: any;
   sessionClient: SessionClient;
   onEvaluateCode: any;
+  readonly?: boolean;
 };
 
 class Mosaic extends Component<Props> {
@@ -101,7 +103,7 @@ class Mosaic extends Component<Props> {
   }
 
   render() {
-    const { sessionClient, onEvaluateCode } = this.props;
+    const { sessionClient, onEvaluateCode, readonly } = this.props;
 
     const rows = this.editorsByRows();
 
@@ -114,6 +116,7 @@ class Mosaic extends Component<Props> {
             sessionClient={sessionClient}
             onEvaluateCode={onEvaluateCode}
             isHalfHeight={rows.length === 2}
+            readonly={readonly}
           />
         ))}
       </Fragment>
