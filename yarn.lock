@@ -3746,11 +3746,6 @@ globby@^9.2.0:
     pify "^4.0.1"
     slash "^2.0.0"
 
-gpucomputationrender-three@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/gpucomputationrender-three/-/gpucomputationrender-three-2.0.0.tgz#73e4f7b4329def9b74e4703a63a29abc65b197a2"
-  integrity sha512-GK+0QfBl3Qu/7pscQnQugvGprpeZ9n1PsHZBMTcIXKK5graazfHPInKnODiD3dY0+8ahNHV0PksEjbTm+0fHkQ==
-
 graceful-fs@^4.1.11, graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.0, graceful-fs@^4.2.2:
   version "4.2.3"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.2.3.tgz#4a12ff1b60376ef09862c2093edd908328be8423"
@@ -7591,11 +7586,6 @@ thenify-all@^1.0.0:
   integrity sha1-5p44obq+lpsBCCB5eLn2K4hgSDk=
   dependencies:
     any-promise "^1.0.0"
-
-three@^0.126.1:
-  version "0.126.1"
-  resolved "https://registry.yarnpkg.com/three/-/three-0.126.1.tgz#cf4e4e52060fd952f6f0d5440cbd422c66bc4be7"
-  integrity sha512-eOEXnZeE1FDV0XgL1u08auIP13jxdN9LQBAEmlErYzMxtIIfuGIAZbijOyookALUhqVzVOx0Tywj6n192VM+nQ==
 
 through2@^2.0.0, through2@^2.0.2:
   version "2.0.5"

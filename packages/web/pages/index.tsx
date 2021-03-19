@@ -1,9 +1,7 @@
 import Router from "next/router";
 import React, { Component, ChangeEvent, FormEvent } from "react";
-import FlockScene from "../components/FlockScene";
 import Layout from "../components/Layout";
 import uuid from "uuid/v4";
-import hasWebgl from "../lib/webgl-detector";
 import Container from "../components/Container";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
@@ -116,7 +114,6 @@ const IndexPage = () => (
       <Title />
       <NewSessionForm />
       <SupportedTargets />
-      {hasWebgl() && <FlockScene />}
     </Container>
   </Layout>
 );
