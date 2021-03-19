@@ -54,7 +54,7 @@
     "prop-types": "^15.7.2",
     "react-codemirror2": "^6.0.0",
     "reconnecting-websocket": "^4.1.10",
-    "three": "^0.125.0",
+    "three": "^0.126.1",
     "typescript": "^3.7.5",
     "uuid": "^3.3.2",
     "y-protocols": "^0.2.0",
