@@ -214,7 +214,7 @@ class Session extends Component<Props, State> {
     // Only send message to parent window if flok is embedded (in an iframe)
     if (window.parent != window.top) {
       console.debug("Post message to parent window:", payload);
-      window.parent.postMessage(payload, location.origin);
+      window.parent.postMessage(payload, "*");
     }
   }
 
