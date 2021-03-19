@@ -204,9 +204,10 @@ class Session extends Component<Props, State> {
       this.sessionClient.flash(editorId, fromLine, toLine);
     }
 
+    const { body } = content;
     this.postMessageToParentWindow({
       cmd: "evaluateCode",
-      args: { editorId, target, body: content, user, local: false }
+      args: { editorId, target, body, user, local: false }
     });
   };
 
