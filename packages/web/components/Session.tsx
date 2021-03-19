@@ -16,6 +16,7 @@ type Props = {
   onHydraEvaluation: (code: string) => void;
   audioStreamingEnabled: boolean;
   readonly: boolean;
+  noLocalEval: boolean;
   extraIceServers?: IceServerType[];
   layout: {
     editors: {
@@ -139,6 +140,10 @@ class Session extends Component<Props, State> {
   }
 
   evaluateLocalCode({ target, body }) {
+    const { noLocalEval } = this.props;
+
+    if (noLocalEval) return;
+
     switch (target) {
       case "hydra":
         this.props.onHydraEvaluation(body);

@@ -265,6 +265,7 @@ interface Props {
   session: string;
   layoutParam: string;
   readonly: boolean;
+  noLocalEval: boolean;
 }
 
 interface State {
@@ -300,6 +301,7 @@ class SessionPage extends Component<Props, State> {
       session: query.session,
       layoutParam: query.layout,
       readonly: query.readonly == "1",
+      noLocalEval: query.noLocalEval == "1"
     };
   }
 
@@ -383,7 +385,7 @@ class SessionPage extends Component<Props, State> {
   };
 
   render() {
-    const { host, session, layoutParam, readonly } = this.props;
+    const { host, session, layoutParam, readonly, noLocalEval } = this.props;
     const {
       loading,
       username,
@@ -417,7 +419,8 @@ class SessionPage extends Component<Props, State> {
             layout={layout}
             audioStreamingEnabled={audioStreamingEnabled}
             onHydraEvaluation={this.handleHydraEvaluation}
-              readonly={readonly}
+            readonly={readonly}
+              noLocalEval={noLocalEval}
           />
         ) : (
               <EmptySession
