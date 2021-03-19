@@ -158,8 +158,6 @@ class Session extends Component<Props, State> {
       user,
     };
 
-    console.log("evaluate code: locally = ", locally)
-
     this.setState({ messagesByClientId: {}, showTargetMessagesPane: false });
 
     if (LOCAL_TARGETS.includes(target)) {
@@ -183,6 +181,11 @@ class Session extends Component<Props, State> {
       user,
       body,
     });
+
+    this.postMessageToParentWindow({
+      cmd: "evaluateCode",
+      args: { editorId, target, body, user, local: locally }
+    });
   };
 
   handleEvaluateRemoteCode = ({ target, content }) => {
@@ -200,7 +203,19 @@ class Session extends Component<Props, State> {
     if (this.props.userName !== user) {
       this.sessionClient.flash(editorId, fromLine, toLine);
     }
+
+    this.postMessageToParentWindow({
+      cmd: "evaluateCode",
+      args: { editorId, target, body: content, user, local: false }
+    });
   };
+
+  postMessageToParentWindow(payload) {
+    // Only send message to parent window if flok is embedded (in an iframe)
+    if (window.parent != window.top) {
+      window.parent.postMessage(payload, location.origin);
+    }
+  }
 
   handleMessageTarget = ({ target, content }) => {
     console.debug(`[message] [target=${target}] ${JSON.stringify(content)}`);
