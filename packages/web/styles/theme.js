@@ -5,7 +5,7 @@ const Theme = {
   },
   colors: {
     foreground: "#efefef",
-    background: "#101010",
+    background: "#000000ef",
     link: "#1eaaf1",
     linkHover: "#0d8ecf",
   },

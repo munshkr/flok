@@ -15,7 +15,7 @@ export default ({ children }: { children: any }) => (
     <style global jsx>
       {`
         html {
-          background-color: #101010;
+          background-color: #000000ef;
           color: #efefef;
           overflow: hidden;
           font-family: "Roboto Mono", monospace;
