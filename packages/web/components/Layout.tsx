@@ -1,7 +1,7 @@
 import Head from "next/head";
 import React from "react";
 
-export default ({ children }: { children: any }) => (
+export default ({ children, backgroundOpacity }: { children: any, backgroundOpacity?: number }) => (
   <div>
     <Head>
       <title>flok</title>
@@ -15,7 +15,7 @@ export default ({ children }: { children: any }) => (
     <style global jsx>
       {`
         html {
-          background-color: #000000ef;
+          background-color: rgba(0, 0, 0, ${(typeof backgroundOpacity == 'number') ? backgroundOpacity : 0.93});
           color: #efefef;
           overflow: hidden;
           font-family: "Roboto Mono", monospace;

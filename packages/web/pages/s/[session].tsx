@@ -267,6 +267,7 @@ interface Props {
   readonly: boolean;
   noLocalEval: boolean;
   noHydra: boolean;
+  backgroundOpacity: number;
 }
 
 interface State {
@@ -297,13 +298,18 @@ class SessionPage extends Component<Props, State> {
 
   static async getInitialProps({ req, query }: NextPageContext) {
     const host = req && req.headers && req.headers.host;
+
+    const bgOpacity: number = +query.bgOpacity;
+    const backgroundOpacity = (bgOpacity >= 0 && bgOpacity <= 1) && bgOpacity
+
     return {
       host,
       session: query.session,
       layoutParam: query.layout,
       readonly: query.readonly == "1",
       noLocalEval: query.noLocalEval == "1",
-      noHydra: query.noHydra == "1"
+      noHydra: query.noHydra == "1",
+      backgroundOpacity
     };
   }
 
@@ -392,7 +398,7 @@ class SessionPage extends Component<Props, State> {
   };
 
   render() {
-    const { host, session, layoutParam, readonly, noLocalEval, noHydra } = this.props;
+    const { host, session, layoutParam, readonly, noLocalEval, noHydra, backgroundOpacity } = this.props;
     const {
       loading,
       username,
@@ -411,7 +417,7 @@ class SessionPage extends Component<Props, State> {
     const layout = this.generateLayoutFromList(layoutList);
 
     return (
-      <Layout>
+      <Layout backgroundOpacity={backgroundOpacity}>
         <Head>
           <title>Flok</title>
         </Head>
