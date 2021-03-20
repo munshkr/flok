@@ -146,7 +146,8 @@ class Session extends Component<Props, State> {
 
     switch (target) {
       case "hydra":
-        this.props.onHydraEvaluation(body);
+        const { onHydraEvaluation } = this.props
+        onHydraEvaluation && onHydraEvaluation(body);
         break;
       default:
         console.error("Unhandle local target:", target);

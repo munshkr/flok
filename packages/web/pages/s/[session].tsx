@@ -266,6 +266,7 @@ interface Props {
   layoutParam: string;
   readonly: boolean;
   noLocalEval: boolean;
+  noHydra: boolean;
 }
 
 interface State {
@@ -301,7 +302,8 @@ class SessionPage extends Component<Props, State> {
       session: query.session,
       layoutParam: query.layout,
       readonly: query.readonly == "1",
-      noLocalEval: query.noLocalEval == "1"
+      noLocalEval: query.noLocalEval == "1",
+      noHydra: query.noHydra == "1"
     };
   }
 
@@ -322,14 +324,19 @@ class SessionPage extends Component<Props, State> {
       console.log("*** DEVELOPMENT MODE ***");
     }
 
-    if (this.state.hasWebGl) {
-      this.hydra = new HydraWrapper(
-        this.hydraCanvas.current,
-        this.handleHydraError
-      );
-      console.log("Hydra wrapper created");
-    } else {
-      console.warn("WebGL is disabled or not supported in this browser");
+    const { noHydra } = this.props;
+    const { hasWebGl } = this.state;
+
+    if (!noHydra) {
+      if (hasWebGl) {
+        this.hydra = new HydraWrapper(
+          this.hydraCanvas.current,
+          this.handleHydraError
+        );
+        console.log("Hydra wrapper created");
+      } else {
+        console.warn("WebGL is disabled or not supported in this browser");
+      }
     }
 
     // Set Websockets URL
@@ -385,7 +392,7 @@ class SessionPage extends Component<Props, State> {
   };
 
   render() {
-    const { host, session, layoutParam, readonly, noLocalEval } = this.props;
+    const { host, session, layoutParam, readonly, noLocalEval, noHydra } = this.props;
     const {
       loading,
       username,
@@ -400,7 +407,7 @@ class SessionPage extends Component<Props, State> {
     if (layoutParam) {
       layoutList = layoutParam.split(",");
     }
-    const hasHydraSlot = layoutList.includes("hydra");
+    const hasHydraSlot = !noHydra && layoutList.includes("hydra");
     const layout = this.generateLayoutFromList(layoutList);
 
     return (
@@ -418,9 +425,9 @@ class SessionPage extends Component<Props, State> {
             extraIceServers={extraIceServers}
             layout={layout}
             audioStreamingEnabled={audioStreamingEnabled}
-            onHydraEvaluation={this.handleHydraEvaluation}
+            onHydraEvaluation={!noHydra && this.handleHydraEvaluation}
             readonly={readonly}
-              noLocalEval={noLocalEval}
+            noLocalEval={noLocalEval}
           />
         ) : (
               <EmptySession
@@ -433,7 +440,7 @@ class SessionPage extends Component<Props, State> {
                 layout={layoutList}
               />
             )}
-        {hasWebgl && (
+        {hasWebgl && !noHydra && (
           <>
             <HydraCanvas ref={this.hydraCanvas} fullscreen />
             {hydraError && <HydraError>{hydraError}</HydraError>}
