@@ -72,7 +72,7 @@ const Title = () => (
 
 // The supported targets that can be entered in the form
 const SupportedTargets = () => (
-  <body>
+  <>
     <h3>currently supported targets:</h3>
     <ul>
       {allTargets.sort().map(target => (<li key={target}>{target}</li>))}
@@ -87,7 +87,7 @@ const SupportedTargets = () => (
         color: #aaa;
       }
     `}</style>
-  </body>
+  </>
 );
 
 const IndexPage = () => (
