@@ -97,7 +97,7 @@ class JoinSessionForm extends Component<{
         <TextInput
           name="user"
           onChange={this.handleChangeUser}
-          value={username}
+          value={username || ""}
           type="text"
           placeholder={"Type a nick name and press Enter"}
           autoFocus
@@ -436,16 +436,16 @@ class SessionPage extends Component<Props, State> {
             noLocalEval={noLocalEval}
           />
         ) : (
-              <EmptySession
-                websocketsUrl={websocketsUrl}
-                session={session}
-                lastUsername={lastUsername}
-                onSubmit={this.handleJoinSubmit}
-                hasHydraSlot={hasHydraSlot}
-                hasWebGl={hasWebGl}
-                layout={layoutList}
-              />
-            )}
+          <EmptySession
+            websocketsUrl={websocketsUrl}
+            session={session}
+            lastUsername={lastUsername}
+            onSubmit={this.handleJoinSubmit}
+            hasHydraSlot={hasHydraSlot}
+            hasWebGl={hasWebGl}
+            layout={layoutList}
+          />
+        )}
         {hasWebgl && !noHydra && (
           <>
             <HydraCanvas ref={this.hydraCanvas} fullscreen />
