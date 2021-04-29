@@ -74,6 +74,9 @@ class Session extends Component<Props, State> {
         this.sessionClient.setUsername(userName);
         this.setState({ showTextEditors: true });
       },
+      onInitialSync: (method: string, editors: { [editorId: string]: string }) => {
+        this.postInitialSessionContentToParentWindow(method, editors);
+      }
     });
     this.sessionClient.join();
 
@@ -99,6 +102,14 @@ class Session extends Component<Props, State> {
         `session:${sessionName}:target:${target}:user:${userName}:out`,
         (content) => this.handleMessageTarget({ target, content })
       );
+    });
+  }
+
+  postInitialSessionContentToParentWindow(method: string, editors: { [editorId: string]: string }) {
+    console.log("Initial sync from", method);
+    this.postMessageToParentWindow({
+      cmd: "initialSync",
+      args: { method, editors }
     });
   }
 

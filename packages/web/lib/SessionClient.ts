@@ -20,6 +20,7 @@ type SessionClientContext = {
   sessionPassword?: string;
   userName?: string;
   onJoin?: Function;
+  onInitialSync?: Function;
 };
 
 class SessionClient {
@@ -29,6 +30,7 @@ class SessionClient {
   signalingServerUrl: string;
   extraIceServers: IceServerType[];
   onJoin: Function;
+  onInitialSync: Function;
 
   _doc: Y.Doc;
   _provider: any;
@@ -56,6 +58,7 @@ class SessionClient {
       sessionPassword,
       userName,
       onJoin,
+      onInitialSync,
     } = ctx;
 
     this.signalingServerUrl = signalingServerUrl;
@@ -63,7 +66,8 @@ class SessionClient {
     this.userName = userName;
     this.sessionName = sessionName || "default";
     this.sessionPassword = sessionPassword;
-    this.onJoin = onJoin || (() => {});
+    this.onJoin = onJoin || (() => { });
+    this.onInitialSync = onInitialSync || (() => { });
 
     // Create document and provider
     this._doc = new Y.Doc();
@@ -81,6 +85,7 @@ class SessionClient {
 
     const roomName = `flok:${sessionName}`;
 
+    // Main provider via WebRTC
     const provider = new WebrtcProvider(roomName, this._doc, {
       password: sessionPassword,
       signaling: [signalingServerUrl],
@@ -88,6 +93,7 @@ class SessionClient {
     });
     this._provider = provider;
 
+    // WebSocket fallback provider, in case WebRTC does not work for some peers
     const websocketProvider = new WebsocketProvider(
       "wss://demos.yjs.dev",
       roomName,
@@ -95,12 +101,22 @@ class SessionClient {
     );
     this._websocketProvider = websocketProvider;
 
-    // this allows you to instantly get the (cached) documents data
+    // A third fallback provider, this allows us to cache documents locally on browser.
     const idbProvider = new IndexeddbPersistence(roomName, this._doc);
-    idbProvider.whenSynced.then(() => {
-      console.log("Loaded data from IndexedDB");
-    });
     this._indexedDbProvider = idbProvider;
+
+    // Handle initial sync for sending the content of all editors
+    if (this.onInitialSync) {
+      websocketProvider.on('sync', synced => {
+        if (synced) this._handleInitialSync("websocket");
+      });
+      provider.on('synced', ({ synced }) => {
+        if (synced) this._handleInitialSync("webrtc");
+      });
+      idbProvider.whenSynced.then(() => {
+        this._handleInitialSync("indexeddb")
+      });
+    }
 
     this.onJoin();
   }
@@ -178,6 +194,14 @@ class SessionClient {
     setTimeout(() => {
       marker.clear();
     }, 600);
+  }
+
+  _handleInitialSync = (method: string) => {
+    let texts = {};
+    Object.entries(this._editorBindings).forEach(([key, binding]: [string, CodeMirrorBinding]) => {
+      texts[key] = binding.target.getValue()
+    });
+    this.onInitialSync(method, texts);
   }
 }
 
