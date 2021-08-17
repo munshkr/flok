@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+* web: Upgrade hydra-synth to 1.3.8
+
+## 0.4.5
+
 ### Added
 
 * web: Read-only mode by adding a `readonly=1` query parameter to a session URL
