@@ -26,7 +26,7 @@
     "express": "^4.17.1",
     "flok-core": "^0.4.5",
     "lib0": "^0.2.26",
-    "next": "^10.0.7",
+    "next": "^11.1.0",
     "next-transpile-modules": "^4.1.0",
     "normalize.css": "^8.0.1",
     "react": "^17.0.1",
