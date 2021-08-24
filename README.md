@@ -262,7 +262,9 @@ yarn
 This will install dependencies from all packages, and prepare (build) packages.
 
 If you have Node 13+, you might have an error about an incompatible package
-(`meyda`).  Try running `yarn --ignore-engines` to skip that check.
+(`meyda`).  Try running `yarn --ignore-engines` to skip that check.  You can
+also config yarn to ignore this automatically from now on, by running `yarn
+config set ignore-engines true`.
 
 `web`, `repl` and `core` packages are stored on the `packages/` directory, and
 there is a root packaged managed by [Lerna](https://github.com/lerna/lerna).
