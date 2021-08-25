@@ -155,8 +155,9 @@ const EmptySession = ({
 
   // Pick the first target as example for flok-repl
   const isReplTarget = (target: string) => !webTargets.includes(target);
-  const targetExample = layout.find(target => isReplTarget(target));
-  const replExample = `flok-repl -H ${websocketsUrl} ` +
+  const targetExample = layout.find((target) => isReplTarget(target));
+  const replExample =
+    `flok-repl -H ${websocketsUrl} ` +
     `-s ${session} ` +
     `-t ${targetExample}${username ? ` -N ${username}` : ""}`;
 
@@ -185,30 +186,33 @@ const EmptySession = ({
             onUsernameChange={(name) => setUsername(name)}
             onSubmit={onSubmit}
           />
-          {targetExample && (<>
-            <p>
-              To connect a REPL, for example <code>{targetExample}</code>, run on a
-            terminal:
-          </p>
-            <div className="example">
-              <code>{replExample}</code>
-              <div>
-                <CopyButton onClick={copyToClipboard}>
-                  {copied ? "Copied!" : "Copy"}
-                </CopyButton>
+          {targetExample && (
+            <>
+              <p>
+                To connect a REPL, for example <code>{targetExample}</code>, run
+                on a terminal:
+              </p>
+              <div className="example">
+                <code>{replExample}</code>
+                <div>
+                  <CopyButton onClick={copyToClipboard}>
+                    {copied ? "Copied!" : "Copy"}
+                  </CopyButton>
+                </div>
               </div>
-            </div>
-            <p>
-              For more information, read{" "}
-              <a
-                target="_blank"
-                href="https://github.com/munshkr/flok#connect-repls-to-flok"
-              >
-                here
-            </a>
-            .
-          </p>
-          </>)}
+              <p>
+                For more information, read{" "}
+                <a
+                  target="_blank"
+                  rel="noreferrer"
+                  href="https://github.com/munshkr/flok#connect-repls-to-flok"
+                >
+                  here
+                </a>
+                .
+              </p>
+            </>
+          )}
         </div>
       </section>
       <style jsx>{`
@@ -300,7 +304,7 @@ class SessionPage extends Component<Props, State> {
     const host = req && req.headers && req.headers.host;
 
     const bgOpacity: number = +query.bgOpacity;
-    const backgroundOpacity = (bgOpacity >= 0 && bgOpacity <= 1) && bgOpacity
+    const backgroundOpacity = bgOpacity >= 0 && bgOpacity <= 1 && bgOpacity;
 
     return {
       host,
@@ -309,7 +313,7 @@ class SessionPage extends Component<Props, State> {
       readonly: query.readonly == "1",
       noLocalEval: query.noLocalEval == "1",
       noHydra: query.noHydra == "1",
-      backgroundOpacity
+      backgroundOpacity,
     };
   }
 
@@ -398,7 +402,15 @@ class SessionPage extends Component<Props, State> {
   };
 
   render() {
-    const { host, session, layoutParam, readonly, noLocalEval, noHydra, backgroundOpacity } = this.props;
+    const {
+      host,
+      session,
+      layoutParam,
+      readonly,
+      noLocalEval,
+      noHydra,
+      backgroundOpacity,
+    } = this.props;
     const {
       loading,
       username,
@@ -423,7 +435,7 @@ class SessionPage extends Component<Props, State> {
         </Head>
         {loading ? (
           <LoadingSpinner />
-        ) : (username || readonly) ? (
+        ) : username || readonly ? (
           <Session
             websocketsHost={host || location.host}
             sessionName={session}

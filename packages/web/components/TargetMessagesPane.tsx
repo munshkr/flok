@@ -104,6 +104,8 @@ const TabsContent = React.forwardRef<HTMLDivElement, DivProps>((props, ref) => (
   </div>
 ));
 
+TabsContent.displayName = "TabsContent";
+
 const MessageListItem = ({ type, body }) => {
   const error = type === "stderr";
 
@@ -267,5 +269,7 @@ class TargetMessagesPane extends Component<Props, State> {
     );
   }
 }
+
+// TargetMessagesPane. = "TargetMessagesPane";
 
 export default TargetMessagesPane;

@@ -36,48 +36,111 @@ const Audio = (props: Props) => {
   const bufRef = useRef(new Uint8Array(2).fill(128));
   const analyserRef = useRef(null);
 
-  const draw = (time) => {
-    rafRef.current = requestAnimationFrame(draw);
-
-    const canvas = canvasRef.current;
-    const buffer = bufRef.current;
-    const analyser = analyserRef.current;
-
-    //update buffer with analyser
-    if (analyser) analyser.getByteTimeDomainData(buffer);
-
-    const ctx = canvas.getContext("2d");
-
-    ctx.fillStyle = "rgb(200, 200, 200)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = "rgb(0, 0, 0)";
-    ctx.beginPath();
-
-    const sliceWidth = (canvas.width * 1.0) / buffer.length;
-    let x = 0;
-
-    for (var i = 0; i < buffer.length; i++) {
-      let v = buffer[i] / 128.0;
-      let y = (v * canvas.height) / 2;
-
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-
-      x += sliceWidth;
-    }
-
-    ctx.lineTo(canvas.width, canvas.height / 2);
-    ctx.stroke();
-  };
-
   useEffect(() => {
+    const draw = (time) => {
+      rafRef.current = requestAnimationFrame(draw);
+
+      const canvas = canvasRef.current;
+      const buffer = bufRef.current;
+      const analyser = analyserRef.current;
+
+      //update buffer with analyser
+      if (analyser) analyser.getByteTimeDomainData(buffer);
+
+      const ctx = canvas.getContext("2d");
+
+      ctx.fillStyle = "rgb(200, 200, 200)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = "rgb(0, 0, 0)";
+      ctx.beginPath();
+
+      const sliceWidth = (canvas.width * 1.0) / buffer.length;
+      let x = 0;
+
+      for (var i = 0; i < buffer.length; i++) {
+        let v = buffer[i] / 128.0;
+        let y = (v * canvas.height) / 2;
+
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+
+        x += sliceWidth;
+      }
+
+      ctx.lineTo(canvas.width, canvas.height / 2);
+      ctx.stroke();
+    };
+
     rafRef.current = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(rafRef.current);
   }, []); // Make sure the effect runs only once
 
   // hook on awareness changes
   useEffect(() => {
+    const updatePeers = (clientID, prevStreaming, streaming) => {
+      const pId = sessionClient._provider.room.peerId;
+      peers.set(clientID, streaming);
+      setProducers([...peers].filter((e) => e[1].producer).map((e) => e[0]));
+      // remove unwanted streams
+      if (
+        prevStreaming &&
+        prevStreaming.consumer &&
+        prevStreaming.requestedPeerId === pId &&
+        consumers.has(clientID) &&
+        (!streaming.consumer || streaming.requestedPeerId !== pId)
+      ) {
+        consumers.delete(clientID);
+        sessionClient._provider.room.webrtcConns.forEach((conn) => {
+          if (conn.remotePeerId === prevStreaming.peerId) {
+            conn.peer.removeTrack(
+              streamRef.current.getTracks()[0],
+              streamRef.current
+            );
+          }
+        });
+      }
+      // add requested streams
+      if (
+        streaming.consumer &&
+        streaming.requestedPeerId === pId &&
+        !consumers.has(clientID)
+      ) {
+        sessionClient._provider.room.webrtcConns.forEach((conn) => {
+          if (conn.remotePeerId === streaming.peerId) {
+            // keep track of already added consumers
+            consumers.add(clientID);
+            conn.peer.addTrack(
+              streamRef.current.getTracks()[0],
+              streamRef.current
+            );
+          }
+        });
+      }
+    };
+
+    const awarenessListener = ({ added, removed, updated }) => {
+      const awareness = sessionClient._provider.awareness;
+      const pId = sessionClient._provider.room.peerId;
+      const f = (clientID) => {
+        const state = awareness.getStates().get(clientID);
+        if (!state) {
+          console.log(`no state for ${clientID}`, peers, consumers);
+        } else {
+          const { streaming } = state;
+          if (streaming && streaming.peerId !== pId) {
+            const prevStreaming = peers.get(clientID);
+            if (JSON.stringify(prevStreaming) !== JSON.stringify(streaming))
+              updatePeers(clientID, prevStreaming, streaming);
+          }
+        }
+      };
+
+      added.forEach(f);
+      removed.forEach(f);
+      updated.forEach(f);
+    };
+
     if (!sessionClient) return;
 
     peers.clear();
@@ -90,69 +153,6 @@ const Audio = (props: Props) => {
       consumers.clear();
     };
   }, [sessionClient]);
-
-  const awarenessListener = ({ added, removed, updated }) => {
-    const awareness = sessionClient._provider.awareness;
-    const pId = sessionClient._provider.room.peerId;
-    const f = (clientID) => {
-      const state = awareness.getStates().get(clientID);
-      if (!state) {
-        console.log(`no state for ${clientID}`, peers, consumers);
-      } else {
-        const { streaming } = state;
-        if (streaming && streaming.peerId !== pId) {
-          const prevStreaming = peers.get(clientID);
-          if (JSON.stringify(prevStreaming) !== JSON.stringify(streaming))
-            updatePeers(clientID, prevStreaming, streaming);
-        }
-      }
-    };
-
-    added.forEach(f);
-    removed.forEach(f);
-    updated.forEach(f);
-  };
-
-  const updatePeers = (clientID, prevStreaming, streaming) => {
-    const pId = sessionClient._provider.room.peerId;
-    peers.set(clientID, streaming);
-    setProducers([...peers].filter((e) => e[1].producer).map((e) => e[0]));
-    // remove unwanted streams
-    if (
-      prevStreaming &&
-      prevStreaming.consumer &&
-      prevStreaming.requestedPeerId === pId &&
-      consumers.has(clientID) &&
-      (!streaming.consumer || streaming.requestedPeerId !== pId)
-    ) {
-      consumers.delete(clientID);
-      sessionClient._provider.room.webrtcConns.forEach((conn) => {
-        if (conn.remotePeerId === prevStreaming.peerId) {
-          conn.peer.removeTrack(
-            streamRef.current.getTracks()[0],
-            streamRef.current
-          );
-        }
-      });
-    }
-    // add requested streams
-    if (
-      streaming.consumer &&
-      streaming.requestedPeerId === pId &&
-      !consumers.has(clientID)
-    ) {
-      sessionClient._provider.room.webrtcConns.forEach((conn) => {
-        if (conn.remotePeerId === streaming.peerId) {
-          // keep track of already added consumers
-          consumers.add(clientID);
-          conn.peer.addTrack(
-            streamRef.current.getTracks()[0],
-            streamRef.current
-          );
-        }
-      });
-    }
-  };
 
   const startAudioContext = () => {
     //run only once

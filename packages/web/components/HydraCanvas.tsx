@@ -33,4 +33,6 @@ const HydraCanvas = React.forwardRef(
   }
 );
 
+HydraCanvas.displayName = "HydraCanvas";
+
 export default memo(HydraCanvas);
