@@ -8,7 +8,6 @@
   "private": true,
   "scripts": {
     "test": "lerna run test",
-    "prepare": "lerna run prepare",
     "prepublishOnly": "lerna run prepublishOnly",
     "start": "cd packages/web && yarn start",
     "new-version": "lerna version --force-publish",

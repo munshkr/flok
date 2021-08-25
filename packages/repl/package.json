@@ -14,8 +14,7 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
     "lint": "tslint -p tsconfig.json",
-    "prepare": "yarn build",
-    "prepublishOnly": "yarn test",
+    "prepublishOnly": "yarn test && yarn build",
     "preversion": "exit 0",
     "publish-current": "yarn publish --non-interactive",
     "test": "exit 0"
