@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * web: Upgrade hydra-synth to 1.3.8
+* web: Upgrade next to 11
 
 ## 0.4.5
 

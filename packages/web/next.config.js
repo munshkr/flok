@@ -25,8 +25,8 @@ module.exports = withTM({
 
   webpack(config) {
     // Fixes npm packages that depend on `fs` module
-    config.node = {
-      fs: "empty",
+    config.resolve.fallback = {
+      fs: false,
     };
 
     config.module.rules.push({
