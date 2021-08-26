@@ -1,6 +1,6 @@
 import { Map } from 'immutable';
 import _ from 'lodash';
-import uuid from 'uuid/v1';
+import { v1 as uuidv1 } from 'uuid';
 import Subscription from './Subscription';
 import WebSocket from 'isomorphic-ws';
 
@@ -269,7 +269,7 @@ class PubSub {
    * @returns {*}
    */
   autoId(): string {
-    return uuid();
+    return uuidv1();
   }
 
   /**

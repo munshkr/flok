@@ -22,7 +22,7 @@
     "immutable": "^4.0.0-rc.12",
     "isomorphic-ws": "^4.0.1",
     "lodash": "^4.17.15",
-    "uuid": "^3.4.0",
+    "uuid": "^8.3.2",
     "ws": "^7.2.1"
   },
   "devDependencies": {

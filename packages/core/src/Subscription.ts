@@ -1,5 +1,5 @@
 import { Map } from 'immutable';
-import uuid from 'uuid/v1';
+import { v1 as uuidv1 } from 'uuid';
 
 type SubscriptionType = {
   id: string;
@@ -85,7 +85,7 @@ class Subscription {
    * @returns {*}
    */
   autoId(): string {
-    return uuid();
+    return uuidv1();
   }
 }
 
