@@ -1,15 +1,15 @@
 import Router from "next/router";
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import Layout from "../components/Layout";
-import uuid from "uuid/v4";
+import { v4 as uuidv4 } from "uuid";
 import Container from "../components/Container";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
-import { allTargets } from "flok-core"
+import { allTargets } from "flok-core";
 
 const NewSessionForm = () => {
-  const [targets, setTargets] = useState("")
-  const [submitting, setSubmitting] = useState(false)
+  const [targets, setTargets] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChangeTargets = (e: ChangeEvent) => {
     const target = e.target as HTMLInputElement;
@@ -20,7 +20,7 @@ const NewSessionForm = () => {
     e.preventDefault();
     setSubmitting(true);
 
-    const session = btoa(uuid());
+    const session = btoa(uuidv4());
     const layout = targets
       .split(",")
       .map((s) => s.trim())
@@ -43,7 +43,7 @@ const NewSessionForm = () => {
       </Button>
     </form>
   );
-}
+};
 
 const Title = () => (
   <header>
@@ -75,7 +75,9 @@ const SupportedTargets = () => (
   <>
     <h3>currently supported targets:</h3>
     <ul>
-      {allTargets.sort().map(target => (<li key={target}>{target}</li>))}
+      {allTargets.sort().map((target) => (
+        <li key={target}>{target}</li>
+      ))}
     </ul>
     <style jsx>{`
       h3 {
