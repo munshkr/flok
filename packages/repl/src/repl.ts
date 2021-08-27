@@ -126,15 +126,21 @@ class CommandREPL extends BaseREPL {
     this.emitter.emit('data', { type: 'stdin', lines });
   }
 
+  handleData(type: string, lines: string[]): string[] {
+    return lines;
+  }
+
   _handleData(data: any, type: string) {
     const { target, session, nickname, notifyToAll } = this;
     const clientId = this.pubSub._id;
     const newBuffer = this._buffers[type].concat(data.toString());
-    const lines = newBuffer.split('\n');
+    const rawLines = newBuffer.split('\n');
 
     const basePath = `session:${session}:target:${target}`;
 
-    this._buffers[type] = lines.pop();
+    this._buffers[type] = rawLines.pop();
+
+    const lines = this.handleData(type, rawLines);
 
     this.emitter.emit('data', { type, lines });
 
