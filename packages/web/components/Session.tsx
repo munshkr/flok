@@ -47,8 +47,8 @@ class Session extends Component<Props, State> {
 
   static defaultProps = {
     userName: "anonymous",
-    onHydraEvaluation: () => { },
-    readonly: false
+    onHydraEvaluation: () => {},
+    readonly: false,
   };
 
   componentDidMount() {
@@ -74,9 +74,12 @@ class Session extends Component<Props, State> {
         this.sessionClient.setUsername(userName);
         this.setState({ showTextEditors: true });
       },
-      onInitialSync: (method: string, editors: { [editorId: string]: string }) => {
+      onInitialSync: (
+        method: string,
+        editors: { [editorId: string]: string }
+      ) => {
         this.postInitialSessionContentToParentWindow(method, editors);
-      }
+      },
     });
     this.sessionClient.join();
 
@@ -105,11 +108,14 @@ class Session extends Component<Props, State> {
     });
   }
 
-  postInitialSessionContentToParentWindow(method: string, editors: { [editorId: string]: string }) {
+  postInitialSessionContentToParentWindow(
+    method: string,
+    editors: { [editorId: string]: string }
+  ) {
     console.log("Initial sync from", method);
     this.postMessageToParentWindow({
       cmd: "initialSync",
-      args: { method, editors }
+      args: { method, editors },
     });
   }
 
@@ -157,7 +163,7 @@ class Session extends Component<Props, State> {
 
     switch (target) {
       case "hydra":
-        const { onHydraEvaluation } = this.props
+        const { onHydraEvaluation } = this.props;
         onHydraEvaluation && onHydraEvaluation(body);
         break;
       default:
@@ -165,7 +171,15 @@ class Session extends Component<Props, State> {
     }
   }
 
-  handleEvaluateCode = ({ editorId, target, body, fromLine, toLine, user, locally = false }) => {
+  handleEvaluateCode = ({
+    editorId,
+    target,
+    body,
+    fromLine,
+    toLine,
+    user,
+    locally = false,
+  }) => {
     const { sessionName } = this.props;
     const { pubsubClient } = this;
     const content = {
@@ -201,7 +215,7 @@ class Session extends Component<Props, State> {
 
     this.postMessageToParentWindow({
       cmd: "evaluateCode",
-      args: { editorId, target, body, user, local: locally }
+      args: { editorId, target, body, user, local: locally },
     });
   };
 
@@ -224,7 +238,7 @@ class Session extends Component<Props, State> {
     const { body } = content;
     this.postMessageToParentWindow({
       cmd: "evaluateCode",
-      args: { editorId, target, body, user, local: false }
+      args: { editorId, target, body, user, local: false },
     });
   };
 
@@ -237,7 +251,7 @@ class Session extends Component<Props, State> {
     console.debug(`[message] [target=${target}] ${JSON.stringify(content)}`);
 
     this.setState((prevState) => {
-      const clientId = content.clientId || "default";
+      const clientId = content.clientId || "unknown";
       const prevMessages = prevState.messagesByClientId[clientId] || [];
       const allMessages = [...prevMessages, { target, content }];
 

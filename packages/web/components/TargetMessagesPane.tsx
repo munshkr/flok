@@ -1,4 +1,4 @@
-import React, { Component, MouseEvent } from "react";
+import React, { useState, useRef, useEffect, MouseEvent } from "react";
 import css from "styled-jsx/css";
 import {
   faCaretSquareDown,
@@ -162,114 +162,83 @@ type Props = {
   onClose: (e: MouseEvent) => any;
 };
 
-type State = {
-  currentClientId: string;
-};
+const TargetMessagesPane = ({
+  messagesByClientId = {},
+  isTop = false,
+  isMaximized = false,
+  onTogglePosition,
+  onToggleMaximize,
+  onClose,
+}: Props) => {
+  const containerRef = useRef(null);
+  const [currentClientId, setCurrentClientId] = useState(null);
 
-class TargetMessagesPane extends Component<Props, State> {
-  static defaultProps = {
-    messages: [],
-    isTop: false,
-    isMaximized: false,
-    onTogglePosition: () => {},
-    onToggleMaximize: () => {},
-    onClose: () => {},
-  };
-  container: HTMLElement;
-  containerRef: React.RefObject<HTMLDivElement>;
+  const clientIds = Object.keys(messagesByClientId);
 
-  constructor(props) {
-    super(props);
+  useEffect(() => {
+    setCurrentClientId(clientIds.length > 0 ? clientIds[0] : null);
+  }, [clientIds]);
 
-    const clientIds = Object.keys(this.props.messagesByClientId);
-    this.state = {
-      currentClientId: clientIds.length > 0 ? clientIds[0] : null,
-    };
-
-    this.containerRef = React.createRef();
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { messagesByClientId } = this.props;
-    if (this.container && prevProps.messagesByClientId !== messagesByClientId) {
-      this.container.scrollTop = this.container.scrollHeight;
+  useEffect(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
-  }
+  }, [messagesByClientId]);
 
-  handleTabClick = (clientId) => {
-    this.setState({ currentClientId: clientId });
-  };
+  const handleTabClick = (clientId) => setCurrentClientId(clientId);
 
-  render() {
-    const {
-      messagesByClientId,
-      isTop,
-      isMaximized,
-      onTogglePosition,
-      onToggleMaximize,
-      onClose,
-    } = this.props;
-    const { currentClientId } = this.state;
+  return (
+    <div
+      className={`target-messages-pane ${isTop ? "top" : "bottom"} ${
+        isMaximized ? "maximized" : ""
+      }`}
+    >
+      <ButtonGroup>
+        <IconButton
+          icon={isTop ? faCaretSquareDown : faCaretSquareUp}
+          onClick={onTogglePosition}
+        />
+        <IconButton
+          icon={isMaximized ? faWindowRestore : faWindowMaximize}
+          onClick={onToggleMaximize}
+        />
+        <IconButton icon={faWindowClose} onClick={onClose} />
+      </ButtonGroup>
+      <Tabs value={clientIds.indexOf(currentClientId)}>
+        {clientIds.map((clientId) => (
+          <Tab key={clientId} onClick={() => handleTabClick(clientId)}>
+            {clientId.slice(0, 7)}
+          </Tab>
+        ))}
+      </Tabs>
+      <TabsContent ref={containerRef}>
+        <MessagesList>{messagesByClientId[currentClientId] || []}</MessagesList>
+      </TabsContent>
 
-    const clientIds = Object.keys(messagesByClientId);
-
-    return (
-      <div
-        className={`target-messages-pane ${isTop ? "top" : "bottom"} ${
-          isMaximized ? "maximized" : ""
-        }`}
-      >
-        <ButtonGroup>
-          <IconButton
-            icon={isTop ? faCaretSquareDown : faCaretSquareUp}
-            onClick={onTogglePosition}
-          />
-          <IconButton
-            icon={isMaximized ? faWindowRestore : faWindowMaximize}
-            onClick={onToggleMaximize}
-          />
-          <IconButton icon={faWindowClose} onClick={onClose} />
-        </ButtonGroup>
-        <Tabs value={clientIds.indexOf(currentClientId)}>
-          {clientIds.map((clientId, i) => (
-            <Tab key={clientId} onClick={() => this.handleTabClick(clientId)}>
-              {clientId.slice(0, 7)}
-            </Tab>
-          ))}
-        </Tabs>
-        <TabsContent ref={this.containerRef}>
-          <MessagesList>
-            {messagesByClientId[currentClientId] || []}
-          </MessagesList>
-        </TabsContent>
-
-        <style jsx>{`
-          div {
-            position: absolute;
-            left: 0;
-            background: #00000090;
-            color: #888;
-            z-index: 1000;
-            font-family: monospace;
-            font-size: 0.8em;
-            height: 20em;
-            width: 100%;
-          }
-          .top {
-            top: 0;
-          }
-          .bottom {
-            bottom: 0;
-          }
-          .maximized {
-            height: 100%;
-          }
-        `}</style>
-      </div>
-    );
-  }
-}
-
-// TargetMessagesPane. = "TargetMessagesPane";
+      <style jsx>{`
+        div {
+          position: absolute;
+          left: 0;
+          background: #00000090;
+          color: #888;
+          z-index: 1000;
+          font-family: monospace;
+          font-size: 0.8em;
+          height: 20em;
+          width: 100%;
+        }
+        .top {
+          top: 0;
+        }
+        .bottom {
+          bottom: 0;
+        }
+        .maximized {
+          height: 100%;
+        }
+      `}</style>
+    </div>
+  );
+};
 
 export default TargetMessagesPane;

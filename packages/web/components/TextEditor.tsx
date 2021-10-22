@@ -112,9 +112,9 @@ const Description = ({ editorId, target }) => (
 class TextEditor extends Component<Props, {}> {
   static defaultProps = {
     target: "default",
-    onEvaluateCode: () => { },
-    onEvaluateRemoteCode: () => { },
-    onCursorActivity: () => { },
+    onEvaluateCode: () => {},
+    onEvaluateRemoteCode: () => {},
+    onCursorActivity: () => {},
   };
 
   cm: any;
@@ -150,7 +150,7 @@ class TextEditor extends Component<Props, {}> {
     const { editor } = this.cm;
     const currentLine = editor.getCursor().line;
     const content = `${editor.getValue()}\n`;
-    const lines = content.split("\n")
+    const lines = content.split("\n");
 
     let code = "";
     let start = false;
@@ -196,8 +196,8 @@ class TextEditor extends Component<Props, {}> {
     const curBlock =
       curBlocks.length > 0 &&
       curBlocks.reduce((prev, curr) => {
-      return prev[0] < curr[0] ? prev : curr;
-    });
+        return prev[0] < curr[0] ? prev : curr;
+      });
     // console.log("Current block:", curBlock);
 
     if (curBlock) {
@@ -257,7 +257,12 @@ class TextEditor extends Component<Props, {}> {
     this.evaluate(content, 0, content.length, locally);
   };
 
-  evaluate(body: string, fromLine: number = -1, toLine: number = -1, locally: boolean = false) {
+  evaluate(
+    body: string,
+    fromLine: number = -1,
+    toLine: number = -1,
+    locally: boolean = false
+  ) {
     const { editorId, target, onEvaluateCode, sessionClient } = this.props;
 
     // console.debug("texteitor.evalute: locally = ", locally)
@@ -310,7 +315,7 @@ class TextEditor extends Component<Props, {}> {
     // Replace shortkeys when using Mercury
     // Because Mercury always replaces the entire code with the newly
     // executed page. No per-line evaluation
-    if (target === 'mercury') {
+    if (target === "mercury") {
       defaultExtraKeys = {
         ...{
           "Shift-Enter": () => this.evaluateAll(false),
@@ -320,7 +325,7 @@ class TextEditor extends Component<Props, {}> {
           "Shift-Alt-Enter": () => this.evaluateAll(true),
           "Ctrl-Alt-Enter": () => this.evaluateAll(true),
           "Cmd-Alt-Enter": () => this.evaluateAll(true),
-        }
+        },
       };
     }
 
@@ -342,7 +347,7 @@ class TextEditor extends Component<Props, {}> {
     };
 
     if (readonly) {
-      options['readOnly'] = "nocursor"
+      options["readOnly"] = "nocursor";
     }
 
     // const { className: heightClassName, styles: heightStyles } = css.resolve`

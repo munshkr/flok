@@ -1,4 +1,4 @@
-import { Component, Fragment } from "react";
+import { useCallback } from "react";
 import dynamic from "next/dynamic";
 import SessionClient from "../lib/SessionClient";
 
@@ -6,7 +6,13 @@ const TextEditor = dynamic(() => import("./TextEditor"), {
   ssr: false,
 });
 
-const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode, readonly }) => (
+const Row = ({
+  editors,
+  isHalfHeight,
+  sessionClient,
+  onEvaluateCode,
+  readonly,
+}) => (
   <div className="container">
     {editors.map(({ id, target }) => (
       <div key={id} className={`slot is-${12 / editors.length}`}>
@@ -61,15 +67,15 @@ const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode, readonly })
 );
 
 type Props = {
-  layout: any;
   sessionClient: SessionClient;
-  onEvaluateCode: any;
+  layout: any;
   readonly?: boolean;
+  onEvaluateCode: any;
 };
 
-class Mosaic extends Component<Props> {
-  editorsByRows() {
-    const { editors } = this.props.layout;
+const Mosaic = ({ sessionClient, layout, readonly, onEvaluateCode }: Props) => {
+  const editorsByRows = useCallback(() => {
+    const { editors } = layout;
     let editorsByRows = [];
 
     switch (editors.length) {
@@ -100,28 +106,24 @@ class Mosaic extends Component<Props> {
     }
 
     return editorsByRows;
-  }
+  }, [layout]);
 
-  render() {
-    const { sessionClient, onEvaluateCode, readonly } = this.props;
+  const rows = editorsByRows();
 
-    const rows = this.editorsByRows();
-
-    return (
-      <Fragment>
-        {rows.map((editors, i) => (
-          <Row
-            key={i}
-            editors={editors}
-            sessionClient={sessionClient}
-            onEvaluateCode={onEvaluateCode}
-            isHalfHeight={rows.length === 2}
-            readonly={readonly}
-          />
-        ))}
-      </Fragment>
-    );
-  }
-}
+  return (
+    <>
+      {rows.map((editors, i) => (
+        <Row
+          key={i}
+          editors={editors}
+          sessionClient={sessionClient}
+          onEvaluateCode={onEvaluateCode}
+          isHalfHeight={rows.length === 2}
+          readonly={readonly}
+        />
+      ))}
+    </>
+  );
+};
 
 export default Mosaic;
