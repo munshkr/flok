@@ -31,7 +31,7 @@ const createServer = (app, secure) => {
         cert: fs.readFileSync(
           process.env.SSL_CERT ? process.env.SSL_CERT : sslCertPath,
           "utf8"
-        )
+        ),
       },
       app
     );
@@ -71,12 +71,16 @@ class Server {
     this._topics = new Map();
   }
 
-  start() {
+  get scheme() {
+    return this.secure ? "https" : "http";
+  }
+
+  start(cb) {
     if (this.started) return this;
 
     const nextApp = next({
       dev: this.isDevelopment,
-      dir: path.join(__dirname, "..")
+      dir: path.join(__dirname, ".."),
     });
     const handle = nextApp.getRequestHandler();
 
@@ -99,11 +103,11 @@ class Server {
         const { pathname } = url.parse(request.url);
 
         if (pathname === "/signal") {
-          wss.handleUpgrade(request, socket, head, ws => {
+          wss.handleUpgrade(request, socket, head, (ws) => {
             wss.emit("connection", ws);
           });
         } else if (pathname === "/pubsub") {
-          pubsubWss.handleUpgrade(request, socket, head, ws => {
+          pubsubWss.handleUpgrade(request, socket, head, (ws) => {
             pubsubWss.emit("connection", ws);
           });
         } else {
@@ -111,13 +115,13 @@ class Server {
         }
       });
 
-      wss.on("connection", conn => this.onSignalingServerConnection(conn));
+      wss.on("connection", (conn) => this.onSignalingServerConnection(conn));
 
       // Prepare PubSub WebScoket server (pubsub)
       const pubSubServer = new PubSub({
         wss: pubsubWss,
         onConnection: addClient,
-        onDisconnection: removeClient
+        onDisconnection: removeClient,
       });
       // eslint-disable-next-line no-param-reassign
       app.pubsub = pubSubServer;
@@ -127,7 +131,7 @@ class Server {
         const sslRedirect = require("./sslRedirect");
         app.use(
           sslRedirect({
-            port: process.env.NODE_ENV === "production" ? null : this.port
+            port: process.env.NODE_ENV === "production" ? null : this.port,
           })
         );
       }
@@ -137,10 +141,10 @@ class Server {
         return handle(req, res);
       });
 
-      const scheme = this.secure ? "https" : "http";
-      server.listen(this.port, this.host, err => {
+      server.listen(this.port, this.host, (err) => {
         if (err) throw err;
-        console.log(`> Listening on ${scheme}://${this.host}:${this.port}`);
+        console.log(`> Server listening on ${this.host}, port ${this.port}`);
+        if (cb) cb();
       });
     });
 
@@ -174,7 +178,7 @@ class Server {
     });
 
     conn.on("close", () => {
-      subscribedTopics.forEach(topicName => {
+      subscribedTopics.forEach((topicName) => {
         const subs = this._topics.get(topicName) || new Set();
         subs.delete(conn);
         if (subs.size === 0) {
@@ -187,7 +191,7 @@ class Server {
 
     conn.on(
       "message",
-      /** @param {object} message */ message => {
+      /** @param {object} message */ (message) => {
         if (typeof message === "string") {
           // eslint-disable-next-line no-param-reassign
           message = JSON.parse(message);
@@ -196,36 +200,36 @@ class Server {
           switch (message.type) {
             case "subscribe":
               /** @type {Array<string>} */ (message.topics || []).forEach(
-              topicName => {
-                if (typeof topicName === "string") {
-                  // add conn to topic
-                  const topic = map.setIfUndefined(
-                    this._topics,
-                    topicName,
-                    () => new Set()
-                  );
-                  topic.add(conn);
-                  // add topic to conn
-                  subscribedTopics.add(topicName);
+                (topicName) => {
+                  if (typeof topicName === "string") {
+                    // add conn to topic
+                    const topic = map.setIfUndefined(
+                      this._topics,
+                      topicName,
+                      () => new Set()
+                    );
+                    topic.add(conn);
+                    // add topic to conn
+                    subscribedTopics.add(topicName);
+                  }
                 }
-              }
-            );
+              );
               break;
             case "unsubscribe":
               /** @type {Array<string>} */ (message.topics || []).forEach(
-              topicName => {
-                const subs = this._topics.get(topicName);
-                if (subs) {
-                  subs.delete(conn);
+                (topicName) => {
+                  const subs = this._topics.get(topicName);
+                  if (subs) {
+                    subs.delete(conn);
+                  }
                 }
-              }
-            );
+              );
               break;
             case "publish":
               if (message.topic) {
                 const receivers = this._topics.get(message.topic);
                 if (receivers) {
-                  receivers.forEach(receiver => send(receiver, message));
+                  receivers.forEach((receiver) => send(receiver, message));
                 }
               }
               break;

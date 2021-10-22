@@ -11,8 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 * web: Upgrade hydra-synth to 1.3.8
 * web: Upgrade next to 11
+* repl: Remove "tidal> " from stdout on tidal target; other minor improvements
+* web: Print possible network IPs when starting web server locally
 
-## 0.4.5
+## [0.4.5] - 2021-01-05
 
 ### Added
 
