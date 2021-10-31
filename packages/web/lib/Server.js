@@ -60,12 +60,13 @@ const send = (conn, message) => {
 
 class Server {
   constructor(ctx) {
-    const { host, port, isDevelopment, secure } = ctx;
+    const { host, port, isDevelopment, secure, staticDir } = ctx;
 
     this.host = host || "0.0.0.0";
     this.port = port || 3000;
     this.isDevelopment = isDevelopment || false;
     this.secure = secure || false;
+    this.staticDir = staticDir;
 
     this.started = false;
     this._topics = new Map();
@@ -134,6 +135,10 @@ class Server {
             port: process.env.NODE_ENV === "production" ? null : this.port,
           })
         );
+      }
+
+      if (this.staticDir) {
+        app.use('/static', express.static(this.staticDir))
       }
 
       // Let Next to handle everything else

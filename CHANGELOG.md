@@ -5,14 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.4.6] - 2021-10-31
+
+### Added
+
+* web: Print possible network IPs when starting web server locally
+* web: New --static-dir option for setting a custom static files directory when
+  starting web server.
 
 ### Changed
 
 * web: Upgrade hydra-synth to 1.3.8
 * web: Upgrade next to 11
 * repl: Remove "tidal> " from stdout on tidal target; other minor improvements
-* web: Print possible network IPs when starting web server locally
 
 ## [0.4.5] - 2021-01-05
 

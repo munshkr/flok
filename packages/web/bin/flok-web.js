@@ -29,12 +29,14 @@ program
   .option("-H, --host [HOST]", "Server host", "0.0.0.0")
   .option("-P, --port [PORT]", "Server port", 3000)
   .option("-s, --secure", "Serve on https (use SSL)", false)
+  .option("--static-dir [PATH]", "Path to static files (optional)")
   .parse(process.argv);
 
 const server = new Server({
   host: program.host,
   port: program.port,
   secure: program.secure,
+  staticDir: program.staticDir,
 });
 
 server.start(() => {
