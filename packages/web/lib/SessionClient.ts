@@ -15,6 +15,7 @@ export type IceServerType = {
 
 type SessionClientContext = {
   signalingServerUrl: string;
+  websocketServerUrl: string;
   extraIceServers?: IceServerType[];
   sessionName?: string;
   sessionPassword?: string;
@@ -28,6 +29,7 @@ class SessionClient {
   sessionName: string;
   sessionPassword: string;
   signalingServerUrl: string;
+  websocketServerUrl: string;
   extraIceServers: IceServerType[];
   onJoin: Function;
   onInitialSync: Function;
@@ -53,6 +55,7 @@ class SessionClient {
   constructor(ctx: SessionClientContext) {
     const {
       signalingServerUrl,
+      websocketServerUrl,
       extraIceServers,
       sessionName,
       sessionPassword,
@@ -62,12 +65,13 @@ class SessionClient {
     } = ctx;
 
     this.signalingServerUrl = signalingServerUrl;
+    this.websocketServerUrl = websocketServerUrl;
     this.extraIceServers = extraIceServers || [];
     this.userName = userName;
     this.sessionName = sessionName || "default";
     this.sessionPassword = sessionPassword;
-    this.onJoin = onJoin || (() => { });
-    this.onInitialSync = onInitialSync || (() => { });
+    this.onJoin = onJoin || (() => {});
+    this.onInitialSync = onInitialSync || (() => {});
 
     // Create document and provider
     this._doc = new Y.Doc();
@@ -77,6 +81,7 @@ class SessionClient {
   join() {
     const {
       signalingServerUrl,
+      websocketServerUrl,
       extraIceServers,
       sessionName,
       sessionPassword,
@@ -95,7 +100,7 @@ class SessionClient {
 
     // WebSocket fallback provider, in case WebRTC does not work for some peers
     const websocketProvider = new WebsocketProvider(
-      "wss://demos.yjs.dev",
+      websocketServerUrl,
       roomName,
       this._doc
     );
@@ -107,14 +112,14 @@ class SessionClient {
 
     // Handle initial sync for sending the content of all editors
     if (this.onInitialSync) {
-      websocketProvider.on('sync', synced => {
+      websocketProvider.on("sync", (synced) => {
         if (synced) this._handleInitialSync("websocket");
       });
-      provider.on('synced', ({ synced }) => {
+      provider.on("synced", ({ synced }) => {
         if (synced) this._handleInitialSync("webrtc");
       });
       idbProvider.whenSynced.then(() => {
-        this._handleInitialSync("indexeddb")
+        this._handleInitialSync("indexeddb");
       });
     }
 
@@ -142,7 +147,9 @@ class SessionClient {
       text,
       editor,
       this.userName,
-      this._provider.awareness
+      this._provider
+        ? this._provider.awareness
+        : this._websocketProvider.awareness
     );
     this._editorBindings[id] = binding;
   }
@@ -198,11 +205,13 @@ class SessionClient {
 
   _handleInitialSync = (method: string) => {
     let texts = {};
-    Object.entries(this._editorBindings).forEach(([key, binding]: [string, CodeMirrorBinding]) => {
-      texts[key] = binding.target.getValue()
-    });
+    Object.entries(this._editorBindings).forEach(
+      ([key, binding]: [string, CodeMirrorBinding]) => {
+        texts[key] = binding.target.getValue();
+      }
+    );
     this.onInitialSync(method, texts);
-  }
+  };
 }
 
 export default SessionClient;

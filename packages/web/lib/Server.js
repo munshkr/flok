@@ -9,6 +9,7 @@ const WebSocket = require("ws");
 const process = require("process");
 const map = require("lib0/dist/map.cjs");
 const { PubSub } = require("flok-core");
+const { setupWSConnection } = require("./y-websocket-server");
 
 const wsReadyStateConnecting = 0;
 const wsReadyStateOpen = 1;
@@ -97,6 +98,7 @@ class Server {
       const app = express();
 
       const wss = new WebSocket.Server({ noServer: true });
+      const docWss = new WebSocket.Server({ noServer: true });
       const pubsubWss = new WebSocket.Server({ noServer: true });
       const server = createServer(app, this.secure);
 
@@ -107,6 +109,10 @@ class Server {
           wss.handleUpgrade(request, socket, head, (ws) => {
             wss.emit("connection", ws);
           });
+        } else if (pathname === "/doc") {
+          docWss.handleUpgrade(request, socket, head, (ws) => {
+            docWss.emit("connection", ws);
+          })
         } else if (pathname === "/pubsub") {
           pubsubWss.handleUpgrade(request, socket, head, (ws) => {
             pubsubWss.emit("connection", ws);
@@ -117,6 +123,7 @@ class Server {
       });
 
       wss.on("connection", (conn) => this.onSignalingServerConnection(conn));
+      docWss.on("connection", (conn) => setupWSConnection);
 
       // Prepare PubSub WebScoket server (pubsub)
       const pubSubServer = new PubSub({
@@ -196,7 +203,7 @@ class Server {
 
     conn.on(
       "message",
-      /** @param {object} message */ (message) => {
+      /** @param {object} message */(message) => {
         if (typeof message === "string") {
           // eslint-disable-next-line no-param-reassign
           message = JSON.parse(message);
@@ -205,30 +212,30 @@ class Server {
           switch (message.type) {
             case "subscribe":
               /** @type {Array<string>} */ (message.topics || []).forEach(
-                (topicName) => {
-                  if (typeof topicName === "string") {
-                    // add conn to topic
-                    const topic = map.setIfUndefined(
-                      this._topics,
-                      topicName,
-                      () => new Set()
-                    );
-                    topic.add(conn);
-                    // add topic to conn
-                    subscribedTopics.add(topicName);
-                  }
+              (topicName) => {
+                if (typeof topicName === "string") {
+                  // add conn to topic
+                  const topic = map.setIfUndefined(
+                    this._topics,
+                    topicName,
+                    () => new Set()
+                  );
+                  topic.add(conn);
+                  // add topic to conn
+                  subscribedTopics.add(topicName);
                 }
-              );
+              }
+            );
               break;
             case "unsubscribe":
               /** @type {Array<string>} */ (message.topics || []).forEach(
-                (topicName) => {
-                  const subs = this._topics.get(topicName);
-                  if (subs) {
-                    subs.delete(conn);
-                  }
+              (topicName) => {
+                const subs = this._topics.get(topicName);
+                if (subs) {
+                  subs.delete(conn);
                 }
-              );
+              }
+            );
               break;
             case "publish":
               if (message.topic) {
