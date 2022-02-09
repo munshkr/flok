@@ -6378,10 +6378,10 @@ p-waterfall@^1.0.0:
   dependencies:
     p-reduce "^1.0.0"
 
-p5@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/p5/-/p5-1.0.0.tgz#d27c77c1c11450ede27af4614a5d24470ffab0c4"
-  integrity sha512-SYYc6NSHA/mMoF00SdI39FmhifMWl0B74/Bg3T793v+KOAWgXsBfr7snv9cjHFqpcmjtJMuZSOoA55qAETCu1w==
+p5@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/p5/-/p5-1.4.1.tgz#979739a576eb566225642b5d25cf7bb8945b70dd"
+  integrity sha512-3/X+qb0bK2Cg8nuZNpZZvzxkeUSRghOf0S+l8c+U8yIkUTVSbbcV0R8y96rx3InVBVhk8cH9kFC93VlZZElqSw==
 
 pako@~1.0.5:
   version "1.0.11"

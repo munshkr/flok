@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * web: Replace yjsdemo WebSocket Yjs server for an embedded WS server
+* web: Upgrade p5 to version 1.4.1
 
 ## [0.4.6] - 2021-10-31
 
