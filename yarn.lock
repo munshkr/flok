@@ -4430,10 +4430,10 @@ husky@^3.1.0:
     run-node "^1.0.0"
     slash "^3.0.0"
 
-hydra-synth@^1.3.8:
-  version "1.3.8"
-  resolved "https://registry.yarnpkg.com/hydra-synth/-/hydra-synth-1.3.8.tgz#36a541ccd02478dbf9067dce79ce25bba21593f4"
-  integrity sha512-mIWPlgkETrwp8GRzZiRgocCg3P5ZokSqZ8JXAHD5hkM7dndnJs1ucQIDnWrcJqy1Cz2UoSGx7NVg4dZ+/deULA==
+hydra-synth@^1.3.16:
+  version "1.3.16"
+  resolved "https://registry.yarnpkg.com/hydra-synth/-/hydra-synth-1.3.16.tgz#927c734d1532f2c9d4b53e65ea8c962b4d1a2595"
+  integrity sha512-v7YsTV2GrFTtD2UZUaE2bogzQmQBl8QN2exb+5396JJGWVGsojqn+q/tjFHlY2ErYjxssv+EVEXM23BNN0b4tw==
   dependencies:
     meyda "^4.1.3"
     raf-loop "^1.1.3"
