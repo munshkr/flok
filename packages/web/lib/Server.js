@@ -105,19 +105,20 @@ class Server {
       server.on("upgrade", (request, socket, head) => {
         const { pathname } = url.parse(request.url);
 
-        if (pathname === "/signal") {
+        if (pathname.startsWith("/signal")) {
           wss.handleUpgrade(request, socket, head, (ws) => {
             wss.emit("connection", ws);
           });
-        } else if (pathname === "/doc") {
+        } else if (pathname.startsWith("/doc")) {
           docWss.handleUpgrade(request, socket, head, (ws) => {
             docWss.emit("connection", ws);
           })
-        } else if (pathname === "/pubsub") {
+        } else if (pathname.startsWith("/pubsub")) {
           pubsubWss.handleUpgrade(request, socket, head, (ws) => {
             pubsubWss.emit("connection", ws);
           });
         } else {
+          console.warn("[server] Ignoring request to path:", pathname);
           socket.destroy();
         }
       });
