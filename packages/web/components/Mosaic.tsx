@@ -6,7 +6,14 @@ const TextEditor = dynamic(() => import("./TextEditor"), {
   ssr: false,
 });
 
-const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode, readonly }) => (
+const Row = ({
+  editors,
+  isHalfHeight,
+  sessionClient,
+  onEvaluateCode,
+  onToggleEditorVisible,
+  readonly,
+}) => (
   <div className="container">
     {editors.map(({ id, target }) => (
       <div key={id} className={`slot is-${12 / editors.length}`}>
@@ -16,6 +23,7 @@ const Row = ({ editors, isHalfHeight, sessionClient, onEvaluateCode, readonly })
           isHalfHeight={isHalfHeight}
           sessionClient={sessionClient}
           onEvaluateCode={onEvaluateCode}
+          onToggleEditorVisible={onToggleEditorVisible}
           readonly={readonly}
         />
       </div>
@@ -64,7 +72,9 @@ type Props = {
   layout: any;
   sessionClient: SessionClient;
   onEvaluateCode: any;
+  onToggleEditorVisible: any;
   readonly?: boolean;
+  visible?: boolean;
 };
 
 class Mosaic extends Component<Props> {
@@ -103,23 +113,36 @@ class Mosaic extends Component<Props> {
   }
 
   render() {
-    const { sessionClient, onEvaluateCode, readonly } = this.props;
+    const {
+      sessionClient,
+      onEvaluateCode,
+      onToggleEditorVisible,
+      readonly,
+      visible,
+    } = this.props;
 
     const rows = this.editorsByRows();
 
     return (
-      <Fragment>
+      <div className="container">
         {rows.map((editors, i) => (
           <Row
             key={i}
             editors={editors}
             sessionClient={sessionClient}
             onEvaluateCode={onEvaluateCode}
+            onToggleEditorVisible={onToggleEditorVisible}
             isHalfHeight={rows.length === 2}
             readonly={readonly}
           />
         ))}
-      </Fragment>
+        <style jsx>{`
+          div {
+            opacity: ${visible ? "100%" : "0%"};
+            transition: opacity 0.2s ease-in-out;
+          }
+        `}</style>
+      </div>
     );
   }
 }

@@ -29,6 +29,7 @@ type Props = {
 type State = {
   showTargetMessagesPane: boolean;
   showTextEditors: boolean;
+  editorVisible: boolean;
   messagesByClientId: { [clientId: string]: Message[] };
   messagesPaneIsTop: boolean;
   messagesPaneIsMaximized: boolean;
@@ -38,6 +39,7 @@ class Session extends Component<Props, State> {
   state: State = {
     showTargetMessagesPane: false,
     showTextEditors: false,
+    editorVisible: true,
     messagesByClientId: {},
     messagesPaneIsTop: false,
     messagesPaneIsMaximized: false,
@@ -284,6 +286,12 @@ class Session extends Component<Props, State> {
     this.setState({ showTargetMessagesPane: false });
   };
 
+  handleToggleEditorVisible = () => {
+    this.setState((prevState: State) => ({
+      editorVisible: !prevState.editorVisible,
+    }));
+  };
+
   render() {
     const {
       messagesByClientId,
@@ -291,6 +299,7 @@ class Session extends Component<Props, State> {
       showTargetMessagesPane,
       messagesPaneIsTop,
       messagesPaneIsMaximized,
+      editorVisible,
     } = this.state;
     const { layout, audioStreamingEnabled, readonly } = this.props;
 
@@ -304,7 +313,9 @@ class Session extends Component<Props, State> {
             layout={layout}
             sessionClient={sessionClient}
             onEvaluateCode={this.handleEvaluateCode}
+            onToggleEditorVisible={this.handleToggleEditorVisible}
             readonly={readonly}
+            visible={editorVisible}
           />
         )}
         {showTargetMessagesPane && messagesByClientId && (
