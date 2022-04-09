@@ -9,6 +9,7 @@
     "dev": "node index.js",
     "lint": "next lint",
     "build": "next build",
+    "prepare": "yarn build",
     "start": "cross-env NODE_ENV=production node index.js",
     "test": "exit 0",
     "publish-current": "yarn publish --non-interactive",
