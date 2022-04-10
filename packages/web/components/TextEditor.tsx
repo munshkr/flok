@@ -341,6 +341,7 @@ class TextEditor extends Component<Props, {}> {
       "Cmd-.": this.freeAllSound,
       "Alt-.": this.freeAllSound,
       "Shift-Ctrl-H": this.toggleEditorVisible,
+      "Shift-Cmd-H": this.toggleEditorVisible,
       ...defaultExtraKeys,
     };
 
