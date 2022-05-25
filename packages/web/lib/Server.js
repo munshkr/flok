@@ -117,6 +117,8 @@ class Server {
           pubsubWss.handleUpgrade(request, socket, head, (ws) => {
             pubsubWss.emit("connection", ws);
           });
+        } else if (pathname.startsWith("/_next/webpack-hmr")) {
+          nextApp.hotReloader?.onHMR(req, socket, head);
         } else {
           console.warn("[server] Ignoring request to path:", pathname);
           socket.destroy();
@@ -153,10 +155,6 @@ class Server {
       app.get("*", (req, res) => {
         return handle(req, res);
       });
-
-      app.all('/_next/webpack-hmr', (req, res) => {
-        return handle(req, res);
-      })
 
       server.listen(this.port, this.host, (err) => {
         if (err) throw err;
