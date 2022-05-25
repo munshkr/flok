@@ -6,6 +6,12 @@ import Container from "../components/Container";
 import TextInput from "../components/TextInput";
 import Button from "../components/Button";
 import { allTargets } from "flok-core";
+import {
+  uniqueNamesGenerator,
+  adjectives,
+  colors,
+  animals,
+} from "unique-names-generator";
 
 const NewSessionForm = () => {
   const [targets, setTargets] = useState("");
@@ -20,7 +26,13 @@ const NewSessionForm = () => {
     e.preventDefault();
     setSubmitting(true);
 
-    const session = btoa(uuidv4());
+    const uuid = btoa(uuidv4());
+    const namePrefix = uniqueNamesGenerator({
+      dictionaries: [adjectives, colors, animals],
+      separator: "-",
+    });
+    const session = `${namePrefix}-${uuid.slice(0, 8)}`;
+
     const layout = targets
       .split(",")
       .map((s) => s.trim())
