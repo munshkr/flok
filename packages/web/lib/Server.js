@@ -154,6 +154,10 @@ class Server {
         return handle(req, res);
       });
 
+      app.all('/_next/webpack-hmr', (req, res) => {
+        return handle(req, res);
+      })
+
       server.listen(this.port, this.host, (err) => {
         if (err) throw err;
         console.log(`> Server listening on ${this.host}, port ${this.port}`);
