@@ -14,6 +14,8 @@ const packageConfig = JSON.parse(
 );
 
 module.exports = withTM({
+  swcMinify: true,
+
   publicRuntimeConfig: {
     flokVersion: packageConfig.version,
     isDevelopment: process.env.NODE_ENV !== "production",
