@@ -25,7 +25,7 @@
     "flok-core": "^0.4.7",
     "lib0": "^0.2.26",
     "next": "12",
-    "next-transpile-modules": "^8.0.0",
+    "next-transpile-modules": "^9.0.0",
     "normalize.css": "^8.0.1",
     "p5": "^1.4.1",
     "react": "^18.1.0",
