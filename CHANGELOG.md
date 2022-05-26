@@ -14,10 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 * web: Replace yjsdemo WebSocket Yjs server for an embedded WS server
+* web: Use a random english name + first 8 chars of uuid as default session name
 * web: Upgrade p5 to version 1.4.1
 * web: Upgrade hydra-synth to version 1.3.16
 * web: Upgrade Next to version 12
-* web: Use a random english name + first 8 chars of uuid as default session name
+* web: Fix package bundle
 
 ## [0.4.6] - 2021-10-31
 
