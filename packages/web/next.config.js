@@ -1,10 +1,5 @@
 /* eslint-disable no-param-reassign */
 // next.config.js
-const withTM = require("next-transpile-modules")([
-  "lib0",
-  "y-protocols",
-  "y-indexeddb",
-]);
 const process = require("process");
 const path = require("path");
 const fs = require("fs");
@@ -13,7 +8,7 @@ const packageConfig = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, "package.json"))
 );
 
-module.exports = withTM({
+module.exports = {
   swcMinify: true,
 
   publicRuntimeConfig: {
@@ -31,6 +26,14 @@ module.exports = withTM({
       fs: false,
     };
 
+    // Skip the following modules from transpiling
+    config.externals = [
+      ...config.externals,
+      'lib0',
+      'y-protocols',
+      'y-indexeddb'
+    ];
+
     config.module.rules.push({
       test: /\.(eot|woff|woff2|ttf|svg|png|jpg|gif)$/,
       use: {
@@ -44,4 +47,4 @@ module.exports = withTM({
 
     return config;
   },
-});
+};
