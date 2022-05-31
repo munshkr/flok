@@ -7,9 +7,10 @@
   "license": "GPL-3.0+",
   "private": true,
   "scripts": {
+    "dev": "cd packages/web && yarn dev",
+    "start": "cd packages/web && yarn start",
     "test": "lerna run test",
     "prepublishOnly": "lerna run prepublishOnly",
-    "start": "cd packages/web && yarn start",
     "new-version": "lerna version --force-publish",
     "publish-all": "lerna run publish-current",
     "release": "yarn new-version && yarn publish-all"
