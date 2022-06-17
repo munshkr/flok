@@ -84,10 +84,10 @@ class StrudelWrapper {
       const { pattern } = await evaluate(code);
       this.scheduler.setPattern(pattern);
       this.scheduler.start();
+      this.onError(null);
     } catch (e) {
       console.error(e);
       this.onError(e.message);
-      return;
     }
   };
 }
