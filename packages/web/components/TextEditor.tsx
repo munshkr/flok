@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { UnControlled as CodeMirror } from "react-codemirror2";
 import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
 import css from "styled-jsx/css";
+import { nonBlockEvalTargets } from "flok-core";
 
 import SessionClient from "../lib/SessionClient";
 import IconButton from "./IconButton";
@@ -323,7 +324,7 @@ class TextEditor extends Component<Props, {}> {
     // Replace shortkeys when using Mercury
     // Because Mercury always replaces the entire code with the newly
     // executed page. No per-line evaluation
-    if (target === "mercury") {
+    if (nonBlockEvalTargets.includes(target)) {
       defaultExtraKeys = {
         ...{
           "Shift-Enter": () => this.evaluateAll(false),
