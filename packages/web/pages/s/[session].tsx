@@ -12,6 +12,7 @@ import { IceServerType } from "../../lib/SessionClient";
 import HydraWrapper from "../../lib/HydraWrapper";
 import HydraCanvas from "../../components/HydraCanvas";
 import HydraError from "../../components/HydraError";
+import StrudelWrapper from "../../lib/StrudelWrapper";
 import TextInput from "../../components/TextInput";
 import Button from "../../components/Button";
 import Checkbox from "../../components/Checkbox";
@@ -288,6 +289,7 @@ interface State {
 class SessionPage extends Component<Props, State> {
   hydraCanvas: React.RefObject<HTMLCanvasElement>;
   hydra: HydraWrapper;
+  strudel: StrudelWrapper;
 
   state = {
     loading: true,
@@ -329,7 +331,7 @@ class SessionPage extends Component<Props, State> {
     this.hydra = null;
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     if (isDevelopment) {
       console.log("*** DEVELOPMENT MODE ***");
     }
@@ -355,7 +357,9 @@ class SessionPage extends Component<Props, State> {
     // Initialize Strudel
     if (layoutList.includes("strudel")) {
       console.log("Initialize Strudel");
-      // TODO: Initialize Strudel
+      this.strudel = new StrudelWrapper(this.handleHydraError);
+      await this.strudel.initialize();
+      console.log("Strude wrapper initialized");
     }
 
     // Set Websockets URL
@@ -390,10 +394,10 @@ class SessionPage extends Component<Props, State> {
     this.setState({ username, hydraEnabled, audioStreamingEnabled });
   };
 
-  handleLocalEvaluation = (target: string, body: string) => {
+  handleLocalEvaluation = async (target: string, body: string) => {
     switch (target) {
       case "hydra":
-        if (!this.props.noHydra) return;
+        if (this.props.noHydra) return;
         const { hydraEnabled, hasWebGl } = this.state;
         if (hasWebGl && hydraEnabled) {
           this.hydra.tryEval(body);
@@ -401,8 +405,10 @@ class SessionPage extends Component<Props, State> {
         break;
       case "strudel":
         console.log(`Evaluate strudel code: ${body}`);
-        // TODO: Evaluate Strudel code
+        await this.strudel.tryEval(body);
         break;
+      default:
+        console.error(`Unknown local target: ${target}`);
     }
   };
 
