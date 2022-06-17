@@ -56,7 +56,7 @@ class StrudelWrapper {
         //console.log('delta', delta);
         // when using .osc or .webdirt, each hap will have context.onTrigger set
         // if no onTrigger is set, try to play hap.value as frequency with a cheap oscillator
-        if (!hap.context.onTrigger) {
+        if (!hap.context.onTrigger && typeof hap.value === "number") {
           //console.log('e', e.show());
           const oscillator = audioContext.createOscillator();
           const master = audioContext.createGain();
