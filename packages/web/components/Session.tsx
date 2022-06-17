@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 
-import { PubSubClient } from "flok-core";
+import { webTargets, PubSubClient } from "flok-core";
 import TargetMessagesPane, { Message } from "./TargetMessagesPane";
 import SessionClient, { IceServerType } from "../lib/SessionClient";
 import Mosaic from "./Mosaic";
 import Audio from "./Audio";
 
 const MAX_LINES: number = 100;
-const LOCAL_TARGETS = ["hydra"];
 
 type Props = {
   websocketsHost: string;
@@ -196,7 +195,7 @@ class Session extends Component<Props, State> {
 
     this.setState({ messagesByClientId: {}, showTargetMessagesPane: false });
 
-    if (LOCAL_TARGETS.includes(target)) {
+    if (webTargets.includes(target)) {
       this.evaluateLocalCode({ target, body });
       if (locally == false) {
         pubsubClient.publish(`session:${sessionName}:target:${target}:eval`, {
@@ -230,7 +229,7 @@ class Session extends Component<Props, State> {
     this.setState({ showTargetMessagesPane: false });
 
     // If target is "local", evaluate code locally
-    if (LOCAL_TARGETS.includes(target)) {
+    if (webTargets.includes(target)) {
       const { body } = content;
       this.evaluateLocalCode({ target, body });
     }
