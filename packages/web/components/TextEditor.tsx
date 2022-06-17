@@ -299,6 +299,8 @@ class TextEditor extends Component<Props, {}> {
       return "silence";
     } else if (target == "hydra") {
       return "hush()";
+    } else if (target == "strudel") {
+      return '"~".out()';
     }
   }
 
