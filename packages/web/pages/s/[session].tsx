@@ -340,6 +340,14 @@ class SessionPage extends Component<Props, State> {
     const { hasWebGl } = this.state;
     const layoutList = this.layoutTargets();
 
+    // Initialize Strudel
+    if (layoutList.includes("strudel")) {
+      console.log("Initialize Strudel");
+      this.strudel = new StrudelWrapper(this.handleHydraError);
+      await this.strudel.initialize();
+      console.log("Strude wrapper initialized");
+    }
+
     // Initialize Hydra
     if (!noHydra && layoutList.includes("hydra")) {
       console.log("Initialize Hydra");
@@ -352,14 +360,6 @@ class SessionPage extends Component<Props, State> {
       } else {
         console.warn("WebGL is disabled or not supported in this browser");
       }
-    }
-
-    // Initialize Strudel
-    if (layoutList.includes("strudel")) {
-      console.log("Initialize Strudel");
-      this.strudel = new StrudelWrapper(this.handleHydraError);
-      await this.strudel.initialize();
-      console.log("Strude wrapper initialized");
     }
 
     // Set Websockets URL
