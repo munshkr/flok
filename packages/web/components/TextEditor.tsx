@@ -297,6 +297,8 @@ class TextEditor extends Component<Props, {}> {
       return "Clock.clear()";
     } else if (target === "mercury") {
       return "silence";
+    } else if (target == "hydra") {
+      return "hush()";
     }
   }
 
