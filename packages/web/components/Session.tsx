@@ -12,7 +12,7 @@ type Props = {
   websocketsHost: string;
   sessionName: string;
   userName?: string;
-  onHydraEvaluation: (code: string) => void;
+  onLocalEvaluation: (target: string, body: string) => void;
   audioStreamingEnabled: boolean;
   readonly: boolean;
   noLocalEval: boolean;
@@ -48,7 +48,7 @@ class Session extends Component<Props, State> {
 
   static defaultProps = {
     userName: "anonymous",
-    onHydraEvaluation: () => {},
+    onLocalEvaluation: () => {},
     readonly: false,
   };
 
@@ -165,13 +165,11 @@ class Session extends Component<Props, State> {
 
     if (noLocalEval) return;
 
-    switch (target) {
-      case "hydra":
-        const { onHydraEvaluation } = this.props;
-        onHydraEvaluation && onHydraEvaluation(body);
-        break;
-      default:
-        console.error("Unhandle local target:", target);
+    if (webTargets.includes(target)) {
+      const { onLocalEvaluation } = this.props;
+      onLocalEvaluation && onLocalEvaluation(target, body);
+    } else {
+      console.error("Unhandle local target:", target);
     }
   }
 

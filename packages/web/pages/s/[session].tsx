@@ -336,8 +336,11 @@ class SessionPage extends Component<Props, State> {
 
     const { noHydra } = this.props;
     const { hasWebGl } = this.state;
+    const layoutList = this.layoutTargets();
 
-    if (!noHydra) {
+    // Initialize Hydra
+    if (!noHydra && layoutList.includes("hydra")) {
+      console.log("Initialize Hydra");
       if (hasWebGl) {
         this.hydra = new HydraWrapper(
           this.hydraCanvas.current,
@@ -347,6 +350,12 @@ class SessionPage extends Component<Props, State> {
       } else {
         console.warn("WebGL is disabled or not supported in this browser");
       }
+    }
+
+    // Initialize Strudel
+    if (layoutList.includes("strudel")) {
+      console.log("Initialize Strudel");
+      // TODO: Initialize Strudel
     }
 
     // Set Websockets URL
@@ -381,10 +390,19 @@ class SessionPage extends Component<Props, State> {
     this.setState({ username, hydraEnabled, audioStreamingEnabled });
   };
 
-  handleHydraEvaluation = (code: string) => {
-    const { hydraEnabled, hasWebGl } = this.state;
-    if (hasWebGl && hydraEnabled) {
-      this.hydra.tryEval(code);
+  handleLocalEvaluation = (target: string, body: string) => {
+    switch (target) {
+      case "hydra":
+        if (!this.props.noHydra) return;
+        const { hydraEnabled, hasWebGl } = this.state;
+        if (hasWebGl && hydraEnabled) {
+          this.hydra.tryEval(body);
+        }
+        break;
+      case "strudel":
+        console.log(`Evaluate strudel code: ${body}`);
+        // TODO: Evaluate Strudel code
+        break;
     }
   };
 
@@ -401,16 +419,15 @@ class SessionPage extends Component<Props, State> {
     };
   };
 
+  layoutTargets = (): string[] => {
+    const { layoutParam } = this.props;
+    const layoutList = layoutParam ? layoutParam.split(",") : defaultLayoutList;
+    return layoutList;
+  };
+
   render() {
-    const {
-      host,
-      session,
-      layoutParam,
-      readonly,
-      noLocalEval,
-      noHydra,
-      backgroundOpacity,
-    } = this.props;
+    const { host, session, readonly, noLocalEval, noHydra, backgroundOpacity } =
+      this.props;
     const {
       loading,
       username,
@@ -421,10 +438,7 @@ class SessionPage extends Component<Props, State> {
       websocketsUrl,
     } = this.state;
 
-    let layoutList = defaultLayoutList;
-    if (layoutParam) {
-      layoutList = layoutParam.split(",");
-    }
+    const layoutList = this.layoutTargets();
     const hasHydraSlot = !noHydra && layoutList.includes("hydra");
     const layout = this.generateLayoutFromList(layoutList);
 
@@ -443,7 +457,7 @@ class SessionPage extends Component<Props, State> {
             extraIceServers={extraIceServers}
             layout={layout}
             audioStreamingEnabled={audioStreamingEnabled}
-            onHydraEvaluation={!noHydra && this.handleHydraEvaluation}
+            onLocalEvaluation={this.handleLocalEvaluation}
             readonly={readonly}
             noLocalEval={noLocalEval}
           />
