@@ -342,23 +342,23 @@ class SessionPage extends Component<Props, State> {
 
     // Initialize Strudel
     if (layoutList.includes("strudel")) {
-      console.log("Initialize Strudel");
+      console.log("Create StrudelWrapper and import Strudel");
       this.strudel = new StrudelWrapper(this.handleHydraError);
-      await this.strudel.initialize();
-      console.log("Strude wrapper initialized");
+      await this.strudel.importModules();
     }
 
     // Initialize Hydra
     if (!noHydra && layoutList.includes("hydra")) {
-      console.log("Initialize Hydra");
       if (hasWebGl) {
+        console.log("Create HydraWrapper");
         this.hydra = new HydraWrapper(
           this.hydraCanvas.current,
           this.handleHydraError
         );
-        console.log("Hydra wrapper created");
       } else {
-        console.warn("WebGL is disabled or not supported in this browser");
+        console.warn(
+          "WebGL is disabled or not supported in this browser, so Hydra was not initialized."
+        );
       }
     }
 

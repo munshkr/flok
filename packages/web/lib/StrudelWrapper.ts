@@ -7,18 +7,20 @@ export type ErrorHandler = (error: string) => void;
 
 class StrudelWrapper {
   initialized: boolean;
-  scheduler: Scheduler;
   onError: ErrorHandler;
+  _scheduler: any;
+  _getAudioContext: () => AudioContext;
 
   constructor(onError: ErrorHandler) {
     this.initialized = false;
     this.onError = onError || (() => {});
   }
 
-  async initialize() {
+  async importModules() {
     const { getAudioContext } = await import(
       "@strudel.cycles/webaudio/webaudio.mjs"
     );
+    this._getAudioContext = getAudioContext;
 
     // import desired modules and add them to the eval scope
     await evalScope(
@@ -34,6 +36,17 @@ class StrudelWrapper {
       controls
       // import other strudel packages here
     ); // add strudel to eval scope
+  }
+
+  async initialize() {
+    if (!this._getAudioContext) {
+      throw new Error(
+        "AudioContext not available. Call importModules() first."
+      );
+    }
+
+    const audioContext = this._getAudioContext();
+    const latency = 0.2;
 
     // // load default samples + init webdirt
     // loadWebDirt({
@@ -43,11 +56,8 @@ class StrudelWrapper {
     //   sampleFolder: "https://strudel.tidalcycles.org/EmuSP12/",
     // });
 
-    const audioContext = getAudioContext();
-    const latency = 0.2;
-
     // the scheduler will query the pattern within the given interval
-    this.scheduler = new Scheduler({
+    this._scheduler = new Scheduler({
       audioContext,
       interval: 0.1,
       latency,
@@ -72,18 +82,16 @@ class StrudelWrapper {
     });
 
     this.initialized = true;
+    console.log("Strudel initialized");
   }
 
   tryEval = async (code: string) => {
-    if (!this.initialized) {
-      console.error("StrudelWrapper not initialized");
-      return;
-    }
+    if (!this.initialized) await this.initialize();
 
     try {
       const { pattern } = await evaluate(code);
-      this.scheduler.setPattern(pattern);
-      this.scheduler.start();
+      this._scheduler.setPattern(pattern);
+      this._scheduler.start();
       this.onError(null);
     } catch (e) {
       console.error(e);
