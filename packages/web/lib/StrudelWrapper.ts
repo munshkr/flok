@@ -67,7 +67,9 @@ class StrudelWrapper {
       latency,
       onEvent: (hap) => {
         if (!hap.context.onTrigger) {
-          throw "No output chosen. Use one of: .out(), .webdirt(), .osc()";
+          this.onError(
+            "No output chosen. Use one of: .out(), .webdirt(), .osc()"
+          );
         }
       },
     });
