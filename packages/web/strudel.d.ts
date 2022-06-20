@@ -8,6 +8,7 @@ declare module "@strudel.cycles/serial";
 declare module "@strudel.cycles/tonal";
 declare module "@strudel.cycles/tone";
 declare module "@strudel.cycles/webaudio";
+declare module "@strudel.cycles/webdirt";
 declare module "@strudel.cycles/webaudio/scheduler.mjs";
 declare module "@strudel.cycles/webaudio/webaudio.mjs";
 declare module "@strudel.cycles/xen";

@@ -1,6 +1,5 @@
 import { evaluate, evalScope } from "@strudel.cycles/eval";
 import { Scheduler } from "@strudel.cycles/webaudio/scheduler.mjs";
-// import { loadWebDirt } from '@strudel.cycles/webdirt';
 import controls from "@strudel.cycles/core/controls.mjs";
 
 export type ErrorHandler = (error: string) => void;
@@ -10,6 +9,7 @@ class StrudelWrapper {
   onError: ErrorHandler;
   _scheduler: any;
   _getAudioContext: () => AudioContext;
+  _loadWebDirt: () => Promise<void>;
 
   constructor(onError: ErrorHandler) {
     this.initialized = false;
@@ -20,7 +20,10 @@ class StrudelWrapper {
     const { getAudioContext } = await import(
       "@strudel.cycles/webaudio/webaudio.mjs"
     );
+    const { loadWebDirt } = await import("@strudel.cycles/webdirt");
+
     this._getAudioContext = getAudioContext;
+    this._loadWebDirt = loadWebDirt;
 
     // import desired modules and add them to the eval scope
     await evalScope(
@@ -32,7 +35,7 @@ class StrudelWrapper {
       import("@strudel.cycles/tone"),
       import("@strudel.cycles/xen"),
       import("@strudel.cycles/osc"),
-      //   import("@strudel.cycles/webdirt"),
+      import("@strudel.cycles/webdirt"),
       controls
       // import other strudel packages here
     ); // add strudel to eval scope
@@ -48,13 +51,13 @@ class StrudelWrapper {
     const audioContext = this._getAudioContext();
     const latency = 0.2;
 
-    // // load default samples + init webdirt
-    // loadWebDirt({
-    //   audioContext,
-    //   latency,
-    //   sampleMapUrl: "https://strudel.tidalcycles.org/EmuSP12.json",
-    //   sampleFolder: "https://strudel.tidalcycles.org/EmuSP12/",
-    // });
+    // load default samples + init webdirt
+    this._loadWebDirt({
+      audioContext,
+      latency,
+      sampleMapUrl: "https://strudel.tidalcycles.org/EmuSP12.json",
+      sampleFolder: "https://strudel.tidalcycles.org/EmuSP12/",
+    });
 
     // the scheduler will query the pattern within the given interval
     this._scheduler = new Scheduler({
