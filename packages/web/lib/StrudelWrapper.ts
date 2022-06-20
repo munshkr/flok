@@ -9,7 +9,7 @@ class StrudelWrapper {
   onError: ErrorHandler;
   _scheduler: any;
   _getAudioContext: () => AudioContext;
-  _loadWebDirt: () => Promise<void>;
+  _loadWebDirt: (opts: any) => Promise<void>;
 
   constructor(onError: ErrorHandler) {
     this.initialized = false;
