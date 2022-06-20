@@ -28,14 +28,15 @@ class StrudelWrapper {
     // import desired modules and add them to the eval scope
     await evalScope(
       import("@strudel.cycles/core"),
-      import("@strudel.cycles/mini"),
       import("@strudel.cycles/midi"),
+      import("@strudel.cycles/mini"),
+      import("@strudel.cycles/osc"),
       import("@strudel.cycles/serial"),
       import("@strudel.cycles/tonal"),
       import("@strudel.cycles/tone"),
-      import("@strudel.cycles/xen"),
-      import("@strudel.cycles/osc"),
+      import("@strudel.cycles/webaudio"),
       import("@strudel.cycles/webdirt"),
+      import("@strudel.cycles/xen"),
       controls
       // import other strudel packages here
     ); // add strudel to eval scope
