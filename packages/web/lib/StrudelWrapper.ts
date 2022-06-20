@@ -65,21 +65,8 @@ class StrudelWrapper {
       interval: 0.1,
       latency,
       onEvent: (hap) => {
-        //const delta = hap.whole.begin - audioContext.currentTime;
-        //console.log('delta', delta);
-        // when using .osc or .webdirt, each hap will have context.onTrigger set
-        // if no onTrigger is set, try to play hap.value as frequency with a cheap oscillator
-        if (!hap.context.onTrigger && typeof hap.value === "number") {
-          //console.log('e', e.show());
-          const oscillator = audioContext.createOscillator();
-          const master = audioContext.createGain();
-          master.gain.value = 0.1;
-          master.connect(audioContext.destination);
-          oscillator.type = "sawtooth";
-          oscillator.frequency.value = hap.value;
-          oscillator.connect(master);
-          oscillator.start(hap.whole.begin);
-          oscillator.stop(hap.whole.end);
+        if (!hap.context.onTrigger) {
+          throw "No output chosen. Use one of: .out(), .webdirt(), .osc()";
         }
       },
     });
