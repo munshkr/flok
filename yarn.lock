@@ -1372,20 +1372,20 @@
   dependencies:
     debug "^4.1.1"
 
-"@strudel.cycles/core@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/core/-/core-0.1.0.tgz#b7a04ecbe81b2913a8552e57e49a923764320658"
-  integrity sha512-Skl3uyGCE22LhM/rQucd2Oz64x71AywEqyyPVno8AQyZ8gvgkBFV6m5uQ0CoGZnBeLU0iOFE3SzI2FXf74ftyw==
+"@strudel.cycles/core@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/core/-/core-0.1.1.tgz#b14fcf5f9da23f34f66996d45c09170ab8cbce62"
+  integrity sha512-5Zt+Aw88Scw7FWELL2v9oLzdSZqhRukD9QDRTY8joUak3wRxv3S5sbYyYFc9kb+N3wJzcf3qnJF3ftLDfZB/kg==
   dependencies:
     bjork "^0.0.1"
     fraction.js "^4.2.0"
 
-"@strudel.cycles/eval@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/eval/-/eval-0.1.1.tgz#c6474b08cade357dc487c0dadc0c477a662d2d14"
-  integrity sha512-lMQPO9BWnAExbmrJFtGdavblpccQuIl0STRaVlOsdm0Q8NzZ7bEzBFy6/E4AjXc6Xo5nnCwHZOe6Ny6mcqLzcg==
+"@strudel.cycles/eval@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/eval/-/eval-0.1.2.tgz#e0ae5f32302339df897a2bd25d3727dfff141af0"
+  integrity sha512-NQuF2J44HszIqvQC+JNDMyuwIT4ULGhCZs4EbI4zisV3NWU4jMxPzs0W/QaBa2NthSFFgS+zCaNExrZyD2Wnhw==
   dependencies:
-    "@strudel.cycles/core" "^0.1.0"
+    "@strudel.cycles/core" "^0.1.1"
     estraverse "^5.3.0"
     shift-ast "^6.1.0"
     shift-codegen "^7.0.3"
@@ -1393,76 +1393,76 @@
     shift-spec "^2018.0.2"
     shift-traverser "^1.0.0"
 
-"@strudel.cycles/midi@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/midi/-/midi-0.1.1.tgz#9897594179be2194a6db915dbb179d74afd6418c"
-  integrity sha512-TCL46L0tHavGvKGwNjUkssxYjxDdV92TjE7hQD3O+zH2B3hLpdfmer5uitCwJdaWIE/GKeKT1cPuvR/W5UK4Rw==
+"@strudel.cycles/midi@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/midi/-/midi-0.1.2.tgz#aadca037aeebf745fedaae009d6940c388fbc78b"
+  integrity sha512-hdcZSWBqP5o5Fc33/0yg/8QIsF4ekUkBZs7wXD3CQVKeEhY+0LkhcTvP7COcyga2iidf6LzKvRqjBgBRrKI5rA==
   dependencies:
-    "@strudel.cycles/tone" "^0.1.1"
+    "@strudel.cycles/tone" "^0.1.2"
     tone "^14.7.77"
     webmidi "^2.5.2"
 
-"@strudel.cycles/mini@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/mini/-/mini-0.1.1.tgz#140d0f4f5d1b3acedfbd06cb0e25f5ee21ac1e91"
-  integrity sha512-xCgkM7XvPTRLKFF2T1K09TGqdH9lbrYygEI03xlI9sAesxDN6E1fyRCUMwM3neVcTVENPlYeYod8Jd0/qpOQ0Q==
+"@strudel.cycles/mini@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/mini/-/mini-0.1.2.tgz#c25917687e8c988bbb5d0951c9632b24beccb3af"
+  integrity sha512-WqW7HnweRc2zEsQKvzR5+rB/euCLmRz5WnOAIMjzCS9toK8tobO3M+Lg6fqQBmjvzispbxy4d9/7GfUEsTbZ2g==
   dependencies:
-    "@strudel.cycles/core" "^0.1.0"
-    "@strudel.cycles/eval" "^0.1.1"
-    "@strudel.cycles/tone" "^0.1.1"
+    "@strudel.cycles/core" "^0.1.1"
+    "@strudel.cycles/eval" "^0.1.2"
+    "@strudel.cycles/tone" "^0.1.2"
 
-"@strudel.cycles/osc@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/osc/-/osc-0.1.0.tgz#f754a7c8d298772eee93bc061ec69f8523a9194e"
-  integrity sha512-rQnnk26/z88mtmiQ3pjA+pFJgLzhQZPHz/Ph5SW6p8V+4Niz2i1bVF2hF33NCHDCxxPZWmQHhAejQs62svfmFg==
+"@strudel.cycles/osc@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/osc/-/osc-0.1.1.tgz#0b43fcf91b49db9bcf71a7a531bdf0c6cd1288bc"
+  integrity sha512-pWArtDrYNbA+jYGLNBuBPPW6EVXnzH7RrWAcRvPJBsEciUpfdaZKduimYHFKmsgLSrNkl5caJR1tR6fkg5s+dA==
   dependencies:
     osc-js "^2.3.2"
 
-"@strudel.cycles/serial@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/serial/-/serial-0.1.0.tgz#14392a0b700ba9fa1b2c334771ba52080f6d8922"
-  integrity sha512-vm2mmeGSoKabmk9S304kjQ9gYc9aIGdty/BFqXlWHJbeauzmi6d+clbS294cHodxWcVXINnWl3VIAUNVtyfgSQ==
-
-"@strudel.cycles/tonal@^0.1.1":
+"@strudel.cycles/serial@^0.1.1":
   version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/tonal/-/tonal-0.1.1.tgz#167f4a004a8a5df5c728f38a50f410405af1f871"
-  integrity sha512-laqXs3vcbrnv7Mo6FKwOuf4TVx7EbGLe0sMK110Fj4x3zzYI0JXMvl3i9mJa2UysFXud5yTRr6Pf6XKOkpda+Q==
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/serial/-/serial-0.1.1.tgz#b0e0aa91af58bd20da177a1fb7573e6e033f4a6d"
+  integrity sha512-qgTDOMlxjFYqZWFa/jfZsl4p5GNP9MHTEaRgOXjYuFX2FjcJvSmg1npaGa1fVZYTpTFz7cbG+hsaj0o/Xc6QEw==
+
+"@strudel.cycles/tonal@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/tonal/-/tonal-0.1.2.tgz#ff9ef5559c4e129439fc01d4f0d2c54f85554c0a"
+  integrity sha512-ZkzO7TkhfgrDFCv8dITI8qIwGn6Z3cDrlgWyF+xiS33x7JaKWEdcoBXUwUzdISCk2cMdI8tOuu9nAk87eu8vtw==
   dependencies:
-    "@strudel.cycles/core" "^0.1.0"
+    "@strudel.cycles/core" "^0.1.1"
     "@tonaljs/tonal" "^4.6.5"
     webmidi "^3.0.15"
 
-"@strudel.cycles/tone@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/tone/-/tone-0.1.1.tgz#eb3ae50fe9e2b78c8f1945bf3ddb0917d9470da4"
-  integrity sha512-iFul9mjNWMVecxw33D7xNhZODG7zUMEcA7l7lKCHtIiO9ZFDHYGhkUi8tN+MjovVM+p3zHVOzzDXjQTBFoUQ4w==
+"@strudel.cycles/tone@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/tone/-/tone-0.1.2.tgz#d23f9aed8420ad0468239f3b11bd0031d9ef3996"
+  integrity sha512-NHxbpcl+Oig1T925s+ySk0vu4ilE1ylWSomBVs0uGCTxN9lFIBq57nLXBjPsLii29M0NFq5D/SLOieKk55QUJA==
   dependencies:
-    "@strudel.cycles/core" "^0.1.0"
+    "@strudel.cycles/core" "^0.1.1"
     "@tonejs/piano" "^0.2.1"
     chord-voicings "^0.0.1"
     tone "^14.7.77"
 
-"@strudel.cycles/webaudio@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/webaudio/-/webaudio-0.1.1.tgz#a7f86f5bc8d8013680f3444553fd838925d70286"
-  integrity sha512-lmcjb+sZG0io2yUumzNtObcZLeVNbOQVXU3qv6Az3o7qozX83nkcfdKxKOWwKEYw2BL5VGfWuQfrQK/Kij4ipA==
+"@strudel.cycles/webaudio@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/webaudio/-/webaudio-0.1.2.tgz#9d7878efb6b5de06f41240d3dbf1002ffd7571bb"
+  integrity sha512-t9bu8ce4zyH4thgKlpJbT/fIwwGvjkXPKF08nghL0D+sTE13UXLQVzmt3gk/0GqXnVqGBXimvL361DnBXG7rzQ==
   dependencies:
-    "@strudel.cycles/core" "^0.1.0"
+    "@strudel.cycles/core" "^0.1.1"
 
-"@strudel.cycles/webdirt@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/webdirt/-/webdirt-0.1.0.tgz#0fd950ecf78b17f2fa4028c4afaf628a84b6a0d3"
-  integrity sha512-F9Ae3xRlWXKZaDZ17zTgyeRhDI6M2BJc09ziWxJCTmnHBaClX/D9PQLbSVe+WMG5pzFgE9UVNloKUyIeEvcbQg==
+"@strudel.cycles/webdirt@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/webdirt/-/webdirt-0.1.1.tgz#74b689b414a86871eb02b678030dc9477d6d36d5"
+  integrity sha512-OxdFozKeXazAfa6C1BOWcuMGmNqG8ik8Xwywhz4Er06il9voSjrkUc3TJ4RDUZGDTKR3cIgPpwwvBTaWZM2IBQ==
   dependencies:
-    "@strudel.cycles/core" "^0.1.0"
+    "@strudel.cycles/core" "^0.1.1"
     WebDirt "github:dktr0/WebDirt"
 
-"@strudel.cycles/xen@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/xen/-/xen-0.1.1.tgz#9928e137524d582f67a31d4a19062820e8a2e58d"
-  integrity sha512-/NhQ87cD/wCpY9A0rhyCAkMtWDIHQZD3JjOxfWpdfSr8pAsNOVe5QsUsm4VnfWhSYrL278ww+jKdmAtSOqQ7oQ==
+"@strudel.cycles/xen@^0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/xen/-/xen-0.1.2.tgz#af309d0885da2d0174e46700d6af28becd40b9ec"
+  integrity sha512-8sldIO6pgC/6Ezkuhk01IGjZEr6a7ojFt6TUBtI7uWk8XPhkm6WQia1PqSoQXXNUYMx57GIKfAhF2SUwTZ434A==
   dependencies:
-    "@strudel.cycles/core" "^0.1.0"
+    "@strudel.cycles/core" "^0.1.1"
 
 "@teamwork/websocket-json-stream@^2.0.0":
   version "2.0.0"
