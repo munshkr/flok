@@ -1449,6 +1449,14 @@
   dependencies:
     "@strudel.cycles/core" "^0.1.0"
 
+"@strudel.cycles/webdirt@^0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/webdirt/-/webdirt-0.1.0.tgz#0fd950ecf78b17f2fa4028c4afaf628a84b6a0d3"
+  integrity sha512-F9Ae3xRlWXKZaDZ17zTgyeRhDI6M2BJc09ziWxJCTmnHBaClX/D9PQLbSVe+WMG5pzFgE9UVNloKUyIeEvcbQg==
+  dependencies:
+    "@strudel.cycles/core" "^0.1.0"
+    WebDirt "github:dktr0/WebDirt"
+
 "@strudel.cycles/xen@^0.1.1":
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@strudel.cycles/xen/-/xen-0.1.1.tgz#9928e137524d582f67a31d4a19062820e8a2e58d"
@@ -1794,6 +1802,10 @@ JSONStream@^1.0.4, JSONStream@^1.3.4:
   dependencies:
     jsonparse "^1.2.0"
     through ">=2.2.7 <3"
+
+"WebDirt@github:dktr0/WebDirt":
+  version "1.0.0"
+  resolved "https://codeload.github.com/dktr0/WebDirt/tar.gz/425dc8fd023440d9c61ffdb8642e44e2710faea0"
 
 abbrev@1:
   version "1.1.1"

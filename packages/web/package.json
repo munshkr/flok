@@ -28,6 +28,7 @@
     "@strudel.cycles/tonal": "^0.1.1",
     "@strudel.cycles/tone": "^0.1.1",
     "@strudel.cycles/webaudio": "^0.1.1",
+    "@strudel.cycles/webdirt": "^0.1.0",
     "@strudel.cycles/xen": "^0.1.1",
     "commander": "^2.20.0",
     "cross-env": "^7.0.0",
