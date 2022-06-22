@@ -1387,14 +1387,6 @@
     "@serialport/bindings-interface" "1.2.1"
     debug "^4.3.2"
 
-"@strudel.cycles/core@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/core/-/core-0.1.1.tgz#b14fcf5f9da23f34f66996d45c09170ab8cbce62"
-  integrity sha512-5Zt+Aw88Scw7FWELL2v9oLzdSZqhRukD9QDRTY8joUak3wRxv3S5sbYyYFc9kb+N3wJzcf3qnJF3ftLDfZB/kg==
-  dependencies:
-    bjork "^0.0.1"
-    fraction.js "^4.2.0"
-
 "@strudel.cycles/core@^0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@strudel.cycles/core/-/core-0.1.2.tgz#eafcfb3328f430e6bcc5875a55d83df4f2a1f5c9"
@@ -1402,19 +1394,6 @@
   dependencies:
     bjork "^0.0.1"
     fraction.js "^4.2.0"
-
-"@strudel.cycles/eval@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/eval/-/eval-0.1.2.tgz#e0ae5f32302339df897a2bd25d3727dfff141af0"
-  integrity sha512-NQuF2J44HszIqvQC+JNDMyuwIT4ULGhCZs4EbI4zisV3NWU4jMxPzs0W/QaBa2NthSFFgS+zCaNExrZyD2Wnhw==
-  dependencies:
-    "@strudel.cycles/core" "^0.1.1"
-    estraverse "^5.3.0"
-    shift-ast "^6.1.0"
-    shift-codegen "^7.0.3"
-    shift-parser "^7.0.3"
-    shift-spec "^2018.0.2"
-    shift-traverser "^1.0.0"
 
 "@strudel.cycles/eval@^0.1.3":
   version "0.1.3"
@@ -1438,14 +1417,14 @@
     tone "^14.7.77"
     webmidi "^2.5.2"
 
-"@strudel.cycles/mini@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/mini/-/mini-0.1.2.tgz#c25917687e8c988bbb5d0951c9632b24beccb3af"
-  integrity sha512-WqW7HnweRc2zEsQKvzR5+rB/euCLmRz5WnOAIMjzCS9toK8tobO3M+Lg6fqQBmjvzispbxy4d9/7GfUEsTbZ2g==
+"@strudel.cycles/mini@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/mini/-/mini-0.1.3.tgz#533127de0975b213bbff750f1383e57d04de34db"
+  integrity sha512-KjNMV3eIMWbe8A8O5XBz6gVz/vW/713UmyYZ5jMJUQ//CAn6zuSrV3AWIYl5OOlNfObAg1PtHMUGYX2/2operA==
   dependencies:
-    "@strudel.cycles/core" "^0.1.1"
-    "@strudel.cycles/eval" "^0.1.2"
-    "@strudel.cycles/tone" "^0.1.2"
+    "@strudel.cycles/core" "^0.1.2"
+    "@strudel.cycles/eval" "^0.1.3"
+    "@strudel.cycles/tone" "^0.1.3"
 
 "@strudel.cycles/osc@^0.1.1":
   version "0.1.1"
@@ -1454,10 +1433,10 @@
   dependencies:
     osc-js "^2.3.2"
 
-"@strudel.cycles/serial@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/serial/-/serial-0.1.2.tgz#e36cf6afb0bbfb68ac81a99c91a63a55a699498e"
-  integrity sha512-J/T16Ot5xVy2B+YUafCbe7EQeSE/MGHdLz4AftY11Rn30MpJsJJm2Aog/quALE1BNBhI9lhK1DSCKLWX2jPqYg==
+"@strudel.cycles/serial@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/serial/-/serial-0.1.3.tgz#7297be33889783832879078f80f6f5bae1907f69"
+  integrity sha512-DdKcugfJJ6H6Q0ILgqcbT37tlSLnewBMMpFZQZPvVqeLlBkiscDk2WvjBf+MlM49BZSd57vWIJ/YTVFYfgXozQ==
 
 "@strudel.cycles/tonal@^0.1.3":
   version "0.1.3"
@@ -1467,16 +1446,6 @@
     "@strudel.cycles/core" "^0.1.2"
     "@tonaljs/tonal" "^4.6.5"
     webmidi "^3.0.15"
-
-"@strudel.cycles/tone@^0.1.2":
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/tone/-/tone-0.1.2.tgz#d23f9aed8420ad0468239f3b11bd0031d9ef3996"
-  integrity sha512-NHxbpcl+Oig1T925s+ySk0vu4ilE1ylWSomBVs0uGCTxN9lFIBq57nLXBjPsLii29M0NFq5D/SLOieKk55QUJA==
-  dependencies:
-    "@strudel.cycles/core" "^0.1.1"
-    "@tonejs/piano" "^0.2.1"
-    chord-voicings "^0.0.1"
-    tone "^14.7.77"
 
 "@strudel.cycles/tone@^0.1.3":
   version "0.1.3"
@@ -1488,10 +1457,10 @@
     chord-voicings "^0.0.1"
     tone "^14.7.77"
 
-"@strudel.cycles/webaudio@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@strudel.cycles/webaudio/-/webaudio-0.1.3.tgz#0c2b36447e3d445ab768261376e99e8cf88ec9a7"
-  integrity sha512-/W2iyf3sI+Hk5iIY8AwtU6IpMUOc9wVIcWjqREQ6IJ8eUGsuJwThkjyZUNgjG5Trh6DXVs739jzlDy+F71v8jw==
+"@strudel.cycles/webaudio@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@strudel.cycles/webaudio/-/webaudio-0.1.4.tgz#aaeb1af3f5a63d3b637cced0a5d445688410814b"
+  integrity sha512-91FZ5YUkiLUPbzg2TQIfabH3ryRthgg7eHO7cXRGJtdP3xSL1OT4ngi5ALGeJT+ip+ThhB8f4mrgalwl16zAUA==
   dependencies:
     "@strudel.cycles/core" "^0.1.2"
 
