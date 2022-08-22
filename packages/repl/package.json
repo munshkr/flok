@@ -7,7 +7,6 @@
   "license": "GPL-3.0",
   "files": [
     "bin/*",
-    "data/*",
     "lib/**/*"
   ],
   "scripts": {
@@ -36,11 +35,5 @@
     "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
     "typescript": "^3.7.5"
-  },
-  "flok": {
-    "tidal": {
-      "bootScript": "data/BootTidal.hs",
-      "version": "1.6.1"
-    }
   }
 }
