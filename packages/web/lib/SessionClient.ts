@@ -35,7 +35,6 @@ class SessionClient {
   onInitialSync: Function;
 
   _doc: Y.Doc;
-  _provider: any;
   _websocketProvider: any;
   _indexedDbProvider: any;
   _editorBindings: {
@@ -90,15 +89,7 @@ class SessionClient {
 
     const roomName = `flok:${sessionName}`;
 
-    // Main provider via WebRTC
-    const provider = new WebrtcProvider(roomName, this._doc, {
-      password: sessionPassword,
-      signaling: [signalingServerUrl],
-      extraIceServers,
-    });
-    this._provider = provider;
-
-    // WebSocket fallback provider, in case WebRTC does not work for some peers
+    // WebSocket provider
     const websocketProvider = new WebsocketProvider(
       websocketServerUrl,
       roomName,
@@ -114,9 +105,6 @@ class SessionClient {
     if (this.onInitialSync) {
       websocketProvider.on("sync", (synced) => {
         if (synced) this._handleInitialSync("websocket");
-      });
-      provider.on("synced", ({ synced }) => {
-        if (synced) this._handleInitialSync("webrtc");
       });
       idbProvider.whenSynced.then(() => {
         this._handleInitialSync("indexeddb");
@@ -147,9 +135,7 @@ class SessionClient {
       text,
       editor,
       this.userName,
-      this._provider
-        ? this._provider.awareness
-        : this._websocketProvider.awareness
+      this._websocketProvider.awareness
     );
     this._editorBindings[id] = binding;
   }
@@ -163,9 +149,6 @@ class SessionClient {
       binding.destroy();
     }
 
-    if (this._provider) {
-      this._provider.destroy();
-    }
     if (this._websocketProvider) {
       this._websocketProvider.destroy();
     }
@@ -175,9 +158,6 @@ class SessionClient {
   }
 
   setUsername(newName: string) {
-    if (this._provider) {
-      this._provider.awareness.setLocalStateField("user", { name: newName });
-    }
     if (this._websocketProvider) {
       this._websocketProvider.awareness.setLocalStateField("user", {
         name: newName,

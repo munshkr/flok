@@ -79,7 +79,7 @@ const Audio = (props: Props) => {
   // hook on awareness changes
   useEffect(() => {
     const updatePeers = (clientID, prevStreaming, streaming) => {
-      const pId = sessionClient._provider.room.peerId;
+      const pId = sessionClient._websocketProvider.room.peerId;
       peers.set(clientID, streaming);
       setProducers([...peers].filter((e) => e[1].producer).map((e) => e[0]));
       // remove unwanted streams
@@ -91,7 +91,7 @@ const Audio = (props: Props) => {
         (!streaming.consumer || streaming.requestedPeerId !== pId)
       ) {
         consumers.delete(clientID);
-        sessionClient._provider.room.webrtcConns.forEach((conn) => {
+        sessionClient._websocketProvider.room.webrtcConns.forEach((conn) => {
           if (conn.remotePeerId === prevStreaming.peerId) {
             conn.peer.removeTrack(
               streamRef.current.getTracks()[0],
@@ -106,7 +106,7 @@ const Audio = (props: Props) => {
         streaming.requestedPeerId === pId &&
         !consumers.has(clientID)
       ) {
-        sessionClient._provider.room.webrtcConns.forEach((conn) => {
+        sessionClient._websocketProvider.room.webrtcConns.forEach((conn) => {
           if (conn.remotePeerId === streaming.peerId) {
             // keep track of already added consumers
             consumers.add(clientID);
@@ -120,8 +120,8 @@ const Audio = (props: Props) => {
     };
 
     const awarenessListener = ({ added, removed, updated }) => {
-      const awareness = sessionClient._provider.awareness;
-      const pId = sessionClient._provider.room.peerId;
+      const awareness = sessionClient._websocketProvider.awareness;
+      const pId = sessionClient._websocketProvider.room.peerId;
       const f = (clientID) => {
         const state = awareness.getStates().get(clientID);
         if (!state) {
@@ -145,7 +145,7 @@ const Audio = (props: Props) => {
 
     peers.clear();
     consumers.clear();
-    const awareness = sessionClient._provider.awareness;
+    const awareness = sessionClient._websocketProvider.awareness;
     awareness.on("change", awarenessListener);
     return () => {
       awareness.off("change", awarenessListener);
@@ -175,8 +175,8 @@ const Audio = (props: Props) => {
   const onProduceClick = async () => {
     setProducing(true);
     startAudioContext();
-    const awareness = sessionClient._provider.awareness;
-    const peerId = sessionClient._provider.room.peerId;
+    const awareness = sessionClient._websocketProvider.awareness;
+    const peerId = sessionClient._websocketProvider.room.peerId;
     const constraints = {
       autoGainControl: false,
       echoCancellation: false,
@@ -224,8 +224,8 @@ const Audio = (props: Props) => {
   const onConsumeClick = async (clientID) => {
     setConsuming(true);
     startAudioContext();
-    const awareness = sessionClient._provider.awareness;
-    const peerId = sessionClient._provider.room.peerId;
+    const awareness = sessionClient._websocketProvider.awareness;
+    const peerId = sessionClient._websocketProvider.room.peerId;
     const peer = peers.get(clientID);
 
     // make producer aware that we want his stream
@@ -235,7 +235,7 @@ const Audio = (props: Props) => {
       producer: false,
       requestedPeerId: peer.peerId,
     });
-    sessionClient._provider.room.webrtcConns.forEach((conn) => {
+    sessionClient._websocketProvider.room.webrtcConns.forEach((conn) => {
       if (conn.remotePeerId === peer.peerId)
         conn.peer.on("stream", handleOnStream);
     });
@@ -243,8 +243,8 @@ const Audio = (props: Props) => {
 
   const onStopProducingClick = () => {
     setProducing(false);
-    const awareness = sessionClient._provider.awareness;
-    const peerId = sessionClient._provider.room.peerId;
+    const awareness = sessionClient._websocketProvider.awareness;
+    const peerId = sessionClient._websocketProvider.room.peerId;
     // make everyone aware that we dont stream anymore
     awareness.setLocalStateField("streaming", {
       peerId,
@@ -256,8 +256,8 @@ const Audio = (props: Props) => {
 
   const onStopConsumingClick = () => {
     setConsuming(false);
-    const awareness = sessionClient._provider.awareness;
-    const peerId = sessionClient._provider.room.peerId;
+    const awareness = sessionClient._websocketProvider.awareness;
+    const peerId = sessionClient._websocketProvider.room.peerId;
     // make producer aware that we dont want his stream anymore
     awareness.setLocalStateField("streaming", {
       peerId,
