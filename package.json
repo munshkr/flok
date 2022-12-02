@@ -1,0 +1,25 @@
+{
+  "name": "flok",
+  "version": "2.0.0",
+  "description": "Web-based P2P collaborative editor for live coding music and graphics",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/munshkr/flok.git"
+  },
+  "keywords": [
+    "codemirror",
+    "webrtc",
+    "live-coding",
+    "collaborative-editing"
+  ],
+  "author": "Damián Silvani <munshkr@gmail.com>",
+  "license": "GPL-3.0+",
+  "bugs": {
+    "url": "https://github.com/munshkr/flok/issues"
+  },
+  "homepage": "https://github.com/munshkr/flok#readme"
+}
