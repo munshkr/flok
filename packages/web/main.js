@@ -1,23 +1,54 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import { setupCounter } from './counter.js'
+/* eslint-env browser */
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+import * as Y from 'yjs'
+import { yCollab, yUndoManagerKeymap } from 'y-codemirror.next'
+import { WebrtcProvider } from 'y-webrtc'
 
-setupCounter(document.querySelector('#counter'))
+import { EditorView, basicSetup } from 'codemirror'
+import { keymap } from '@codemirror/view'
+import { javascript } from '@codemirror/lang-javascript'
+import { oneDark } from '@codemirror/theme-one-dark'
+
+import * as random from 'lib0/random'
+import { EditorState } from '@codemirror/state'
+
+export const usercolors = [
+  { color: '#30bced', light: '#30bced33' },
+  { color: '#6eeb83', light: '#6eeb8333' },
+  { color: '#ffbc42', light: '#ffbc4233' },
+  { color: '#ecd444', light: '#ecd44433' },
+  { color: '#ee6352', light: '#ee635233' },
+  { color: '#9ac2c9', light: '#9ac2c933' },
+  { color: '#8acb88', light: '#8acb8833' },
+  { color: '#1be7ff', light: '#1be7ff33' }
+]
+
+export const userColor = usercolors[random.uint32() % usercolors.length]
+
+const ydoc = new Y.Doc()
+const provider = new WebrtcProvider('codemirror6-demo-room', ydoc)
+const ytext = ydoc.getText('codemirror')
+
+provider.awareness.setLocalStateField('user', {
+  name: 'Anonymous ' + Math.floor(Math.random() * 100),
+  color: userColor.color,
+  colorLight: userColor.light
+})
+
+const state = EditorState.create({
+  doc: ytext.toString(),
+  extensions: [
+    keymap.of([
+      ...yUndoManagerKeymap
+    ]),
+    basicSetup,
+    javascript(),
+    EditorView.lineWrapping,
+    yCollab(ytext, provider.awareness),
+    oneDark
+  ]
+})
+
+const view = new EditorView({ state, parent: (document.querySelector('#editor')) })
+
+window.example = { provider, ydoc, ytext, view }
