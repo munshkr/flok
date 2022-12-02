@@ -5,6 +5,26 @@ Web-based P2P collaborative editor for live coding music and graphics
 **NOTE: This branch is for the next version of Flok (v2.0). Work in progress**
 
 
+## Development
+
+```
+npm i
+```
+
+Then, to run web server:
+
+```
+cd packages/web
+npm run dev
+```
+
+To build production build:
+
+```
+npm run build
+```
+
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at the [issues
