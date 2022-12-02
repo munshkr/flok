@@ -1,0 +1,13 @@
+{
+  "name": "@flok/repl",
+  "description": "REPL client for Flok",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Damián Silvani <munshkr@gmail.com>",
+  "license": "GPL-3.0+",
+  "dependencies": {
+    "@flok/core": "*"
+  }
+}
