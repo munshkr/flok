@@ -1,13 +1,6 @@
 {
   "name": "flok",
-  "version": "2.0.0",
   "description": "Web-based P2P collaborative editor for live coding music and graphics",
-  "main": "index.js",
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/munshkr/flok.git"
@@ -15,6 +8,7 @@
   "keywords": [
     "codemirror",
     "webrtc",
+    "websockets",
     "live-coding",
     "collaborative-editing"
   ],
@@ -25,6 +19,9 @@
   },
   "homepage": "https://github.com/munshkr/flok#readme",
   "devDependencies": {
-    "vite": "^3.2.3"
-  }
+    "lerna": "^6.1.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

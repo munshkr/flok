@@ -1,0 +1,15 @@
+{
+  "name": "@flok/web",
+  "description": "Web server for Flok",
+  "main": "main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "author": "Damián Silvani <munshkr@gmail.com>",
+  "license": "GPL-3.0+",
+  "devDependencies": {
+    "vite": "^3.2.3"
+  }
+}
