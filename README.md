@@ -68,7 +68,6 @@ security problem.
 This is a list of known public servers (up-to-date):
 
 * [flok.clic.cf](https://flok.clic.cf)
-* [flok-hub.herokuapp.com](https://flok-hub.herokuapp.com)
 
 #### Create a session
 
