@@ -2,7 +2,10 @@
 
 import * as Y from 'yjs'
 import { yCollab, yUndoManagerKeymap } from 'y-codemirror.next'
+import { IndexeddbPersistence } from 'y-indexeddb'
 import { WebrtcProvider } from 'y-webrtc'
+import { WebsocketProvider } from 'y-websocket'
+import * as awarenessProtocol from 'y-protocols/awareness.js'
 
 import { EditorView, basicSetup } from 'codemirror'
 import { keymap } from '@codemirror/view'
@@ -26,14 +29,26 @@ export const usercolors = [
 export const userColor = usercolors[random.uint32() % usercolors.length]
 
 const ydoc = new Y.Doc()
-const provider = new WebrtcProvider('codemirror6-demo-room', ydoc)
-const ytext = ydoc.getText('codemirror')
 
-provider.awareness.setLocalStateField('user', {
+const awareness = new awarenessProtocol.Awareness(ydoc)
+awareness.setLocalStateField('user', {
   name: 'Anonymous ' + Math.floor(Math.random() * 100),
   color: userColor.color,
   colorLight: userColor.light
 })
+
+const idbProvider = new IndexeddbPersistence('flok-room', ydoc)
+idbProvider.on('synced', () => {
+  console.log('Data from IndexexDB loaded')
+})
+
+const webrtcProvider = new WebrtcProvider('flok-room', ydoc, { awareness })
+const wsProvider = new WebsocketProvider('wss://demos.yjs.dev', 'flok-room', ydoc, { awareness })
+wsProvider.on('status', event => {
+  console.log(event.status) // logs "connected" or "disconnected"
+})
+
+const ytext = ydoc.getText('codemirror')
 
 const state = EditorState.create({
   doc: ytext.toString(),
@@ -44,11 +59,9 @@ const state = EditorState.create({
     basicSetup,
     javascript(),
     EditorView.lineWrapping,
-    yCollab(ytext, provider.awareness),
+    yCollab(ytext, awareness),
     oneDark
   ]
 })
 
 const view = new EditorView({ state, parent: (document.querySelector('#editor')) })
-
-window.example = { provider, ydoc, ytext, view }

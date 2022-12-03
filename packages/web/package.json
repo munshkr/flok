@@ -21,7 +21,9 @@
     "@flok/core": "*",
     "codemirror": "^6.0.1",
     "y-codemirror.next": "^0.3.2",
+    "y-indexeddb": "^9.0.9",
     "y-webrtc": "^10.2.3",
+    "y-websocket": "^1.4.5",
     "yjs": "^13.5.43"
   }
 }
