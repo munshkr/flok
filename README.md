@@ -2,7 +2,8 @@
 
 Web-based P2P collaborative editor for live coding music and graphics
 
-**NOTE: This branch is for the next version of Flok (v2.0). Work in progress**
+**NOTE: This branch is for the next major version of Flok v1.0, which is meant
+to be a full rewrite/refactor. Work in progress**
 
 
 ## Development
