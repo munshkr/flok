@@ -18,14 +18,12 @@
     "publish-current": "yarn publish --non-interactive",
     "test": "exit 0"
   },
-  "bin": {
-    "flok-repl": "./bin/flok-repl.js"
-  },
+  "bin": "./bin/flok-repl.js",
   "dependencies": {
     "command-exists": "^1.2.8",
     "commander": "^2.20.0",
     "dotenv": "^8.2.0",
-    "flok-core": "^0.4.10",
+    "flok-core": "^1.0.0",
     "glob": "^7.1.6",
     "osc": "^2.4.0"
   },
