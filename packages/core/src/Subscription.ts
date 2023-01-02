@@ -1,12 +1,12 @@
 import { Map } from 'immutable';
 import { v1 as uuidv1 } from 'uuid';
 
-type SubscriptionType = {
+interface SubscriptionType {
   id: string;
   topic: string;
   clientId: string;
   type: string;
-};
+}
 
 class Subscription {
   subscriptions: Map<string, SubscriptionType>;

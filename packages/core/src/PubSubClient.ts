@@ -1,17 +1,17 @@
 import { EventEmitter } from 'fbemitter';
 import WebSocket from 'isomorphic-ws';
 
-type QueueItem = {
+interface QueueItem {
   type: string;
   payload: any;
-};
+}
 
-type PubSubClientContext = {
+interface PubSubClientContext {
   connect: boolean;
   reconnect: boolean;
   onMeMessage?: Function;
   onClose?: Function;
-};
+}
 
 class PubSubClient {
   emitter: EventEmitter;
@@ -60,8 +60,8 @@ class PubSubClient {
     this._url = url;
     this._options = options;
 
-    this.onMeMessage = options.onMeMessage || (() => { });
-    this.onClose = options.onClose || (() => { });
+    this.onMeMessage = options.onMeMessage || (() => {});
+    this.onClose = options.onClose || (() => {});
 
     if (this._options && this._options.connect) {
       // auto connect
@@ -251,12 +251,12 @@ class PubSubClient {
     try {
       // Try to connect allowing unauthorized connections
       this._ws = new WebSocket(this._url, {
-        rejectUnauthorized: false
+        rejectUnauthorized: false,
       });
     } catch (err) {
       // In browser, WebSockets class does not support extra options, so create
       // again WebSocket without options object.
-      if (err.name === "SyntaxError") {
+      if (err.name === 'SyntaxError') {
         this._ws = new WebSocket(this._url);
       } else {
         throw err;

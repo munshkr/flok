@@ -1,7 +1,7 @@
 {
   "name": "flok-core",
   "description": "Core package of flok, contains Pub/Sub functionality and CLI-based client",
-  "version": "0.4.10",
+  "version": "1.0.0",
   "main": "./lib/index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
@@ -22,17 +22,17 @@
     "immutable": "^4.0.0-rc.12",
     "isomorphic-ws": "^4.0.1",
     "lodash": "^4.17.15",
-    "uuid": "^8.3.2",
-    "ws": "^7.2.1"
+    "uuid": "^9.0.0",
+    "ws": "^8.11.0"
   },
   "devDependencies": {
     "@types/fbemitter": "^2.0.32",
     "@types/lodash": "^4.14.149",
-    "@types/uuid": "^3.4.7",
-    "@types/ws": "^7.2.1",
-    "prettier": "^1.19.1",
+    "@types/uuid": "^9.0.0",
+    "@types/ws": "^8.5.4",
+    "prettier": "2.8.1",
     "tslint": "^6.0.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.7.5"
+    "typescript": "^4.9"
   }
 }

@@ -4,12 +4,12 @@ import { v1 as uuidv1 } from 'uuid';
 import Subscription from './Subscription';
 import WebSocket from 'isomorphic-ws';
 
-type ClientType = {
+interface ClientType {
   id: string;
   ws: WebSocket;
   userId: string;
   subscriptions: string[];
-};
+}
 
 class PubSub {
   wss: WebSocket;
@@ -46,9 +46,7 @@ class PubSub {
   }
 
   load() {
-    const { wss } = this;
-
-    wss.on('connection', ws => {
+    this.wss.on('connection', ws => {
       const id = this.autoId();
 
       const client: ClientType = {
@@ -225,14 +223,11 @@ class PubSub {
    * @returns {*}
    */
   stringToJson(message: string): any {
-    let res;
     try {
-      res = JSON.parse(message);
+      return JSON.parse(message);
     } catch (e) {
       console.log(e);
     }
-
-    return res;
   }
 
   /**
