@@ -67,7 +67,7 @@ security problem.
 
 This is a list of known public servers (up-to-date):
 
-* [flok.clic.cf](https://flok.clic.cf)
+* [flok.cc](https://flok.cc)
 
 #### Create a session
 
