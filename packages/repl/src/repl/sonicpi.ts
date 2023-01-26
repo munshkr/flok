@@ -5,20 +5,24 @@ import * as fs from 'fs';
 import { UDPPort } from 'osc';
 
 const DEFAULT_PORT = 4557;
-const PORT_LOG_REGEX = new RegExp(/Listen port:\s+(\d+)/);
+const PORT_LOG_REGEX = new RegExp(/Opening UDP Server to listen to GUI on port:\s+(\d+)/);
+const TOKEN_LOG_REGEX = new RegExp(/Token:\s+(.+)/)
 
 class SonicPiREPL extends BaseREPL {
   udpPort: UDPPort;
   started: boolean;
   portReady: boolean;
   port: number;
+  token: string;
 
   constructor(ctx: BaseREPLContext) {
     super(ctx);
 
     this.started = false;
     this.portReady = false;
-    this.port = this.findPortFromLogs()
+    const { port, token } = this.findPortAndTokenFromLogs();
+    this.port = port
+    this.token = token;
 
     console.log("SonicPi OSC port:", this.port);
   }
@@ -59,6 +63,10 @@ class SonicPiREPL extends BaseREPL {
       address: '/run-code',
       args: [
         {
+          type: 'i',
+          value: this.token,
+        },
+        {
           type: 's',
           value: newBody,
         },
@@ -71,23 +79,23 @@ class SonicPiREPL extends BaseREPL {
   }
 
   get logPath(): string {
-    return path.join(os.homedir(), ".sonic-pi", "log", "server-output.log")
+    return path.join(os.homedir(), ".sonic-pi", "log", "spider.log")
   }
 
-  findPortFromLogs() {
+  findPortAndTokenFromLogs(): {token: string, port: number} {
     let lines: Array<string>;
-    try {
-      lines = fs.readFileSync(this.logPath, 'utf-8').split("\n");
-    } catch {
-      console.warn(`Failed to read SonicPi logs at ${this.logPath}.`)
-      return DEFAULT_PORT;
-    }
+    lines = fs.readFileSync(this.logPath, 'utf-8').split("\n");
 
     let port;
-    lines.forEach(line => {
-      const match = line.match(PORT_LOG_REGEX);
-      if (match) {
-        port = parseInt(match[1]);
+    let token;
+    lines.forEach((line, i) => {
+      const portMatch = line.match(PORT_LOG_REGEX);
+      const tokenMatch = line.match(TOKEN_LOG_REGEX);
+      if (portMatch) {
+        port = parseInt(portMatch[1]);
+      }
+      if (tokenMatch) {
+        token = tokenMatch[1];
       }
     })
 
@@ -96,7 +104,7 @@ class SonicPiREPL extends BaseREPL {
       port = DEFAULT_PORT;
     }
 
-    return port;
+    return { port, token };
   }
 }
 
