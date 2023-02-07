@@ -9,7 +9,7 @@ const packageConfig = JSON.parse(
 );
 
 module.exports = {
-  swcMinify: true,
+  swcMinify: false,
 
   publicRuntimeConfig: {
     flokVersion: packageConfig.version,
