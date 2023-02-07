@@ -1,11 +1,11 @@
 import { repl, controls, evalScope } from "@strudel.cycles/core";
+import { transpiler } from "@strudel.cycles/transpiler";
 import {
   getAudioContext,
   initAudioOnFirstClick,
   webaudioOutput,
   samples,
-} from '@strudel.cycles/webaudio';
-import { transpiler } from '@strudel.cycles/transpiler';
+} from "@strudel.cycles/webaudio";
 
 export type ErrorHandler = (error: string) => void;
 
@@ -29,22 +29,23 @@ class StrudelWrapper {
       import("@strudel.cycles/osc"),
       import("@strudel.cycles/serial"),
       import("@strudel.cycles/tonal"),
-      import("@strudel.cycles/tone"),
       import("@strudel.cycles/webaudio"),
-      import("@strudel.cycles/webdirt"),
       import("@strudel.cycles/xen"),
       controls
     );
-    await samples('https://strudel.tidalcycles.org/EmuSP12.json', 'https://strudel.tidalcycles.org/EmuSP12/')
+    await samples(
+      "https://strudel.tidalcycles.org/EmuSP12.json",
+      "https://strudel.tidalcycles.org/EmuSP12/"
+    );
   }
 
   async initialize() {
     this._repl = repl({
       defaultOutput: webaudioOutput,
-      afterEval: ()=>{},
-      beforeEval: ()=>{},
-      onSchedulerError: e=>this.onError(e.toString()),
-      onEvalError: e=>this.onError(e.toString()),
+      afterEval: () => {},
+      beforeEval: () => {},
+      onSchedulerError: (e) => this.onError(e.toString()),
+      onEvalError: (e) => this.onError(e.toString()),
       getTime: () => getAudioContext().currentTime,
       transpiler,
     });

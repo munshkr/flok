@@ -12,7 +12,6 @@ import { IceServerType } from "../../lib/SessionClient";
 import HydraWrapper from "../../lib/HydraWrapper";
 import HydraCanvas from "../../components/HydraCanvas";
 import HydraError from "../../components/HydraError";
-import StrudelWrapper from "../../lib/StrudelWrapper";
 import TextInput from "../../components/TextInput";
 import Button from "../../components/Button";
 import Checkbox from "../../components/Checkbox";
@@ -289,7 +288,7 @@ interface State {
 class SessionPage extends Component<Props, State> {
   hydraCanvas: React.RefObject<HTMLCanvasElement>;
   hydra: HydraWrapper;
-  strudel: StrudelWrapper;
+  strudel: any;
 
   state = {
     loading: true,
@@ -343,6 +342,7 @@ class SessionPage extends Component<Props, State> {
     // Initialize Strudel
     if (layoutList.includes("strudel")) {
       console.log("Create StrudelWrapper and import Strudel");
+      const { default: StrudelWrapper } = await import("../../lib/StrudelWrapper")
       this.strudel = new StrudelWrapper(this.handleHydraError);
       await this.strudel.importModules();
     }
