@@ -35,9 +35,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
-    "@fortawesome/fontawesome-svg-core": "^1.2.36",
-    "@fortawesome/free-solid-svg-icons": "^5.15.4",
-    "@fortawesome/react-fontawesome": "^0.1.15",
+    "@fortawesome/fontawesome-svg-core": "^6.3.0",
+    "@fortawesome/free-solid-svg-icons": "^6.3.0",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@teamwork/websocket-json-stream": "^2.0.0",
     "@types/react": "^16.9.19",
     "codemirror": "^5.51.0",
