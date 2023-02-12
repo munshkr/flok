@@ -4,5 +4,6 @@ declare global {
     src: Function;
     H: Function;
     P5: Function;
+    global: Window;
   }
 }

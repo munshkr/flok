@@ -329,7 +329,7 @@ class SessionPage extends Component<Props, State> {
     this.hydra = null;
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     if (isDevelopment) {
       console.log("*** DEVELOPMENT MODE ***");
     }
@@ -339,10 +339,8 @@ class SessionPage extends Component<Props, State> {
 
     if (!noHydra) {
       if (hasWebGl) {
-        this.hydra = new HydraWrapper(
-          this.hydraCanvas.current,
-          this.handleHydraError
-        );
+        this.hydra = new HydraWrapper(this.handleHydraError);
+        await this.hydra.initialize(this.hydraCanvas.current);
         console.log("Hydra wrapper created");
       } else {
         console.warn("WebGL is disabled or not supported in this browser");

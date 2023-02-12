@@ -2,7 +2,7 @@ import p5lib from "p5";
 
 // require("p5/lib/addons/p5.dom");
 
-class P5 extends p5lib {
+export default class P5 extends p5lib {
   constructor({
     width = window.innerWidth,
     height = window.innerHeight,
@@ -14,7 +14,7 @@ class P5 extends p5lib {
         p.createCanvas(width, height, p[mode]);
       };
       //    p.setup = () => { p.createCanvas() }
-      p.draw = () => {};
+      p.draw = () => { };
     }, "hydra-ui");
     this.width = width;
     this.height = height;
@@ -40,5 +40,3 @@ class P5 extends p5lib {
     this.drawingContext.clearRect(0, 0, this.canvas.width, this.canvas.height);
   }
 }
-
-module.exports = P5;
