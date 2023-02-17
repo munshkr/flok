@@ -15,9 +15,6 @@
     "publish-all": "lerna run publish-current",
     "release": "yarn new-version && yarn publish-all"
   },
-  "engines": {
-    "yarn": "^3.0.0"
-  },
   "husky": {
     "hooks": {}
   },
