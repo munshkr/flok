@@ -17,6 +17,7 @@ Web-based P2P collaborative editor for live coding music and graphics
   - [SuperCollider](https://supercollider.github.io/) (sclang)
   - [FoxDot](https://foxdot.org/)
   - [Mercury](#mercury)
+  - [Sardine](https://sardine.raphaelforment.fr)
   - [SonicPi](https://sonic-pi.net/) (*not implemented yet*)
   - ... any interpreter with a REPL (Python, Ruby, etc.)
 * Web Plugins, for languages embedded in editor:
@@ -168,6 +169,17 @@ object, like this:
 
 * `ghci`: Use a specific Ghci command instead of plain `ghci`.
   This overrides `useStack` option, if used too.
+
+#### Sardine
+
+Use `flok-repl` with the `-t sardine` parameter. In order to make it work, 
+the `fishery` REPL must be included to your PATH. It should already be the
+case if you followed a regular install.
+
+##### Extra options
+
+* `python`: Path to your custom `fishery` Python REPL. Use this if you need
+  to target a specific install of Sardine (Python version, different path, etc).
 
 #### FoxDot
 
