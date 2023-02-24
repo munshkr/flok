@@ -14,6 +14,7 @@ const replClasses = {
   remote_sclang: RemoteSclangREPL,
   foxdot: FoxDotREPL,
   mercury: MercuryREPL,
+  sardine: SardineREPL,
 };
 
 function createREPLFor(repl: string, ctx: CommandREPLContext) {

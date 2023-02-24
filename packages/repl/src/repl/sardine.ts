@@ -1,11 +1,11 @@
 import { CommandREPL, CommandREPLContext } from '../repl';
 
-class FoxDotREPL extends CommandREPL {
+class SardineREPL extends CommandREPL {
   constructor(ctx: CommandREPLContext) {
     super(ctx);
 
     this.command = this.commandPath();
-    this.args = ['-i', '-c', '"from FoxDot import *\nload_startup_file()"'];
+    this.args = [];
   }
 
   // eslint-disable-next-line class-methods-use-this
@@ -18,8 +18,8 @@ class FoxDotREPL extends CommandREPL {
 
   commandPath(): string {
     const { python } = this.extraOptions;
-    return python || 'python';
+    return python || 'fishery';
   }
 }
 
-export default FoxDotREPL;
+export default SardineREPL;
