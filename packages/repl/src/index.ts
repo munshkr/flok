@@ -3,6 +3,7 @@ import TidalREPL from './repl/tidal';
 import SclangREPL, { RemoteSclangREPL } from './repl/sclang';
 import FoxDotREPL from './repl/foxdot';
 import MercuryREPL from './repl/mercury';
+import SardineREPL from './repl/sardine';
 
 const path = require("path");
 const fs = require("fs");
