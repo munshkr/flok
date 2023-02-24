@@ -8,14 +8,6 @@ class SardineREPL extends CommandREPL {
     this.args = [];
   }
 
-  // eslint-disable-next-line class-methods-use-this
-  prepare(body: string): string {
-    return `execute\(\"${body
-      .replace(/(\n)/gm, '\\n')
-      .replace(/(\")/gm, '\\"')
-      .trim()}\"\)\n`;
-  }
-
   commandPath(): string {
     const { python } = this.extraOptions;
     return python || 'fishery';
