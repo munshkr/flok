@@ -58,7 +58,7 @@ abstract class BaseREPL {
     // Subscribe to pub sub
     const { target, session } = this;
     this.pubSub.subscribe(`session:${session}:target:${target}:in`, (message: Message) => {
-      const { body } = message;
+      const { body = '' } = message;
       this.write(body);
     });
   }
