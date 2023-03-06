@@ -1,4 +1,4 @@
-import { EventEmitter } from "fbemitter";
+import EventEmitter from "events";
 import WebSocket from "isomorphic-ws";
 
 interface QueueItem {
@@ -98,8 +98,8 @@ class PubSubClient {
    * @param topic
    * @param cb
    */
-  subscribe(topic: string, cb: Function) {
-    const listener = this.emitter.addListener(`subscribe_topic_${topic}`, cb);
+  subscribe(topic: string, cb: (...args: any[]) => void) {
+    const listener = this.emitter.on(`subscribe_topic_${topic}`, cb);
     // add listener to array
     this._listeners.push(listener);
 

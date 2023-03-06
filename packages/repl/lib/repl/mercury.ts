@@ -1,6 +1,7 @@
 import { BaseREPL, BaseREPLContext } from "../repl.js";
-// import * as os from 'os';
-import { UDPPort } from "osc";
+import osc from "osc";
+
+const { UDPPort } = osc;
 
 // The Mercury REPL
 // $ flok-repl -t mercury
@@ -15,7 +16,7 @@ import { UDPPort } from "osc";
 // So always execute full page instead of per-line
 //
 class MercuryREPL extends BaseREPL {
-  udpPort: UDPPort;
+  udpPort: typeof UDPPort;
   port: number;
   started: boolean;
   portReady: boolean;

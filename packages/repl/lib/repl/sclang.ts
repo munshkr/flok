@@ -4,8 +4,10 @@ import {
   BaseREPLContext,
   CommandREPLContext,
 } from "../repl.js";
-import * as os from "os";
-import { UDPPort } from "osc";
+import os from "os";
+import osc from "osc";
+
+const { UDPPort } = osc;
 
 class SclangREPL extends CommandREPL {
   constructor(ctx: CommandREPLContext) {
@@ -41,7 +43,7 @@ class SclangREPL extends CommandREPL {
 }
 
 class RemoteSclangREPL extends BaseREPL {
-  udpPort: UDPPort;
+  udpPort: typeof UDPPort;
   port: number;
   started: boolean;
   portReady: boolean;

@@ -10,8 +10,8 @@ import FoxDotREPL from "./repl/foxdot.js";
 import MercuryREPL from "./repl/mercury.js";
 import SardineREPL from "./repl/sardine.js";
 
-const path = require("path");
-const fs = require("fs");
+import path from "path";
+import fs from "fs";
 
 const replClasses = {
   default: CommandREPL,
@@ -37,7 +37,8 @@ function readPackageMetadata() {
     __dirname,
     path.join("..", "package.json")
   );
-  const body = JSON.parse(fs.readFileSync(packageJsonPath));
+  const rawBody = fs.readFileSync(packageJsonPath);
+  const body = JSON.parse(rawBody.toString());
   return body["flok"];
 }
 

@@ -2,24 +2,24 @@
 import dotenv from "dotenv";
 import process from "process";
 import fs from "fs";
-import { program } from "commander/esm.mjs";
+import { Command } from "commander";
 import { CommandREPL, replClasses } from "./index.js";
 
 dotenv.config();
-
-const packageInfo = require("../package.json");
 
 const readConfig = (path) => {
   const raw = fs.readFileSync(path);
   return JSON.parse(raw.toString());
 };
 
+const packageInfo = readConfig("package.json");
 const knownTypes = Object.keys(replClasses).filter(
   (repl) => repl !== "default"
 );
+const program = new Command();
 
+program.version(packageInfo.version);
 program
-  .version(packageInfo.version)
   .option("-t, --type <type>", "Type of REPL", "command")
   .option("-H, --hub <url>", "Hub address", "ws://localhost:3000")
   .option("-s, --session-name <name>", "Session name", "default")
@@ -38,8 +38,10 @@ program
   .option("--extra <options>", "Extra options in JSON")
   .parse(process.argv);
 
+const opts = program.opts();
+
 // Try to read config file (if --config was provided, or FLOK_CONFIG env var is defined)
-const configPath = program.config || process.env.FLOK_CONFIG;
+const configPath = opts.config || process.env.FLOK_CONFIG;
 const config = configPath ? readConfig(configPath) : {};
 
 // Override config with command line options
@@ -54,7 +56,7 @@ const options = [
 ];
 for (let i = 0; i < options.length; i++) {
   const opt = options[i];
-  config[opt] = config[opt] || program[opt];
+  config[opt] = config[opt] || opts[opt];
 }
 
 const { type, hub, sessionName, targetName, path, nickname, notifyToAll } =
@@ -65,7 +67,7 @@ const cmd = program.args[0];
 const args = program.args.slice(1);
 
 // If asked to list type, print and exit
-if (program.listTypes) {
+if (opts.listTypes) {
   console.log("Known types:", knownTypes);
   process.exit(0);
 }
@@ -89,7 +91,7 @@ if (!useDefaultREPL && !knownTypes.includes(type)) {
 const target = targetName || (useDefaultREPL ? "default" : type);
 
 // Extra options
-const { extra } = program;
+const { extra } = opts;
 let extraOptions = config.extra || {};
 if (extra) {
   try {
