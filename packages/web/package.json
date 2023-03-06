@@ -6,21 +6,24 @@
   "main": "main.js",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
     "signaling-server": "PORT=4444 npx y-webrtc",
     "ws-server": "PORT=4445 npx y-websocket"
   },
   "devDependencies": {
-    "vite": "^3.2.3"
+    "@preact/preset-vite": "^2.5.0",
+    "typescript": "^4.9.3",
+    "vite": "^4.1.0"
   },
   "dependencies": {
+    "preact": "^10.11.3",
+    "@flok/core": "*",
     "@codemirror/commands": "^6.1.2",
     "@codemirror/lang-javascript": "^6.1.1",
     "@codemirror/state": "^6.1.4",
     "@codemirror/theme-one-dark": "^6.1.0",
     "@codemirror/view": "^6.6.0",
-    "@flok/core": "*",
     "codemirror": "^6.0.1",
     "y-codemirror.next": "^0.3.2",
     "y-indexeddb": "^9.0.9",
