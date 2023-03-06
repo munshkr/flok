@@ -42,8 +42,9 @@ idbProvider.on('synced', () => {
   console.log('Data from IndexexDB loaded')
 })
 
-const webrtcProvider = new WebrtcProvider('flok-room', ydoc, { awareness })
-const wsProvider = new WebsocketProvider('wss://demos.yjs.dev', 'flok-room', ydoc, { awareness })
+const webrtcProvider = new WebrtcProvider('flok-room', ydoc, { awareness, signaling: ['ws://localhost:4444'] })
+
+const wsProvider = new WebsocketProvider('ws://localhost:4445', 'flok-room', ydoc, { awareness })
 wsProvider.on('status', event => {
   console.log(event.status) // logs "connected" or "disconnected"
 })

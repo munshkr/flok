@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "signaling-server": "PORT=4444 npx y-webrtc",
+    "ws-server": "PORT=4445 npx y-websocket"
   },
   "devDependencies": {
     "vite": "^3.2.3"
