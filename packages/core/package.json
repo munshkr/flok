@@ -1,5 +1,6 @@
 {
   "name": "@flok/core",
+  "version": "1.0.0",
   "description": "Core package of flok, contains Pub/Sub functionality and CLI-based client",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
