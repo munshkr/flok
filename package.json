@@ -1,6 +1,7 @@
 {
   "name": "flok",
   "description": "Web-based P2P collaborative editor for live coding music and graphics",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/munshkr/flok.git"
