@@ -1,0 +1,35 @@
+{
+  "name": "@flok/server",
+  "version": "1.0.0",
+  "description": "Server package of flok, contains WebSocket, WebRTC signaling and http servers",
+  "author": "Damián Silvani <munshkr@gmail.com>",
+  "license": "GPL-3.0+",
+  "type": "module",
+  "files": [
+    "dist",
+    "cert"
+  ],
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@flok/core": "*",
+    "express": "^4.18.2",
+    "lib0": "^0.2.63",
+    "y-websocket": "^1.4.6"
+  },
+  "devDependencies": {
+    "@types/node": "^18.14.6",
+    "typescript": "^4.9.4"
+  }
+}
