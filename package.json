@@ -1,5 +1,5 @@
 {
-  "name": "flok",
+  "name": "root",
   "description": "Web-based P2P collaborative editor for live coding music and graphics",
   "private": true,
   "repository": {
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/munshkr/flok#readme",
   "devDependencies": {
-    "lerna": "^6.1.0"
+    "lerna": "^6.5.1"
   },
   "workspaces": [
     "packages/*"
