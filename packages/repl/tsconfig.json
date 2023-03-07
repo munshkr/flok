@@ -10,5 +10,5 @@
     "allowSyntheticDefaultImports": true,
     "outDir": "dist"
   },
-  "include": ["lib"]
+  "include": ["lib", "bin/command.ts"]
 }

@@ -1,9 +1,10 @@
-#!/usr/bin/env node
 import dotenv from "dotenv";
 import process from "process";
+import path from "path";
 import fs from "fs";
 import { Command } from "commander";
-import { CommandREPL, replClasses } from "./index.js";
+import { CommandREPL, replClasses } from "../lib/index.js";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -12,7 +13,9 @@ const readConfig = (path) => {
   return JSON.parse(raw.toString());
 };
 
-const packageInfo = readConfig("package.json");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const packageInfo = readConfig(path.resolve(__dirname, "../../package.json"));
 const knownTypes = Object.keys(replClasses).filter(
   (repl) => repl !== "default"
 );
@@ -59,8 +62,15 @@ for (let i = 0; i < options.length; i++) {
   config[opt] = config[opt] || opts[opt];
 }
 
-const { type, hub, sessionName, targetName, path, nickname, notifyToAll } =
-  config;
+const {
+  type,
+  hub,
+  sessionName,
+  targetName,
+  path: pubSubPath,
+  nickname,
+  notifyToAll,
+} = config;
 
 // Prepare command and arguments
 const cmd = program.args[0];
@@ -123,7 +133,7 @@ if (useDefaultREPL) {
     target,
     session: sessionName,
     hub,
-    pubSubPath: path,
+    pubSubPath,
     nickname,
     notifyToAll,
     extraOptions,
@@ -134,7 +144,7 @@ if (useDefaultREPL) {
     target,
     session: sessionName,
     hub,
-    pubSubPath: path,
+    pubSubPath,
     nickname,
     notifyToAll,
     extraOptions,
