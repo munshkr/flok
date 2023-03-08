@@ -1,13 +1,14 @@
-import express from "express";
 import url from "url";
 import path from "path";
 import fs from "fs";
 import WebSocket from "ws";
 import process from "process";
+import https from "https";
+import connect from "connect";
 import { map } from "lib0";
-
 import { PubSub } from "@flok/core";
-import { setupWSConnection } from "y-websocket";
+import { setupWSConnection } from "./y-websocket-server.js";
+import { getFileDirname } from "./utils.js";
 
 const wsReadyStateConnecting = 0;
 const wsReadyStateOpen = 1;
@@ -16,65 +17,26 @@ const wsReadyStateOpen = 1;
 
 const pingTimeout = 30000;
 
+const __dirname = getFileDirname();
 const sslCertPath = path.resolve(__dirname, "..", "cert", "localhost.crt");
 const sslKeyPath = path.resolve(__dirname, "..", "cert", "localhost.key");
-
-const createServer = (app, secure) => {
-  if (secure) {
-    return require("https").createServer(
-      {
-        key: fs.readFileSync(
-          process.env.SSL_KEY ? process.env.SSL_KEY : sslKeyPath,
-          "utf8"
-        ),
-        cert: fs.readFileSync(
-          process.env.SSL_CERT ? process.env.SSL_CERT : sslCertPath,
-          "utf8"
-        ),
-      },
-      app
-    );
-  }
-
-  return require("http").createServer(app);
-};
-
-/**
- * @param {any} conn
- * @param {object} message
- */
-const send = (conn, message) => {
-  if (
-    conn.readyState !== wsReadyStateConnecting &&
-    conn.readyState !== wsReadyStateOpen
-  ) {
-    conn.close();
-  }
-  try {
-    conn.send(JSON.stringify(message));
-  } catch (e) {
-    conn.close();
-  }
-};
 
 export default class Server {
   host: string;
   port: number;
   isDevelopment: boolean;
   secure: boolean;
-  staticDir: string;
   started: boolean;
 
   _topics: Map<string, Set<any>>;
 
   constructor(ctx) {
-    const { host, port, isDevelopment, secure, staticDir } = ctx;
+    const { host, port, isDevelopment, secure } = ctx;
 
     this.host = host || "0.0.0.0";
-    this.port = port || 3000;
+    this.port = port || 3001;
     this.isDevelopment = isDevelopment || false;
     this.secure = secure || false;
-    this.staticDir = staticDir;
 
     this.started = false;
     this._topics = new Map();
@@ -87,12 +49,6 @@ export default class Server {
   start(cb) {
     if (this.started) return this;
 
-    const nextApp = next({
-      dev: this.isDevelopment,
-      dir: path.join(__dirname, ".."),
-    });
-    const handle = nextApp.getRequestHandler();
-
     function addClient(uuid) {
       console.log("[pubsub] Add client", uuid);
     }
@@ -101,73 +57,57 @@ export default class Server {
       console.log("[pubsub] Remove client", uuid);
     }
 
-    nextApp.prepare().then(() => {
-      const app = express();
+    const app = connect();
 
-      const wss = new WebSocket.Server({ noServer: true });
-      const docWss = new WebSocket.Server({ noServer: true });
-      const pubsubWss = new WebSocket.Server({ noServer: true });
-      const server = createServer(app, this.secure);
+    const wss = new WebSocket.Server({ noServer: true });
+    const docWss = new WebSocket.Server({ noServer: true });
+    const pubsubWss = new WebSocket.Server({ noServer: true });
 
-      server.on("upgrade", (request, socket, head) => {
-        const { pathname } = url.parse(request.url);
+    const server = createServer(app, this.secure);
 
-        if (pathname.startsWith("/signal")) {
-          wss.handleUpgrade(request, socket, head, (ws) => {
-            wss.emit("connection", ws);
-          });
-        } else if (pathname.startsWith("/doc")) {
-          docWss.handleUpgrade(request, socket, head, (ws) => {
-            docWss.emit("connection", ws);
-          });
-        } else if (pathname.startsWith("/pubsub")) {
-          pubsubWss.handleUpgrade(request, socket, head, (ws) => {
-            pubsubWss.emit("connection", ws);
-          });
-        } else if (pathname.startsWith("/_next/webpack-hmr")) {
-          nextApp.hotReloader?.onHMR(req, socket, head);
-        } else {
-          console.warn("[server] Ignoring request to path:", pathname);
-          socket.destroy();
-        }
-      });
+    server.on("upgrade", (request, socket, head) => {
+      const { pathname } = url.parse(request.url);
 
-      wss.on("connection", (conn) => this.onSignalingServerConnection(conn));
-      docWss.on("connection", (conn) => setupWSConnection);
-
-      // Prepare PubSub WebScoket server (pubsub)
-      const pubSubServer = new PubSub({
-        wss: pubsubWss,
-        onConnection: addClient,
-        onDisconnection: removeClient,
-      });
-      // eslint-disable-next-line no-param-reassign
-      app.pubsub = pubSubServer;
-
-      if (process.env.REDIRECT_HTTPS) {
-        console.log("> Going to redirect http to https");
-        const sslRedirect = require("./sslRedirect");
-        app.use(
-          sslRedirect({
-            port: process.env.NODE_ENV === "production" ? null : this.port,
-          })
-        );
+      if (pathname.startsWith("/signal")) {
+        wss.handleUpgrade(request, socket, head, (ws) => {
+          wss.emit("connection", ws);
+        });
+      } else if (pathname.startsWith("/doc")) {
+        docWss.handleUpgrade(request, socket, head, (ws) => {
+          docWss.emit("connection", ws);
+        });
+      } else if (pathname.startsWith("/pubsub")) {
+        pubsubWss.handleUpgrade(request, socket, head, (ws) => {
+          pubsubWss.emit("connection", ws);
+        });
+      } else {
+        console.warn("[server] Ignoring request to path:", pathname);
+        socket.destroy();
       }
+    });
 
-      if (this.staticDir) {
-        app.use("/static", express.static(this.staticDir));
-      }
+    wss.on("connection", (conn) => this.onSignalingServerConnection(conn));
+    docWss.on("connection", () => setupWSConnection);
 
-      // Let Next to handle everything else
-      app.get("*", (req, res) => {
-        return handle(req, res);
-      });
+    // Prepare PubSub WebScoket server (pubsub)
+    const pubSubServer = new PubSub({
+      wss: pubsubWss,
+      onConnection: addClient,
+      onDisconnection: removeClient,
+    });
 
-      server.listen(this.port, this.host, (err) => {
-        if (err) throw err;
-        console.log(`> Server listening on ${this.host}, port ${this.port}`);
-        if (cb) cb();
-      });
+    if (process.env.REDIRECT_HTTPS) {
+      console.log("> Going to redirect http to https");
+      app.use(
+        sslRedirect({
+          port: process.env.NODE_ENV === "production" ? null : this.port,
+        })
+      );
+    }
+
+    server.listen(this.port, this.host, () => {
+      console.log(`> Flok server listening on ${this.host}, port ${this.port}`);
+      if (cb) cb();
     });
 
     return this;
@@ -258,3 +198,61 @@ export default class Server {
     });
   }
 }
+
+const createServer = (app, secure) => {
+  if (secure) {
+    return https.createServer(
+      {
+        key: fs.readFileSync(
+          process.env.SSL_KEY ? process.env.SSL_KEY : sslKeyPath,
+          "utf8"
+        ),
+        cert: fs.readFileSync(
+          process.env.SSL_CERT ? process.env.SSL_CERT : sslCertPath,
+          "utf8"
+        ),
+      },
+      app
+    );
+  }
+
+  return https.createServer(app);
+};
+
+/**
+ * @param {any} conn
+ * @param {object} message
+ */
+const send = (conn, message) => {
+  if (
+    conn.readyState !== wsReadyStateConnecting &&
+    conn.readyState !== wsReadyStateOpen
+  ) {
+    conn.close();
+  }
+  try {
+    conn.send(JSON.stringify(message));
+  } catch (e) {
+    conn.close();
+  }
+};
+
+/**
+ * Force load with https on production environment
+ * https://devcenter.heroku.com/articles/http-routing#heroku-headers
+ *
+ * Based on https://www.npmjs.com/package/heroku-ssl-redirect
+ */
+const sslRedirect = ({ port, status }: { port: number; status?: number }) => {
+  status = status || 302;
+  return (req, res, next) => {
+    if (req.headers["x-forwarded-proto"] !== "https") {
+      res.redirect(
+        status,
+        `https://${req.hostname}${port ? `:${port}` : ""}${req.originalUrl}`
+      );
+    } else {
+      next();
+    }
+  };
+};
