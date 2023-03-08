@@ -9,20 +9,20 @@ to be a full rewrite/refactor. Work in progress**
 ## Development
 
 ```
-npm i
+yarn
 ```
 
 Then, to run web server:
 
 ```
 cd packages/web
-npm run dev
+yarn dev
 ```
 
 To build production build:
 
 ```
-npm run build
+yarn build
 ```
 
 
