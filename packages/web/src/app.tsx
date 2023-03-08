@@ -4,7 +4,7 @@ import { yCollab, yUndoManagerKeymap } from 'y-codemirror.next'
 import { IndexeddbPersistence } from 'y-indexeddb'
 import { WebrtcProvider } from 'y-webrtc'
 import { WebsocketProvider } from 'y-websocket'
-import * as awarenessProtocol from 'y-protocols/awareness.js'
+import { Awareness } from 'y-protocols/awareness.js'
 
 import { EditorView, basicSetup } from 'codemirror'
 import { keymap } from '@codemirror/view'
@@ -36,7 +36,7 @@ export function App() {
 
     const ydoc = new Y.Doc()
 
-    const awareness = new awarenessProtocol.Awareness(ydoc)
+    const awareness = new Awareness(ydoc)
     awareness.setLocalStateField('user', {
       name: 'Anonymous ' + Math.floor(Math.random() * 100),
       color: userColor.color,
@@ -49,11 +49,16 @@ export function App() {
     })
 
     const webrtcProvider = new WebrtcProvider('flok-room', ydoc, {
-      awareness, signaling: ['ws://localhost:4444']
+      awareness,
+      signaling: ['ws://localhost:4444'],
+      password: null,
+      maxConns: null,
+      filterBcConns: null,
+      peerOpts: null,
     })
 
     const wsProvider = new WebsocketProvider('ws://localhost:4445', 'flok-room', ydoc, { awareness })
-    wsProvider.on('status', event => {
+    wsProvider.on('status', (event: any) => {
       console.log(event.status) // logs "connected" or "disconnected"
     })
 
