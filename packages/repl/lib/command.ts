@@ -3,7 +3,7 @@ import process from "process";
 import path from "path";
 import fs from "fs";
 import { Command } from "commander";
-import { CommandREPL, replClasses } from "../lib/index.js";
+import { CommandREPL, replClasses } from "./index.js";
 import { fileURLToPath } from "url";
 
 dotenv.config();
@@ -15,7 +15,7 @@ const readConfig = (path) => {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const packageInfo = readConfig(path.resolve(__dirname, "../../package.json"));
+const packageInfo = readConfig(path.resolve(__dirname, "../package.json"));
 const knownTypes = Object.keys(replClasses).filter(
   (repl) => repl !== "default"
 );

@@ -8,15 +8,15 @@
   "files": [
     "dist"
   ],
-  "bin": "./dist/bin/command.js",
-  "types": "./dist/lib/index.d.ts",
-  "module": "./dist/lib/index.js",
-  "main": "./dist/lib/index.cjs",
+  "bin": "./dist/command.js",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.js",
+  "main": "./dist/index.cjs",
   "exports": {
     ".": {
-      "types": "./dist/lib/index.d.ts",
-      "import": "./dist/lib/index.js",
-      "require": "./dist/lib/index.cjs"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "scripts": {
