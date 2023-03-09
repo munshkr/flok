@@ -4,13 +4,12 @@
   "description": "Web server for Flok",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "signaling-server": "PORT=4444 npx y-webrtc",
-    "ws-server": "PORT=4445 npx y-websocket"
+    "start": "cross-env NODE_ENV=production node server.js",
+    "lint": "next lint"
   },
   "dependencies": {
     "@codemirror/commands": "^6.1.2",
@@ -19,20 +18,26 @@
     "@codemirror/theme-one-dark": "^6.1.0",
     "@codemirror/view": "^6.6.0",
     "@flok/core": "*",
+    "@flok/server": "*",
     "@types/node": "18.14.6",
-    "@types/react-dom": "18.0.11",
     "@types/react": "18.0.28",
+    "@types/react-dom": "18.0.11",
     "codemirror": "^6.0.1",
-    "eslint-config-next": "13.2.3",
+    "connect": "^3.7.0",
     "eslint": "8.35.0",
+    "eslint-config-next": "13.2.3",
     "next": "13.2.3",
-    "react-dom": "18.2.0",
     "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "serve-static": "^1.15.0",
     "typescript": "4.9.5",
     "y-codemirror.next": "^0.3.2",
     "y-indexeddb": "^9.0.9",
     "y-webrtc": "^10.2.3",
     "y-websocket": "^1.4.5",
     "yjs": "^13.5.43"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }
