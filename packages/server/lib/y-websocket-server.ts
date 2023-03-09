@@ -44,7 +44,7 @@ const updateHandler = (update: Uint8Array, origin: any, doc: WSSharedDoc) => {
   doc.conns.forEach((_, conn) => send(doc, conn, message));
 };
 
-class WSSharedDoc extends Doc {
+export class WSSharedDoc extends Doc {
   name: string;
   mux: mutex.mutex;
   conns: Map<any, Set<number>>;
@@ -231,3 +231,5 @@ export const setupWSConnection = (
     send(doc, conn, encoding.toUint8Array(encoder));
   }
 };
+
+export default setupWSConnection;

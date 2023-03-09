@@ -1,7 +1,7 @@
 {
   "name": "@flok/server",
   "version": "1.0.0",
-  "description": "Server package of flok, contains WebSocket, WebRTC signaling and http servers",
+  "description": "Server middleware of Flok, which handles WebSocket connections and WebRTC signaling",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
   "type": "module",
@@ -9,7 +9,6 @@
     "dist",
     "cert"
   ],
-  "bin": "./dist/command.ts",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
   "main": "./dist/index.cjs",
