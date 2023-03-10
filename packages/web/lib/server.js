@@ -2,6 +2,7 @@ import http from "http";
 import https from "https";
 import path from "path";
 import fs from "fs";
+import serveStatic from "serve-static";
 import { parse } from "url";
 import next from "next";
 import connect from "connect";
@@ -23,6 +24,11 @@ export async function createServer({ hostname, port, dev, secure, staticDir }) {
   await nextApp.prepare()
 
   const app = withFlokServer(connect());
+
+  if (staticDir) {
+    console.log(`> Serving static files at ${staticDir}`)
+    app.use(serveStatic(staticDir))
+  }
 
   app.use(async (req, res) => {
     try {
