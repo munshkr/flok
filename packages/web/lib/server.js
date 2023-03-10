@@ -1,9 +1,18 @@
 import http from "http";
+import https from "https";
+import path from "path";
+import fs from "fs";
 import { parse } from "url";
 import next from "next";
 import connect from "connect";
 import withFlokServer from "@flok/server";
+import { fileURLToPath } from "url";
 import { networkInterfaces } from "os";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const sslCertPath = path.resolve(__dirname, "..", "cert", "localhost.crt");
+const sslKeyPath = path.resolve(__dirname, "..", "cert", "localhost.key");
 
 export async function createServer({ hostname, port, dev, secure, staticDir }) {
   // when using middleware `hostname` and `port` must be provided below
@@ -28,7 +37,13 @@ export async function createServer({ hostname, port, dev, secure, staticDir }) {
     }
   });
 
-  return http.createServer(app)
+  if (secure) {
+    const key = fs.readFileSync(process.env.SSL_KEY || sslKeyPath, "utf8")
+    const cert = fs.readFileSync(process.env.SSL_CERT || sslCertPath, "utf8")
+    return https.createServer({ key, cert }, app);
+  } else {
+    return http.createServer(app)
+  }
 }
 
 export async function startServer({ onReady, ...opts }) {
