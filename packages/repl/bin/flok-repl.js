@@ -3,7 +3,7 @@ import process from "process";
 import path from "path";
 import fs from "fs";
 import { Command } from "commander";
-import { CommandREPL, replClasses } from "./index.js";
+import { CommandREPL, replClasses } from "../dist/index.js";
 import { fileURLToPath } from "url";
 
 dotenv.config();
