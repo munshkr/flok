@@ -6,9 +6,9 @@
   "license": "GPL-3.0+",
   "type": "module",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "node index.js",
     "build": "next build",
-    "start": "cross-env NODE_ENV=production node server.js",
+    "start": "cross-env NODE_ENV=production node index.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -39,6 +39,7 @@
     "yjs": "^13.5.43"
   },
   "devDependencies": {
+    "@types/connect": "^3.4.35",
     "cross-env": "^7.0.3"
   }
 }
