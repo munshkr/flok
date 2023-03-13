@@ -6,9 +6,11 @@
   "license": "GPL-3.0+",
   "type": "module",
   "files": [
+    "bin",
     "dist",
     "cert"
   ],
+  "bin": "./bin/flok-repl.js",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
   "main": "./dist/index.cjs",

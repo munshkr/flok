@@ -16,14 +16,17 @@ export default function (app) {
 
     if (pathname.startsWith("/signal")) {
       wss.handleUpgrade(request, socket, head, (ws) => {
+        console.log("/signal upgrade");
         wss.emit("connection", ws);
       });
     } else if (pathname.startsWith("/doc")) {
       docWss.handleUpgrade(request, socket, head, (ws) => {
+        console.log("/doc upgrade");
         docWss.emit("connection", ws);
       });
     } else if (pathname.startsWith("/pubsub")) {
       pubsubWss.handleUpgrade(request, socket, head, (ws) => {
+        console.log("/pubsub upgrade");
         pubsubWss.emit("connection", ws);
       });
     } else {
@@ -35,7 +38,7 @@ export default function (app) {
   wss.on("connection", (conn) => onWsConnection(conn, topics));
   docWss.on("connection", () => onYjsWsConnection);
 
-  // Prepare PubSub WebScoket server (pubsub)
+  // Prepare PubSub WebScoket server (pubsub) for code evaluation
   app._pubSubServer = new PubSub({
     wss: pubsubWss,
     onConnection: (uuid: string) => {
