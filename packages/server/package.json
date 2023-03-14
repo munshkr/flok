@@ -29,7 +29,8 @@
     "connect": "^3.7.0",
     "lib0": "^0.2.63",
     "y-protocols": "^1.0.5",
-    "y-websocket": "^1.4.6"
+    "y-websocket": "^1.4.6",
+    "yjs": "^13.5.50"
   },
   "devDependencies": {
     "@types/node": "^18.14.6",

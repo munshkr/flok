@@ -25,7 +25,6 @@ program
 
 const opts = program.opts();
 
-const app = withFlokServer(connect());
-
 console.log(`> Flok server started. Listening on ${opts.host}:${opts.port}`);
-http.createServer(app).listen(opts.port, opts.host)
+const server = http.createServer(connect());
+withFlokServer(server).listen(opts.port, opts.host);
