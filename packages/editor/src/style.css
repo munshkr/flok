@@ -95,11 +95,7 @@ button:focus-visible {
   }
 }
 
-.cm-wrap {
-  height: 300px;
-  border: 1px solid #ddd;
-}
-
-.cm-scroller {
-  overflow: auto;
+#editor {
+  height: 100vh;
+  width: 100vw;
 }

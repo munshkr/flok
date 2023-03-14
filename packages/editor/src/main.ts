@@ -44,11 +44,11 @@ idbProvider.on("synced", () => {
 
 const webrtcProvider = new WebrtcProvider("flok-room", ydoc, {
   awareness,
-  signaling: ["ws://localhost:4444"],
+  signaling: ["ws://localhost:3000/signal"],
 });
 
 const wsProvider = new WebsocketProvider(
-  "ws://localhost:4445",
+  "ws://localhost:3000/doc",
   "flok-room",
   ydoc,
   { awareness }
