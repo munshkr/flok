@@ -1,7 +1,7 @@
 {
   "name": "@flok/editor",
   "version": "1.0.0",
-  "description": "Text editor component for interacting with a Flok server, handles collaborative editing and code evaluation",
+  "description": "CodeMirror 6 extensions for interacting with a Flok server, includes collaborative editing and code evaluation",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
   "type": "module",
@@ -9,13 +9,13 @@
     "dist",
     "index.d.ts"
   ],
-  "main": "./dist/counter.umd.cjs",
-  "module": "./dist/counter.js",
+  "main": "./dist/main.umd.cjs",
+  "module": "./dist/main.js",
   "types": "./index.d.ts",
   "exports": {
     "types": "./index.d.ts",
-    "import": "./dist/counter.js",
-    "require": "./dist/counter.umd.cjs"
+    "import": "./dist/main.js",
+    "require": "./dist/main.umd.cjs"
   },
   "scripts": {
     "dev": "vite",
