@@ -10,7 +10,7 @@
     "dist",
     "cert"
   ],
-  "bin": "./bin/flok-repl.js",
+  "bin": "./bin/flok-server.js",
   "types": "./dist/index.d.ts",
   "module": "./dist/index.js",
   "main": "./dist/index.cjs",
@@ -22,7 +22,8 @@
     }
   },
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "dev": "yarn build && node bin/flok-server.js"
   },
   "dependencies": {
     "@flok/core": "*",

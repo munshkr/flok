@@ -5,14 +5,18 @@ import { PubSub } from "@flok/core";
 import onYjsWsConnection from "./y-websocket-server.js";
 import onWsConnection from "./ws-server.js";
 
-export function withFlokServer(server: http.Server): [http.Server, PubSub] {
+type FlokServer = http.Server & { _pubSubServer: PubSub };
+
+export default function withFlokServer(server: http.Server): FlokServer {
   const topics: Map<string, Set<any>> = new Map();
 
   const wss = new WebSocket.Server({ noServer: true });
   const docWss = new WebSocket.Server({ noServer: true });
   const pubsubWss = new WebSocket.Server({ noServer: true });
 
-  server.on("upgrade", (request, socket, head) => {
+  const newServer = server as FlokServer;
+
+  newServer.on("upgrade", (request, socket, head) => {
     const { pathname } = url.parse(request.url);
 
     if (pathname.startsWith("/signal")) {
@@ -37,7 +41,7 @@ export function withFlokServer(server: http.Server): [http.Server, PubSub] {
   docWss.on("connection", () => onYjsWsConnection);
 
   // Prepare PubSub WebScoket server (pubsub) for code evaluation
-  const pubSubServer = new PubSub({
+  newServer._pubSubServer = new PubSub({
     wss: pubsubWss,
     onConnection: (uuid: string) => {
       console.log("[pubsub] Add client", uuid);
@@ -47,5 +51,5 @@ export function withFlokServer(server: http.Server): [http.Server, PubSub] {
     },
   });
 
-  return [server, pubSubServer];
+  return newServer;
 }
