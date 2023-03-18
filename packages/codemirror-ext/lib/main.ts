@@ -5,6 +5,7 @@ import { WebrtcProvider } from "y-webrtc";
 import { WebsocketProvider } from "y-websocket";
 import { Awareness } from "y-protocols/awareness.js";
 import { keymap } from "@codemirror/view";
+import { Prec } from "@codemirror/state";
 import * as random from "lib0/random";
 
 export type UserColor = {
@@ -135,9 +136,33 @@ export class FlokSession {
   }
 }
 
+export function evalKeymap() {
+  const evalCode = (msg: any) => {
+    console.log("eval", msg);
+  };
+
+  return keymap.of([
+    {
+      key: "Ctrl-Enter",
+      run() {
+        evalCode("ctrl");
+        return true;
+      },
+    },
+    {
+      key: "Cmd-Enter",
+      run() {
+        evalCode("cmd");
+        return true;
+      },
+    },
+  ]);
+}
+
 export const flokCollabSetup = (session: FlokSession, textId: string) => {
   return [
     keymap.of([...yUndoManagerKeymap]),
+    Prec.high(evalKeymap()),
     yCollab(session.yDoc.getText(textId), session.awareness),
   ];
 };

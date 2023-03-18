@@ -2,16 +2,14 @@ import { EditorView, basicSetup } from "codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorState } from "@codemirror/state";
+import { keymap } from "@codemirror/view";
+import { indentWithTab } from "@codemirror/commands";
 
 import { flokCollabSetup, FlokSession } from "../lib/main.js";
 
 import "./style.css";
 
-const session = new FlokSession({
-  onWsStatus: (event) => {
-    console.log(event.status);
-  },
-});
+const session = new FlokSession();
 const id = "main";
 
 const state = EditorState.create({
@@ -19,6 +17,7 @@ const state = EditorState.create({
   extensions: [
     basicSetup,
     flokCollabSetup(session, id),
+    keymap.of([indentWithTab]),
     javascript(),
     EditorView.lineWrapping,
     oneDark,
