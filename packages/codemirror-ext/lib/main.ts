@@ -26,6 +26,12 @@ export const userColors: UserColor[] = [
   { color: "#1be7ff", light: "#1be7ff33" },
 ];
 
+export type EvalContext = {
+  editorId: string;
+  fromLine: number;
+  toLine: number;
+};
+
 export type FlokSessionOptions = {
   hostname?: string;
   port?: number;
@@ -112,6 +118,14 @@ export class FlokSession {
     this._targets.clear();
   }
 
+  evaluate(target: string, body: string, context: EvalContext) {
+    this._pubSubClient.publish(`session:${this.name}:target:${target}:eval`, {
+      body,
+      user: this.user,
+      ...context,
+    });
+  }
+
   _prepareYjs() {
     this._createDoc();
     this._createProviders();
@@ -155,22 +169,34 @@ export class FlokSession {
     });
   }
 
+  on(eventName: string, cb: (...args: any[]) => void) {
+    this._emitter.on(eventName, cb);
+  }
+
   _subscribeToTarget(target: string) {
     // Subscribe to messages directed to a specific target
     this._pubSubClient.subscribe(
       `session:${this.name}:target:${target}:eval`,
-      (content) => this._emitter.emit("eval", { target, content })
+      (content) => {
+        this._emitter.emit(`eval`, { target, content });
+
+        // Notify to flok-repls
+        this._pubSubClient.publish(
+          `session:${this.name}:target:${target}:in`,
+          content
+        );
+      }
     );
 
     this._pubSubClient.subscribe(
       `session:${this.name}:target:${target}:out`,
-      (content) => this._emitter.emit("message", { target, content })
+      (content) => this._emitter.emit(`message`, { target, content })
     );
 
     // Subscribes to messages directed to ourselves
     this._pubSubClient.subscribe(
       `session:${this.name}:target:${target}:user:${this.user}:out`,
-      (content) => this._emitter.emit("message:user", { target, content })
+      (content) => this._emitter.emit(`message-user`, { target, content })
     );
   }
 
@@ -188,9 +214,14 @@ export class FlokSession {
   }
 }
 
-export function evalKeymap() {
+export function evalKeymap(
+  session: FlokSession,
+  editorId: string,
+  target: string
+) {
   const evalCode = (msg: any) => {
     console.log("eval", msg);
+    session.evaluate(target, msg, { editorId, fromLine: 0, toLine: 4 });
   };
 
   return keymap.of([
@@ -211,10 +242,14 @@ export function evalKeymap() {
   ]);
 }
 
-export const flokCollabSetup = (session: FlokSession, textId: string) => {
+export const flokCollabSetup = (
+  session: FlokSession,
+  editorId: string,
+  target: string
+) => {
   return [
     keymap.of([...yUndoManagerKeymap]),
-    Prec.high(evalKeymap()),
-    yCollab(session.yDoc.getText(textId), session.awareness),
+    Prec.high(evalKeymap(session, target, editorId)),
+    yCollab(session.getText(editorId), session.awareness),
   ];
 };

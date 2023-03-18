@@ -9,23 +9,48 @@ import { flokCollabSetup, FlokSession } from "../lib/main.js";
 
 import "./style.css";
 
+const createEditor = (
+  id: string,
+  {
+    session,
+    target,
+    el,
+  }: {
+    session: FlokSession;
+    target: string;
+    el: HTMLDivElement;
+  }
+) => {
+  const state = EditorState.create({
+    doc: session.getTextString(id),
+    extensions: [
+      basicSetup,
+      flokCollabSetup(session, id, target),
+      keymap.of([indentWithTab]),
+      javascript(),
+      EditorView.lineWrapping,
+      oneDark,
+    ],
+  });
+
+  const view = new EditorView({
+    state,
+    parent: el,
+  });
+
+  return [state, view];
+};
+
 const session = new FlokSession("default");
-const id = "slot1";
 session.addTargets("tidal", "hydra");
 
-const state = EditorState.create({
-  doc: session.getTextString(id),
-  extensions: [
-    basicSetup,
-    flokCollabSetup(session, id),
-    keymap.of([indentWithTab]),
-    javascript(),
-    EditorView.lineWrapping,
-    oneDark,
-  ],
+createEditor("tidal-editor", {
+  session,
+  target: "tidal",
+  el: document.querySelector<HTMLDivElement>("#slot1 .editor")!,
 });
-
-const view = new EditorView({
-  state,
-  parent: document.querySelector<HTMLDivElement>("#editor")!,
+createEditor("hydra-editor", {
+  session,
+  target: "hydra",
+  el: document.querySelector<HTMLDivElement>("#slot2 .editor")!,
 });
