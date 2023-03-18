@@ -9,8 +9,9 @@ import { flokCollabSetup, FlokSession } from "../lib/main.js";
 
 import "./style.css";
 
-const session = new FlokSession();
-const id = "main";
+const session = new FlokSession("default");
+const id = "slot1";
+session.addTargets("tidal", "hydra");
 
 const state = EditorState.create({
   doc: session.getTextString(id),

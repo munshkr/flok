@@ -6,7 +6,9 @@ import { WebsocketProvider } from "y-websocket";
 import { Awareness } from "y-protocols/awareness.js";
 import { keymap } from "@codemirror/view";
 import { Prec } from "@codemirror/state";
+import { PubSubClient } from "@flok/core";
 import * as random from "lib0/random";
+import EventEmitter from "events";
 
 export type UserColor = {
   color: string;
@@ -28,7 +30,6 @@ export type FlokSessionOptions = {
   hostname?: string;
   port?: number;
   isSecure?: boolean;
-  room?: string;
   user?: string;
 };
 
@@ -36,28 +37,33 @@ export class FlokSession {
   hostname: string;
   port: number;
   isSecure: boolean;
-  room: string;
+  name: string;
 
   yDoc!: Y.Doc;
   awareness!: Awareness;
 
   _user: string;
   _userColor: UserColor;
+  _targets: Set<string> = new Set();
 
   _idbProvider!: IndexeddbPersistence;
   _webrtcProvider!: WebrtcProvider;
   _wsProvider!: WebsocketProvider;
+  _pubSubClient!: PubSubClient;
 
-  constructor(opts: FlokSessionOptions = {}) {
+  _emitter: EventEmitter = new EventEmitter();
+
+  constructor(name: string, opts: FlokSessionOptions = {}) {
+    this.name = name;
     this.hostname = opts?.hostname || "localhost";
     this.port = opts?.port || 3000;
     this.isSecure = opts?.isSecure || false;
-    this.room = opts?.room || "default";
 
     this._user = opts?.user || "Anonymous " + Math.floor(Math.random() * 100);
     this._userColor = userColors[random.uint32() % userColors.length];
 
     this._prepareYjs();
+    this._preparePubSub();
   }
 
   get user(): string {
@@ -86,6 +92,26 @@ export class FlokSession {
     return this.getText(id).toString();
   }
 
+  addTargets(...items: string[]) {
+    const newTargets = new Set(
+      items.filter((item) => !this._targets.has(item))
+    );
+    items.forEach((item) => this._targets.add(item));
+    newTargets.forEach((target) => this._subscribeToTarget(target));
+  }
+
+  removeTargets(...items: string[]) {
+    items.forEach((item) => {
+      this._targets.delete(item);
+      this._pubSubClient.unsubscribe(item);
+    });
+  }
+
+  clearTargets() {
+    this._targets.forEach((item) => this._pubSubClient.unsubscribe(item));
+    this._targets.clear();
+  }
+
   _prepareYjs() {
     this._createDoc();
     this._createProviders();
@@ -100,19 +126,19 @@ export class FlokSession {
   }
 
   _createProviders() {
-    this._idbProvider = new IndexeddbPersistence(this.room, this.yDoc);
+    this._idbProvider = new IndexeddbPersistence(this.name, this.yDoc);
     // this._idbProvider.on("synced", () => {
     //   console.log("Data from IndexexDB loaded");
     // });
 
-    this._webrtcProvider = new WebrtcProvider(this.room, this.yDoc, {
+    this._webrtcProvider = new WebrtcProvider(this.name, this.yDoc, {
       awareness: this.awareness,
       signaling: [`${this._wsUrl}/signal`],
     });
 
     this._wsProvider = new WebsocketProvider(
       `${this._wsUrl}/doc`,
-      this.room,
+      this.name,
       this.yDoc,
       { awareness: this.awareness }
     );
@@ -120,6 +146,32 @@ export class FlokSession {
     // this._wsProvider.on("status", (event: any) => {
     //   console.log(event.status);
     // });
+  }
+
+  _preparePubSub() {
+    this._pubSubClient = new PubSubClient(`${this._wsUrl}/pubsub`, {
+      connect: true,
+      reconnect: true,
+    });
+  }
+
+  _subscribeToTarget(target: string) {
+    // Subscribe to messages directed to a specific target
+    this._pubSubClient.subscribe(
+      `session:${this.name}:target:${target}:eval`,
+      (content) => this._emitter.emit("eval", { target, content })
+    );
+
+    this._pubSubClient.subscribe(
+      `session:${this.name}:target:${target}:out`,
+      (content) => this._emitter.emit("message", { target, content })
+    );
+
+    // Subscribes to messages directed to ourselves
+    this._pubSubClient.subscribe(
+      `session:${this.name}:target:${target}:user:${this.user}:out`,
+      (content) => this._emitter.emit("message:user", { target, content })
+    );
   }
 
   _updateUserStateField() {
