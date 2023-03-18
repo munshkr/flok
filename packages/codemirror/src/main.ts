@@ -5,7 +5,7 @@ import { EditorState } from "@codemirror/state";
 import { keymap } from "@codemirror/view";
 import { indentWithTab } from "@codemirror/commands";
 
-import { flokCollabSetup, FlokSession } from "../lib/main.js";
+import { flokCollabSetup, Session } from "../lib/main.js";
 
 import "./style.css";
 
@@ -16,7 +16,7 @@ const createEditor = (
     target,
     el,
   }: {
-    session: FlokSession;
+    session: Session;
     target: string;
     el: HTMLDivElement;
   }
@@ -41,7 +41,7 @@ const createEditor = (
   return [state, view];
 };
 
-const session = new FlokSession("default");
+const session = new Session("default");
 session.addTargets("tidal", "hydra");
 
 createEditor("tidal-editor", {
