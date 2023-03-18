@@ -1,7 +1,7 @@
 {
   "name": "@flok/editor",
   "version": "1.0.0",
-  "description": "CodeMirror 6 extensions for interacting with a Flok server, includes collaborative editing and code evaluation",
+  "description": "CodeMirror 6 extension for interacting with a Flok server, includes collaborative editing and code evaluation",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
   "type": "module",
