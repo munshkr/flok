@@ -16,6 +16,6 @@ body {
   width: 50%;
 }
 
-.slot span {
+.slot .title {
   font-weight: 600;
 }
