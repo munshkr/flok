@@ -1,6 +1,7 @@
-import { keymap } from "@codemirror/view";
+import { EditorView, keymap } from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 import type Session from "./Session";
+import { flash } from "./flashField";
 
 interface EvalBlock {
   text: string;
@@ -54,41 +55,46 @@ export default function evalKeymap(
   editorId: string,
   target: string
 ) {
-  const evaluateBlockOrSelection = (state: EditorState) => {
+  const evaluateBlockOrSelection = (view: EditorView) => {
+    const { state } = view;
     const selection = getSelection(state);
     if (selection.text) {
       const { text, from, to } = selection;
+      flash(view, from, to);
       session.evaluate(target, text, { editorId, from, to });
     } else {
       const { text, from, to } = getBlock(state);
+      flash(view, from, to);
       session.evaluate(target, text, { editorId, from, to });
     }
   };
 
-  const evaluateLine = (state: EditorState) => {
+  const evaluateLine = (view: EditorView) => {
+    const { state } = view;
     const { text, from, to } = getLine(state);
+    flash(view, from, to);
     session.evaluate(target, text, { editorId, from, to });
   };
 
   return keymap.of([
     {
       key: "Ctrl-Enter",
-      run({ state }) {
-        evaluateBlockOrSelection(state);
+      run(view) {
+        evaluateBlockOrSelection(view);
         return true;
       },
     },
     {
       key: "Cmd-Enter",
-      run({ state }) {
-        evaluateBlockOrSelection(state);
+      run(view) {
+        evaluateBlockOrSelection(view);
         return true;
       },
     },
     {
       key: "Shift-Enter",
-      run({ state }) {
-        evaluateLine(state);
+      run(view) {
+        evaluateLine(view);
         return true;
       },
     },
