@@ -24,6 +24,7 @@
   "devDependencies": {
     "@codemirror/lang-javascript": "^6.1.4",
     "@codemirror/theme-one-dark": "^6.1.1",
+    "@types/debug": "^4.1.7",
     "typescript": "^4.9.4",
     "vite": "^4.0.4"
   },
@@ -32,6 +33,7 @@
     "@codemirror/state": "^6.2.0",
     "@codemirror/view": "^6.9.2",
     "codemirror": "^6.0.1",
+    "debug": "^4.3.4",
     "y-codemirror.next": "^0.3.2",
     "y-indexeddb": "^9.0.9",
     "y-protocols": "^1.0.5",

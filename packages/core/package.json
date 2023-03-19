@@ -31,6 +31,7 @@
     "ws": "^8.12.1"
   },
   "devDependencies": {
+    "@types/debug": "^4.1.7",
     "@types/lodash": "^4.14.191",
     "@types/node": "^18.14.6",
     "@types/uuid": "^9.0.1",
