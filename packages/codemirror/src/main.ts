@@ -41,16 +41,18 @@ const createEditor = (
   return [state, view];
 };
 
+const handleMessage = (...args: any[]) => {
+  const consoleEl = document.getElementById("console");
+  if (!consoleEl) return;
+  consoleEl.innerHTML += JSON.stringify(args) + "<br>";
+  consoleEl.scrollTop = consoleEl.scrollHeight;
+};
+
 const session = new Session("default");
 session.addTargets("tidal", "hydra");
 
-session.on("message", (...args) => {
-  console.log("message", ...args);
-});
-
-session.on("message-user", (...args) => {
-  console.log("message-user", ...args);
-});
+session.on("message", handleMessage);
+session.on("message-user", handleMessage);
 
 // Create two editors, one for each of the targets
 createEditor("tidal-editor", {
