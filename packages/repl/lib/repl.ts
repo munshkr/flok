@@ -1,6 +1,9 @@
 import { ChildProcess, spawn } from "child_process";
 import { EventEmitter } from "events";
 import { PubSubClient } from "@flok/core";
+import debugModule from "debug";
+
+const debug = new debugModule("flok:repl");
 
 type Message = {
   body: string;
@@ -127,7 +130,7 @@ class CommandREPL extends BaseREPL {
     // Spawn process
     const cmd = this.command;
     const args = this.args;
-    console.log(`Spawn '${cmd}' with args:`, args);
+    debug(`Spawn '${cmd}' with args:`, args);
     this.repl = spawn(cmd, args, { shell: true });
 
     // Handle stdout and stderr
@@ -141,7 +144,7 @@ class CommandREPL extends BaseREPL {
 
     this.repl.on("close", (code: number) => {
       this.emitter.emit("close", { code });
-      console.log(`Child process exited with code ${code}`);
+      debug(`Child process exited with code ${code}`);
     });
   }
 

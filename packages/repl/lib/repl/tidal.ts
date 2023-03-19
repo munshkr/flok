@@ -1,6 +1,9 @@
 import { execSync } from "child_process";
 import * as path from "path";
 import { CommandREPL, CommandREPLContext } from "../repl.js";
+import debugModule from "debug";
+
+const debug = new debugModule("flok:repl:tidal");
 
 class TidalREPL extends CommandREPL {
   constructor(ctx: CommandREPLContext) {
@@ -38,11 +41,11 @@ class TidalREPL extends CommandREPL {
         .toString()
         .trim()
         .replace(/"/g, "");
-      console.log("Data dir:", dataDir);
+      debug("Data dir:", dataDir);
       return dataDir;
     } catch (err) {
-      console.warn(`Failed to get tidal data dir`);
-      console.warn(
+      debug(`Failed to get tidal data dir`);
+      debug(
         `You will need to specify the location of your TidalCycles bootloading script.\n` +
           `Read more: https://github.com/munshkr/flok/wiki/Failed-to-get-tidal-data-dir`
       );

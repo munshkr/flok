@@ -6,6 +6,9 @@ import {
 } from "../repl.js";
 import os from "os";
 import osc from "osc";
+import debugModule from "debug";
+
+const debug = new debugModule("flok:repl:sclang");
 
 const { UDPPort } = osc;
 
@@ -65,8 +68,8 @@ class RemoteSclangREPL extends BaseREPL {
 
     // Listen for incoming OSC messages.
     this.udpPort.on("message", function (oscMsg, timeTag, info) {
-      console.log("An OSC message just arrived!", oscMsg);
-      console.log("Remote info is: ", info);
+      debug("An OSC message just arrived!", oscMsg);
+      debug("Remote info is: ", info);
     });
 
     // Open the socket.
@@ -83,7 +86,7 @@ class RemoteSclangREPL extends BaseREPL {
 
   write(body: string) {
     if (!this.portReady) {
-      console.error("UDP Port is not ready yet.");
+      debug("UDP Port is not ready yet.");
       return;
     }
 
