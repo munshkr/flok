@@ -53,7 +53,7 @@ class Subscription {
       type,
     };
 
-    debug("New subscription:", subscription.clientId, "->", subscription.topic);
+    debug("Add:", subscription.clientId, "->", subscription.topic);
     this.subscriptions = this.subscriptions.set(id, subscription);
     return id;
   }
@@ -63,7 +63,8 @@ class Subscription {
    * @param id
    */
   remove(id: string) {
-    debug("Remove subscription:", this.subscriptions.get(id));
+    const subscription = this.subscriptions.get(id);
+    debug("Remove:", subscription.clientId, "->", subscription.topic);
     this.subscriptions = this.subscriptions.remove(id);
   }
 
