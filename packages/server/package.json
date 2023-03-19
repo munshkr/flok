@@ -28,6 +28,7 @@
   "dependencies": {
     "@flok/core": "*",
     "connect": "^3.7.0",
+    "debug": "^4.3.4",
     "lib0": "^0.2.63",
     "y-protocols": "^1.0.5",
     "y-websocket": "^1.4.6",
