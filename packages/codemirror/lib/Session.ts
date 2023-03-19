@@ -177,35 +177,38 @@ export default class Session {
     // Subscribe to messages directed to a specific target
     this._pubSubClient.subscribe(
       `session:${this.name}:target:${target}:eval`,
-      (content) => {
-        debug(`session:${this.name}:target:${target}:eval`, content);
-        this._emitter.emit(`eval`, { target, content });
+      (args) => {
+        debug(`session:${this.name}:target:${target}:eval`, args);
+        this._emitter.emit(`eval`, args);
+        this._emitter.emit(`eval:${target}`, args);
 
         // Notify to flok-repls
         this._pubSubClient.publish(
           `session:${this.name}:target:${target}:in`,
-          content
+          args
         );
       }
     );
 
     this._pubSubClient.subscribe(
       `session:${this.name}:target:${target}:out`,
-      (content) => {
-        debug(`session:${this.name}:target:${target}:out`, content);
-        this._emitter.emit(`message`, { target, content });
+      (args) => {
+        debug(`session:${this.name}:target:${target}:out`, args);
+        this._emitter.emit(`message`, args);
+        this._emitter.emit(`message:${target}`, args);
       }
     );
 
     // Subscribes to messages directed to ourselves
     this._pubSubClient.subscribe(
       `session:${this.name}:target:${target}:user:${this.user}:out`,
-      (content) => {
+      (args) => {
         debug(
           `session:${this.name}:target:${target}:user:${this.user}:out`,
-          content
+          args
         );
-        this._emitter.emit(`message-user`, { target, content });
+        this._emitter.emit(`message`, args);
+        this._emitter.emit(`message:${target}`, args);
       }
     );
   }

@@ -20,9 +20,3 @@ body {
 .slot .title {
   font-weight: 600;
 }
-
-#console {
-  background: #333;
-  height: 20vh;
-  overflow: scroll;
-}
