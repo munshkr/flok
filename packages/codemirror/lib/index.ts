@@ -15,7 +15,7 @@ export const flokCollabSetup = (
   return [
     keymap.of([...yUndoManagerKeymap]),
     Prec.high(evalKeymap(session, editorId, target)),
-    flashField,
+    flashField(),
     yCollab(session.getText(editorId), session.awareness),
   ];
 };
