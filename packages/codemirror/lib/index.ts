@@ -7,15 +7,15 @@ import Session from "./Session";
 
 export { Session, evalKeymap, flashField, flash };
 
-export const flokCollabSetup = (
+export const flokBasicSetup = (
   session: Session,
   editorId: string,
   target: string
 ) => {
   return [
     keymap.of([...yUndoManagerKeymap]),
-    Prec.high(evalKeymap(session, editorId, target)),
     flashField(),
+    Prec.high(evalKeymap(session, editorId, target)),
     yCollab(session.getText(editorId), session.awareness),
   ];
 };

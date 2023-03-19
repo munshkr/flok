@@ -5,7 +5,7 @@ import { EditorState } from "@codemirror/state";
 import { keymap } from "@codemirror/view";
 import { indentWithTab } from "@codemirror/commands";
 
-import { flokCollabSetup, Session } from "../lib/index.js";
+import { flokBasicSetup, Session } from "../lib/index.js";
 
 import "./style.css";
 
@@ -25,7 +25,7 @@ const createEditor = (
     doc: session.getTextString(id),
     extensions: [
       basicSetup,
-      flokCollabSetup(session, id, target),
+      flokBasicSetup(session, id, target),
       keymap.of([indentWithTab]),
       javascript(),
       EditorView.lineWrapping,
