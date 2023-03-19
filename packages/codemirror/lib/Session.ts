@@ -118,9 +118,9 @@ export default class Session {
     this._targets.clear();
   }
 
-  evaluate(target: string, text: string, context: EvalContext) {
+  evaluate(target: string, body: string, context: EvalContext) {
     this._pubSubClient.publish(`session:${this.name}:target:${target}:eval`, {
-      text,
+      body,
       user: this.user,
       ...context,
     });
@@ -178,6 +178,7 @@ export default class Session {
     this._pubSubClient.subscribe(
       `session:${this.name}:target:${target}:eval`,
       (content) => {
+        debug(`session:${this.name}:target:${target}:eval`, content);
         this._emitter.emit(`eval`, { target, content });
 
         // Notify to flok-repls
@@ -190,13 +191,22 @@ export default class Session {
 
     this._pubSubClient.subscribe(
       `session:${this.name}:target:${target}:out`,
-      (content) => this._emitter.emit(`message`, { target, content })
+      (content) => {
+        debug(`session:${this.name}:target:${target}:out`, content);
+        this._emitter.emit(`message`, { target, content });
+      }
     );
 
     // Subscribes to messages directed to ourselves
     this._pubSubClient.subscribe(
       `session:${this.name}:target:${target}:user:${this.user}:out`,
-      (content) => this._emitter.emit(`message-user`, { target, content })
+      (content) => {
+        debug(
+          `session:${this.name}:target:${target}:user:${this.user}:out`,
+          content
+        );
+        this._emitter.emit(`message-user`, { target, content });
+      }
     );
   }
 

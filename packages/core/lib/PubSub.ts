@@ -153,9 +153,8 @@ class PubSub {
     // now let send to all subscribers in the topic with exactly message from publisher
     subscriptions.forEach((subscription) => {
       const { clientId } = subscription;
-      const subscriptionType = subscription.type; // email, phone, ....
-      debug("Client id of subscription", clientId, subscription);
-      // we are only handle send via websocket
+      const subscriptionType = subscription.type;
+      // only websockets are supported
       if (subscriptionType === "ws") {
         this.send(clientId, {
           action: "publish",

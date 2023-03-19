@@ -44,6 +44,15 @@ const createEditor = (
 const session = new Session("default");
 session.addTargets("tidal", "hydra");
 
+session.on("message", (...args) => {
+  console.log("message", ...args);
+});
+
+session.on("message-user", (...args) => {
+  console.log("message-user", ...args);
+});
+
+// Create two editors, one for each of the targets
 createEditor("tidal-editor", {
   session,
   target: "tidal",
