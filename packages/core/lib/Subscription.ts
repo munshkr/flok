@@ -53,7 +53,7 @@ class Subscription {
       type,
     };
 
-    debug("New subscription:", subscription);
+    debug("New subscription:", subscription.clientId, "->", subscription.topic);
     this.subscriptions = this.subscriptions.set(id, subscription);
     return id;
   }
