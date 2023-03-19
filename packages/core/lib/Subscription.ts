@@ -1,5 +1,8 @@
 import { Map } from "immutable";
 import { v1 as uuidv1 } from "uuid";
+import debugModule from "debug";
+
+const debug = new debugModule("flok:core:subscription");
 
 interface SubscriptionType {
   id: string;
@@ -47,26 +50,28 @@ class Subscription {
       id,
       topic,
       clientId,
-      type, // email, phone
+      type,
     };
 
-    console.log("New subscriber via add method:", subscription);
+    debug("New subscription:", subscription);
     this.subscriptions = this.subscriptions.set(id, subscription);
     return id;
   }
 
   /**
-   * Remove a subsciption
+   * Remove a subscription
    * @param id
    */
   remove(id: string) {
+    debug("Remove subscription:", this.subscriptions.get(id));
     this.subscriptions = this.subscriptions.remove(id);
   }
 
   /**
-   * Clear all subscription
+   * Clear all subscriptions
    */
   clear() {
+    debug("Clear all subscriptions");
     this.subscriptions = this.subscriptions.clear();
   }
 

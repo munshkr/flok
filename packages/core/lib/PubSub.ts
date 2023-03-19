@@ -3,6 +3,9 @@ import _ from "lodash";
 import { v1 as uuidv1 } from "uuid";
 import Subscription from "./Subscription.js";
 import WebSocket from "isomorphic-ws";
+import debugModule from "debug";
+
+const debug = new debugModule("flok:core:pubsub");
 
 interface ClientType {
   id: string;
@@ -151,7 +154,7 @@ class PubSub {
     subscriptions.forEach((subscription) => {
       const { clientId } = subscription;
       const subscriptionType = subscription.type; // email, phone, ....
-      console.log("Client id of subscription", clientId, subscription);
+      debug("Client id of subscription", clientId, subscription);
       // we are only handle send via websocket
       if (subscriptionType === "ws") {
         this.send(clientId, {
@@ -247,7 +250,7 @@ class PubSub {
     try {
       return JSON.parse(message);
     } catch (e) {
-      console.log(e);
+      debug("Error converting string to JSON:", e);
     }
   }
 
@@ -302,7 +305,7 @@ class PubSub {
     try {
       res = JSON.stringify(message);
     } catch (err) {
-      console.log("An error convert object message to string", err);
+      debug("Error converting object to string:", err);
     }
 
     ws.send(res);

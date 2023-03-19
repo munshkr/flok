@@ -1,5 +1,8 @@
 import EventEmitter from "events";
 import WebSocket from "isomorphic-ws";
+import debugModule from "debug";
+
+const debug = new debugModule("flok:core:pubsub");
 
 interface QueueItem {
   type: string;
@@ -167,7 +170,7 @@ class PubSubClient {
     try {
       res = JSON.parse(message);
     } catch (e) {
-      console.log(e);
+      debug("Error converting string to JSON:", e);
     }
 
     return res;
@@ -241,7 +244,7 @@ class PubSubClient {
     // Set timeout
     this._isReconnecting = true;
     this._reconnectTimeout = setTimeout(() => {
-      console.log("Reconnecting....");
+      debug("Reconnecting....");
       this.connect();
     }, 2000);
   }
@@ -278,7 +281,7 @@ class PubSubClient {
       this._connected = true;
       this._isReconnecting = false;
 
-      console.log("Connected to the server");
+      debug("Connected to the server");
       this.send({ action: "me" });
       // run queue
       this.runQueue();
@@ -311,14 +314,14 @@ class PubSubClient {
       }
     };
     ws.onerror = (err) => {
-      console.error("unable connect to the server", err.error);
+      debug("Error: Unable connect to the server", err.error);
 
       this._connected = false;
       this._isReconnecting = false;
       this.reconnect();
     };
     ws.onclose = () => {
-      console.log("Connection is closed");
+      debug("Connection is closed");
 
       this._connected = false;
       this._isReconnecting = false;
