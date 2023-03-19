@@ -5,6 +5,9 @@ import fs from "fs";
 import { Command } from "commander";
 import { CommandREPL, replClasses } from "../dist/index.js";
 import { fileURLToPath } from "url";
+import debugModule from "debug";
+
+const debug = debugModule("flok:repl");
 
 dotenv.config();
 
@@ -113,17 +116,17 @@ if (extra) {
 }
 
 // Start...
-console.log(`Hub address: ${hub}`);
-console.log(`Session name: ${sessionName}`);
-console.log(`Target name: ${target}`);
-console.log(`Type: ${type}`);
+debug(`Hub address: ${hub}`);
+debug(`Session name: ${sessionName}`);
+debug(`Target name: ${target}`);
+debug(`Type: ${type}`);
 if (notifyToAll) {
-  console.log(`Notify messages to all users`);
+  debug(`Notify messages to all users`);
 }
 if (nickname) {
-  console.log(`Notify messages to user named "${nickname}"`);
+  debug(`Notify messages to user named "${nickname}"`);
 }
-console.log(`Extra options:`, extraOptions);
+debug(`Extra options:`, extraOptions);
 
 let replClient;
 if (useDefaultREPL) {
@@ -157,17 +160,9 @@ replClient.emitter.on("data", (data) => {
   const shortClientId = replClient.pubSub._id
     ? replClient.pubSub._id.slice(0, 7)
     : "unknown";
-  const line = data.lines.join("\n> ");
+  const line = data.lines.join("\n");
   if (line) {
-    if (data.type === "stderr") {
-      process.stderr.write(`[${shortClientId} err] ${line}\n`);
-    } else if (data.type === "stdout") {
-      process.stdout.write(`[${shortClientId} out] ${line}\n`);
-    } else if (data.type === "stdin") {
-      process.stdout.write(`[${shortClientId} in ] ${line}\n`);
-    } else {
-      process.stdout.write(`[${shortClientId} ???] ${JSON.stringify(data)}\n`);
-    }
+    debug(`[${shortClientId} ${data.type}]`, line);
   }
 });
 
