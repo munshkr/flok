@@ -24,7 +24,6 @@ export default (conn: any, topics: Map<string, Set<any>>) => {
       try {
         conn.ping();
       } catch (e) {
-        debug("Failed to ping:", e);
         conn.close();
       }
     }
