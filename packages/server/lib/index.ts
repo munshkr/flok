@@ -4,6 +4,9 @@ import http from "http";
 import { PubSub } from "@flok/core";
 import onYjsWsConnection from "./y-websocket-server.js";
 import onWsConnection from "./ws-server.js";
+import debugModule from "debug";
+
+const debug = new debugModule("flok:server");
 
 type FlokServer = http.Server & { _pubSubServer: PubSub };
 
@@ -32,7 +35,7 @@ export default function withFlokServer(server: http.Server): FlokServer {
         pubsubWss.emit("connection", ws);
       });
     } else {
-      console.warn("[server] Ignoring request to path:", pathname);
+      debug("Ignoring request to path:", pathname);
       socket.destroy();
     }
   });
@@ -44,10 +47,10 @@ export default function withFlokServer(server: http.Server): FlokServer {
   newServer._pubSubServer = new PubSub({
     wss: pubsubWss,
     onConnection: (uuid: string) => {
-      console.log("[pubsub] Add client", uuid);
+      debug("Add pubsub client", uuid);
     },
     onDisconnection: (uuid: string) => {
-      console.log("[pubsub] Remove client", uuid);
+      debug("Remove pubsub client", uuid);
     },
   });
 

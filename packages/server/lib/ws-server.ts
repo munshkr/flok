@@ -1,4 +1,7 @@
 import { map } from "lib0";
+import debugModule from "debug";
+
+const debug = new debugModule("flok:server:ws-server");
 
 const wsReadyStateConnecting = 0;
 const wsReadyStateOpen = 1;
@@ -21,6 +24,7 @@ export default (conn: any, topics: Map<string, Set<any>>) => {
       try {
         conn.ping();
       } catch (e) {
+        debug("Failed to ping:", e);
         conn.close();
       }
     }
