@@ -2,7 +2,7 @@ import { Map } from "immutable";
 import { v1 as uuidv1 } from "uuid";
 import debugModule from "debug";
 
-const debug = new debugModule("flok:core:subscription");
+const debug = debugModule("flok:core:subscription");
 
 interface SubscriptionType {
   id: string;

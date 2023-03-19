@@ -6,7 +6,7 @@ import onYjsWsConnection from "./y-websocket-server.js";
 import onWsConnection from "./ws-server.js";
 import debugModule from "debug";
 
-const debug = new debugModule("flok:server");
+const debug = debugModule("flok:server");
 
 type FlokServer = http.Server & { _pubSubServer: PubSub };
 

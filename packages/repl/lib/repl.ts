@@ -3,7 +3,7 @@ import { EventEmitter } from "events";
 import { PubSubClient } from "@flok/core";
 import debugModule from "debug";
 
-const debug = new debugModule("flok:repl");
+const debug = debugModule("flok:repl");
 
 type Message = {
   body: string;

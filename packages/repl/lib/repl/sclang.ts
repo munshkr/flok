@@ -8,7 +8,7 @@ import os from "os";
 import osc from "osc";
 import debugModule from "debug";
 
-const debug = new debugModule("flok:repl:sclang");
+const debug = debugModule("flok:repl:sclang");
 
 const { UDPPort } = osc;
 

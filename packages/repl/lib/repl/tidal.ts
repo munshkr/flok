@@ -3,7 +3,7 @@ import * as path from "path";
 import { CommandREPL, CommandREPLContext } from "../repl.js";
 import debugModule from "debug";
 
-const debug = new debugModule("flok:repl:tidal");
+const debug = debugModule("flok:repl:tidal");
 
 class TidalREPL extends CommandREPL {
   constructor(ctx: CommandREPLContext) {

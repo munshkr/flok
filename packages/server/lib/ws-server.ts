@@ -1,7 +1,7 @@
 import { map } from "lib0";
 import debugModule from "debug";
 
-const debug = new debugModule("flok:server:ws-server");
+const debug = debugModule("flok:server:ws-server");
 
 const wsReadyStateConnecting = 0;
 const wsReadyStateOpen = 1;

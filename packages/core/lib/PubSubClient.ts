@@ -2,7 +2,7 @@ import EventEmitter from "events";
 import WebSocket from "isomorphic-ws";
 import debugModule from "debug";
 
-const debug = new debugModule("flok:core:pubsub");
+const debug = debugModule("flok:core:pubsub");
 
 interface QueueItem {
   type: string;

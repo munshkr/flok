@@ -2,7 +2,7 @@ import { BaseREPL, BaseREPLContext } from "../repl.js";
 import osc from "osc";
 import debugModule from "debug";
 
-const debug = new debugModule("flok:repl:mercury");
+const debug = debugModule("flok:repl:mercury");
 
 const { UDPPort } = osc;
 

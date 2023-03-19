@@ -6,6 +6,9 @@ import { WebrtcProvider } from "y-webrtc";
 import { WebsocketProvider } from "y-websocket";
 import { Awareness } from "y-protocols/awareness.js";
 import { PubSubClient } from "@flok/core";
+import debugModule from "debug";
+
+const debug = debugModule("flok:codemirror:session");
 
 export interface UserColor {
   color: string;
