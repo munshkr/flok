@@ -27,6 +27,7 @@
     "@flok/core": "*",
     "command-exists": "^1.2.9",
     "commander": "^10.0.0",
+    "debug": "^4.3.4",
     "dotenv": "^16.0.3",
     "glob": "^9.2.1",
     "osc": "^2.4.3"
