@@ -7,10 +7,10 @@ import { WebsocketProvider } from "y-websocket";
 import { Awareness } from "y-protocols/awareness.js";
 import { PubSubClient } from "@flok/core";
 
-export type UserColor = {
+export interface UserColor {
   color: string;
   light: string;
-};
+}
 
 export const userColors: UserColor[] = [
   { color: "#30bced", light: "#30bced33" },
@@ -23,18 +23,18 @@ export const userColors: UserColor[] = [
   { color: "#1be7ff", light: "#1be7ff33" },
 ];
 
-export type EvalContext = {
+export interface EvalContext {
   editorId: string;
   from: number | null;
   to: number | null;
-};
+}
 
-export type SessionOptions = {
+export interface SessionOptions {
   hostname?: string;
   port?: number;
   isSecure?: boolean;
   user?: string;
-};
+}
 
 export default class Session {
   hostname: string;

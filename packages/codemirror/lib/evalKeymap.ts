@@ -2,11 +2,11 @@ import { keymap } from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 import type Session from "./Session";
 
-type EvalBlock = {
+interface EvalBlock {
   text: string;
   from: number | null;
   to: number | null;
-};
+}
 
 export function getSelection(state: EditorState): EvalBlock {
   if (state.selection.main.empty) return { text: "", from: null, to: null };
