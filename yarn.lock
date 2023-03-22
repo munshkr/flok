@@ -23,7 +23,7 @@
     chalk "^2.0.0"
     js-tokens "^4.0.0"
 
-"@babel/runtime@^7.20.7":
+"@babel/runtime@^7.18.6", "@babel/runtime@^7.20.7":
   version "7.21.0"
   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.21.0.tgz"
   integrity sha512-xwII0//EObnq89Ji5AKYQaRYiW/nZ3llSv29d49IuxPhKbtJoLP+9QUUZ4nVragQVtaVGeZrpB+ZtG/Pdy/POw==
@@ -40,7 +40,7 @@
     "@codemirror/view" "^6.6.0"
     "@lezer/common" "^1.0.0"
 
-"@codemirror/commands@^6.0.0", "@codemirror/commands@^6.1.2":
+"@codemirror/commands@^6.0.0":
   version "6.2.1"
   resolved "https://registry.npmjs.org/@codemirror/commands/-/commands-6.2.1.tgz"
   integrity sha512-FFiNKGuHA5O8uC6IJE5apI5rT9gyjlw4whqy4vlcX0wE/myxL6P1s0upwDhY4HtMWLOwzwsp0ap3bjdQhvfDOA==
@@ -50,7 +50,7 @@
     "@codemirror/view" "^6.0.0"
     "@lezer/common" "^1.0.0"
 
-"@codemirror/commands@^6.2.2":
+"@codemirror/commands@^6.1.0", "@codemirror/commands@^6.2.2":
   version "6.2.2"
   resolved "https://registry.npmjs.org/@codemirror/commands/-/commands-6.2.2.tgz"
   integrity sha512-s9lPVW7TxXrI/7voZ+HmD/yiAlwAYn9PH5SUVSUhsxXHhv4yl5eZ3KLntSoTynfdgVYM0oIpccQEWRBQgmNZyw==
@@ -103,12 +103,12 @@
     "@codemirror/view" "^6.0.0"
     crelt "^1.0.5"
 
-"@codemirror/state@^6.0.0", "@codemirror/state@^6.1.4", "@codemirror/state@^6.2.0":
+"@codemirror/state@^6.0.0", "@codemirror/state@^6.1.1", "@codemirror/state@^6.1.4", "@codemirror/state@^6.2.0":
   version "6.2.0"
   resolved "https://registry.npmjs.org/@codemirror/state/-/state-6.2.0.tgz"
   integrity sha512-69QXtcrsc3RYtOtd+GsvczJ319udtBf1PTrr2KbLWM/e2CXUPnh0Nz9AUo8WfhSQ7GeL8dPVNUmhQVgpmuaNGA==
 
-"@codemirror/theme-one-dark@^6.1.0", "@codemirror/theme-one-dark@^6.1.1":
+"@codemirror/theme-one-dark@^6.0.0", "@codemirror/theme-one-dark@^6.1.0", "@codemirror/theme-one-dark@^6.1.1":
   version "6.1.1"
   resolved "https://registry.npmjs.org/@codemirror/theme-one-dark/-/theme-one-dark-6.1.1.tgz"
   integrity sha512-+CfzmScfJuD6uDF5bHJkAjWTQ2QAAHxODCPxUEgcImDYcJLT+4l5vLnBHmDVv46kCC5uUJGMrBJct2Z6JbvqyQ==
@@ -1071,6 +1071,31 @@
     "@typescript-eslint/types" "5.54.1"
     eslint-visitor-keys "^3.3.0"
 
+"@uiw/codemirror-extensions-basic-setup@4.19.9":
+  version "4.19.9"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-extensions-basic-setup/-/codemirror-extensions-basic-setup-4.19.9.tgz#9c14901c7165bba9ef9a06d9c7a80d025e9c1ad7"
+  integrity sha512-O4yAgVpD3Pon4t4+lwZ2MTGg2TeU/Jv8YzKS9ap4fP/WMTVrKmpdq+DOafbhZSlhmU0XGfQPPJ4WX6rtZgx3Rw==
+  dependencies:
+    "@codemirror/autocomplete" "^6.0.0"
+    "@codemirror/commands" "^6.0.0"
+    "@codemirror/language" "^6.0.0"
+    "@codemirror/lint" "^6.0.0"
+    "@codemirror/search" "^6.0.0"
+    "@codemirror/state" "^6.0.0"
+    "@codemirror/view" "^6.0.0"
+
+"@uiw/react-codemirror@^4.19.9":
+  version "4.19.9"
+  resolved "https://registry.yarnpkg.com/@uiw/react-codemirror/-/react-codemirror-4.19.9.tgz#c999e35eb2739ff15031a358b675393576909474"
+  integrity sha512-U+A1fSfELMFFs5a+ZOPwCJKZMYaMy6QHOfNOOV7WhSveM7GYHT970GjTfs2dn1LlvhebwyK9ei0rCXZdsI9n9Q==
+  dependencies:
+    "@babel/runtime" "^7.18.6"
+    "@codemirror/commands" "^6.1.0"
+    "@codemirror/state" "^6.1.1"
+    "@codemirror/theme-one-dark" "^6.0.0"
+    "@uiw/codemirror-extensions-basic-setup" "4.19.9"
+    codemirror "^6.0.0"
+
 "@yarnpkg/lockfile@^1.1.0":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@yarnpkg/lockfile/-/lockfile-1.1.0.tgz"
@@ -1624,7 +1649,7 @@ cmd-shim@5.0.0, cmd-shim@^5.0.0:
   dependencies:
     mkdirp-infer-owner "^2.0.0"
 
-codemirror@^6.0.1:
+codemirror@^6.0.0, codemirror@^6.0.1:
   version "6.0.1"
   resolved "https://registry.npmjs.org/codemirror/-/codemirror-6.0.1.tgz"
   integrity sha512-J8j+nZ+CdWmIeFIGXEFbFPtpiYacFMDR8GlHK3IyHQJMCaVRfGx9NT+Hxivv1ckLWPvNdZqndbr/7lVhrf/Svg==
@@ -6396,7 +6421,7 @@ y-protocols@^1.0.5:
   dependencies:
     lib0 "^0.2.42"
 
-y-webrtc@^10.2.3, y-webrtc@^10.2.4:
+y-webrtc@^10.2.4:
   version "10.2.4"
   resolved "https://registry.npmjs.org/y-webrtc/-/y-webrtc-10.2.4.tgz"
   integrity sha512-yoTl2tXdJsLLYIp2X2GRqNywgGwk4CEs3NcXJmgLLq2Ga8VX86q3Y3QBLy5mi30InRjjKL/ymCasAsydXTta+w==
@@ -6407,7 +6432,7 @@ y-webrtc@^10.2.3, y-webrtc@^10.2.4:
   optionalDependencies:
     ws "^7.2.0"
 
-y-websocket@^1.4.5, y-websocket@^1.4.6:
+y-websocket@^1.4.6:
   version "1.4.6"
   resolved "https://registry.npmjs.org/y-websocket/-/y-websocket-1.4.6.tgz"
   integrity sha512-QAmFPlcjUWbdtueMjP/z7CpIJ3pyQbBiPsXyjeeXfSF5VJwV7aqlbU16a0YOsiSQwHCeLO8N2mYs8WsrKfmE7A==
@@ -6486,13 +6511,6 @@ yargs@^17.6.2:
     string-width "^4.2.3"
     y18n "^5.0.5"
     yargs-parser "^21.1.1"
-
-yjs@^13.5.43:
-  version "13.5.48"
-  resolved "https://registry.npmjs.org/yjs/-/yjs-13.5.48.tgz"
-  integrity sha512-RFUqe1UQa1iKfQ9wZkZQP33iEBBSTz6sW3S5CWzHEe0JVksOi8AzspSTvQk5VskoJj4HzMUYgaNcPrE0MqJ8xQ==
-  dependencies:
-    lib0 "^0.2.49"
 
 yjs@^13.5.50:
   version "13.5.50"
