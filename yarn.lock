@@ -1084,6 +1084,22 @@
     "@codemirror/state" "^6.0.0"
     "@codemirror/view" "^6.0.0"
 
+"@uiw/codemirror-theme-gruvbox-dark@^4.19.9":
+  version "4.19.9"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-theme-gruvbox-dark/-/codemirror-theme-gruvbox-dark-4.19.9.tgz#7c0fec29c462a73d0ab703f764a3fc07c3b6f776"
+  integrity sha512-bMGxo3fqwa0RxYnLX+gsK3E3MWzfdz3rVFu/8SvO2BEZugbknRa5eRiodQkVf8r63L5vpcjeZtVgIUsa6It81g==
+  dependencies:
+    "@uiw/codemirror-themes" "4.19.9"
+
+"@uiw/codemirror-themes@4.19.9":
+  version "4.19.9"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.19.9.tgz#988876213a2e350244ac2a0d479ebb792afbe94d"
+  integrity sha512-PH3hl1w42z7GXe/zoD9gSadOGBWyKPl7vHm/8V1PUuHXT21+neyfRc7v0xPwb05pGP6ExfbmPi78y4+g6cHopg==
+  dependencies:
+    "@codemirror/language" "^6.0.0"
+    "@codemirror/state" "^6.0.0"
+    "@codemirror/view" "^6.0.0"
+
 "@uiw/react-codemirror@^4.19.9":
   version "4.19.9"
   resolved "https://registry.yarnpkg.com/@uiw/react-codemirror/-/react-codemirror-4.19.9.tgz#c999e35eb2739ff15031a358b675393576909474"
