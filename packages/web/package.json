@@ -35,7 +35,8 @@
     "tailwind-merge": "^1.10.0",
     "tailwindcss-animate": "^1.0.5",
     "typescript": "4.9.5",
-    "unique-names-generator": "^4.7.1"
+    "unique-names-generator": "^4.7.1",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@types/connect": "^3.4.35",
