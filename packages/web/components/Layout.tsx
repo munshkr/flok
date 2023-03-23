@@ -5,7 +5,7 @@ export default function Layout({ children }: PropsWithChildren) {
   return (
     <>
       <Head>
-        <title>Flok</title>
+        <title>flok</title>
         <meta
           name="description"
           content="Web-based P2P collaborative editor for live coding sounds and images"
@@ -13,7 +13,7 @@ export default function Layout({ children }: PropsWithChildren) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>{children}</main>
+      <main className="bg-slate-900 text-slate-100 h-screen">{children}</main>
     </>
   );
 }

@@ -1,3 +1,14 @@
-export default function Home() {
-  return <h1 className="text-3xl font-bold underline">Hello world!</h1>;
-}
+import { GetServerSideProps } from "next";
+import { generateRandomSessionName } from "@/lib/utils";
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const sessionName = generateRandomSessionName();
+  return {
+    redirect: {
+      destination: `/s/${sessionName}`,
+      permanent: false,
+    },
+  };
+};
+
+export default function Home() {}
