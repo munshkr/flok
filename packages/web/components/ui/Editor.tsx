@@ -18,4 +18,5 @@ function Editor({ value, onChange }: IEditorProps) {
     />
   );
 }
+
 export default Editor;
