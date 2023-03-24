@@ -9,7 +9,8 @@ import {
   MenubarShortcut,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import Editor from "@/components/ui/editor";
+import { ThemeToggle } from "./theme-toggle";
+import Editor from "@/components/editor";
 
 export default function SessionPage() {
   return (
@@ -28,8 +29,9 @@ export default function SessionPage() {
             <MenubarItem>Print</MenubarItem>
           </MenubarContent>
         </MenubarMenu>
+        <ThemeToggle />
       </Menubar>
-      <Editor value="foo()" />;
+      {/* <Editor value="foo()" />; */}
     </>
   );
 }

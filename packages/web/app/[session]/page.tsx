@@ -1,4 +1,4 @@
-import SessionPage from "./session-page";
+import SessionPage from "@/components/session-page";
 
 export default async function Page() {
   return <SessionPage />;
