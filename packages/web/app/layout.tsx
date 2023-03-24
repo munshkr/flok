@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 
 import "@/styles/globals.css";
 import { cn } from "@/lib/utils";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const metadata = {
   title: "flok",

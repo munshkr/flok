@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Menubar,
   MenubarContent,
@@ -6,10 +8,10 @@ import {
   MenubarSeparator,
   MenubarShortcut,
   MenubarTrigger,
-} from "@/components/ui/Menubar";
-import Editor from "@/components/ui/Editor";
+} from "@/components/ui/menubar";
+import Editor from "@/components/ui/editor";
 
-export default function Home() {
+export default function SessionPage() {
   return (
     <>
       <Menubar>
