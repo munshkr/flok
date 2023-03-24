@@ -17,6 +17,7 @@
     "@flok/codemirror": "*",
     "@flok/core": "*",
     "@flok/server": "*",
+    "@radix-ui/react-dialog": "^1.0.3",
     "@radix-ui/react-dropdown-menu": "^2.0.4",
     "@radix-ui/react-menubar": "^1.0.2",
     "@types/node": "18.14.6",
