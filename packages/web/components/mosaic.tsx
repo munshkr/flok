@@ -61,17 +61,6 @@ export default function Mosaic({ items }: IMosaicProps) {
           ))}
         </div>
       ))}
-
-      {/* <div className="flex flex-row">
-        {items.map((item, i) => (
-          <div
-            key={i}
-            className="flex-grow h-full border-slate-800 dark:border-slate-200 p-4 m-1 bg-fuchsia-300 rounded-md"
-          >
-            {item}
-          </div>
-        ))}
-      </div> */}
     </div>
   );
 }
