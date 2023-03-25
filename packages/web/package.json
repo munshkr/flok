@@ -24,6 +24,7 @@
     "@types/node": "18.14.6",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
+    "@uiw/codemirror-themes": "^4.19.10",
     "@uiw/react-codemirror": "^4.19.9",
     "class-variance-authority": "^0.4.0",
     "clsx": "^1.2.1",

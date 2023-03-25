@@ -1,7 +1,6 @@
-import { Inter } from "next/font/google";
-
 import "@/styles/globals.css";
 import { cn } from "@/lib/utils";
+import { fontSans, fontMono } from "./theme";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -10,12 +9,6 @@ export const metadata = {
   description:
     "Web-based P2P collaborative editor for live coding sounds and images",
 };
-
-const fontSans = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  display: "swap",
-});
 
 export default function RootLayout({
   children,
@@ -30,7 +23,8 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen font-sans bg-slate-100 text-slate-900 antialiased dark:bg-slate-900 dark:text-slate-50",
-          fontSans.variable
+          fontSans.variable,
+          fontMono.variable
         )}
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

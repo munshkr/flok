@@ -8,6 +8,7 @@ import ConfigureDialog from "../../components/configure-dialog";
 import { allTargets } from "@flok/core";
 import { useToast } from "@/hooks/use-toast";
 import { store } from "@/lib/utils";
+import Editor from "@/components/editor";
 
 interface Pane {
   target: string;
@@ -74,7 +75,12 @@ export default function SessionPage() {
       />
       <Mosaic
         items={panes.map((pane, i) => (
-          <div key={i}>{pane.target}</div>
+          <Editor
+            key={i}
+            value={pane.content}
+            autoFocus={i === 0}
+            className="flex-grow"
+          />
         ))}
       />
     </>

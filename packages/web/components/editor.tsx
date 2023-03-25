@@ -1,24 +1,24 @@
 "use client";
 
 import React, { useMemo, useEffect, useState } from "react";
-import CodeMirror from "@uiw/react-codemirror";
+import { EditorView } from "@codemirror/view";
+import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { useTheme } from "next-themes";
+import { fontMono } from "@/app/theme";
 
-type CodeMirrorThemeProp = "light" | "dark" | "none";
+type CodeMirrorThemeProp = "light" | "dark";
 
 const codeMirrorTheme = (theme?: string): CodeMirrorThemeProp => {
   if (theme === "light") return "light";
-  if (theme === "dark") return "dark";
-  return "none";
+  return "dark";
 };
 
-interface IEditorProps {
-  value: string;
-  onChange?: (value: string, viewUpdate: any) => void;
-}
+const baseTheme = EditorView.baseTheme({
+  ".cm-scroller": { fontFamily: fontMono.style.fontFamily, fontWeight: 600 },
+});
 
-function Editor({ value, onChange }: IEditorProps) {
+function Editor(props: ReactCodeMirrorProps) {
   const [mounted, setMounted] = useState(false);
   const { theme } = useTheme();
 
@@ -35,10 +35,13 @@ function Editor({ value, onChange }: IEditorProps) {
 
   return (
     <CodeMirror
-      value={value}
       theme={themeName}
-      extensions={[javascript()]}
-      onChange={onChange}
+      extensions={[baseTheme, javascript()]}
+      basicSetup={{
+        foldGutter: false,
+        lineNumbers: false,
+      }}
+      {...props}
     />
   );
 }

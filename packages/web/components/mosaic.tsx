@@ -54,7 +54,7 @@ export default function Mosaic({ items }: IMosaicProps) {
           {rowItems.map((item, j) => (
             <div
               key={`${i}-${j}`}
-              className="flex-grow border-slate-800 dark:border-slate-200 p-4 ml-2 last:mr-2 bg-slate-300 dark:bg-slate-700 rounded-md"
+              className="flex-grow border-slate-800 dark:border-slate-200 ml-2 last:mr-2 bg-white dark:bg-[#282c34] overflow-auto basis-full"
             >
               {item}
             </div>

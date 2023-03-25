@@ -1411,6 +1411,15 @@
     "@codemirror/state" "^6.0.0"
     "@codemirror/view" "^6.0.0"
 
+"@uiw/codemirror-themes@^4.19.10":
+  version "4.19.10"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.19.10.tgz#9e9f32a78bd4d8be8d83f7dfa99ee3757eba9a86"
+  integrity sha512-FnNN2fh6S30wdaakxdULduwuL5VG6AuFEzNFgNwozVU7jsu4LG4GKlh0iY3gCvIX3RxXN/PUwhn8KD1tkqOQkQ==
+  dependencies:
+    "@codemirror/language" "^6.0.0"
+    "@codemirror/state" "^6.0.0"
+    "@codemirror/view" "^6.0.0"
+
 "@uiw/react-codemirror@^4.19.9":
   version "4.19.9"
   resolved "https://registry.yarnpkg.com/@uiw/react-codemirror/-/react-codemirror-4.19.9.tgz#c999e35eb2739ff15031a358b675393576909474"
