@@ -6,6 +6,7 @@ import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { useTheme } from "next-themes";
 import { fontMono } from "@/app/theme";
+// import { flokBasicSetup } from "@flok/codemirror";
 
 type CodeMirrorThemeProp = "light" | "dark";
 
@@ -18,11 +19,28 @@ const baseTheme = EditorView.baseTheme({
   ".cm-scroller": { fontFamily: fontMono.style.fontFamily, fontWeight: 600 },
 });
 
-function Editor(props: ReactCodeMirrorProps) {
+interface IEditorProps extends ReactCodeMirrorProps {
+  session: any;
+  target: string;
+  id: string;
+}
+
+function Editor({ session, target, id, ...props }: IEditorProps) {
   const [mounted, setMounted] = useState(false);
+  const [flokSetup, setFlokSetup] = useState<any[]>([]);
   const { theme } = useTheme();
 
   const themeName = useMemo(() => codeMirrorTheme(theme), [theme]);
+
+  useEffect(() => {
+    (async () => {
+      if (!session || !id || !target) return [];
+      const cm = await import("@flok/codemirror");
+      const setup = cm.flokBasicSetup(session, id, target);
+      console.log("setup", setup);
+      setFlokSetup(setup);
+    })();
+  }, [session, id, target]);
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
@@ -36,7 +54,7 @@ function Editor(props: ReactCodeMirrorProps) {
   return (
     <CodeMirror
       theme={themeName}
-      extensions={[baseTheme, javascript()]}
+      extensions={[baseTheme, ...flokSetup, javascript()]}
       basicSetup={{
         foldGutter: false,
         lineNumbers: false,

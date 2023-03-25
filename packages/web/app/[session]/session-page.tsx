@@ -18,20 +18,26 @@ interface Pane {
 
 const defaultTarget = allTargets[0] || "default";
 
-interface ISessionPageProps {
-  name: string;
-}
-
 export default function SessionPage() {
   const pathname = usePathname();
   const sessionName = pathname.slice(1);
 
   const { toast } = useToast();
 
+  const [session, setSession] = useState<Session | null>(null);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [panes, setPanes] = useState<Pane[]>([
     { target: defaultTarget, content: "" },
   ]);
+
+  useEffect(() => {
+    if (!sessionName) return;
+
+    import("@flok/codemirror").then((cm) => {
+      const newSession = new cm.Session(sessionName);
+      setSession(newSession);
+    });
+  }, [sessionName]);
 
   useEffect(() => {
     const key = `session:${sessionName}`;
@@ -40,13 +46,13 @@ export default function SessionPage() {
     console.log("settings for", sessionName, settings);
   }, [sessionName]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      toast({
-        description: "Connected to Flok server",
-      });
-    }, 500);
-  }, [toast]);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     toast({
+  //       description: "Connected to Flok server",
+  //     });
+  //   }, 500);
+  // }, [toast]);
 
   const handleViewLayoutAdd = () => {
     setPanes((prevPanes) => [
@@ -81,6 +87,9 @@ export default function SessionPage() {
               key={i}
               value={pane.content}
               autoFocus={i === 0}
+              session={session}
+              target={pane.target}
+              id={`pane-${i}`}
               className="flex-grow"
             />
           </Pane>

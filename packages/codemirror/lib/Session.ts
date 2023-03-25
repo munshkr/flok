@@ -130,6 +130,15 @@ export default class Session {
     this._emitter.on(eventName, cb);
   }
 
+  dispose() {
+    this._pubSubClient.disconnect();
+    this._wsProvider.destroy();
+    this._webrtcProvider.destroy();
+    this._idbProvider.destroy();
+    this.yDoc.destroy();
+    this.awareness.destroy();
+  }
+
   _prepareYjs() {
     this._createDoc();
     this._createProviders();
