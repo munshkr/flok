@@ -9,6 +9,7 @@ import { allTargets } from "@flok/core";
 import { useToast } from "@/hooks/use-toast";
 import { store } from "@/lib/utils";
 import Editor from "@/components/editor";
+import Pane from "@/components/pane";
 
 interface Pane {
   target: string;
@@ -75,12 +76,14 @@ export default function SessionPage() {
       />
       <Mosaic
         items={panes.map((pane, i) => (
-          <Editor
-            key={i}
-            value={pane.content}
-            autoFocus={i === 0}
-            className="flex-grow"
-          />
+          <Pane key={i}>
+            <Editor
+              key={i}
+              value={pane.content}
+              autoFocus={i === 0}
+              className="flex-grow"
+            />
+          </Pane>
         ))}
       />
     </>
