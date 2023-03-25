@@ -20,3 +20,20 @@ export function generateRandomSessionName() {
   });
   return `${namePrefix}-${uuid.slice(0, 8)}`;
 }
+
+export const store = {
+  get: (key: string): any | null => {
+    const value = localStorage.getItem(key);
+    if (value !== null) {
+      try {
+        return JSON.parse(value);
+      } catch (err) {
+        return;
+      }
+    }
+    return;
+  },
+  set: (key: string, value: any) => {
+    localStorage.setItem(key, JSON.stringify(value));
+  },
+};

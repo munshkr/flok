@@ -12,14 +12,17 @@ import {
   MenubarSubTrigger,
   MenubarSubContent,
 } from "@/components/ui/menubar";
-import { ThemeToggle } from "./theme-toggle";
+import ThemeToggle from "./theme-toggle";
+import ConfigureDialog from "./configure-dialog";
 
 interface IMenuProps {
+  onSessionConfigure?: any;
   onViewLayoutAdd?: any;
   onViewLayoutRemove?: any;
 }
 
 export default function Menu({
+  onSessionConfigure,
   onViewLayoutAdd,
   onViewLayoutRemove,
 }: IMenuProps) {
@@ -28,8 +31,8 @@ export default function Menu({
       <MenubarMenu>
         <MenubarTrigger>Session</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem>
-            Configure <MenubarShortcut>⌘C</MenubarShortcut>
+          <MenubarItem onSelect={onSessionConfigure}>
+            Configure<MenubarShortcut>⌘C</MenubarShortcut>
           </MenubarItem>
           <MenubarSeparator />
           <MenubarItem>New</MenubarItem>
