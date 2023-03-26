@@ -6,6 +6,10 @@
     "type": "git",
     "url": "git+https://github.com/munshkr/flok.git"
   },
+  "scripts": {
+    "build": "lerna run build",
+    "prepare": "yarn build"
+  },
   "keywords": [
     "codemirror",
     "webrtc",
