@@ -5,7 +5,7 @@ import Subscription from "./Subscription.js";
 import WebSocket from "isomorphic-ws";
 import debugModule from "debug";
 
-const debug = debugModule("flok:core:pubsub");
+const debug = debugModule("flok:pubsub:server");
 
 interface ClientType {
   id: string;

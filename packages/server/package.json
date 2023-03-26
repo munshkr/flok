@@ -26,7 +26,7 @@
     "dev": "yarn build && node bin/flok-server.js"
   },
   "dependencies": {
-    "@flok/core": "*",
+    "@flok/pubsub": "*",
     "connect": "^3.7.0",
     "debug": "^4.3.4",
     "lib0": "^0.2.63"

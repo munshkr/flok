@@ -1,7 +1,7 @@
 import url from "url";
 import WebSocket from "ws";
 import http from "http";
-import { PubSub } from "@flok/core";
+import { PubSub } from "@flok/pubsub";
 import onYjsWsConnection from "./y-websocket-server.js";
 import onWsConnection from "./ws-server.js";
 import debugModule from "debug";

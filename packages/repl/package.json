@@ -24,7 +24,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@flok/core": "*",
+    "@flok/pubsub": "*",
     "command-exists": "^1.2.9",
     "commander": "^10.0.0",
     "debug": "^4.3.4",

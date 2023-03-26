@@ -1,7 +1,7 @@
 {
-  "name": "@flok/core",
+  "name": "@flok/pubsub",
   "version": "1.0.0",
-  "description": "Core package of flok, contains Pub/Sub functionality and CLI-based client",
+  "description": "Pub/Sub client-server, used for remote code execution and message passing on Flok",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
   "type": "module",

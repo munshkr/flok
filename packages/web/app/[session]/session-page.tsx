@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import Menu from "@/components/menu";
 import Mosaic from "@/components/mosaic";
 import ConfigureDialog from "../../components/configure-dialog";
-import { allTargets } from "@flok/core";
 import { useToast } from "@/hooks/use-toast";
 import { store } from "@/lib/utils";
 import Editor from "@/components/editor";
@@ -17,7 +16,7 @@ interface Pane {
   content: string;
 }
 
-const defaultTarget = allTargets[0] || "default";
+const defaultTarget = "tidal";
 
 export default function SessionPage() {
   const pathname = usePathname();
