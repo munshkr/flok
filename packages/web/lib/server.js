@@ -6,7 +6,7 @@ import serveStatic from "serve-static";
 import { parse } from "url";
 import next from "next";
 import connect from "connect";
-import withFlokServer from "@flok/server";
+import withFlokServer from "@flok/connect-server";
 import { fileURLToPath } from "url";
 import { networkInterfaces } from "os";
 

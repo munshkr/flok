@@ -19,7 +19,7 @@
     "@codemirror/view": "^6.9.3",
     "@flok/codemirror": "*",
     "@flok/pubsub": "*",
-    "@flok/server": "*",
+    "@flok/connect-server": "*",
     "@radix-ui/react-dialog": "^1.0.3",
     "@radix-ui/react-dropdown-menu": "^2.0.4",
     "@radix-ui/react-menubar": "^1.0.2",
