@@ -2,6 +2,10 @@ import { map, mutex, encoding, decoding } from "lib0";
 import { Doc } from "yjs";
 import * as awarenessProtocol from "y-protocols/awareness";
 import * as syncProtocol from "y-protocols/sync";
+import type http from "http";
+import debugModule from "debug";
+
+const debug = debugModule("flok:server:y-websocket-server");
 
 const wsReadyStateConnecting = 0;
 const wsReadyStateOpen = 1;
@@ -168,7 +172,7 @@ const pingTimeout = 30000;
 
 export const setupWSConnection = (
   conn: any,
-  req: any,
+  req: http.IncomingMessage,
   { docName = req.url.slice(1).split("?")[0], gc = true }: any = {}
 ) => {
   conn.binaryType = "arraybuffer";

@@ -3,7 +3,7 @@ import WebSocket from "ws";
 import http from "http";
 import { PubSub } from "@flok/pubsub";
 import onYjsWsConnection from "./y-websocket-server.js";
-import onWsConnection from "./ws-server.js";
+import onSignalingWsConnection from "./signaling-server.js";
 import debugModule from "debug";
 
 const debug = debugModule("flok:server");
@@ -23,16 +23,19 @@ export default function withFlokServer(server: http.Server): FlokServer {
     const { pathname } = url.parse(request.url);
 
     if (pathname.startsWith("/signal")) {
-      wss.handleUpgrade(request, socket, head, (ws) => {
-        wss.emit("connection", ws);
+      wss.handleUpgrade(request, socket, head, (...args: any[]) => {
+        debug("y-webrtc signaling connection");
+        wss.emit("connection", ...args);
       });
     } else if (pathname.startsWith("/doc")) {
-      docWss.handleUpgrade(request, socket, head, (ws) => {
-        docWss.emit("connection", ws);
+      docWss.handleUpgrade(request, socket, head, (...args: any[]) => {
+        debug("y-websocket connection");
+        docWss.emit("connection", ...args);
       });
     } else if (pathname.startsWith("/pubsub")) {
-      pubsubWss.handleUpgrade(request, socket, head, (ws) => {
-        pubsubWss.emit("connection", ws);
+      pubsubWss.handleUpgrade(request, socket, head, (...args: any[]) => {
+        debug("pubsub connection");
+        pubsubWss.emit("connection", ...args);
       });
     } else {
       debug("Ignoring request to path:", pathname);
@@ -40,8 +43,12 @@ export default function withFlokServer(server: http.Server): FlokServer {
     }
   });
 
-  wss.on("connection", (conn) => onWsConnection(conn, topics));
-  docWss.on("connection", () => onYjsWsConnection);
+  wss.on("connection", (conn: WebSocket) =>
+    onSignalingWsConnection(conn, topics)
+  );
+  docWss.on("connection", (conn: WebSocket, req: http.IncomingMessage) => {
+    onYjsWsConnection(conn, req);
+  });
 
   // Prepare PubSub WebScoket server (pubsub) for code evaluation
   newServer._pubSubServer = new PubSub({

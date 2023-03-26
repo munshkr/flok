@@ -1,7 +1,7 @@
 import { map } from "lib0";
 import debugModule from "debug";
 
-const debug = debugModule("flok:server:ws-server");
+const debug = debugModule("flok:server:signaling-server");
 
 const wsReadyStateConnecting = 0;
 const wsReadyStateOpen = 1;
@@ -49,6 +49,7 @@ export default (conn: any, topics: Map<string, Set<any>>) => {
     if (typeof message === "string") {
       message = JSON.parse(message);
     }
+    debug("message", message);
     if (message && message.type && !closed) {
       switch (message.type) {
         case "subscribe":
