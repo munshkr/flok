@@ -1,5 +1,5 @@
-import * as Y from "yjs";
-import * as random from "lib0/random";
+import type { Doc, Text } from "yjs";
+import { uint32 } from "lib0/random";
 import EventEmitter from "events";
 import { IndexeddbPersistence } from "y-indexeddb";
 import { WebrtcProvider } from "y-webrtc";
@@ -45,7 +45,7 @@ export class Session {
   isSecure: boolean;
   name: string;
 
-  yDoc!: Y.Doc;
+  yDoc: Doc;
   awareness!: Awareness;
 
   _user: string;
@@ -59,14 +59,16 @@ export class Session {
 
   _emitter: EventEmitter = new EventEmitter();
 
-  constructor(name: string, opts: SessionOptions = {}) {
+  constructor(name: string, doc: Doc, opts: SessionOptions = {}) {
     this.name = name;
+    this.yDoc = doc;
+
     this.hostname = opts?.hostname || "localhost";
     this.port = opts?.port || 3000;
     this.isSecure = opts?.isSecure || false;
 
     this._user = opts?.user || "Anonymous " + Math.floor(Math.random() * 100);
-    this._userColor = userColors[random.uint32() % userColors.length];
+    this._userColor = userColors[uint32() % userColors.length];
 
     this._prepareYjs();
     this._preparePubSub();
@@ -90,7 +92,7 @@ export class Session {
     this._updateUserStateField();
   }
 
-  getText(id: string): Y.Text {
+  getText(id: string): Text {
     return this.yDoc.getText(id);
   }
 
@@ -140,23 +142,16 @@ export class Session {
   }
 
   _prepareYjs() {
-    this._createDoc();
-    this._createProviders();
-  }
-
-  _createDoc() {
-    this.yDoc = new Y.Doc();
-
-    // Awareness
     this.awareness = new Awareness(this.yDoc);
     this._updateUserStateField();
+    this._createProviders();
   }
 
   _createProviders() {
     this._idbProvider = new IndexeddbPersistence(this.name, this.yDoc);
-    // this._idbProvider.on("synced", () => {
-    //   console.log("Data from IndexexDB loaded");
-    // });
+    this._idbProvider.on("synced", () => {
+      debug("Synced data from IndexedDB");
+    });
 
     this._webrtcProvider = new WebrtcProvider(this.name, this.yDoc, {
       awareness: this.awareness,
@@ -170,9 +165,9 @@ export class Session {
       { awareness: this.awareness }
     );
 
-    // this._wsProvider.on("status", (event: any) => {
-    //   console.log(event.status);
-    // });
+    this._wsProvider.on("status", (event: any) => {
+      debug("Websocket status:", event.status);
+    });
   }
 
   _preparePubSub() {

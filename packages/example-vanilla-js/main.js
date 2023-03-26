@@ -3,10 +3,10 @@ import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorState, Prec } from "@codemirror/state";
 import { keymap } from "@codemirror/view";
-import { indentWithTab } from "@codemirror/commands";
 import { yCollab, yUndoManagerKeymap } from "y-codemirror.next";
 import { Session } from "@flok/session";
 import { flashField, evalKeymap } from "@flok/codemirror-eval";
+import { Doc } from "yjs";
 
 import "./style.css";
 
@@ -29,7 +29,6 @@ const createEditor = (id, { session, target, el }) => {
     extensions: [
       basicSetup,
       flokBasicSetup(session, id, target),
-      keymap.of([indentWithTab]),
       javascript(),
       EditorView.lineWrapping,
       oneDark,
@@ -52,7 +51,8 @@ const handleEvalHydra = (msg) => {
   console.log("eval:hydra", msg);
 };
 
-const session = new Session("default");
+const ydoc = new Doc()
+const session = new Session("default", ydoc);
 session.addTargets("tidal", "hydra");
 
 session.on("message", handleMessage);

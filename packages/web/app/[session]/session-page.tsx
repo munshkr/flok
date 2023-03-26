@@ -10,6 +10,7 @@ import { store } from "@/lib/utils";
 import Editor from "@/components/editor";
 import Pane from "@/components/pane";
 import { Session } from "@flok/session";
+import { Doc } from "yjs";
 
 interface Pane {
   target: string;
@@ -32,7 +33,8 @@ export default function SessionPage() {
 
   useEffect(() => {
     if (!sessionName) return;
-    const newSession = new Session(sessionName);
+    const doc = new Doc();
+    const newSession = new Session(sessionName, doc);
     setSession(newSession);
 
     const key = `session:${sessionName}`;
