@@ -2,11 +2,10 @@ import { EditorView, basicSetup } from "codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorState, Prec } from "@codemirror/state";
-import { keymap } from "@codemirror/view";
-import { yCollab, yUndoManagerKeymap } from "y-codemirror.next";
+import { yCollab } from "y-codemirror.next";
 import { Session } from "@flok/session";
 import { flashField, evalKeymap } from "@flok/codemirror-eval";
-import { Doc } from "yjs";
+import { Doc, UndoManager } from "yjs";
 
 import "./style.css";
 
@@ -15,11 +14,13 @@ const flokBasicSetup = (
   editorId,
   target
 ) => {
+  const text = session.getText(editorId);
+  const undoManager = new UndoManager(text);
+
   return [
-    keymap.of([...yUndoManagerKeymap]),
     flashField(),
     Prec.high(evalKeymap(session, editorId, target)),
-    yCollab(session.getText(editorId), session.awareness),
+    yCollab(text, session.awareness, { undoManager }),
   ];
 };
 
