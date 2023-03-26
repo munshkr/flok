@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { store } from "@/lib/utils";
 import Editor from "@/components/editor";
 import Pane from "@/components/pane";
+import type { Session } from "@flok/codemirror";
 
 interface Pane {
   target: string;
