@@ -5,8 +5,8 @@ const debug = debugModule("flok:server:signaling-server");
 
 const wsReadyStateConnecting = 0;
 const wsReadyStateOpen = 1;
-// const wsReadyStateClosing = 2; // eslint-disable-line
-// const wsReadyStateClosed = 3; // eslint-disable-line
+const wsReadyStateClosing = 2; // eslint-disable-line
+const wsReadyStateClosed = 3; // eslint-disable-line
 
 const pingTimeout = 30000;
 
@@ -45,16 +45,13 @@ export default (conn: any, topics: Map<string, Set<any>>) => {
     closed = true;
   });
 
-  conn.on("message", (message: any) => {
-    if (typeof message === "string") {
-      message = JSON.parse(message);
-    }
-    debug("message", message);
+  conn.on("message", (data: Buffer) => {
+    const message = JSON.parse(data.toString());
     if (message && message.type && !closed) {
       switch (message.type) {
         case "subscribe":
           /** @type {Array<string>} */ (message.topics || []).forEach(
-            (topicName) => {
+            (topicName: string) => {
               if (typeof topicName === "string") {
                 // add conn to topic
                 const topic = map.setIfUndefined(
@@ -71,7 +68,7 @@ export default (conn: any, topics: Map<string, Set<any>>) => {
           break;
         case "unsubscribe":
           /** @type {Array<string>} */ (message.topics || []).forEach(
-            (topicName) => {
+            (topicName: string) => {
               const subs = topics.get(topicName);
               if (subs) {
                 subs.delete(conn);
@@ -83,6 +80,7 @@ export default (conn: any, topics: Map<string, Set<any>>) => {
           if (message.topic) {
             const receivers = topics.get(message.topic);
             if (receivers) {
+              message.clients = receivers.size;
               receivers.forEach((receiver) => send(receiver, message));
             }
           }
@@ -96,7 +94,7 @@ export default (conn: any, topics: Map<string, Set<any>>) => {
   });
 };
 
-const send = (conn: any, message: object) => {
+const send = (conn: WebSocket, message: object) => {
   if (
     conn.readyState !== wsReadyStateConnecting &&
     conn.readyState !== wsReadyStateOpen
