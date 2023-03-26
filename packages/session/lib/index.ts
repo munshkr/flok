@@ -10,6 +10,8 @@ import debugModule from "debug";
 
 const debug = debugModule("flok:codemirror:session");
 
+type Provider = "webrtc" | "websocket" | "indexeddb";
+
 export interface UserColor {
   color: string;
   light: string;
@@ -37,6 +39,8 @@ export interface SessionOptions {
   port?: number;
   isSecure?: boolean;
   user?: string;
+  providers?: Provider[];
+  extraSignalingServers?: string[];
 }
 
 export class Session {
@@ -51,6 +55,8 @@ export class Session {
   _user: string;
   _userColor: UserColor;
   _targets: Set<string> = new Set();
+  _providers: Provider[];
+  _extraSignalingServers: string[];
 
   _idbProvider!: IndexeddbPersistence;
   _webrtcProvider!: WebrtcProvider;
@@ -69,6 +75,8 @@ export class Session {
 
     this._user = opts?.user || "Anonymous " + Math.floor(Math.random() * 100);
     this._userColor = userColors[uint32() % userColors.length];
+    this._providers = opts?.providers || ["webrtc", "websocket", "indexeddb"];
+    this._extraSignalingServers = opts?.extraSignalingServers || [];
 
     this._prepareYjs();
     this._preparePubSub();
@@ -134,9 +142,9 @@ export class Session {
 
   dispose() {
     this._pubSubClient.disconnect();
-    this._wsProvider.destroy();
-    this._webrtcProvider.destroy();
-    this._idbProvider.destroy();
+    if (this._wsProvider) this._wsProvider.destroy();
+    if (this._webrtcProvider) this._webrtcProvider.destroy();
+    if (this._idbProvider) this._idbProvider.destroy();
     this.yDoc.destroy();
     this.awareness.destroy();
   }
@@ -148,26 +156,32 @@ export class Session {
   }
 
   _createProviders() {
-    this._idbProvider = new IndexeddbPersistence(this.name, this.yDoc);
-    this._idbProvider.on("synced", () => {
-      debug("Synced data from IndexedDB");
-    });
+    if (this._providers.includes("indexeddb")) {
+      this._idbProvider = new IndexeddbPersistence(this.name, this.yDoc);
+      this._idbProvider.on("synced", () => {
+        debug("Synced data from IndexedDB");
+      });
+    }
 
-    this._webrtcProvider = new WebrtcProvider(this.name, this.yDoc, {
-      awareness: this.awareness,
-      signaling: [`${this._wsUrl}/signal`],
-    });
+    if (this._providers.includes("webrtc")) {
+      this._webrtcProvider = new WebrtcProvider(this.name, this.yDoc, {
+        awareness: this.awareness,
+        signaling: [`${this._wsUrl}/signal`, ...this._extraSignalingServers],
+      });
+    }
 
-    this._wsProvider = new WebsocketProvider(
-      `${this._wsUrl}/doc`,
-      this.name,
-      this.yDoc,
-      { awareness: this.awareness }
-    );
+    if (this._providers.includes("websocket")) {
+      this._wsProvider = new WebsocketProvider(
+        `${this._wsUrl}/doc`,
+        this.name,
+        this.yDoc,
+        { awareness: this.awareness }
+      );
 
-    this._wsProvider.on("status", (event: any) => {
-      debug("Websocket status:", event.status);
-    });
+      this._wsProvider.on("status", (event: any) => {
+        debug("Websocket status:", event.status);
+      });
+    }
   }
 
   _preparePubSub() {
