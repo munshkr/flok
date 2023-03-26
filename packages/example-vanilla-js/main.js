@@ -1,26 +1,29 @@
 import { EditorView, basicSetup } from "codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { EditorState } from "@codemirror/state";
+import { EditorState, Prec } from "@codemirror/state";
 import { keymap } from "@codemirror/view";
 import { indentWithTab } from "@codemirror/commands";
-
-import { flokBasicSetup, Session } from "../lib/index.js";
+import { yCollab, yUndoManagerKeymap } from "y-codemirror.next";
+import { Session } from "@flok/session";
+import { flashField, evalKeymap } from "@flok/codemirror-eval";
 
 import "./style.css";
 
-const createEditor = (
-  id: string,
-  {
-    session,
-    target,
-    el,
-  }: {
-    session: Session;
-    target: string;
-    el: HTMLDivElement;
-  }
+const flokBasicSetup = (
+  session,
+  editorId,
+  target
 ) => {
+  return [
+    keymap.of([...yUndoManagerKeymap]),
+    flashField(),
+    Prec.high(evalKeymap(session, editorId, target)),
+    yCollab(session.getText(editorId), session.awareness),
+  ];
+};
+
+const createEditor = (id, { session, target, el }) => {
   const state = EditorState.create({
     doc: session.getTextString(id),
     extensions: [
@@ -41,11 +44,11 @@ const createEditor = (
   return [state, view];
 };
 
-const handleMessage = (msg: any) => {
+const handleMessage = (msg) => {
   console.log("message", msg);
 };
 
-const handleEvalHydra = (msg: any) => {
+const handleEvalHydra = (msg) => {
   console.log("eval:hydra", msg);
 };
 
@@ -60,10 +63,10 @@ session.on("eval:hydra", handleEvalHydra);
 createEditor("tidal-editor", {
   session,
   target: "tidal",
-  el: document.querySelector<HTMLDivElement>("#slot1 .editor")!,
+  el: document.querySelector("#slot1 .editor"),
 });
 createEditor("hydra-editor", {
   session,
   target: "hydra",
-  el: document.querySelector<HTMLDivElement>("#slot2 .editor")!,
+  el: document.querySelector("#slot2 .editor"),
 });

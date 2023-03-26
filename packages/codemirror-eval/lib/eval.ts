@@ -1,7 +1,7 @@
 import { EditorView, keymap } from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
-import type Session from "./Session";
-import { flash } from "./flashField";
+import { flash } from "./flashField.js";
+import type Session from "@flok/session";
 
 interface EvalBlock {
   text: string;
@@ -50,51 +50,57 @@ export function getBlock(state: EditorState): EvalBlock {
   return { text, from, to };
 }
 
-export default function evalKeymap(
+export const evaluateBlockOrSelection = (
+  view: EditorView,
   session: Session,
   editorId: string,
   target: string
-) {
-  const evaluateBlockOrSelection = (view: EditorView) => {
-    const { state } = view;
-    const selection = getSelection(state);
-    if (selection.text) {
-      const { text, from, to } = selection;
-      flash(view, from, to);
-      session.evaluate(target, text, { editorId, from, to });
-    } else {
-      const { text, from, to } = getBlock(state);
-      flash(view, from, to);
-      session.evaluate(target, text, { editorId, from, to });
-    }
-  };
-
-  const evaluateLine = (view: EditorView) => {
-    const { state } = view;
-    const { text, from, to } = getLine(state);
+) => {
+  const { state } = view;
+  const selection = getSelection(state);
+  if (selection.text) {
+    const { text, from, to } = selection;
     flash(view, from, to);
     session.evaluate(target, text, { editorId, from, to });
-  };
+  } else {
+    const { text, from, to } = getBlock(state);
+    flash(view, from, to);
+    session.evaluate(target, text, { editorId, from, to });
+  }
+};
 
+export const evaluateLine = (
+  view: EditorView,
+  session: Session,
+  editorId: string,
+  target: string
+) => {
+  const { state } = view;
+  const { text, from, to } = getLine(state);
+  flash(view, from, to);
+  session.evaluate(target, text, { editorId, from, to });
+};
+
+export function evalKeymap(session: Session, editorId: string, target: string) {
   return keymap.of([
     {
       key: "Ctrl-Enter",
       run(view) {
-        evaluateBlockOrSelection(view);
+        evaluateBlockOrSelection(view, session, editorId, target);
         return true;
       },
     },
     {
       key: "Cmd-Enter",
       run(view) {
-        evaluateBlockOrSelection(view);
+        evaluateBlockOrSelection(view, session, editorId, target);
         return true;
       },
     },
     {
       key: "Shift-Enter",
       run(view) {
-        evaluateLine(view);
+        evaluateLine(view, session, editorId, target);
         return true;
       },
     },

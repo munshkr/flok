@@ -1,0 +1,30 @@
+{
+  "name": "example-vanilla-js",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^4.2.0"
+  },
+  "dependencies": {
+    "yjs": "^13.5.50",
+    "y-codemirror.next": "^0.3.2",
+    "@codemirror/lang-javascript": "^6.1.4",
+    "@codemirror/theme-one-dark": "^6.1.1",
+    "y-indexeddb": "^9.0.9",
+    "y-protocols": "^1.0.5",
+    "y-webrtc": "^10.2.4",
+    "y-websocket": "^1.5.0",
+    "@codemirror/commands": "^6.2.2",
+    "@codemirror/state": "^6.2.0",
+    "@codemirror/view": "^6.9.2",
+    "codemirror": "^6.0.1",
+    "@flok/session": "*",
+    "@flok/codemirror-eval": "*"
+  }
+}

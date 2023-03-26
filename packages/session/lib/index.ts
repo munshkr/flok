@@ -39,7 +39,7 @@ export interface SessionOptions {
   user?: string;
 }
 
-export default class Session {
+export class Session {
   hostname: string;
   port: number;
   isSecure: boolean;
@@ -235,3 +235,5 @@ export default class Session {
     return `${schema}://${this.hostname}:${this.port}`;
   }
 }
+
+export default Session;
