@@ -7,11 +7,12 @@
   "type": "module",
   "bin": "./bin/flok-web.js",
   "scripts": {
-    "dev": "node server.js",
+    "dev": "node ./bin/flok-web.js",
     "build": "tsc && vite build",
-    "start": "cross-env NODE_ENV=production node server.js"
+    "start": "cross-env NODE_ENV=production node ./bin/flok-web.js"
   },
   "dependencies": {
+    "@flok/connect-server": "*",
     "express": "^4.18.2",
     "react-dom": "^18.2.0",
     "react": "^18.2.0",
