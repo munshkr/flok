@@ -18,7 +18,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "types": ["unplugin-fonts/client"]
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
