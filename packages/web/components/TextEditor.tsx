@@ -14,6 +14,7 @@ import "codemirror/mode/haskell/haskell";
 import "codemirror/mode/smalltalk/smalltalk";
 import "codemirror/addon/scroll/simplescrollbars";
 import "codemirror/addon/selection/mark-selection";
+import "codemirror/addon/comment/comment";
 
 type EvaluateCodeArgs = {
   editorId: string;
@@ -338,6 +339,7 @@ class TextEditor extends Component<Props, {}> {
           "Shift-Alt-Enter": () => this.evaluateAll(true),
           "Ctrl-Alt-Enter": () => this.evaluateAll(true),
           "Cmd-Alt-Enter": () => this.evaluateAll(true),
+          'Alt-/': 'toggleComment',
         },
       };
     }
@@ -348,6 +350,8 @@ class TextEditor extends Component<Props, {}> {
       "Alt-.": this.freeAllSound,
       "Shift-Ctrl-H": this.toggleEditorVisible,
       "Shift-Cmd-H": this.toggleEditorVisible,
+      'Cmd-/': 'toggleComment',
+      'Ctrl-/': 'toggleComment',
       ...defaultExtraKeys,
     };
 
@@ -358,6 +362,8 @@ class TextEditor extends Component<Props, {}> {
       theme: "material",
       lineNumbers: false,
       lineWrapping: true,
+      indentUnit: 4,
+      indentWithTabs: false,
       extraKeys,
     };
 
