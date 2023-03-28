@@ -362,8 +362,6 @@ class TextEditor extends Component<Props, {}> {
       theme: "material",
       lineNumbers: false,
       lineWrapping: true,
-      indentUnit: 4,
-      indentWithTabs: false,
       extraKeys,
     };
 
