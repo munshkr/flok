@@ -235,32 +235,14 @@ on how to install the extension.
 #### Mercury
 
 [Mercury](https://github.com/tmhglnd/mercury) is a minimal and human readable
-language for livecoding of algorithmic electronic music. Follow these steps to
-connect Flok to the Mercury livecoding environment:
+language for livecoding of algorithmic electronic music. Below is a link to steps for
+connecting Flok to either the Mercury Playground (browser based) or the Max8 version
+of the livecoding environment:
 
-First make sure you have installed `Mercury` and `flok-repl` properly.
-1. Install Mercury via the 
-   [quick start quide](https://github.com/tmhglnd/mercury/blob/master/docs/quick-start.md). 
-2. Install the `flok-repl` globally with `npm install -g flok-repl`.
+[Follow the step-by-step guide here](https://tmhglnd.github.io/mercury/collaborate.html)
 
-Now follow these steps for a succesful setup.
-1. Setup Flok with target `mercury` and click **Create session**.
-3. Copy the `flok-repl -H xxx -s xxx -t mercury` command to run in the terminal
-   at step 4.
-3. **Join** the Flok with your nickname.
-4. Run the copied `flok-repl` command in the terminal. Or manually set it up
-   with argument `-t mercury`.
-5. Enable *Audio* and optionally *Visuals* in Mercury to hear sound.
-
-Now start typing some code! 🎵
-
-- `Ctrl/Alt + Return` to evaluate
-- `Ctrl/Alt + .` to silence
-
-Flok will send the entire code via OSC messaging to port 4880. Mercury should
-be listening to this port automatically. Bug reports are welcome in the issues.
-If the issue is more Mercury than Flok related please report
-[here](https://github.com/tmhglnd/mercury/issues/new)
+Bug reports are welcome in the issues. If the issue is more Mercury than Flok related please
+report [here](https://github.com/tmhglnd/mercury/issues/new)
 
 ## Development
 
