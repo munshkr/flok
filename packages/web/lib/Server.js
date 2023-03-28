@@ -77,7 +77,7 @@ class Server {
     return this.secure ? "https" : "http";
   }
 
-  start(cb) {
+  async start(cb) {
     if (this.started) return this;
 
     const nextApp = next({
@@ -94,76 +94,79 @@ class Server {
       console.log("[pubsub] Remove client", uuid);
     }
 
-    nextApp.prepare().then(() => {
-      const app = express();
+    await nextApp.prepare();
+    const app = express();
 
-      const wss = new WebSocket.Server({ noServer: true });
-      const docWss = new WebSocket.Server({ noServer: true });
-      const pubsubWss = new WebSocket.Server({ noServer: true });
-      const server = createServer(app, this.secure);
+    const wss = new WebSocket.Server({ noServer: true });
+    const docWss = new WebSocket.Server({ noServer: true });
+    const pubsubWss = new WebSocket.Server({ noServer: true });
+    const server = createServer(app, this.secure);
 
-      server.on("upgrade", (request, socket, head) => {
-        const { pathname } = url.parse(request.url);
+    server.on("upgrade", (request, socket, head) => {
+      const { pathname } = url.parse(request.url);
 
-        if (pathname.startsWith("/signal")) {
-          wss.handleUpgrade(request, socket, head, (ws) => {
-            wss.emit("connection", ws);
-          });
-        } else if (pathname.startsWith("/doc")) {
-          docWss.handleUpgrade(request, socket, head, (ws) => {
-            docWss.emit("connection", ws);
-          })
-        } else if (pathname.startsWith("/pubsub")) {
-          pubsubWss.handleUpgrade(request, socket, head, (ws) => {
-            pubsubWss.emit("connection", ws);
-          });
-        } else if (pathname.startsWith("/_next/webpack-hmr")) {
-          nextApp.hotReloader?.onHMR(req, socket, head);
-        } else {
-          console.warn("[server] Ignoring request to path:", pathname);
-          socket.destroy();
-        }
-      });
-
-      wss.on("connection", (conn) => this.onSignalingServerConnection(conn));
-      docWss.on("connection", setupWSConnection);
-
-      // Prepare PubSub WebScoket server (pubsub)
-      const pubSubServer = new PubSub({
-        wss: pubsubWss,
-        onConnection: addClient,
-        onDisconnection: removeClient,
-      });
-      // eslint-disable-next-line no-param-reassign
-      app.pubsub = pubSubServer;
-
-      if (process.env.REDIRECT_HTTPS) {
-        console.log("> Going to redirect http to https");
-        const sslRedirect = require("./sslRedirect");
-        app.use(
-          sslRedirect({
-            port: process.env.NODE_ENV === "production" ? null : this.port,
-          })
-        );
+      if (pathname.startsWith("/signal")) {
+        wss.handleUpgrade(request, socket, head, (ws) => {
+          wss.emit("connection", ws);
+        });
+      } else if (pathname.startsWith("/doc")) {
+        docWss.handleUpgrade(request, socket, head, (ws) => {
+          docWss.emit("connection", ws);
+        })
+      } else if (pathname.startsWith("/pubsub")) {
+        pubsubWss.handleUpgrade(request, socket, head, (ws) => {
+          pubsubWss.emit("connection", ws);
+        });
+      } else if (pathname.startsWith("/_next/webpack-hmr")) {
+        nextApp.hotReloader?.onHMR(req, socket, head);
+      } else {
+        console.warn("[server] Ignoring request to path:", pathname);
+        socket.destroy();
       }
-
-      if (this.staticDir) {
-        app.use('/static', express.static(this.staticDir))
-      }
-
-      // Let Next to handle everything else
-      app.get("*", (req, res) => {
-        return handle(req, res);
-      });
-
-      server.listen(this.port, this.host, (err) => {
-        if (err) throw err;
-        console.log(`> Server listening on ${this.host}, port ${this.port}`);
-        if (cb) cb();
-      });
     });
 
-    return this;
+    wss.on("connection", (conn) => this.onSignalingServerConnection(conn));
+    docWss.on("connection", setupWSConnection);
+
+    // Prepare PubSub WebScoket server (pubsub)
+    const pubSubServer = new PubSub({
+      wss: pubsubWss,
+      onConnection: addClient,
+      onDisconnection: removeClient,
+    });
+    // eslint-disable-next-line no-param-reassign
+    app.pubsub = pubSubServer;
+
+    if (process.env.REDIRECT_HTTPS) {
+      console.log("> Going to redirect http to https");
+      const sslRedirect = require("./sslRedirect");
+      app.use(
+        sslRedirect({
+          port: process.env.NODE_ENV === "production" ? null : this.port,
+        })
+      );
+    }
+
+    if (this.staticDir) {
+      app.use('/static', express.static(this.staticDir))
+    }
+
+    // Let Next to handle everything else
+    app.get("*", (req, res) => {
+      return handle(req, res);
+    });
+
+
+    server.on('error', (err) => {
+      console.error(err)
+      process.exit(2);
+    });
+
+    server.listen(this.port, this.host, (err) => {
+      if (err) throw err;
+      console.log(`> Server listening on ${this.host}, port ${this.port}`);
+      if (cb) cb();
+    });
   }
 
   onSignalingServerConnection(conn) {
