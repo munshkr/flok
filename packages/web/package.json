@@ -19,6 +19,7 @@
     "lucide-react": "^0.128.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.9.0",
     "tailwind-merge": "^1.10.0",
     "tailwindcss-animate": "^1.0.5",
     "unique-names-generator": "^4.7.1",
