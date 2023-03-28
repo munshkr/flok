@@ -126,7 +126,7 @@ class Server {
       });
 
       wss.on("connection", (conn) => this.onSignalingServerConnection(conn));
-      docWss.on("connection", (conn) => setupWSConnection);
+      docWss.on("connection", setupWSConnection);
 
       // Prepare PubSub WebScoket server (pubsub)
       const pubSubServer = new PubSub({
