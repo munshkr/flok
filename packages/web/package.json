@@ -2,15 +2,14 @@
   "name": "flok-web",
   "description": "Web server for Flok",
   "version": "0.4.11",
-  "main": "index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
-    "dev": "node index.js",
+    "dev": "node server.js",
     "lint": "next lint",
     "build": "next build",
     "prepare": "yarn build",
-    "start": "cross-env NODE_ENV=production node index.js",
+    "start": "cross-env NODE_ENV=production node server.js",
     "test": "exit 0",
     "publish-current": "yarn publish --non-interactive",
     "prepublishOnly": "yarn test && yarn build"
