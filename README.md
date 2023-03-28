@@ -236,7 +236,7 @@ on how to install the extension.
 
 [Mercury](https://github.com/tmhglnd/mercury) is a minimal and human readable
 language for livecoding of algorithmic electronic music. Below is a link to steps for
-connecting Flok to the either the Mercury Playground (browser based) or the Max8 version
+connecting Flok to either the Mercury Playground (browser based) or the Max8 version
 of the livecoding environment:
 
 [Follow the step-by-step guide here](https://tmhglnd.github.io/mercury/collaborate.html)
