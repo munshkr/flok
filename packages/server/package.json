@@ -13,7 +13,7 @@
     "start": "node bin/flok-server.js"
   },
   "dependencies": {
-    "@flok/connect-server": "*",
+    "@flok/server-middleware": "*",
     "connect": "^3.7.0",
     "debug": "^4.3.4",
     "lib0": "^0.2.63",

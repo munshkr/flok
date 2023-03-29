@@ -1,7 +1,7 @@
 {
-  "name": "@flok/connect-server",
+  "name": "@flok/server-middleware",
   "version": "1.0.0",
-  "description": "Connect middleware for Flok, handles WebSocket connections and WebRTC signaling",
+  "description": "Connect/Express middleware for Flok, handles WebSocket connections and WebRTC signaling",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
   "type": "module",
