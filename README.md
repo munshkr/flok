@@ -19,8 +19,8 @@ to be a full rewrite/refactor. Work in progress**
 * [`@flok/pubsub`](packages/pubsub): Pub/Sub client-server, used for remote code
   execution and message passing on Flok
 * [`@flok/session`](packages/session): Flok session package
-* [`@flok/server-middleware`](packages/server-middleware): Connect/Express
-  middleware for Flok, handles WebSocket connections and WebRTC signaling
+* [`@flok/server-middleware`](packages/server-middleware): Server middleware for
+  Flok, handles WebSocket connections and WebRTC signaling
 * [`@flok/cm-eval`](packages/cm-eval): CodeMirror 6 extension for code evaluation
 
 ### Examples
@@ -36,7 +36,8 @@ to be a full rewrite/refactor. Work in progress**
     * Latest version (v6) comes with better extensibility and accesability
 * Use [Yjs](https://yjs.dev/) for collaborative editor
     * Battle-tested and updated
-    * Now supports CodeMirror 6: [y-codemirror.next](https://github.com/yjs/y-codemirror.next)
+    * Now supports CodeMirror 6:
+      [y-codemirror.next](https://github.com/yjs/y-codemirror.next)
 * More modular and extensible, similar to CodeMirror extensions, e.g.:
     * Line/block-based evaluation: `@flok/cm-eval`
     * TidalCycles pattern and RMS decorators: `@flok/cm-tidalcycles-decorators`
