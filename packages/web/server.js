@@ -25,7 +25,7 @@ export async function createServer(app, { secure }) {
 
 export async function startServer({ onReady, staticDir, ...opts }) {
   try {
-    const app = withFlokServer(express());
+    const app = express();
 
     if (staticDir) {
       console.log(`> Serving static files at ${staticDir}`)
@@ -35,8 +35,10 @@ export async function startServer({ onReady, staticDir, ...opts }) {
     const scheme = opts.secure ? "https" : "http";
     const server = await createServer(app, opts);
 
+    const flokServer = withFlokServer(server)
+
     ViteExpress.config({ vitePort: opts.port })
-    ViteExpress.bind(app, server);
+    ViteExpress.bind(app, flokServer);
 
     server.listen(opts.port, onReady || (() => {
       const netResults = getPossibleIpAddresses();
