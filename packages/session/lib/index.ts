@@ -1,4 +1,4 @@
-import type { Doc, Text } from "yjs";
+import type { Text } from "yjs";
 import { uint32 } from "lib0/random";
 import EventEmitter from "events";
 import { IndexeddbPersistence } from "y-indexeddb";
@@ -6,6 +6,7 @@ import { WebrtcProvider } from "y-webrtc";
 import { WebsocketProvider } from "y-websocket";
 import { Awareness } from "y-protocols/awareness.js";
 import { PubSubClient } from "@flok/pubsub";
+import { Doc } from "yjs";
 import debugModule from "debug";
 
 const debug = debugModule("flok:codemirror:session");
@@ -50,7 +51,7 @@ export class Session {
   name: string;
 
   yDoc: Doc;
-  awareness!: Awareness;
+  awareness: Awareness;
 
   _user: string;
   _userColor: UserColor;
@@ -58,16 +59,15 @@ export class Session {
   _providers: Provider[];
   _extraSignalingServers: string[];
 
-  _idbProvider!: IndexeddbPersistence;
-  _webrtcProvider!: WebrtcProvider;
-  _wsProvider!: WebsocketProvider;
-  _pubSubClient!: PubSubClient;
+  _idbProvider: IndexeddbPersistence;
+  _webrtcProvider: WebrtcProvider;
+  _wsProvider: WebsocketProvider;
+  _pubSubClient: PubSubClient;
 
   _emitter: EventEmitter = new EventEmitter();
 
-  constructor(name: string, doc: Doc, opts: SessionOptions = {}) {
+  constructor(name: string, opts: SessionOptions = {}) {
     this.name = name;
-    this.yDoc = doc;
 
     this.hostname = opts?.hostname || "localhost";
     this.port = opts?.port || 3000;
@@ -150,6 +150,7 @@ export class Session {
   }
 
   _prepareYjs() {
+    this.yDoc = new Doc();
     this.awareness = new Awareness(this.yDoc);
     this._updateUserStateField();
     this._createProviders();

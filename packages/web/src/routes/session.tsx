@@ -38,14 +38,15 @@ export default function SessionPage() {
 
   useEffect(() => {
     if (!name) return;
-    const doc = new Doc();
-    const newSession = new Session(name, doc);
+    const newSession = new Session(name);
     setSession(newSession);
 
     const key = `session:${name}`;
     const settings = store.get(key);
     if (!settings) store.set(key, {});
     console.log("settings for", name, settings);
+
+    return () => newSession.dispose();
   }, [name]);
 
   useEffect(() => {
