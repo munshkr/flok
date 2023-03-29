@@ -4,7 +4,7 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorState, Prec } from "@codemirror/state";
 import { yCollab } from "y-codemirror.next";
 import { Session } from "@flok/session";
-import { flashField, evalKeymap } from "@flok/codemirror-eval";
+import { flashField, evalKeymap } from "@flok/cm-eval";
 import { Doc, UndoManager } from "yjs";
 
 import "./style.css";

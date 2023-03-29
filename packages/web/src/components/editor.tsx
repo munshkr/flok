@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { EditorView } from "@codemirror/view";
 import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
-import { flashField, evalKeymap } from "@flok/codemirror-eval";
+import { flashField, evalKeymap } from "@flok/cm-eval";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
 import { Prec } from "@codemirror/state";
