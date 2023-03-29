@@ -44,7 +44,6 @@ export default function SessionPage() {
     const key = `session:${name}`;
     const settings = store.get(key);
     if (!settings) store.set(key, {});
-    console.log("settings for", name, settings);
 
     return () => newSession.dispose();
   }, [name]);

@@ -142,8 +142,10 @@ export class Session {
 
   dispose() {
     this._pubSubClient.disconnect();
-    if (this._wsProvider) this._wsProvider.destroy();
-    if (this._webrtcProvider) this._webrtcProvider.destroy();
+    if (this._wsProvider && this._wsProvider.wsconnected)
+      this._wsProvider.destroy();
+    if (this._webrtcProvider && !this._webrtcProvider.closed)
+      this._webrtcProvider.destroy();
     if (this._idbProvider) this._idbProvider.destroy();
     this.yDoc.destroy();
     this.awareness.destroy();
