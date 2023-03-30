@@ -12,4 +12,26 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          yjs: [
+            "yjs",
+            "y-websocket",
+            "y-webrtc",
+            // "y-protocols",
+            "y-indexeddb",
+            "y-codemirror.next",
+          ],
+          "radix-ui": [
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-dropdown-menu",
+            "@radix-ui/react-menubar",
+            "@radix-ui/react-toast",
+          ],
+        },
+      },
+    },
+  },
 });
