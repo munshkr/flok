@@ -1,4 +1,5 @@
 import express from "express";
+import compression from "compression";
 import ViteExpress from "vite-express";
 import http from "http";
 import https from "https";
@@ -27,11 +28,6 @@ export async function startServer({ onReady, staticDir, ...opts }) {
   try {
     const app = express();
 
-    if (staticDir) {
-      console.log(`> Serving static files at ${staticDir}`)
-      app.use(express.static(staticDir))
-    }
-
     const scheme = opts.secure ? "https" : "http";
     const server = await createServer(app, opts);
 
@@ -39,6 +35,13 @@ export async function startServer({ onReady, staticDir, ...opts }) {
 
     ViteExpress.config({ vitePort: opts.port })
     ViteExpress.bind(app, flokServer);
+
+    app.use(compression())
+
+    if (staticDir) {
+      console.log(`> Serving static files at ${staticDir}`)
+      app.use(express.static(staticDir))
+    }
 
     server.listen(opts.port, onReady || (() => {
       const netResults = getPossibleIpAddresses();
