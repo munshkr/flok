@@ -22,7 +22,7 @@ export default function UsernameDialog({
   onAccept,
   ...props
 }: UsernameDialogProps) {
-  const [nameValue, setNameValue] = useState(name || "");
+  const [nameValue, setNameValue] = useState(name || "foo");
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();

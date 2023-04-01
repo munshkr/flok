@@ -12,19 +12,20 @@ import {
   MenubarSubTrigger,
   MenubarSubContent,
 } from "@/components/ui/menubar";
-// import ConfigureDialog from "./configure-dialog";
 
-interface IMenuProps {
-  onSessionConfigure?: any;
-  onViewLayoutAdd?: any;
-  onViewLayoutRemove?: any;
+interface MenuProps {
+  onSessionConfigure?: (e: Event) => void;
+  onSessionChangeUsername?: (e: Event) => void;
+  onViewLayoutAdd?: (e: Event) => void;
+  onViewLayoutRemove?: (e: Event) => void;
 }
 
 export default function Menu({
   onSessionConfigure,
+  onSessionChangeUsername,
   onViewLayoutAdd,
   onViewLayoutRemove,
-}: IMenuProps) {
+}: MenuProps) {
   return (
     <Menubar>
       <MenubarMenu>
@@ -32,6 +33,9 @@ export default function Menu({
         <MenubarContent>
           <MenubarItem onSelect={onSessionConfigure}>
             Configure<MenubarShortcut>⌘C</MenubarShortcut>
+          </MenubarItem>
+          <MenubarItem onSelect={onSessionChangeUsername}>
+            Change username
           </MenubarItem>
           <MenubarSeparator />
           <MenubarItem>New</MenubarItem>
@@ -49,8 +53,8 @@ export default function Menu({
           <MenubarSub>
             <MenubarSubTrigger>Layout</MenubarSubTrigger>
             <MenubarSubContent>
-              <MenubarItem onClick={onViewLayoutAdd}>Add</MenubarItem>
-              <MenubarItem onClick={onViewLayoutRemove}>Remove</MenubarItem>
+              <MenubarItem onSelect={onViewLayoutAdd}>Add</MenubarItem>
+              <MenubarItem onSelect={onViewLayoutRemove}>Remove</MenubarItem>
             </MenubarSubContent>
           </MenubarSub>
         </MenubarContent>

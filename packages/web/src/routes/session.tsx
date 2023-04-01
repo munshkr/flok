@@ -45,6 +45,8 @@ export default function SessionPage() {
       isSecure,
     });
     setSession(newSession);
+    console.log("username from session:", newSession.user);
+    setUsername(newSession.user);
 
     const key = `session:${name}`;
     const settings = store.get(key);
@@ -55,6 +57,7 @@ export default function SessionPage() {
 
   useEffect(() => {
     if (!session) return;
+    console.log("setting user on session to", username);
     session.user = username;
   }, [session, username]);
 
@@ -69,24 +72,23 @@ export default function SessionPage() {
     setPanes((prevPanes) => prevPanes.slice(0, -1));
   };
 
-  const handleSessionConfigure = () => {
-    setConfigureDialogOpen(true);
-  };
-
   return (
     <>
       <Menu
         onViewLayoutAdd={handleViewLayoutAdd}
         onViewLayoutRemove={handleViewLayoutRemove}
-        onSessionConfigure={handleSessionConfigure}
+        onSessionConfigure={() => setConfigureDialogOpen(true)}
+        onSessionChangeUsername={() => setUsernameDialogOpen(true)}
       />
       <SessionCommandDialog />
-      <UsernameDialog
-        name={username}
-        open={usernameDialogOpen}
-        onAccept={(name) => setUsername(name)}
-        onOpenChange={(isOpen) => setUsernameDialogOpen(isOpen)}
-      />
+      {session && (
+        <UsernameDialog
+          name={username}
+          open={usernameDialogOpen}
+          onAccept={(name) => setUsername(name)}
+          onOpenChange={(isOpen) => setUsernameDialogOpen(isOpen)}
+        />
+      )}
       <ConfigureDialog
         open={configureDialogOpen}
         onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
