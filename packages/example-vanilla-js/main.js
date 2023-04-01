@@ -52,8 +52,7 @@ const handleEvalHydra = (msg) => {
   console.log("eval:hydra", msg);
 };
 
-const ydoc = new Doc()
-const session = new Session("default", ydoc);
+const session = new Session("default", { port: 3000 });
 session.addTargets("tidal", "hydra");
 
 session.on("message", handleMessage);
