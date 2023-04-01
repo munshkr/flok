@@ -30,6 +30,13 @@ export default defineConfig({
             "@radix-ui/react-menubar",
             "@radix-ui/react-toast",
           ],
+          codemirror: [
+            "codemirror",
+            "@codemirror/lang-javascript",
+            "@codemirror/state",
+            "@codemirror/theme-one-dark",
+            "@codemirror/view",
+          ],
         },
       },
     },
