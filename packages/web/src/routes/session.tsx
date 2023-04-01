@@ -38,8 +38,14 @@ export default function SessionPage() {
   useEffect(() => {
     if (!name) return;
 
-    const { hostname, port } = window.location;
-    const newSession = new Session(name, { hostname, port: parseInt(port) });
+    const { hostname, port, protocol } = window.location;
+    const isSecure = protocol === "https:";
+    console.log("protocol", protocol, "isSecure", isSecure);
+    const newSession = new Session(name, {
+      hostname,
+      port: parseInt(port),
+      isSecure,
+    });
     setSession(newSession);
 
     const key = `session:${name}`;
