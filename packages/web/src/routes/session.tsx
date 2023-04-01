@@ -100,7 +100,7 @@ export default function SessionPage() {
         items={panes.map((pane, i) => (
           <Pane key={i}>
             <Editor
-              key={i}
+              key={`${name}-${i}`}
               value={pane.content}
               autoFocus={i === 0}
               session={session}
