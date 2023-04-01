@@ -7,6 +7,7 @@ import { store } from "../lib/utils";
 import Editor from "../components/editor";
 import Pane from "../components/pane";
 import { Session } from "@flok/session";
+import SessionCommandDialog from "../components/session-command-dialog";
 
 interface ISessionLoaderParams {
   name: string;
@@ -79,6 +80,7 @@ export default function SessionPage() {
 
   return (
     <>
+      <SessionCommandDialog />
       <ConfigureDialog
         open={configureDialogOpen}
         onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
