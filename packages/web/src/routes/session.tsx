@@ -40,7 +40,7 @@ export default function SessionPage() {
 
     const { hostname, port, protocol } = window.location;
     const isSecure = protocol === "https:";
-    console.log("protocol", protocol, "isSecure", isSecure);
+
     const newSession = new Session(name, {
       hostname,
       port: parseInt(port),
