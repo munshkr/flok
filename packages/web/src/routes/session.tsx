@@ -1,6 +1,5 @@
 import { useLoaderData } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Menu from "../components/menu";
 import Mosaic from "../components/mosaic";
 import ConfigureDialog from "../components/configure-dialog";
 import { useToast } from "../hooks/use-toast";
@@ -63,28 +62,23 @@ export default function SessionPage() {
     }, 500);
   }, [toast]);
 
-  const handleViewLayoutAdd = () => {
-    setPanes((prevPanes) => [
-      ...prevPanes,
-      { target: defaultTarget, content: "" },
-    ]);
-  };
+  // const handleViewLayoutAdd = () => {
+  //   setPanes((prevPanes) => [
+  //     ...prevPanes,
+  //     { target: defaultTarget, content: "" },
+  //   ]);
+  // };
 
-  const handleViewLayoutRemove = () => {
-    setPanes((prevPanes) => prevPanes.slice(0, -1));
-  };
+  // const handleViewLayoutRemove = () => {
+  //   setPanes((prevPanes) => prevPanes.slice(0, -1));
+  // };
 
-  const handleSessionConfigure = () => {
-    setConfigureDialogOpen(true);
-  };
+  // const handleSessionConfigure = () => {
+  //   setConfigureDialogOpen(true);
+  // };
 
   return (
     <>
-      <Menu
-        onViewLayoutAdd={handleViewLayoutAdd}
-        onViewLayoutRemove={handleViewLayoutRemove}
-        onSessionConfigure={handleSessionConfigure}
-      />
       <ConfigureDialog
         open={configureDialogOpen}
         onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
