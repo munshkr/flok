@@ -8,8 +8,9 @@ import { store } from "@/lib/utils";
 import { Session } from "@flok/session";
 import { useEffect, useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import ConfigureDialog from "../components/configure-dialog";
-import Menu from "../components/menu";
+import { useNavigate } from "react-router-dom";
+import ConfigureDialog from "@/components/configure-dialog";
+import SessionMenu from "@/components/session-menu";
 
 interface SessionLoaderParams {
   name: string;
@@ -24,6 +25,7 @@ const defaultTarget = "hydra";
 
 export default function SessionPage() {
   const { name } = useLoaderData() as SessionLoaderParams;
+  const navigate = useNavigate();
 
   const [session, setSession] = useState<Session | null>(null);
   const [username, setUsername] = useState<string>("");
@@ -76,11 +78,12 @@ export default function SessionPage() {
 
   return (
     <>
-      <Menu
+      <SessionMenu
         onViewLayoutAdd={handleViewLayoutAdd}
         onViewLayoutRemove={handleViewLayoutRemove}
         onSessionConfigure={() => setConfigureDialogOpen(true)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
+        onSessionNew={() => navigate("/")}
       />
       <SessionCommandDialog />
       <UsernameDialog

@@ -16,13 +16,15 @@ import {
 interface MenuProps {
   onSessionConfigure?: (e: Event) => void;
   onSessionChangeUsername?: (e: Event) => void;
+  onSessionNew?: (e: Event) => void;
   onViewLayoutAdd?: (e: Event) => void;
   onViewLayoutRemove?: (e: Event) => void;
 }
 
-export default function Menu({
+export default function SessionMenu({
   onSessionConfigure,
   onSessionChangeUsername,
+  onSessionNew,
   onViewLayoutAdd,
   onViewLayoutRemove,
 }: MenuProps) {
@@ -38,7 +40,7 @@ export default function Menu({
             Change username
           </MenubarItem>
           <MenubarSeparator />
-          <MenubarItem>New</MenubarItem>
+          <MenubarItem onSelect={onSessionNew}>New</MenubarItem>
           <MenubarSeparator />
           <MenubarItem>Open</MenubarItem>
           <MenubarItem>Open Recent</MenubarItem>
