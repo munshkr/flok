@@ -46,7 +46,7 @@ export interface SessionOptions {
 
 export class Session {
   hostname: string;
-  port: number;
+  port?: number;
   isSecure: boolean;
   name: string;
 
@@ -70,7 +70,7 @@ export class Session {
     this.name = name;
 
     this.hostname = opts?.hostname || "localhost";
-    this.port = opts?.port || 3000;
+    this.port = opts?.port;
     this.isSecure = opts?.isSecure || false;
 
     this._user = opts?.user || "Anonymous " + Math.floor(Math.random() * 100);
@@ -244,7 +244,7 @@ export class Session {
 
   get _wsUrl() {
     const schema = this.isSecure ? `wss` : `ws`;
-    return `${schema}://${this.hostname}:${this.port}`;
+    return `${schema}://${this.hostname}${this.port ? `:${this.port}` : ""}`;
   }
 }
 
