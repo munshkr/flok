@@ -1,13 +1,13 @@
 import { useLoaderData } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Mosaic from "../components/mosaic";
-import ConfigureDialog from "../components/configure-dialog";
-import { useToast } from "../hooks/use-toast";
-import { store } from "../lib/utils";
-import Editor from "../components/editor";
-import Pane from "../components/pane";
+import Mosaic from "@/components/mosaic";
+import ConfigureDialog from "@/components/configure-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { store } from "@/lib/utils";
+import Editor from "@/components/editor";
+import Pane from "@/components/pane";
 import { Session } from "@flok/session";
-import SessionCommandDialog from "../components/session-command-dialog";
+import SessionCommandDialog from "@/components/session-command-dialog";
 
 interface ISessionLoaderParams {
   name: string;

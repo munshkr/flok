@@ -4,7 +4,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "../components/ui/dialog";
+} from "./ui/dialog";
 import { DialogProps } from "@radix-ui/react-dialog";
 
 export default function ConfigureDialog(props: DialogProps) {
