@@ -1,41 +1,18 @@
 import express from "express";
 import http from "http";
-import https from "https";
-import path from "path";
-import fs from "fs";
 import process from "process";
-import { fileURLToPath } from "url";
 import { networkInterfaces } from "os";
 import pc from "picocolors";
 import withFlokServer from "@flok/server-middleware";
 import ViteExpress, { info } from "./vite-express.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const sslCertPath = path.resolve(__dirname, "..", "cert", "localhost.crt");
-const sslKeyPath = path.resolve(__dirname, "..", "cert", "localhost.key");
-
-export async function createServer(app, { secure }) {
-  if (secure) {
-    const key = fs.readFileSync(process.env.SSL_KEY || sslKeyPath, "utf8")
-    const cert = fs.readFileSync(process.env.SSL_CERT || sslCertPath, "utf8")
-    return https.createServer({ key, cert }, app);
-  } else {
-    return http.createServer(app)
-  }
-}
-
 export async function startServer({ onReady, staticDir, ...opts }) {
   try {
     const app = express();
-
-    const scheme = opts.secure ? "https" : "http";
-    const server = await createServer(app, opts);
-
-    const flokServer = withFlokServer(server)
+    const server = withFlokServer(http.createServer(app))
 
     ViteExpress.config({ vitePort: opts.port })
-    ViteExpress.bind(app, flokServer);
+    ViteExpress.bind(app, server);
 
     if (staticDir) {
       info(`Serving extra static files at ${pc.gray(staticDir)}`)
@@ -47,11 +24,11 @@ export async function startServer({ onReady, staticDir, ...opts }) {
       if (netResults.length > 1) {
         info("If on LAN, try sharing with your friends one of these URLs:");
         Object.entries(netResults).map(([k, v]) => {
-          info(`\t${k}: ${scheme}://${v}:${opts.port}`);
+          info(`\t${k}: http://${v}:${opts.port}`);
         });
       } else {
         info(
-          `If on LAN, try sharing with your friends ${scheme}://${Object.values(netResults)[0]}:${opts.port}`);
+          `If on LAN, try sharing with your friends http://${Object.values(netResults)[0]}:${opts.port}`);
       }
     }))
   } catch (err) {

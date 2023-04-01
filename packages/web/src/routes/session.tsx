@@ -8,7 +8,6 @@ import { store } from "../lib/utils";
 import Editor from "../components/editor";
 import Pane from "../components/pane";
 import { Session } from "@flok/session";
-import { Doc } from "yjs";
 
 interface ISessionLoaderParams {
   name: string;
