@@ -1,14 +1,15 @@
-import { useLoaderData } from "react-router-dom";
-import { useEffect, useState } from "react";
-import Mosaic from "@/components/mosaic";
-import ConfigureDialog from "@/components/configure-dialog";
-import UsernameDialog from "@/components/username-dialog";
-import { store } from "@/lib/utils";
 import Editor from "@/components/editor";
+import Mosaic from "@/components/mosaic";
 import Pane from "@/components/pane";
-import { Session } from "@flok/session";
 import SessionCommandDialog from "@/components/session-command-dialog";
 import { Toaster } from "@/components/ui/toaster";
+import UsernameDialog from "@/components/username-dialog";
+import { store } from "@/lib/utils";
+import { Session } from "@flok/session";
+import { useEffect, useState } from "react";
+import { useLoaderData } from "react-router-dom";
+import ConfigureDialog from "../components/configure-dialog";
+import Menu from "../components/menu";
 
 interface SessionLoaderParams {
   name: string;
@@ -57,23 +58,28 @@ export default function SessionPage() {
     session.user = username;
   }, [session, username]);
 
-  // const handleViewLayoutAdd = () => {
-  //   setPanes((prevPanes) => [
-  //     ...prevPanes,
-  //     { target: defaultTarget, content: "" },
-  //   ]);
-  // };
+  const handleViewLayoutAdd = () => {
+    setPanes((prevPanes) => [
+      ...prevPanes,
+      { target: defaultTarget, content: "" },
+    ]);
+  };
 
-  // const handleViewLayoutRemove = () => {
-  //   setPanes((prevPanes) => prevPanes.slice(0, -1));
-  // };
+  const handleViewLayoutRemove = () => {
+    setPanes((prevPanes) => prevPanes.slice(0, -1));
+  };
 
-  // const handleSessionConfigure = () => {
-  //   setConfigureDialogOpen(true);
-  // };
+  const handleSessionConfigure = () => {
+    setConfigureDialogOpen(true);
+  };
 
   return (
     <>
+      <Menu
+        onViewLayoutAdd={handleViewLayoutAdd}
+        onViewLayoutRemove={handleViewLayoutRemove}
+        onSessionConfigure={handleSessionConfigure}
+      />
       <SessionCommandDialog />
       <UsernameDialog
         name={username}
