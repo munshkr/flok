@@ -1,13 +1,14 @@
 import express from "express";
-import compression from "compression";
-import ViteExpress from "vite-express";
 import http from "http";
 import https from "https";
 import path from "path";
 import fs from "fs";
+import process from "process";
 import { fileURLToPath } from "url";
 import { networkInterfaces } from "os";
+import pc from "picocolors";
 import withFlokServer from "@flok/server-middleware";
+import ViteExpress, { info } from "./vite-express.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -36,23 +37,21 @@ export async function startServer({ onReady, staticDir, ...opts }) {
     ViteExpress.config({ vitePort: opts.port })
     ViteExpress.bind(app, flokServer);
 
-    app.use(compression())
-
     if (staticDir) {
-      console.log(`> Serving static files at ${staticDir}`)
+      info(`Serving extra static files at ${pc.gray(staticDir)}`)
       app.use(express.static(staticDir))
     }
 
     server.listen(opts.port, onReady || (() => {
       const netResults = getPossibleIpAddresses();
       if (netResults.length > 1) {
-        console.log("> If on LAN, try sharing with your friends one of these URLs:");
+        info("If on LAN, try sharing with your friends one of these URLs:");
         Object.entries(netResults).map(([k, v]) => {
-          console.log(`\t${k}: ${scheme}://${v}:${opts.port}`);
+          info(`\t${k}: ${scheme}://${v}:${opts.port}`);
         });
       } else {
-        console.log(
-          `> If on LAN, try sharing with your friends ${scheme}://${Object.values(netResults)[0]}:${opts.port}`);
+        info(
+          `If on LAN, try sharing with your friends ${scheme}://${Object.values(netResults)[0]}:${opts.port}`);
       }
     }))
   } catch (err) {
