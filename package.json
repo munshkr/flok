@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "lerna run build",
-    "prepare": "yarn build"
+    "prepare": "npm run build"
   },
   "keywords": [
     "codemirror",
