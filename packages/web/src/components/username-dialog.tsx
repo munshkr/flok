@@ -10,10 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DialogProps } from "@radix-ui/react-dialog";
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 
 interface UsernameDialogProps extends DialogProps {
   name?: string;
+  defaultValue?: string;
   onAccept?: (name: string) => void;
 }
 
@@ -22,22 +23,28 @@ export default function UsernameDialog({
   onAccept,
   ...props
 }: UsernameDialogProps) {
-  const [nameValue, setNameValue] = useState(name || "foo");
+  const [nameValue, setNameValue] = useState("");
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onAccept && onAccept(nameValue);
+    if (onAccept && nameValue) {
+      onAccept(nameValue);
+    }
     props.onOpenChange && props.onOpenChange(false);
   };
+
+  useEffect(() => {
+    if (!props.open) setNameValue("");
+  }, [props.open]);
 
   return (
     <Dialog {...props}>
       <DialogContent>
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Edit user name</DialogTitle>
+            <DialogTitle>Change user name</DialogTitle>
             <DialogDescription>
-              Enter your user name. It will be shown below your cursor.
+              It will be shown below your cursor.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -48,8 +55,9 @@ export default function UsernameDialog({
               <Input
                 id="name"
                 value={nameValue}
+                placeholder={name || "Enter a username... "}
                 className="col-span-3"
-                onChange={(e) => setNameValue(e.target.value)}
+                onChange={(e) => setNameValue(e.target.value.trim())}
               />
             </div>
           </div>

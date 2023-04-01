@@ -38,27 +38,29 @@ export default function SessionPage() {
 
     const { hostname, port, protocol } = window.location;
     const isSecure = protocol === "https:";
-
     const newSession = new Session(name, {
       hostname,
       port: parseInt(port),
       isSecure,
     });
     setSession(newSession);
-    console.log("username from session:", newSession.user);
-    setUsername(newSession.user);
 
-    const key = `session:${name}`;
-    const settings = store.get(key);
-    if (!settings) store.set(key, {});
+    // Load and set saved username, if available
+    const savedUsername = store.get("username");
+    if (!savedUsername) {
+      setUsernameDialogOpen(true);
+    } else {
+      setUsername(savedUsername);
+    }
 
     return () => newSession.dispose();
   }, [name]);
 
   useEffect(() => {
     if (!session) return;
-    console.log("setting user on session to", username);
+    console.log(`Setting user on session to '${username}'`);
     session.user = username;
+    store.set("username", username);
   }, [session, username]);
 
   const handleViewLayoutAdd = () => {
@@ -81,14 +83,12 @@ export default function SessionPage() {
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
       />
       <SessionCommandDialog />
-      {session && (
-        <UsernameDialog
-          name={username}
-          open={usernameDialogOpen}
-          onAccept={(name) => setUsername(name)}
-          onOpenChange={(isOpen) => setUsernameDialogOpen(isOpen)}
-        />
-      )}
+      <UsernameDialog
+        name={username}
+        open={usernameDialogOpen}
+        onAccept={(name) => setUsername(name)}
+        onOpenChange={(isOpen) => setUsernameDialogOpen(isOpen)}
+      />
       <ConfigureDialog
         open={configureDialogOpen}
         onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
