@@ -38,7 +38,9 @@ export default function SessionPage() {
 
   useEffect(() => {
     if (!name) return;
-    const newSession = new Session(name);
+
+    const { hostname, port } = window.location;
+    const newSession = new Session(name, { hostname, port: parseInt(port) });
     setSession(newSession);
 
     const key = `session:${name}`;
