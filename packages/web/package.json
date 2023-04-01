@@ -26,6 +26,7 @@
     "@uiw/react-codemirror": "^4.19.11",
     "class-variance-authority": "^0.4.0",
     "clsx": "^1.2.1",
+    "cmdk": "^0.2.0",
     "codemirror": "^6.0.1",
     "compression": "^1.7.4",
     "express": "^4.18.2",
