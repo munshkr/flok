@@ -19,7 +19,7 @@ import {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-} from "./ui/command";
+} from "@/components/ui/command";
 
 export default function SessionCommandDialog() {
   const [open, setOpen] = useState(false);

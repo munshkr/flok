@@ -11,7 +11,7 @@ import {
   MenubarSub,
   MenubarSubTrigger,
   MenubarSubContent,
-} from "./ui/menubar";
+} from "@/components/ui/menubar";
 // import ConfigureDialog from "./configure-dialog";
 
 interface IMenuProps {

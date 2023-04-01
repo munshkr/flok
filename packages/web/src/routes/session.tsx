@@ -2,14 +2,15 @@ import { useLoaderData } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Mosaic from "@/components/mosaic";
 import ConfigureDialog from "@/components/configure-dialog";
-import { useToast } from "@/hooks/use-toast";
+import UsernameDialog from "@/components/username-dialog";
 import { store } from "@/lib/utils";
 import Editor from "@/components/editor";
 import Pane from "@/components/pane";
 import { Session } from "@flok/session";
 import SessionCommandDialog from "@/components/session-command-dialog";
+import { Toaster } from "@/components/ui/toaster";
 
-interface ISessionLoaderParams {
+interface SessionLoaderParams {
   name: string;
 }
 
@@ -18,18 +19,14 @@ interface Pane {
   content: string;
 }
 
-const defaultTarget = "tidal";
-
-export async function loader({ params }: { params: any }) {
-  return { name: params.name };
-}
+const defaultTarget = "hydra";
 
 export default function SessionPage() {
-  const { name } = useLoaderData() as ISessionLoaderParams;
-
-  const { toast } = useToast();
+  const { name } = useLoaderData() as SessionLoaderParams;
 
   const [session, setSession] = useState<Session | null>(null);
+  const [username, setUsername] = useState<string>("");
+  const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [panes, setPanes] = useState<Pane[]>([
     { target: defaultTarget, content: "" },
@@ -56,12 +53,9 @@ export default function SessionPage() {
   }, [name]);
 
   useEffect(() => {
-    setTimeout(() => {
-      toast({
-        description: "Connected to Flok server",
-      });
-    }, 500);
-  }, [toast]);
+    if (!session) return;
+    session.user = username;
+  }, [session, username]);
 
   // const handleViewLayoutAdd = () => {
   //   setPanes((prevPanes) => [
@@ -81,6 +75,12 @@ export default function SessionPage() {
   return (
     <>
       <SessionCommandDialog />
+      <UsernameDialog
+        name={username}
+        open={usernameDialogOpen}
+        onAccept={(name) => setUsername(name)}
+        onOpenChange={(isOpen) => setUsernameDialogOpen(isOpen)}
+      />
       <ConfigureDialog
         open={configureDialogOpen}
         onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
@@ -100,6 +100,7 @@ export default function SessionPage() {
           </Pane>
         ))}
       />
+      <Toaster />
     </>
   );
 }

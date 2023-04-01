@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { loader as rootLoader } from "./routes/root";
-import SessionPage, { loader as sessionLoader } from "./routes/session";
+import SessionPage from "./routes/session";
 import ErrorPage from "./error-page";
 import "./index.css";
 
@@ -15,7 +15,7 @@ const router = createBrowserRouter([
   {
     path: "s/:name",
     element: <SessionPage />,
-    loader: sessionLoader,
+    loader: ({ params: { name } }) => ({ name }),
   },
 ]);
 
