@@ -5,41 +5,47 @@ import { EditorState, Prec } from "@codemirror/state";
 import { yCollab } from "y-codemirror.next";
 import { Session } from "@flok/session";
 import { flashField, evalKeymap } from "@flok/cm-eval";
-import { Doc, UndoManager } from "yjs";
+import { UndoManager } from "yjs";
 
 import "./style.css";
 
-const flokBasicSetup = (
-  session,
-  editorId,
-  target
-) => {
-  const text = session.getText(editorId);
+const flokBasicSetup = (doc) => {
+  const text = doc.getText();
   const undoManager = new UndoManager(text);
 
   return [
     flashField(),
-    Prec.high(evalKeymap(session, editorId, target)),
+    Prec.high(evalKeymap(doc)),
     yCollab(text, session.awareness, { undoManager }),
   ];
 };
 
-const createEditor = (id, { session, target, el }) => {
+const createEditor = doc => {
   const state = EditorState.create({
-    doc: session.getTextString(id),
+    doc: doc.content,
     extensions: [
       basicSetup,
-      flokBasicSetup(session, id, target),
+      flokBasicSetup(doc),
       javascript(),
       EditorView.lineWrapping,
       oneDark,
     ],
   });
 
+  const editorEl = document.querySelector(`#${doc.id} .editor`);
   const view = new EditorView({
     state,
-    parent: el,
+    parent: editorEl,
   });
+
+  const targetEl = document.querySelector(`#${doc.id} .target`);
+
+  targetEl.addEventListener("change", (e) => {
+    doc.target = e.target.value;
+  })
+  doc.session.on(`change-target:${doc.id}`, () => {
+    targetEl.value = doc.target;
+  })
 
   return [state, view];
 };
@@ -53,20 +59,16 @@ const handleEvalHydra = (msg) => {
 };
 
 const session = new Session("default", { port: 3000 });
-session.addTargets("tidal", "hydra");
+window.session = session
 
 session.on("message", handleMessage);
 session.on("message-user", handleMessage);
 session.on("eval:hydra", handleEvalHydra);
 
+session.setActiveDocuments([
+  { id: "slot1", target: "tidal" },
+  { id: "slot2", target: "hydra" },
+])
+
 // Create two editors, one for each of the targets
-createEditor("tidal-editor", {
-  session,
-  target: "tidal",
-  el: document.querySelector("#slot1 .editor"),
-});
-createEditor("hydra-editor", {
-  session,
-  target: "hydra",
-  el: document.querySelector("#slot2 .editor"),
-});
+session.getDocuments().map(doc => createEditor(doc))

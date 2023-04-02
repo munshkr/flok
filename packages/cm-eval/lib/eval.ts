@@ -1,7 +1,7 @@
 import { EditorView, keymap } from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 import { flash } from "./flashField.js";
-import type Session from "@flok/session";
+import type { Document } from "@flok/session";
 
 interface EvalBlock {
   text: string;
@@ -50,57 +50,47 @@ export function getBlock(state: EditorState): EvalBlock {
   return { text, from, to };
 }
 
-export const evaluateBlockOrSelection = (
-  view: EditorView,
-  session: Session,
-  editorId: string,
-  target: string
-) => {
+export const evaluateBlockOrSelection = (view: EditorView, doc: Document) => {
   const { state } = view;
   const selection = getSelection(state);
   if (selection.text) {
     const { text, from, to } = selection;
     flash(view, from, to);
-    session.evaluate(target, text, { editorId, from, to });
+    doc.evaluate(text, { from, to });
   } else {
     const { text, from, to } = getBlock(state);
     flash(view, from, to);
-    session.evaluate(target, text, { editorId, from, to });
+    doc.evaluate(text, { from, to });
   }
 };
 
-export const evaluateLine = (
-  view: EditorView,
-  session: Session,
-  editorId: string,
-  target: string
-) => {
+export const evaluateLine = (view: EditorView, doc: Document) => {
   const { state } = view;
   const { text, from, to } = getLine(state);
   flash(view, from, to);
-  session.evaluate(target, text, { editorId, from, to });
+  doc.evaluate(text, { from, to });
 };
 
-export function evalKeymap(session: Session, editorId: string, target: string) {
+export function evalKeymap(document: Document) {
   return keymap.of([
     {
       key: "Ctrl-Enter",
       run(view) {
-        evaluateBlockOrSelection(view, session, editorId, target);
+        evaluateBlockOrSelection(view, document);
         return true;
       },
     },
     {
       key: "Cmd-Enter",
       run(view) {
-        evaluateBlockOrSelection(view, session, editorId, target);
+        evaluateBlockOrSelection(view, document);
         return true;
       },
     },
     {
       key: "Shift-Enter",
       run(view) {
-        evaluateLine(view, session, editorId, target);
+        evaluateLine(view, document);
         return true;
       },
     },
