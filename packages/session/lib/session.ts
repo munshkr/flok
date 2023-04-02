@@ -55,7 +55,6 @@ export class Session {
 
   _user: string;
   _userColor: UserColor;
-  _targets: Set<string> = new Set();
   _providers: Provider[];
   _extraSignalingServers: string[];
 
@@ -145,26 +144,6 @@ export class Session {
 
   getTextString(id: string) {
     return this.getText(id).toString();
-  }
-
-  addTargets(...items: string[]) {
-    const newTargets = new Set(
-      items.filter((item) => !this._targets.has(item))
-    );
-    items.forEach((item) => this._targets.add(item));
-    newTargets.forEach((target) => this._subscribeToTarget(target));
-  }
-
-  removeTargets(...items: string[]) {
-    items.forEach((item) => {
-      this._targets.delete(item);
-      this._pubSubClient.unsubscribe(item);
-    });
-  }
-
-  clearTargets() {
-    this._targets.forEach((item) => this._pubSubClient.unsubscribe(item));
-    this._targets.clear();
   }
 
   evaluate(
@@ -280,6 +259,10 @@ export class Session {
     );
   }
 
+  _unsubscribeTarget(target: string) {
+    this._pubSubClient.unsubscribe(target);
+  }
+
   _updateUserStateField() {
     this.awareness.setLocalStateField("user", {
       name: this.user,
@@ -289,10 +272,30 @@ export class Session {
   }
 
   _observeSharedTypes() {
-    this._yTargets().observe((e) => {
-      e.keysChanged.forEach((key) =>
-        this._emitter.emit(`change-target:${key}`)
-      );
+    const ymap = this._yTargets();
+    ymap.observe((e) => {
+      e.changes.keys.forEach((change, key) => {
+        // If a target was added or updated, subscribe and emit change event
+        if (change.action === "add" || change.action === "update") {
+          const newValue = ymap.get(key);
+          debug(
+            `Document "${key}" was added or updated. New target: "${newValue}. ` +
+              `Previous target: "${change.oldValue}".`
+          );
+          debug(`Subscribe to ${newValue}`);
+          this._subscribeToTarget(newValue);
+          this._emitter.emit(`change-target:${key}`, newValue, change.oldValue);
+        }
+
+        // If a target is not present anymore, unsubscribe on PubSub
+        if (change.action === "update" || change.action === "delete") {
+          const targets = Array.from(ymap.values());
+          if (!targets.includes(change.oldValue)) {
+            debug(`Unsubscribe from ${change.oldValue}`);
+            this._unsubscribeTarget(change.oldValue);
+          }
+        }
+      });
     });
   }
 
