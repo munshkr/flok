@@ -2,7 +2,6 @@ import process from "process";
 import path from "path";
 import fs from "fs";
 import http from "http";
-import connect from "connect";
 import { Command } from "commander";
 import { fileURLToPath } from "url";
 import withFlokServer from "@flok/server-middleware";
@@ -26,5 +25,5 @@ program
 const opts = program.opts();
 
 console.log(`> Flok server started. Listening on ${opts.host}:${opts.port}`);
-const server = http.createServer(connect());
+const server = http.createServer();
 withFlokServer(server).listen(opts.port, opts.host);
