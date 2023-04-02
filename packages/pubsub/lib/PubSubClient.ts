@@ -80,11 +80,13 @@ class PubSubClient {
    * @param topic
    */
   unsubscribe(topic: string) {
+    debug("unsubscribe", topic);
+
     const subscription = this._subscriptions.find((sub) => sub.topic === topic);
 
     if (subscription && subscription.listener) {
       // first need to remove local listener
-      subscription.listener.remove();
+      subscription.listener.removeAllListeners();
     }
 
     // need to tell to the server side that i dont want to receive message from this topic
@@ -102,6 +104,8 @@ class PubSubClient {
    * @param cb
    */
   subscribe(topic: string, cb: (...args: any[]) => void) {
+    debug("subscribe", topic);
+
     const listener = this.emitter.on(`subscribe_topic_${topic}`, cb);
     // add listener to array
     this._listeners.push(listener);
@@ -129,6 +133,8 @@ class PubSubClient {
    * @param message
    */
   publish(topic: string, message: any) {
+    debug("publish", topic);
+
     this.send({
       action: "publish",
       payload: {
@@ -144,6 +150,8 @@ class PubSubClient {
    * @param message
    */
   broadcast(topic: string, message: any) {
+    debug("broadcast", topic);
+
     this.send({
       action: "broadcast",
       payload: {
