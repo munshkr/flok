@@ -164,8 +164,8 @@ export class Session {
     this._emitter.on(eventName, cb);
   }
 
-  dispose() {
-    this._pubSubClient.stop();
+  destroy() {
+    this._pubSubClient.destroy();
     if (this._wsProvider && this._wsProvider.wsconnected)
       this._wsProvider.destroy();
     if (this._webrtcProvider && !this._webrtcProvider.closed)
@@ -210,6 +210,9 @@ export class Session {
 
   _preparePubSub() {
     this._pubSubClient = new PubSubClient({ url: `${this._wsUrl}/pubsub` });
+    this._pubSubClient.on("error", (err) => {
+      debug("error on pubsub", err);
+    });
     this._pubSubClient.start();
   }
 

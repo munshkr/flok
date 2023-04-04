@@ -55,7 +55,7 @@ export default function SessionPage() {
       setUsername(savedUsername);
     }
 
-    return () => newSession.dispose();
+    return () => newSession.destroy();
   }, [name]);
 
   useEffect(() => {

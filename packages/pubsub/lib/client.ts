@@ -36,13 +36,22 @@ export class PubSubClient {
     if (this._started) return;
     this._connect();
     this._started = true;
+    debug("started");
   }
 
   stop() {
     if (!this._started) return;
-    this._ws.close();
+    if (this._ws.readyState === WebSocket.OPEN) this._ws.close();
     this._subscriptions.clear();
     this._started = false;
+    this._ws = null;
+    debug("stopped");
+  }
+
+  destroy() {
+    this._subscriptions.forEach((sub) => this.removeAllListeners(sub));
+    this.stop();
+    debug("destroyed");
   }
 
   on(eventName: string | symbol, cb: (...args: any[]) => void) {
@@ -91,6 +100,7 @@ export class PubSubClient {
     this._ws = new WebSocket(this.url);
 
     this._ws.onopen = () => {
+      if (!this._ws) return;
       debug("open");
       this._connected = true;
       this._notifyState();
@@ -98,6 +108,7 @@ export class PubSubClient {
     };
 
     this._ws.onclose = () => {
+      if (!this._ws) return;
       debug("close");
       this._connected = false;
       if (this._started)
@@ -106,11 +117,13 @@ export class PubSubClient {
     };
 
     this._ws.onerror = (err: any) => {
+      if (!this._ws) return;
       debug("error", err);
       this._emitter.emit("error", err);
     };
 
     this._ws.onmessage = (event) => {
+      if (!this._ws) return;
       const data = JSON.parse(event.data.toString());
       const { topic, payload } = data;
       debug("message", topic, payload);
