@@ -66,7 +66,7 @@ export class PubSubClient {
     this._emitter.removeAllListeners(eventName);
   }
 
-  publish(topic: string, msg: string) {
+  publish(topic: string, msg: any) {
     if (this._connected) this._send("publish", { topic, msg });
   }
 
