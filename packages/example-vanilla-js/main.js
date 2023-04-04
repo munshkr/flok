@@ -16,7 +16,7 @@ const flokBasicSetup = (doc) => {
   return [
     flashField(),
     Prec.high(evalKeymap(doc)),
-    yCollab(text, session.awareness, { undoManager }),
+    yCollab(text, doc.session.awareness, { undoManager }),
   ];
 };
 
