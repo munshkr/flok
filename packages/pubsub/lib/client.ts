@@ -68,7 +68,11 @@ export class PubSubClient {
   subscribe(topic: string, cb?: (...args: any[]) => void) {
     if (this._connected) this._send("subscribe", { topic });
     this._subscriptions.add(topic);
-    if (cb) this.on(`message:${topic}`, cb);
+    if (cb) {
+      const event = `message:${topic}`;
+      this.removeAllListeners(event);
+      this.on(event, cb);
+    }
   }
 
   unsubscribe(topic: string) {
@@ -107,7 +111,6 @@ export class PubSubClient {
     };
 
     this._ws.onmessage = (event) => {
-      debug("rawData", event);
       const data = JSON.parse(event.data.toString());
       const { topic, payload } = data;
       debug("message", topic, payload);
