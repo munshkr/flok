@@ -85,8 +85,11 @@ abstract class BaseREPL {
   }
 
   _connectToPubSubServer() {
-    const wsUrl = `${this.hub}${this.pubSubPath}`;
-    this.pubSub = new PubSubClient({ url: wsUrl });
+    this.pubSub = new PubSubClient({ url: `${this.hub}${this.pubSubPath}` });
+    this.pubSub.start();
+    this.pubSub.on("error", (err) => {
+      debug("error", err);
+    });
   }
 }
 
