@@ -13,6 +13,7 @@ export class PubSubClient {
 
   protected _ws: WebSocket;
   protected _connected: boolean = false;
+  protected _subscriptions: Set<string> = new Set();
   protected _emitter: EventEmitter = new EventEmitter();
 
   constructor({
@@ -85,15 +86,18 @@ export class PubSubClient {
   }
 
   subscribe(topic: string) {
-    this._send("subscribe", { topic });
+    if (this._connected) this._send("subscribe", { topic });
+    this._subscriptions.add(topic);
   }
 
   unsubscribe(topic: string) {
-    this._send("unsubscribe", { topic });
+    if (this._connected) this._send("unsubscribe", { topic });
+    this._subscriptions.delete(topic);
   }
 
   unsubscribeAll() {
-    this._send("unsubscribe-all");
+    if (this._connected) this._send("unsubscribe-all");
+    this._subscriptions.clear();
   }
 
   get _wsUrl() {
