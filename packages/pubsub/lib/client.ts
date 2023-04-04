@@ -16,11 +16,13 @@ export class PubSubClient {
   readonly port: number;
   readonly isSecure: boolean;
   reconnectTimeout: number = 1000;
+  serverPingTimeout: number = 30000;
 
   protected _ws: WebSocket;
   protected _started: boolean = false;
   protected _connected: boolean = false;
   protected _subscriptions: Set<string> = new Set();
+  protected _pingTimeoutId: any;
   protected _emitter: EventEmitter = new EventEmitter();
 
   constructor({
@@ -96,12 +98,14 @@ export class PubSubClient {
       debug("open");
       this._connected = true;
       this._notifyState();
+      this._heartbeat();
       this._emitter.emit("open");
     });
 
     this._ws.on("close", () => {
       debug("close");
       this._connected = false;
+      clearTimeout(this._pingTimeoutId);
       if (this._started)
         setTimeout(() => this._connect(), this.reconnectTimeout);
       this._emitter.emit("close");
@@ -112,6 +116,10 @@ export class PubSubClient {
       this._emitter.emit("error", err);
     });
 
+    this._ws.on("ping", () => {
+      this._heartbeat();
+    });
+
     this._ws.on("message", (rawData) => {
       const data = JSON.parse(rawData.toString());
       const { topic, payload } = data;
@@ -119,6 +127,18 @@ export class PubSubClient {
       this._emitter.emit("message", topic, payload);
       this._emitter.emit(`message:${topic}`, payload);
     });
+  }
+
+  protected _heartbeat() {
+    clearTimeout(this._pingTimeoutId);
+
+    // Use `WebSocket#terminate()`, which immediately destroys the connection,
+    // instead of `WebSocket#close()`, which waits for the close timer.
+    // Delay should be equal to the interval at which your server
+    // sends out pings plus a conservative assumption of the latency.
+    this._pingTimeoutId = setTimeout(() => {
+      this._ws.terminate();
+    }, this.serverPingTimeout + 1000);
   }
 
   protected _notifyState() {

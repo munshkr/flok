@@ -5,13 +5,18 @@ import debugModule from "debug";
 const debug = debugModule("flok:pubsub:server");
 
 export class PubSubServer {
+  pingTimeout: number = 30000;
+
   protected _wss: WebSocketServer;
   protected _subscribers: { [topic: string]: Set<string> } = {};
   protected _clients: { [id: string]: WebSocket } = {};
+  protected _isAlive: { [id: string]: boolean } = {};
+  protected _pingIntervalId: any;
 
   constructor(wss: WebSocketServer) {
     this._wss = wss;
     this._addEventListeners();
+    this._setPingInterval();
   }
 
   protected _handleListening(...args: any[]) {
@@ -20,6 +25,7 @@ export class PubSubServer {
 
   protected _handleClose() {
     debug("closed");
+    clearInterval(this._pingIntervalId);
   }
 
   protected _handleError(err: Error) {
@@ -31,6 +37,8 @@ export class PubSubServer {
     this._clients[id] = ws;
 
     debug(`[${id}] connection`);
+
+    this._isAlive[id] = true;
 
     ws.on("message", (rawData) => {
       const data = JSON.parse(rawData.toString());
@@ -72,6 +80,10 @@ export class PubSubServer {
       debug(`[${id}] error`, err);
     });
 
+    ws.on("pong", () => {
+      this._isAlive[id] = true;
+    });
+
     ws.on("close", () => {
       debug(`[${id}] close`);
       // Remove ws from all subscribed topics
@@ -86,6 +98,16 @@ export class PubSubServer {
     this._wss.on("connection", this._handleConnection.bind(this));
     this._wss.on("close", this._handleClose.bind(this));
     this._wss.on("error", this._handleError.bind(this));
+  }
+
+  protected _setPingInterval() {
+    this._pingIntervalId = setInterval(() => {
+      Object.entries(this._clients).forEach(([id, ws]) => {
+        if (!this._isAlive[id]) return ws.terminate();
+        this._isAlive[id] = false;
+        ws.ping();
+      });
+    }, this.pingTimeout);
   }
 
   protected _publish(topic: string, msg: any) {
