@@ -10,7 +10,7 @@ import { Doc } from "yjs";
 import debugModule from "debug";
 import { Document } from "./document.js";
 
-const debug = debugModule("flok:codemirror:session");
+const debug = debugModule("flok:session");
 
 type Provider = "webrtc" | "websocket" | "indexeddb";
 
@@ -76,6 +76,8 @@ export class Session {
     this._userColor = userColors[uint32() % userColors.length];
     this._providers = opts?.providers || ["webrtc", "websocket", "indexeddb"];
     this._extraSignalingServers = opts?.extraSignalingServers || [];
+
+    this._handleObserveSharedTypes = this._handleObserveSharedTypes.bind(this);
 
     this._prepareYjs();
     this._preparePubSub();
@@ -171,6 +173,7 @@ export class Session {
     if (this._webrtcProvider && !this._webrtcProvider.closed)
       this._webrtcProvider.destroy();
     if (this._idbProvider) this._idbProvider.destroy();
+    this._yTargets().unobserve(this._handleObserveSharedTypes);
     this.yDoc.destroy();
     this.awareness.destroy();
   }
@@ -217,6 +220,8 @@ export class Session {
   }
 
   _subscribeToTarget(target: string) {
+    if (!this._pubSubClient) return;
+
     // Subscribe to messages directed to a specific target
     this._pubSubClient.subscribe(
       `session:${this.name}:target:${target}:eval`,
@@ -269,31 +274,35 @@ export class Session {
   }
 
   _observeSharedTypes() {
-    const ymap = this._yTargets();
-    ymap.observe((e) => {
-      e.changes.keys.forEach((change, key) => {
-        // If a target was added or updated, subscribe and emit change event
-        if (change.action === "add" || change.action === "update") {
-          const newValue = ymap.get(key);
-          debug(
-            `Document "${key}" was added or updated. New target: "${newValue}". ` +
-              `Previous target: "${change.oldValue}".`
-          );
-          debug(`Subscribe to ${newValue}`);
-          this._subscribeToTarget(newValue);
-          this._emitter.emit(`change-target:${key}`, newValue, change.oldValue);
-        }
+    this._yTargets().observe(this._handleObserveSharedTypes);
+  }
 
-        // If a target is not present anymore, unsubscribe on PubSub
-        if (change.action === "update" || change.action === "delete") {
-          const targets = Array.from(ymap.values());
-          if (!targets.includes(change.oldValue)) {
-            debug(`Unsubscribe from ${change.oldValue}`);
-            this._unsubscribeTarget(change.oldValue);
-          }
+  protected _handleObserveSharedTypes(event: Y.YMapEvent<string>) {
+    const ymap = this._yTargets();
+    event.changes.keys.forEach((change, key) => {
+      // If a target was added or updated, subscribe and emit change event
+      if (change.action === "add" || change.action === "update") {
+        const newValue = ymap.get(key);
+        debug(
+          `Document "${key}" was added or updated. New target: "${newValue}". ` +
+            `Previous target: "${change.oldValue}".`
+        );
+        debug(`Subscribe to ${newValue}`);
+        this._subscribeToTarget(newValue);
+        this._emitter.emit(`change-target:${key}`, newValue, change.oldValue);
+      }
+
+      // If a target is not present anymore, unsubscribe on PubSub
+      if (change.action === "update" || change.action === "delete") {
+        const targets = Array.from(ymap.values());
+        if (!targets.includes(change.oldValue)) {
+          debug(`Unsubscribe from ${change.oldValue}`);
+          this._unsubscribeTarget(change.oldValue);
         }
-      });
+      }
     });
+
+    this._emitter.emit("change", this.getDocuments());
   }
 
   get _wsUrl() {
