@@ -11,6 +11,7 @@ import { useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ConfigureDialog from "@/components/configure-dialog";
 import SessionMenu from "@/components/session-menu";
+import TargetSelect from "@/components/target-select";
 
 interface SessionLoaderParams {
   name: string;
@@ -89,6 +90,10 @@ export default function SessionPage() {
     ]);
   }, [session, documents]);
 
+  const handleTargetSelectChange = (document: Document, newTarget: string) => {
+    document.target = newTarget;
+  };
+
   return (
     <>
       <SessionMenu
@@ -112,6 +117,10 @@ export default function SessionPage() {
       <Mosaic
         items={documents.map((doc, i) => (
           <Pane key={doc.id}>
+            <TargetSelect
+              value={doc.target}
+              onChange={(t) => handleTargetSelectChange(doc, t)}
+            />
             <Editor document={doc} autoFocus={i === 0} className="flex-grow" />
           </Pane>
         ))}
