@@ -6,10 +6,13 @@ interface IMosaicProps {
 }
 
 export default function Mosaic({ items }: IMosaicProps) {
-  const itemsByRows = (items: any[]) => {
-    let rows = [];
+  const itemsByRows = (items: ReactNode[]) => {
+    let rows: ReactNode[][] = [];
 
     switch (items.length) {
+      case 0:
+        rows = [];
+        break;
       case 1:
       case 2:
         rows = [items];
@@ -33,7 +36,8 @@ export default function Mosaic({ items }: IMosaicProps) {
         rows = [items.slice(0, 4), items.slice(4, 8)];
         break;
       default:
-        throw "More than 8 slots are not supported right now";
+        console.warn("More than 8 slots are not supported right now");
+        rows = [items.slice(0, 4), items.slice(4, 8)];
     }
 
     return rows;
@@ -51,7 +55,7 @@ export default function Mosaic({ items }: IMosaicProps) {
           )}
           key={i}
         >
-          {rowItems.map((item, j) => (
+          {rowItems.map((item: any, j: number) => (
             <div
               key={`${i}-${j}`}
               className="flex-grow border-slate-800 dark:border-slate-200 ml-2 last:mr-2 bg-white dark:bg-[#282c34] overflow-auto basis-full"

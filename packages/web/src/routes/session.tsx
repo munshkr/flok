@@ -5,8 +5,8 @@ import SessionCommandDialog from "@/components/session-command-dialog";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
 import { store } from "@/lib/utils";
-import { Session } from "@flok/session";
-import { useEffect, useState } from "react";
+import { Session, Document } from "@flok/session";
+import { useEffect, useState, useCallback } from "react";
 import { useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ConfigureDialog from "@/components/configure-dialog";
@@ -31,9 +31,7 @@ export default function SessionPage() {
   const [username, setUsername] = useState<string>("");
   const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
-  const [panes, setPanes] = useState<Pane[]>([
-    { target: defaultTarget, content: "" },
-  ]);
+  const [documents, setDocuments] = useState<Document[]>([]);
 
   useEffect(() => {
     if (!name) return;
@@ -47,6 +45,9 @@ export default function SessionPage() {
     });
     setSession(newSession);
 
+    // Default documents
+    newSession.setActiveDocuments([{ id: "1", target: "tidal" }]);
+
     // Load and set saved username, if available
     const savedUsername = store.get("username");
     if (!savedUsername) {
@@ -54,6 +55,10 @@ export default function SessionPage() {
     } else {
       setUsername(savedUsername);
     }
+
+    newSession.on("change", (documents) => {
+      setDocuments(documents);
+    });
 
     return () => newSession.destroy();
   }, [name]);
@@ -65,16 +70,24 @@ export default function SessionPage() {
     store.set("username", username);
   }, [session, username]);
 
-  const handleViewLayoutAdd = () => {
-    setPanes((prevPanes) => [
-      ...prevPanes,
-      { target: defaultTarget, content: "" },
-    ]);
-  };
+  const handleViewLayoutAdd = useCallback(() => {
+    if (!session) return;
+    const newDocs = [
+      ...documents.map((doc) => ({ id: doc.id, target: doc.target })),
+      { id: String(documents.length + 1), target: "default" },
+    ];
+    console.log("newDocs", newDocs);
+    session.setActiveDocuments(newDocs);
+  }, [session, documents]);
 
-  const handleViewLayoutRemove = () => {
-    setPanes((prevPanes) => prevPanes.slice(0, -1));
-  };
+  const handleViewLayoutRemove = useCallback(() => {
+    if (!session) return;
+    session.setActiveDocuments([
+      ...documents
+        .map((doc) => ({ id: doc.id, target: doc.target }))
+        .slice(0, -1),
+    ]);
+  }, [session, documents]);
 
   return (
     <>
@@ -97,15 +110,14 @@ export default function SessionPage() {
         onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
       />
       <Mosaic
-        items={panes.map((pane, i) => (
-          <Pane key={i}>
+        items={documents.map((doc, i) => (
+          <Pane key={doc.id}>
             <Editor
-              key={`${name}-${i}`}
-              value={pane.content}
-              autoFocus={i === 0}
+              id={doc.id}
+              value={doc.content}
               session={session}
-              target={pane.target}
-              id={`pane-${i}`}
+              target={doc.target}
+              autoFocus={i === 0}
               className="flex-grow"
             />
           </Pane>
