@@ -3,6 +3,17 @@
 WebSocket-based Pub/Sub client and server, used for remote code execution and
 message passing in Flok.
 
+## Features
+
+* Basic Publish/Subscribe functionality: `subscribe`, `unsubscribe`, `publish`,
+  `unsubscribeAll`.
+* Payload is JSON serialized, topics are any string.
+* Allows subscribing or unsubscribing without being connected by storing state
+  on the client.
+* Automatically reconnects if connection is lost, recovering client's state.
+* Ping/pong mechanism for detecting and closing broken connections both on
+  client and server.
+
 ## Usage
 
 ### Server
@@ -22,30 +33,32 @@ console.log(`PubSub server listening on`, wss.address())
 ### Client
 
 ```js
-import { PubSubClient } from "@flok/pubsub"
+// Subscribe to topics
+client.subscribe("b");
+client.subscribe("a");
 
-const client = new PubSubClient({ port: 4000 });
+client.start();
 
-client.connect();
-
-// Wait for the connection to be made
+// Wait for the connection to be made, otherwise published messages are discarded.
+let internalId;
 client.on("open", () => {
-  // Subscribe to topics
-  client.subscribe("b");
-  client.subscribe("a");
-
   // Publish a message (any JSON serializable object) to a topic
-  setInterval(() => {
+  internalId = setInterval(() => {
     client.publish("a", { salutation: "hello!" })
   }, 2000);
-
-  setTimeout(() => {
-    // Unsubscribe from a topic
-    client.subscribe("b");
-    // ... or from all topics with a single call
-    client.unsubscribeAll();
-  }, 5000)
 })
+
+// Add an error event handler to ignore connection errors
+client.on("error", () => { });
+
+client.on("close", () => clearInterval(internalId))
+
+setTimeout(() => {
+  // Unsubscribe from a topic
+  client.unsubscribe("b");
+  // ... or from all topics with a single call
+  client.unsubscribeAll();
+}, 5000)
 
 // you can add a listener for all message events
 client.on("message", (topic, data) => {
