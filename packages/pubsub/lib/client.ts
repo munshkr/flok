@@ -15,6 +15,7 @@ export class PubSubClient {
   readonly host: string;
   readonly port: number;
   readonly isSecure: boolean;
+  reconnectTimeout: number = 1000;
 
   protected _ws: WebSocket;
   protected _started: boolean = false;
@@ -26,48 +27,22 @@ export class PubSubClient {
     host = "localhost",
     port = 3000,
     isSecure = false,
+    reconnectTimeout = 1000,
   }: {
     host: string;
     port: number;
     isSecure: boolean;
+    reconnectTimeout: number;
   }) {
     this.host = host;
     this.port = port;
     this.isSecure = isSecure;
+    this.reconnectTimeout = reconnectTimeout;
   }
 
   start() {
     if (this._started) return;
-
-    this._ws = new WebSocket(this._wsUrl);
-
-    this._ws.on("open", () => {
-      debug("open");
-      this._connected = true;
-      this._notifyState();
-      this._emitter.emit("open");
-    });
-
-    this._ws.on("close", () => {
-      debug("close");
-      this._connected = false;
-      // TODO: Reconnect?
-      this._emitter.emit("close");
-    });
-
-    this._ws.on("error", (err: Error) => {
-      debug("err", err);
-      this._emitter.emit("error", err);
-    });
-
-    this._ws.on("message", (rawData) => {
-      const data = JSON.parse(rawData.toString());
-      const { topic, payload } = data;
-      debug("message", topic, payload);
-      this._emitter.emit("message", topic, payload);
-      this._emitter.emit(`message:${topic}`, payload);
-    });
-
+    this._connect();
     this._started = true;
   }
 
@@ -112,6 +87,38 @@ export class PubSubClient {
   get _wsUrl() {
     const schema = this.isSecure ? `wss` : `ws`;
     return `${schema}://${this.host}${this.port ? `:${this.port}` : ""}`;
+  }
+
+  protected _connect() {
+    this._ws = new WebSocket(this._wsUrl);
+
+    this._ws.on("open", () => {
+      debug("open");
+      this._connected = true;
+      this._notifyState();
+      this._emitter.emit("open");
+    });
+
+    this._ws.on("close", () => {
+      debug("close");
+      this._connected = false;
+      if (this._started)
+        setTimeout(() => this._connect(), this.reconnectTimeout);
+      this._emitter.emit("close");
+    });
+
+    this._ws.on("error", (err: Error) => {
+      debug("error", err);
+      this._emitter.emit("error", err);
+    });
+
+    this._ws.on("message", (rawData) => {
+      const data = JSON.parse(rawData.toString());
+      const { topic, payload } = data;
+      debug("message", topic, payload);
+      this._emitter.emit("message", topic, payload);
+      this._emitter.emit(`message:${topic}`, payload);
+    });
   }
 
   protected _notifyState() {

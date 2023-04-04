@@ -111,7 +111,7 @@ export class PubSubServer {
   protected _unsubscribe(topic: string, subscriber: string) {
     const subs = this._subscribers;
     if (subs[topic]) subs[topic].delete(subscriber);
-    if (subs[topic].size === 0) delete subs[topic];
+    if (subs[topic] && subs[topic].size === 0) delete subs[topic];
     debug("subscribers after `unsubscribe`:", this._subscribers);
   }
 
