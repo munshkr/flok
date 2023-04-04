@@ -40,7 +40,6 @@ export class PubSubServer {
       switch (type) {
         case "publish": {
           const { topic, msg } = payload;
-          // TODO Send msg to all subscribers to topic
           this._publish(topic, msg);
           break;
         }
@@ -56,6 +55,11 @@ export class PubSubServer {
         }
         case "unsubscribe-all": {
           this._unsubscribeAll(id);
+          break;
+        }
+        case "state": {
+          const { topics } = payload;
+          this._updateState(id, topics);
           break;
         }
         default: {
@@ -124,5 +128,10 @@ export class PubSubServer {
     topics.forEach((topic) => {
       if (this._subscribers[topic].size === 0) delete this._subscribers[topic];
     });
+  }
+
+  protected _updateState(subscriber: string, topics: string[]) {
+    this._unsubscribeAll(subscriber);
+    topics.forEach((topic) => this._subscribe(topic, subscriber));
   }
 }

@@ -4,7 +4,12 @@ import { EventEmitter } from "events";
 
 const debug = debugModule("flok:pubsub:client");
 
-type MessageType = "publish" | "subscribe" | "unsubscribe" | "unsubscribe-all";
+type MessageType =
+  | "publish"
+  | "subscribe"
+  | "unsubscribe"
+  | "unsubscribe-all"
+  | "state";
 
 export class PubSubClient {
   readonly host: string;
@@ -38,6 +43,7 @@ export class PubSubClient {
     this._ws.on("open", () => {
       debug("open");
       this._emitter.emit("open");
+      this._notifyState();
     });
 
     this._ws.on("close", () => {
@@ -103,6 +109,10 @@ export class PubSubClient {
   get _wsUrl() {
     const schema = this.isSecure ? `wss` : `ws`;
     return `${schema}://${this.host}${this.port ? `:${this.port}` : ""}`;
+  }
+
+  protected _notifyState() {
+    this._send("state", { topics: [...this._subscriptions] });
   }
 
   protected _send(
