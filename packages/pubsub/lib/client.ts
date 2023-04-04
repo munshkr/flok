@@ -17,6 +17,7 @@ export class PubSubClient {
   readonly isSecure: boolean;
 
   protected _ws: WebSocket;
+  protected _started: boolean = false;
   protected _connected: boolean = false;
   protected _subscriptions: Set<string> = new Set();
   protected _emitter: EventEmitter = new EventEmitter();
@@ -35,22 +36,22 @@ export class PubSubClient {
     this.isSecure = isSecure;
   }
 
-  async connect() {
-    if (this._connected) return;
+  start() {
+    if (this._started) return;
 
     this._ws = new WebSocket(this._wsUrl);
 
     this._ws.on("open", () => {
       debug("open");
-      this._emitter.emit("open");
+      this._connected = true;
       this._notifyState();
+      this._emitter.emit("open");
     });
 
     this._ws.on("close", () => {
       debug("close");
-      // TODO: Reconnect?
-
       this._connected = false;
+      // TODO: Reconnect?
       this._emitter.emit("close");
     });
 
@@ -67,7 +68,14 @@ export class PubSubClient {
       this._emitter.emit(`message:${topic}`, payload);
     });
 
-    this._connected = true;
+    this._started = true;
+  }
+
+  stop() {
+    if (!this._started) return;
+    this._ws.close();
+    this._subscriptions.clear();
+    this._started = false;
   }
 
   on(eventName: string | symbol, cb: (...args: any[]) => void) {
@@ -82,13 +90,8 @@ export class PubSubClient {
     return this._emitter.once(eventName, cb);
   }
 
-  disconnect() {
-    if (!this._connected) return;
-    this._ws.close();
-  }
-
   publish(topic: string, msg: string) {
-    this._send("publish", { topic, msg });
+    if (this._connected) this._send("publish", { topic, msg });
   }
 
   subscribe(topic: string) {
