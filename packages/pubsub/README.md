@@ -69,6 +69,11 @@ client.on("message", (topic, data) => {
 client.on("message:a", (data) => {
   console.log("message from topic 'a'", data)
 })
+
+// Finally, you can subscribe and listen to messages in a single call
+client.subscribe("c", (data) => {
+  console.log("message from 'c'", data);
+});
 ```
 
 ## Development

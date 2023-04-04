@@ -56,29 +56,35 @@ export class PubSubClient {
   }
 
   on(eventName: string | symbol, cb: (...args: any[]) => void) {
-    return this._emitter.on(eventName, cb);
+    this._emitter.on(eventName, cb);
   }
 
   off(eventName: string | symbol, cb: (...args: any[]) => void) {
-    return this._emitter.off(eventName, cb);
+    this._emitter.off(eventName, cb);
   }
 
   once(eventName: string | symbol, cb: (...args: any[]) => void) {
-    return this._emitter.once(eventName, cb);
+    this._emitter.once(eventName, cb);
+  }
+
+  removeAllListeners(eventName: string) {
+    this._emitter.removeAllListeners(eventName);
   }
 
   publish(topic: string, msg: string) {
     if (this._connected) this._send("publish", { topic, msg });
   }
 
-  subscribe(topic: string) {
+  subscribe(topic: string, cb?: (...args: any[]) => void) {
     if (this._connected) this._send("subscribe", { topic });
     this._subscriptions.add(topic);
+    if (cb) this.on(`message:${topic}`, cb);
   }
 
   unsubscribe(topic: string) {
     if (this._connected) this._send("unsubscribe", { topic });
     this._subscriptions.delete(topic);
+    this.removeAllListeners(`message:${topic}`);
   }
 
   unsubscribeAll() {
