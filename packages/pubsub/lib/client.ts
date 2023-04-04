@@ -12,10 +12,7 @@ type MessageType =
   | "state";
 
 export class PubSubClient {
-  readonly host: string;
-  readonly port: number;
-  readonly path: string;
-  readonly isSecure: boolean;
+  readonly url: string;
   reconnectTimeout: number = 1000;
   serverPingTimeout: number = 30000;
 
@@ -27,23 +24,17 @@ export class PubSubClient {
   protected _emitter: EventEmitter = new EventEmitter();
 
   constructor({
-    host = "localhost",
-    port = 3000,
-    path = "/",
-    isSecure = false,
+    url = "ws://localhost:3000/",
     reconnectTimeout = 1000,
+    serverPingTimeout = 30000,
   }: {
-    host: string;
-    port: number;
-    path: string;
-    isSecure: boolean;
-    reconnectTimeout: number;
+    url: string;
+    reconnectTimeout?: number;
+    serverPingTimeout?: number;
   }) {
-    this.host = host;
-    this.port = port;
-    this.path = path;
-    this.isSecure = isSecure;
+    this.url = url;
     this.reconnectTimeout = reconnectTimeout;
+    this.serverPingTimeout = serverPingTimeout;
   }
 
   start() {
@@ -96,15 +87,8 @@ export class PubSubClient {
     this._subscriptions.clear();
   }
 
-  get wsUrl() {
-    const schema = this.isSecure ? `wss` : `ws`;
-    return `${schema}://${this.host}${this.port ? `:${this.port}` : ""}${
-      this.path
-    }`;
-  }
-
   protected _connect() {
-    this._ws = new WebSocket(this.wsUrl);
+    this._ws = new WebSocket(this.url);
 
     this._ws.on("open", () => {
       debug("open");

@@ -33,6 +33,10 @@ console.log(`PubSub server listening on`, wss.address())
 ### Client
 
 ```js
+import { PubSubClient } from "@flok/pubsub"
+
+const client = new PubSubClient({ url: "ws://localhost:4000" });
+
 // Subscribe to topics
 client.subscribe("b");
 client.subscribe("a");
