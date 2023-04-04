@@ -273,7 +273,7 @@ export class Session {
         if (change.action === "add" || change.action === "update") {
           const newValue = ymap.get(key);
           debug(
-            `Document "${key}" was added or updated. New target: "${newValue}. ` +
+            `Document "${key}" was added or updated. New target: "${newValue}". ` +
               `Previous target: "${change.oldValue}".`
           );
           debug(`Subscribe to ${newValue}`);

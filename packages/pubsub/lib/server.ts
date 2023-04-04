@@ -50,7 +50,7 @@ export class PubSubServer {
 
     ws.on("message", (rawData) => {
       const data = JSON.parse(rawData.toString());
-      debug(`[${id}] message`, data);
+      debug(`[${id}] message`, rawData.toString());
 
       const { type, payload } = data;
       switch (type) {
