@@ -112,14 +112,7 @@ export default function SessionPage() {
       <Mosaic
         items={documents.map((doc, i) => (
           <Pane key={doc.id}>
-            <Editor
-              id={doc.id}
-              value={doc.content}
-              session={session}
-              target={doc.target}
-              autoFocus={i === 0}
-              className="flex-grow"
-            />
+            <Editor document={doc} autoFocus={i === 0} className="flex-grow" />
           </Pane>
         ))}
       />
