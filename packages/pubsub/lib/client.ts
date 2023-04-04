@@ -14,27 +14,22 @@ type MessageType =
 export class PubSubClient {
   readonly url: string;
   reconnectTimeout: number = 1000;
-  serverPingTimeout: number = 30000;
 
   protected _ws: WebSocket;
   protected _started: boolean = false;
   protected _connected: boolean = false;
   protected _subscriptions: Set<string> = new Set();
-  protected _pingTimeoutId: any;
   protected _emitter: EventEmitter = new EventEmitter();
 
   constructor({
     url = "ws://localhost:3000/",
     reconnectTimeout = 1000,
-    serverPingTimeout = 30000,
   }: {
     url: string;
     reconnectTimeout?: number;
-    serverPingTimeout?: number;
   }) {
     this.url = url;
     this.reconnectTimeout = reconnectTimeout;
-    this.serverPingTimeout = serverPingTimeout;
   }
 
   start() {
@@ -88,53 +83,37 @@ export class PubSubClient {
   }
 
   protected _connect() {
+    debug("create WebSocket on", this.url);
     this._ws = new WebSocket(this.url);
 
-    this._ws.on("open", () => {
+    this._ws.onopen = () => {
       debug("open");
       this._connected = true;
       this._notifyState();
-      this._heartbeat();
       this._emitter.emit("open");
-    });
+    };
 
-    this._ws.on("close", () => {
+    this._ws.onclose = () => {
       debug("close");
       this._connected = false;
-      clearTimeout(this._pingTimeoutId);
       if (this._started)
         setTimeout(() => this._connect(), this.reconnectTimeout);
       this._emitter.emit("close");
-    });
+    };
 
-    this._ws.on("error", (err: Error) => {
+    this._ws.onerror = (err: any) => {
       debug("error", err);
       this._emitter.emit("error", err);
-    });
+    };
 
-    this._ws.on("ping", () => {
-      this._heartbeat();
-    });
-
-    this._ws.on("message", (rawData) => {
-      const data = JSON.parse(rawData.toString());
+    this._ws.onmessage = (event) => {
+      debug("rawData", event);
+      const data = JSON.parse(event.data.toString());
       const { topic, payload } = data;
       debug("message", topic, payload);
       this._emitter.emit("message", topic, payload);
       this._emitter.emit(`message:${topic}`, payload);
-    });
-  }
-
-  protected _heartbeat() {
-    clearTimeout(this._pingTimeoutId);
-
-    // Use `WebSocket#terminate()`, which immediately destroys the connection,
-    // instead of `WebSocket#close()`, which waits for the close timer.
-    // Delay should be equal to the interval at which your server
-    // sends out pings plus a conservative assumption of the latency.
-    this._pingTimeoutId = setTimeout(() => {
-      this._ws.terminate();
-    }, this.serverPingTimeout + 1000);
+    };
   }
 
   protected _notifyState() {

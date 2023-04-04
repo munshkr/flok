@@ -165,7 +165,7 @@ export class Session {
   }
 
   dispose() {
-    this._pubSubClient.disconnect();
+    this._pubSubClient.stop();
     if (this._wsProvider && this._wsProvider.wsconnected)
       this._wsProvider.destroy();
     if (this._webrtcProvider && !this._webrtcProvider.closed)
@@ -205,18 +205,12 @@ export class Session {
         this.yDoc,
         { awareness: this.awareness }
       );
-
-      this._wsProvider.on("status", (event: any) => {
-        debug("Websocket status:", event.status);
-      });
     }
   }
 
   _preparePubSub() {
-    this._pubSubClient = new PubSubClient(`${this._wsUrl}/pubsub`, {
-      connect: true,
-      reconnect: true,
-    });
+    this._pubSubClient = new PubSubClient({ url: `${this._wsUrl}/pubsub` });
+    this._pubSubClient.start();
   }
 
   _subscribeToTarget(target: string) {

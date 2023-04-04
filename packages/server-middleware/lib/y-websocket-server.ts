@@ -4,6 +4,7 @@ import * as awarenessProtocol from "y-protocols/awareness";
 import * as syncProtocol from "y-protocols/sync";
 import type http from "http";
 import debugModule from "debug";
+import type { WebSocket } from "ws";
 
 const debug = debugModule("flok:server:y-websocket-server");
 
@@ -171,7 +172,7 @@ const send = (doc: WSSharedDoc, conn: any, m: Uint8Array) => {
 const pingTimeout = 30000;
 
 export const setupWSConnection = (
-  conn: any,
+  conn: WebSocket,
   req: http.IncomingMessage,
   { docName = req.url.slice(1).split("?")[0], gc = true }: any = {}
 ) => {
@@ -188,10 +189,8 @@ export const setupWSConnection = (
   });
   doc.conns.set(conn, new Set());
   // listen and reply to events
-  conn.on(
-    "message",
-    /** @param {ArrayBuffer} message */ (message) =>
-      messageListener(conn, doc, new Uint8Array(message))
+  conn.on("message", (message: ArrayBuffer) =>
+    messageListener(conn, doc, new Uint8Array(message))
   );
   conn.on("close", () => {
     closeConn(doc, conn);

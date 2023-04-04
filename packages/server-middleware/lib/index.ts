@@ -1,21 +1,21 @@
 import url from "url";
-import WebSocket from "ws";
+import { WebSocketServer, type WebSocket } from "ws";
 import http from "http";
-import { PubSub } from "@flok/pubsub";
+import { PubSubServer } from "@flok/pubsub";
 import onYjsWsConnection from "./y-websocket-server.js";
 import onSignalingWsConnection from "./signaling-server.js";
 import debugModule from "debug";
 
 const debug = debugModule("flok:server");
 
-type FlokServer = http.Server & { _pubSubServer: PubSub };
+type FlokServer = http.Server & { _pubSubServer: PubSubServer };
 
 export default function withFlokServer(server: http.Server): FlokServer {
   const topics: Map<string, Set<any>> = new Map();
 
-  const wss = new WebSocket.Server({ noServer: true });
-  const docWss = new WebSocket.Server({ noServer: true });
-  const pubsubWss = new WebSocket.Server({ noServer: true });
+  const wss = new WebSocketServer({ noServer: true });
+  const docWss = new WebSocketServer({ noServer: true });
+  const pubsubWss = new WebSocketServer({ noServer: true });
 
   const newServer = server as FlokServer;
 
@@ -51,14 +51,9 @@ export default function withFlokServer(server: http.Server): FlokServer {
   });
 
   // Prepare PubSub WebScoket server (pubsub) for code evaluation
-  newServer._pubSubServer = new PubSub({
+  newServer._pubSubServer = new PubSubServer({
     wss: pubsubWss,
-    onConnection: (uuid: string) => {
-      debug("Add pubsub client", uuid);
-    },
-    onDisconnection: (uuid: string) => {
-      debug("Remove pubsub client", uuid);
-    },
+    pingTimeout: 5000,
   });
 
   return newServer;

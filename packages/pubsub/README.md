@@ -25,7 +25,7 @@ import { PubSubServer } from "@flok/pubsub"
 // To use the server, you need to create a `WebSocketServer` and pass it to
 // `PubSubServer`.
 const wss = new WebSocketServer({ port: 4000 });
-const server = new PubSubServer(wss);
+const server = new PubSubServer({ wss });
 
 console.log(`PubSub server listening on`, wss.address())
 ```

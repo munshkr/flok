@@ -13,8 +13,16 @@ export class PubSubServer {
   protected _isAlive: { [id: string]: boolean } = {};
   protected _pingIntervalId: any;
 
-  constructor(wss: WebSocketServer) {
+  constructor({
+    wss,
+    pingTimeout = 30000,
+  }: {
+    wss: WebSocketServer;
+    pingTimeout?: number;
+  }) {
     this._wss = wss;
+    this.pingTimeout = pingTimeout;
+
     this._addEventListeners();
     this._setPingInterval();
   }

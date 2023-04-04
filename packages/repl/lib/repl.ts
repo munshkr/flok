@@ -86,11 +86,7 @@ abstract class BaseREPL {
 
   _connectToPubSubServer() {
     const wsUrl = `${this.hub}${this.pubSubPath}`;
-
-    this.pubSub = new PubSubClient(wsUrl, {
-      connect: true,
-      reconnect: true,
-    });
+    this.pubSub = new PubSubClient({ url: wsUrl });
   }
 }
 
@@ -162,7 +158,6 @@ class CommandREPL extends BaseREPL {
 
   _handleData(data: any, type: string) {
     const { target, session, nickname, notifyToAll } = this;
-    const clientId = this.pubSub._id;
     const newBuffer = this._buffers[type].concat(data.toString());
     const rawLines = newBuffer.split("\n");
 
@@ -181,7 +176,6 @@ class CommandREPL extends BaseREPL {
         ? `${basePath}:out`
         : `${basePath}:user:${nickname}:out`;
       this.pubSub.publish(path, {
-        clientId,
         target,
         type,
         body: lines,
