@@ -18,7 +18,7 @@ const program = new Command();
 
 program.version(packageInfo.version);
 program
-  .option("-H, --host [HOST]", "Server host", "0.0.0.0")
+  .option("-H, --host [HOST]", "Server host", "localhost")
   .option("-P, --port [PORT]", "Server port", 3000)
   .parse(process.argv);
 
