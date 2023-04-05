@@ -118,8 +118,9 @@ export default function SessionPage() {
         items={documents.map((doc, i) => (
           <Pane key={doc.id}>
             <TargetSelect
+              triggerProps={{ className: "w-[120px] h-6" }}
               value={doc.target}
-              onChange={(t) => handleTargetSelectChange(doc, t)}
+              onValueChange={(t) => handleTargetSelectChange(doc, t)}
             />
             <Editor document={doc} autoFocus={i === 0} className="flex-grow" />
           </Pane>

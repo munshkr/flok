@@ -5,6 +5,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { SelectProps, SelectTriggerProps } from "@radix-ui/react-select";
 
 const knownTargets = [
   "tidal",
@@ -15,15 +16,17 @@ const knownTargets = [
   "mercury",
 ];
 
-interface TargetSelectProps {
-  value: string;
-  onChange: (value: string) => void;
+interface TargetSelectProps extends SelectProps {
+  triggerProps: SelectTriggerProps;
 }
 
-export default function TargetSelect({ value, onChange }: TargetSelectProps) {
+export default function TargetSelect({
+  triggerProps,
+  ...props
+}: TargetSelectProps) {
   return (
-    <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-[180px]">
+    <Select {...props}>
+      <SelectTrigger {...triggerProps}>
         <SelectValue placeholder="Target" />
       </SelectTrigger>
       <SelectContent>
