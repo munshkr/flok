@@ -49,6 +49,7 @@ export default function SessionPage() {
 
     // Default documents
     newSession.setActiveDocuments([{ id: "1", target: "tidal" }]);
+    setDocuments(newSession.getDocuments());
 
     // Load and set saved username, if available
     const savedUsername = store.get("username");
