@@ -36,6 +36,7 @@
     "picocolors": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-helmet-async": "^1.3.0",
     "react-router-dom": "^6.9.0",
     "tailwind-merge": "^1.10.0",
     "tailwindcss-animate": "^1.0.5",

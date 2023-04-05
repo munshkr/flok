@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import ConfigureDialog from "@/components/configure-dialog";
 import SessionMenu from "@/components/session-menu";
 import TargetSelect from "@/components/target-select";
+import { Helmet } from "react-helmet-async";
 
 interface SessionLoaderParams {
   name: string;
@@ -96,6 +97,9 @@ export default function SessionPage() {
 
   return (
     <>
+      <Helmet>
+        <title>{name} ~ Flok</title>
+      </Helmet>
       <SessionMenu
         onViewLayoutAdd={handleViewLayoutAdd}
         onViewLayoutRemove={handleViewLayoutRemove}
