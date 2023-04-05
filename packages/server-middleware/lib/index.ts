@@ -24,17 +24,14 @@ export default function withFlokServer(server: http.Server): FlokServer {
 
     if (pathname.startsWith("/signal")) {
       wss.handleUpgrade(request, socket, head, (...args: any[]) => {
-        debug("y-webrtc signaling connection");
         wss.emit("connection", ...args);
       });
     } else if (pathname.startsWith("/doc")) {
       docWss.handleUpgrade(request, socket, head, (...args: any[]) => {
-        debug("y-websocket connection");
         docWss.emit("connection", ...args);
       });
     } else if (pathname.startsWith("/pubsub")) {
       pubsubWss.handleUpgrade(request, socket, head, (...args: any[]) => {
-        debug("pubsub connection");
         pubsubWss.emit("connection", ...args);
       });
     } else {
@@ -51,10 +48,7 @@ export default function withFlokServer(server: http.Server): FlokServer {
   });
 
   // Prepare PubSub WebScoket server (pubsub) for code evaluation
-  newServer._pubSubServer = new PubSubServer({
-    wss: pubsubWss,
-    pingTimeout: 5000,
-  });
+  newServer._pubSubServer = new PubSubServer({ wss: pubsubWss });
 
   return newServer;
 }
