@@ -122,12 +122,19 @@ export default function SessionPage() {
       <Mosaic
         items={documents.map((doc, i) => (
           <Pane key={doc.id}>
+            <Editor
+              document={doc}
+              autoFocus={i === 0}
+              className="flex-grow focus:ring-transparent shadow-none ring-offset-0"
+            />
             <TargetSelect
-              triggerProps={{ className: "w-[120px] h-6" }}
+              triggerProps={{
+                className:
+                  "w-auto h-6 absolute top-0 right-0 border-none focus:ring-0 focus:ring-offset-0 p-1",
+              }}
               value={doc.target}
               onValueChange={(t) => handleTargetSelectChange(doc, t)}
             />
-            <Editor document={doc} autoFocus={i === 0} className="flex-grow" />
           </Pane>
         ))}
       />

@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
 
 export default function Pane({ children }: PropsWithChildren) {
-  return <div>{children}</div>;
+  return <div className="relative">{children}</div>;
 }
