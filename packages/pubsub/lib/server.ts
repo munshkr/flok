@@ -97,7 +97,7 @@ export class PubSubServer {
       // Remove ws from all subscribed topics
       this._unsubscribeAll(id);
       delete this._clients[id];
-      debug("clients after `close`:", this._clients);
+      debug("clients after `close`:", Object.keys(this._clients));
     });
   }
 
