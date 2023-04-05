@@ -9,7 +9,7 @@
     "tidal"
   ],
   "defaultTarget": "hydra",
-  "syntaxByTarget": {
+  "langByTarget": {
     "foxdot": "python",
     "hydra": "javascript",
     "mercury": "javascript",
