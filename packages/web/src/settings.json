@@ -1,0 +1,21 @@
+{
+  "knownTargets": [
+    "foxdot",
+    "hydra",
+    "mercury",
+    "sardine",
+    "sclang",
+    "strudel",
+    "tidal"
+  ],
+  "defaultTarget": "hydra",
+  "syntaxByTarget": {
+    "foxdot": "python",
+    "hydra": "javascript",
+    "mercury": "javascript",
+    "sardine": "python",
+    "sclang": "smalltalk",
+    "strudel": "javascript",
+    "tidal": "haskell"
+  }
+}

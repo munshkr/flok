@@ -14,6 +14,8 @@ import SessionMenu from "@/components/session-menu";
 import TargetSelect from "@/components/target-select";
 import { Helmet } from "react-helmet-async";
 
+import { defaultTarget } from "@/settings.json";
+
 interface SessionLoaderParams {
   name: string;
 }
@@ -22,8 +24,6 @@ interface Pane {
   target: string;
   content: string;
 }
-
-const defaultTarget = "hydra";
 
 export default function SessionPage() {
   const { name } = useLoaderData() as SessionLoaderParams;
@@ -48,7 +48,7 @@ export default function SessionPage() {
     setSession(newSession);
 
     // Default documents
-    newSession.setActiveDocuments([{ id: "1", target: "tidal" }]);
+    newSession.setActiveDocuments([{ id: "1", target: defaultTarget }]);
     setDocuments(newSession.getDocuments());
 
     // Load and set saved username, if available
@@ -77,7 +77,7 @@ export default function SessionPage() {
     if (!session) return;
     const newDocs = [
       ...documents.map((doc) => ({ id: doc.id, target: doc.target })),
-      { id: String(documents.length + 1), target: "default" },
+      { id: String(documents.length + 1), target: defaultTarget },
     ];
     console.log("newDocs", newDocs);
     session.setActiveDocuments(newDocs);

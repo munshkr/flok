@@ -6,15 +6,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { SelectProps, SelectTriggerProps } from "@radix-ui/react-select";
-
-const knownTargets = [
-  "tidal",
-  "hydra",
-  "foxdot",
-  "sclang",
-  "sardine",
-  "mercury",
-];
+import { knownTargets } from "@/settings.json";
 
 interface TargetSelectProps extends SelectProps {
   triggerProps: SelectTriggerProps;
@@ -30,7 +22,7 @@ export default function TargetSelect({
         <SelectValue placeholder="Target" />
       </SelectTrigger>
       <SelectContent>
-        {knownTargets.map((item) => (
+        {knownTargets.sort().map((item) => (
           <SelectItem key={item} value={item}>
             {item}
           </SelectItem>
