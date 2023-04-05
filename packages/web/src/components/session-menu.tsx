@@ -12,6 +12,10 @@ import {
   MenubarSubTrigger,
   MenubarSubContent,
 } from "@/components/ui/menubar";
+import { Link } from "react-router-dom";
+
+const repoUrl = "https://github.com/munshkr/flok";
+const changelogUrl = `${repoUrl}/blob/main/CHANGELOG.md#changelog`;
 
 interface MenuProps {
   onSessionConfigure?: (e: Event) => void;
@@ -42,10 +46,10 @@ export default function SessionMenu({
           <MenubarSeparator />
           <MenubarItem onSelect={onSessionNew}>New</MenubarItem>
           <MenubarSeparator />
-          <MenubarItem>Open</MenubarItem>
-          <MenubarItem>Open Recent</MenubarItem>
+          <MenubarItem disabled>Open</MenubarItem>
+          <MenubarItem disabled>Open Recent</MenubarItem>
           <MenubarSeparator />
-          <MenubarItem>Save As...</MenubarItem>
+          <MenubarItem disabled>Save As...</MenubarItem>
         </MenubarContent>
       </MenubarMenu>
 
@@ -65,15 +69,23 @@ export default function SessionMenu({
       <MenubarMenu>
         <MenubarTrigger>Help</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem>
+          <MenubarItem disabled>
             Quickstart <MenubarShortcut>⌘H</MenubarShortcut>
           </MenubarItem>
-          <MenubarItem>
+          <MenubarItem disabled>
             Show All Commands <MenubarShortcut>⌘K</MenubarShortcut>
           </MenubarItem>
           <MenubarSeparator />
-          <MenubarItem>Show Release Notes</MenubarItem>
-          <MenubarItem>Go to GitHub</MenubarItem>
+          <MenubarItem>
+            <Link to={changelogUrl} reloadDocument target="_blank">
+              Show Release Notes
+            </Link>
+          </MenubarItem>
+          <MenubarItem>
+            <Link to={repoUrl} reloadDocument target="_blank">
+              Go to GitHub
+            </Link>
+          </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>
