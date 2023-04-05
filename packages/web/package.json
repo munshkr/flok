@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@codemirror/lang-javascript": "^6.1.4",
+    "@codemirror/lang-python": "^6.1.2",
     "@codemirror/state": "^6.2.0",
     "@codemirror/theme-one-dark": "^6.1.1",
     "@codemirror/view": "^6.9.3",
