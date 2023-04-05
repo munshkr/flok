@@ -262,7 +262,12 @@ export class Session {
   }
 
   _unsubscribeTarget(target: string) {
-    this._pubSubClient.unsubscribe(target);
+    const topics = [
+      `session:${this.name}:target:${target}:eval`,
+      `session:${this.name}:target:${target}:out`,
+      `session:${this.name}:target:${target}:user:${this.user}:out`,
+    ];
+    topics.forEach((topic) => this._pubSubClient.unsubscribe(topic));
   }
 
   _updateUserStateField() {
