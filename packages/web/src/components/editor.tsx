@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { EditorView } from "@codemirror/view";
 import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
-import { flashField, evalKeymap } from "@flok/cm-eval";
+import { flashField, remoteEvalFlash, evalKeymap } from "@flok/cm-eval";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
 import { Prec } from "@codemirror/state";
@@ -15,6 +15,18 @@ const baseTheme = EditorView.baseTheme({
 interface IEditorProps extends ReactCodeMirrorProps {
   document?: Document;
 }
+
+const flokSetup = (doc: Document) => {
+  const text = doc.getText();
+  const undoManager = new UndoManager(text);
+
+  return [
+    flashField(),
+    remoteEvalFlash(doc),
+    Prec.high(evalKeymap(doc)),
+    yCollab(text, doc.session.awareness, { undoManager }),
+  ];
+};
 
 function Editor({ document, ...props }: IEditorProps) {
   const [mounted, setMounted] = useState(false);
@@ -30,20 +42,11 @@ function Editor({ document, ...props }: IEditorProps) {
     return null;
   }
 
-  const text = document.getText();
-  const undoManager = new UndoManager(text);
-
   return (
     <CodeMirror
       value={document.content}
       theme={themeName}
-      extensions={[
-        baseTheme,
-        flashField(),
-        Prec.high(evalKeymap(document)),
-        yCollab(text, document.session.awareness, { undoManager }),
-        javascript(),
-      ]}
+      extensions={[baseTheme, flokSetup(document), javascript()]}
       basicSetup={{
         foldGutter: false,
         lineNumbers: false,

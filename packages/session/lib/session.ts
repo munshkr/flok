@@ -42,6 +42,12 @@ export interface EvalContext {
   to: number | null;
 }
 
+export interface EvalMessage extends EvalContext {
+  editorId: string;
+  body: string;
+  user: string;
+}
+
 export interface SessionOptions {
   hostname?: string;
   port?: number;
@@ -161,16 +167,32 @@ export class Session {
     body: string,
     context: EvalContext
   ) {
-    this._pubSubClient.publish(`session:${this.name}:target:${target}:eval`, {
+    const msg: EvalMessage = {
       editorId,
       body,
       user: this.user,
       ...context,
-    });
+    };
+    this._pubSubClient.publish(
+      `session:${this.name}:target:${target}:eval`,
+      msg
+    );
   }
 
   on(eventName: SessionEvent, cb: (...args: any[]) => void) {
     this._emitter.on(eventName, cb);
+  }
+
+  off(eventName: SessionEvent, cb: (...args: any[]) => void) {
+    this._emitter.off(eventName, cb);
+  }
+
+  once(eventName: SessionEvent, cb: (...args: any[]) => void) {
+    this._emitter.once(eventName, cb);
+  }
+
+  removeAllListeners(eventName: SessionEvent) {
+    this._emitter.removeAllListeners(eventName);
   }
 
   destroy() {

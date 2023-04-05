@@ -4,7 +4,7 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorState, Prec } from "@codemirror/state";
 import { yCollab } from "y-codemirror.next";
 import { Session } from "@flok/session";
-import { flashField, evalKeymap } from "@flok/cm-eval";
+import { flashField, evalKeymap, remoteEvalFlash } from "@flok/cm-eval";
 import { UndoManager } from "yjs";
 
 import "./style.css";
@@ -15,6 +15,7 @@ const flokBasicSetup = (doc) => {
 
   return [
     flashField(),
+    remoteEvalFlash(doc),
     Prec.high(evalKeymap(doc)),
     yCollab(text, doc.session.awareness, { undoManager }),
   ];
