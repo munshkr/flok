@@ -13,6 +13,13 @@ import { Document } from "./document.js";
 const debug = debugModule("flok:session");
 
 type Provider = "webrtc" | "websocket" | "indexeddb";
+type SessionEvent =
+  | "eval"
+  | "message"
+  | "change"
+  | `eval:${string}`
+  | `message:${string}`
+  | `change-target:${string}`;
 
 export interface UserColor {
   color: string;
@@ -162,7 +169,7 @@ export class Session {
     });
   }
 
-  on(eventName: string, cb: (...args: any[]) => void) {
+  on(eventName: SessionEvent, cb: (...args: any[]) => void) {
     this._emitter.on(eventName, cb);
   }
 
