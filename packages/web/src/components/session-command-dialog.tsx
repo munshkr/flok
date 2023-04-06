@@ -100,6 +100,11 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
           </Link>
         </CommandGroup>
       </CommandList>
+      <span className="text-xs text-slate-500 ml-3 mr-3 mt-4 mb-2">
+        Tip: Press <kbd>⌘</kbd>
+        <kbd>J</kbd> or <kbd>Ctrl</kbd>-<kbd>J</kbd> to open or close this
+        prompt
+      </span>
     </CommandDialog>
   );
 }
