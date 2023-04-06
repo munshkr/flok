@@ -49,16 +49,13 @@ export default function Mosaic({ items }: IMosaicProps) {
     <div className="flex flex-col items-stretch h-[calc(100vh-40px)]">
       {rows.map((rowItems, i) => (
         <div
-          className={cn(
-            "flex flex-row mt-2 last:mb-2",
-            rows.length > 1 ? "h-1/2" : "h-full"
-          )}
+          className={cn("flex flex-row", rows.length > 1 ? "h-1/2" : "h-full")}
           key={i}
         >
           {rowItems.map((item: any, j: number) => (
             <div
               key={`${i}-${j}`}
-              className="flex-grow border-slate-800 dark:border-slate-200 ml-2 last:mr-2 bg-white dark:bg-[#282c34] overflow-auto basis-full"
+              className="flex-grow bg-transparent overflow-auto basis-full"
             >
               {item}
             </div>

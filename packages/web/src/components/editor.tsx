@@ -21,6 +21,10 @@ const langExtensionsByLanguage: { [lang: string]: any } = {
 
 const baseTheme = EditorView.baseTheme({
   ".cm-scroller": { fontFamily: "Inconsolata", fontWeight: 600 },
+  "&.cm-editor": { background: "transparent" },
+  "&.cm-editor:focus": { boxShadow: "none", boder: "none" },
+  ".cm-line *": { background: "#00000040" },
+  ".cm-selectionBackground": { opacity: 0.5 },
 });
 
 interface IEditorProps extends ReactCodeMirrorProps {

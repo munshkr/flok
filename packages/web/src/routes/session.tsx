@@ -3,17 +3,20 @@ import Mosaic from "@/components/mosaic";
 import Pane from "@/components/pane";
 import SessionCommandDialog from "@/components/session-command-dialog";
 import { Toaster } from "@/components/ui/toaster";
+import { useToast } from "@/hooks/use-toast";
 import UsernameDialog from "@/components/username-dialog";
 import { store } from "@/lib/utils";
 import { Session, Document } from "@flok/session";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ConfigureDialog from "@/components/configure-dialog";
 import SessionMenu from "@/components/session-menu";
 import TargetSelect from "@/components/target-select";
 import { Helmet } from "react-helmet-async";
-
+import { isWebglSupported } from "@/lib/webgl-detector";
+import HydraWrapper from "@/lib/hydra-wrapper";
+import HydraCanvas from "@/components/hydra-canvas";
 import { defaultTarget } from "@/settings.json";
 
 interface SessionLoaderParams {
@@ -30,10 +33,19 @@ export default function SessionPage() {
   const navigate = useNavigate();
 
   const [session, setSession] = useState<Session | null>(null);
+
   const [username, setUsername] = useState<string>("");
   const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
+
+  const hasWebGl = useMemo(() => isWebglSupported(), []);
+
+  const [hydra, setHydra] = useState<HydraWrapper | null>(null);
+  const [hydraError, setHydraError] = useState<string>("");
+  const hydraCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const { toast } = useToast();
 
   useEffect(() => {
     if (!name) return;
@@ -67,6 +79,26 @@ export default function SessionPage() {
   }, [name]);
 
   useEffect(() => {
+    if (!hydraCanvasRef.current || !session) return;
+
+    if (hasWebGl) {
+      console.log("Create HydraWrapper");
+      const hydra = new HydraWrapper({ onError: handleHydraError });
+      setHydra(hydra);
+      hydra.initialize(hydraCanvasRef.current);
+
+      session.on("eval:hydra", ({ body }) => {
+        console.log("eval hydra", body);
+        if (hydra) hydra.tryEval(body);
+      });
+    } else {
+      console.warn(
+        "WebGL is disabled or not supported in this browser, so Hydra was not initialized."
+      );
+    }
+  }, [session, hydraCanvasRef]);
+
+  useEffect(() => {
     if (!session) return;
     console.log(`Setting user on session to '${username}'`);
     session.user = username;
@@ -96,6 +128,15 @@ export default function SessionPage() {
     document.target = newTarget;
   };
 
+  const handleHydraError = (error: string) => {
+    if (!error) return;
+    toast({
+      variant: "destructive",
+      title: "Hydra error",
+      description: <pre>{error}</pre>,
+    });
+  };
+
   return (
     <>
       <Helmet>
@@ -122,22 +163,24 @@ export default function SessionPage() {
       <Mosaic
         items={documents.map((doc, i) => (
           <Pane key={doc.id}>
-            <Editor
-              document={doc}
-              autoFocus={i === 0}
-              className="flex-grow focus:ring-transparent shadow-none ring-offset-0"
-            />
             <TargetSelect
               triggerProps={{
                 className:
-                  "w-auto h-6 absolute top-0 right-0 border-none focus:ring-0 focus:ring-offset-0 p-1",
+                  "w-auto h-6 border-none focus:ring-0 focus:ring-offset-0 p-1",
               }}
               value={doc.target}
               onValueChange={(t) => handleTargetSelectChange(doc, t)}
             />
+            <Editor document={doc} autoFocus={i === 0} className="flex-grow" />
           </Pane>
         ))}
       />
+      {hasWebGl && hydraCanvasRef && (
+        <>
+          <HydraCanvas ref={hydraCanvasRef} fullscreen />
+          {hydraError && <HydraError>{hydraError}</HydraError>}
+        </>
+      )}
       <Toaster />
     </>
   );
