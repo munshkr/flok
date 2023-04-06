@@ -19,7 +19,10 @@ type SessionEvent =
   | "change"
   | `eval:${string}`
   | `message:${string}`
-  | `change-target:${string}`;
+  | `change-target:${string}`
+  | "pubsub:open"
+  | "pubsub:close"
+  | "pubsub:error";
 
 export interface UserColor {
   color: string;
@@ -196,6 +199,9 @@ export class Session {
   }
 
   destroy() {
+    ["error", "open", "close"].forEach((e) =>
+      this._pubSubClient.removeAllListeners(e)
+    );
     this._pubSubClient.destroy();
     if (this._wsProvider && this._wsProvider.wsconnected)
       this._wsProvider.destroy();
@@ -244,6 +250,13 @@ export class Session {
     this._pubSubClient = new PubSubClient({ url: `${this._wsUrl}/pubsub` });
     this._pubSubClient.on("error", (err) => {
       debug("error on pubsub", err);
+      this._emitter.emit("pubsub:error", err);
+    });
+    this._pubSubClient.on("open", () => {
+      this._emitter.emit("pubsub:open");
+    });
+    this._pubSubClient.on("close", () => {
+      this._emitter.emit("pubsub:close");
     });
     this._pubSubClient.start();
   }
