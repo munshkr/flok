@@ -12,6 +12,7 @@ import { useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ConfigureDialog from "@/components/configure-dialog";
 import TargetSelect from "@/components/target-select";
+import { CommandsButton } from "@/components/commands-button";
 import { Helmet } from "react-helmet-async";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import HydraWrapper from "@/lib/hydra-wrapper";
@@ -36,6 +37,7 @@ export default function SessionPage() {
 
   const [session, setSession] = useState<Session | null>(null);
 
+  const [commandsDialogOpen, setCommandsDialogOpen] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
@@ -98,6 +100,17 @@ export default function SessionPage() {
 
     return () => newSession.destroy();
   }, [name]);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "j" && e.metaKey) {
+        setCommandsDialogOpen((open) => !open);
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, []);
 
   useEffect(() => {
     if (!hydraCanvasRef.current || !session) return;
@@ -184,14 +197,9 @@ export default function SessionPage() {
       <Helmet>
         <title>{name} ~ Flok</title>
       </Helmet>
-      {/* <SessionMenu
-        onViewLayoutAdd={handleViewLayoutAdd}
-        onViewLayoutRemove={handleViewLayoutRemove}
-        onSessionConfigure={() => setConfigureDialogOpen(true)}
-        onSessionChangeUsername={() => setUsernameDialogOpen(true)}
-        onSessionNew={() => navigate("/")}
-      /> */}
       <SessionCommandDialog
+        open={commandsDialogOpen}
+        onOpenChange={(isOpen) => setCommandsDialogOpen(isOpen)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
         onSessionNew={() => navigate("/")}
         onLayoutAdd={handleViewLayoutAdd}
@@ -226,6 +234,7 @@ export default function SessionPage() {
       {hasWebGl && hydraCanvasRef && (
         <HydraCanvas ref={hydraCanvasRef} fullscreen />
       )}
+      <CommandsButton onClick={() => setCommandsDialogOpen(true)} />
       <Toaster />
     </>
   );

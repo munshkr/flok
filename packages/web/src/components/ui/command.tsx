@@ -156,3 +156,5 @@ export {
   CommandShortcut,
   CommandSeparator,
 };
+
+export type { CommandDialogProps };

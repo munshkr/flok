@@ -1,21 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Edit2, FilePlus, Minus, Plus, Github } from "lucide-react";
+import { Edit2, FilePlus, Minus, Plus, Github, Settings } from "lucide-react";
 import {
   CommandDialog,
+  CommandDialogProps,
   CommandEmpty,
   CommandGroup,
   CommandInput,
   CommandItem,
   CommandList,
   CommandSeparator,
-  // CommandShortcut,
+  CommandShortcut,
 } from "@/components/ui/command";
 import { Link } from "react-router-dom";
 import { repoUrl, changeLogUrl } from "@/settings.json";
 
-interface SessionCommandDialogProps {
+interface SessionCommandDialogProps extends CommandDialogProps {
   onSessionChangeUsername: () => void;
   onSessionNew: () => void;
   onLayoutAdd: () => void;
@@ -24,28 +25,17 @@ interface SessionCommandDialogProps {
 }
 
 export default function SessionCommandDialog(props: SessionCommandDialogProps) {
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "j" && e.metaKey) {
-        setOpen((open) => !open);
-      }
-    };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
-
   const wrapHandler = (callback: () => void) => {
     return () => {
+      const { onOpenChange } = props;
+
       callback();
-      setOpen(false);
+      if (onOpenChange) onOpenChange(false);
     };
   };
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen}>
+    <CommandDialog {...props}>
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
