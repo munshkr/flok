@@ -83,16 +83,21 @@ export const evaluateDocument = (view: EditorView, doc: Document) => {
 export function evalKeymap(
   document: Document,
   {
-    defaultKeys = ["Ctrl-Enter", "Cmd-Enter"],
+    defaultEvalKeys = ["Ctrl-Enter", "Cmd-Enter"],
     lineEvalKeys = ["Shift-Enter"],
     documentEvalKeys = ["Alt-Enter", "Ctrl-Shift-Enter", "Cmd-Shift-Enter"],
+    defaultMode = "block",
   } = {}
 ) {
   return keymap.of([
-    ...defaultKeys.map((key) => ({
+    ...defaultEvalKeys.map((key) => ({
       key,
       run(view: EditorView) {
-        evaluateBlockOrSelection(view, document);
+        if (defaultMode === "block") {
+          evaluateBlockOrSelection(view, document);
+        } else {
+          evaluateDocument(view, document);
+        }
         return true;
       },
     })),
