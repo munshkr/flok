@@ -1,4 +1,4 @@
-import Hydra from "hydra-synth";
+import Hydra from "@flok/hydra-synth";
 
 declare global {
   interface Window {

@@ -1,1 +1,1 @@
-declare module "hydra-synth";
+declare module "@flok/hydra-synth";
