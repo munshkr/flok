@@ -17,6 +17,9 @@ import { isWebglSupported } from "@/lib/webgl-detector";
 import HydraWrapper from "@/lib/hydra-wrapper";
 import HydraCanvas from "@/components/hydra-canvas";
 import { defaultTarget } from "@/settings.json";
+import { panicCodes as panicCodesUntyped } from "@/settings.json";
+
+const panicCodes = panicCodesUntyped as { [target: string]: string };
 
 interface SessionLoaderParams {
   name: string;
@@ -128,6 +131,21 @@ export default function SessionPage() {
     session.user = username;
     store.set("username", username);
   }, [session, username]);
+
+  useEffect(() => {
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "." && (e.metaKey || e.ctrlKey) && e.shiftKey) {
+        documents.forEach((doc) => {
+          const panicCode = panicCodes[doc.target];
+          if (panicCode) doc.evaluate(panicCode, { from: 0, to: 0 });
+        });
+        toast({ title: "Panic!", duration: 1000 });
+      }
+    };
+
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
+  }, [documents]);
 
   const handleViewLayoutAdd = useCallback(() => {
     if (!session) return;

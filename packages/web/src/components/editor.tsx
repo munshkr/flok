@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { EditorView } from "@codemirror/view";
+import { EditorView, keymap } from "@codemirror/view";
 import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
@@ -10,17 +10,19 @@ import { UndoManager } from "yjs";
 import { Prec } from "@codemirror/state";
 import type { Document } from "@flok/session";
 import {
-  langByTarget as languagesByTarget,
+  langByTarget as langByTargetUntyped,
   targetsWithDocumentEvalMode,
+  panicCodes as panicCodesUntyped,
 } from "@/settings.json";
 
 const defaultLanguage = "javascript";
-const langByTarget = languagesByTarget as { [lang: string]: string };
+const langByTarget = langByTargetUntyped as { [lang: string]: string };
 const langExtensionsByLanguage: { [lang: string]: any } = {
   javascript: javascript,
   python: python,
   haskell: haskell,
 };
+const panicCodes = panicCodesUntyped as { [target: string]: string };
 
 const baseTheme = EditorView.baseTheme({
   "&.cm-editor": {
@@ -67,6 +69,23 @@ const baseTheme = EditorView.baseTheme({
   },
 });
 
+const panicKeymap = (doc: Document, keys: string[] = ["Cmd-.", "Ctrl-."]) => {
+  const panicCode: string | null = panicCodes[doc.target];
+
+  return (
+    panicCode &&
+    keymap.of([
+      ...keys.map((key) => ({
+        key,
+        run() {
+          doc.evaluate(panicCode, { from: 0, to: 0 });
+          return true;
+        },
+      })),
+    ])
+  );
+};
+
 interface IEditorProps extends ReactCodeMirrorProps {
   document?: Document;
 }
@@ -82,6 +101,7 @@ const flokSetup = (doc: Document) => {
     flashField(),
     remoteEvalFlash(doc),
     Prec.high(evalKeymap(doc, { defaultMode })),
+    panicKeymap(doc),
     yCollab(text, doc.session.awareness, { undoManager }),
   ];
 };
