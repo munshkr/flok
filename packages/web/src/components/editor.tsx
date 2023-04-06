@@ -9,7 +9,10 @@ import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
 import { Prec } from "@codemirror/state";
 import type { Document } from "@flok/session";
-import { langByTarget as languagesByTarget } from "@/settings.json";
+import {
+  langByTarget as languagesByTarget,
+  targetsWithDocumentEvalMode,
+} from "@/settings.json";
 
 const defaultLanguage = "javascript";
 const langByTarget = languagesByTarget as { [lang: string]: string };
@@ -71,11 +74,14 @@ interface IEditorProps extends ReactCodeMirrorProps {
 const flokSetup = (doc: Document) => {
   const text = doc.getText();
   const undoManager = new UndoManager(text);
+  const defaultMode = targetsWithDocumentEvalMode.includes(doc.target)
+    ? "document"
+    : "block";
 
   return [
     flashField(),
     remoteEvalFlash(doc),
-    Prec.high(evalKeymap(doc)),
+    Prec.high(evalKeymap(doc, { defaultMode })),
     yCollab(text, doc.session.awareness, { undoManager }),
   ];
 };
