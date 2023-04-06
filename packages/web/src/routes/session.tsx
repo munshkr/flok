@@ -188,7 +188,7 @@ export default function SessionPage() {
     toast({
       variant: "destructive",
       title: "Hydra error",
-      description: <pre>{error}</pre>,
+      description: <pre className="whitespace-pre-wrap">{error}</pre>,
     });
   };
 
