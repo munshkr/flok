@@ -74,6 +74,25 @@ export default function SessionPage() {
       setDocuments(documents);
     });
 
+    let connected = false;
+    newSession.on("pubsub:open", () => {
+      connected = true;
+      toast({
+        title: "Connected to server",
+        duration: 1000,
+      });
+    });
+
+    newSession.on("pubsub:close", () => {
+      if (!connected) return;
+      connected = false;
+      toast({
+        variant: "destructive",
+        title: "Disconnected from server",
+        description: "Remote evaluations will be ignored until reconnected.",
+      });
+    });
+
     return () => newSession.destroy();
   }, [name]);
 
