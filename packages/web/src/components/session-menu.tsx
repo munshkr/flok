@@ -76,16 +76,12 @@ export default function SessionMenu({
             Show All Commands <MenubarShortcut>⌘K</MenubarShortcut>
           </MenubarItem>
           <MenubarSeparator />
-          <MenubarItem>
-            <Link to={changelogUrl} reloadDocument target="_blank">
-              Show Release Notes
-            </Link>
-          </MenubarItem>
-          <MenubarItem>
-            <Link to={repoUrl} reloadDocument target="_blank">
-              Go to GitHub
-            </Link>
-          </MenubarItem>
+          <Link to={changelogUrl} reloadDocument target="_blank">
+            <MenubarItem>Show Release Notes</MenubarItem>
+          </Link>
+          <Link to={repoUrl} reloadDocument target="_blank">
+            <MenubarItem>Go to GitHub</MenubarItem>
+          </Link>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>

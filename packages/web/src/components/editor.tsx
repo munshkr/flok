@@ -58,7 +58,7 @@ function Editor({ document, ...props }: IEditorProps) {
   }
 
   const language: string = langByTarget[document.target] || defaultLanguage;
-  const languageExtension = langExtensionsByLanguage[language];
+  const languageExtension = langExtensionsByLanguage[language] || javascript;
 
   return (
     <CodeMirror
