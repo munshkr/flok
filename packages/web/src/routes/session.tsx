@@ -42,7 +42,6 @@ export default function SessionPage() {
   const hasWebGl = useMemo(() => isWebglSupported(), []);
 
   const [hydra, setHydra] = useState<HydraWrapper | null>(null);
-  const [hydraError, setHydraError] = useState<string>("");
   const hydraCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const { toast } = useToast();
@@ -176,10 +175,7 @@ export default function SessionPage() {
         ))}
       />
       {hasWebGl && hydraCanvasRef && (
-        <>
-          <HydraCanvas ref={hydraCanvasRef} fullscreen />
-          {hydraError && <HydraError>{hydraError}</HydraError>}
-        </>
+        <HydraCanvas ref={hydraCanvasRef} fullscreen />
       )}
       <Toaster />
     </>
