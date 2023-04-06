@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 import path from "path";
 import Unfonts from "unplugin-fonts/vite";
 
@@ -11,6 +12,10 @@ export default defineConfig({
     },
   },
   plugins: [
+    nodePolyfills({
+      // Whether to polyfill `node:` protocol imports.
+      protocolImports: true,
+    }),
     react(),
     Unfonts({
       google: {
