@@ -13,9 +13,7 @@ import {
   MenubarSubContent,
 } from "@/components/ui/menubar";
 import { Link } from "react-router-dom";
-
-const repoUrl = "https://github.com/munshkr/flok";
-const changelogUrl = `${repoUrl}/blob/main/CHANGELOG.md#changelog`;
+import { repoUrl, changeLogUrl } from "@/settings.json";
 
 interface MenuProps {
   onSessionConfigure?: (e: Event) => void;
@@ -76,7 +74,7 @@ export default function SessionMenu({
             Show All Commands <MenubarShortcut>⌘K</MenubarShortcut>
           </MenubarItem>
           <MenubarSeparator />
-          <Link to={changelogUrl} reloadDocument target="_blank">
+          <Link to={changeLogUrl} reloadDocument target="_blank">
             <MenubarItem>Show Release Notes</MenubarItem>
           </Link>
           <Link to={repoUrl} reloadDocument target="_blank">

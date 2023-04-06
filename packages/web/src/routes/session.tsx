@@ -160,14 +160,20 @@ export default function SessionPage() {
       <Helmet>
         <title>{name} ~ Flok</title>
       </Helmet>
-      <SessionMenu
+      {/* <SessionMenu
         onViewLayoutAdd={handleViewLayoutAdd}
         onViewLayoutRemove={handleViewLayoutRemove}
         onSessionConfigure={() => setConfigureDialogOpen(true)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
         onSessionNew={() => navigate("/")}
+      /> */}
+      <SessionCommandDialog
+        onSessionChangeUsername={() => setUsernameDialogOpen(true)}
+        onSessionNew={() => navigate("/")}
+        onLayoutAdd={handleViewLayoutAdd}
+        onLayoutRemove={handleViewLayoutRemove}
+        onLayoutConfigure={() => setConfigureDialogOpen(true)}
       />
-      <SessionCommandDialog />
       <UsernameDialog
         name={username}
         open={usernameDialogOpen}
