@@ -53,7 +53,10 @@ const baseTheme = EditorView.baseTheme({
     color: "black",
     padding: "3px 4px",
     fontSize: "0.8rem",
-    top: "1.1em",
+    top: "1.15em",
+  },
+  "& :focus .cm-ySelectionInfo": {
+    zIndex: "-1",
   },
 });
 
