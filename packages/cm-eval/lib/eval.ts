@@ -71,28 +71,44 @@ export const evaluateLine = (view: EditorView, doc: Document) => {
   doc.evaluate(text, { from, to });
 };
 
-export function evalKeymap(document: Document) {
+export const evaluateDocument = (view: EditorView, doc: Document) => {
+  const { state } = view;
+  const { from } = state.doc.line(1);
+  const { to } = state.doc.line(state.doc.lines);
+  const text = state.doc.sliceString(from, to);
+  flash(view, from, to);
+  doc.evaluate(text, { from, to });
+};
+
+export function evalKeymap(
+  document: Document,
+  {
+    defaultKeys = ["Ctrl-Enter", "Cmd-Enter"],
+    lineEvalKeys = ["Shift-Enter"],
+    documentEvalKeys = ["Alt-Enter", "Ctrl-Shift-Enter", "Cmd-Shift-Enter"],
+  } = {}
+) {
   return keymap.of([
-    {
-      key: "Ctrl-Enter",
-      run(view) {
+    ...defaultKeys.map((key) => ({
+      key,
+      run(view: EditorView) {
         evaluateBlockOrSelection(view, document);
         return true;
       },
-    },
-    {
-      key: "Cmd-Enter",
-      run(view) {
-        evaluateBlockOrSelection(view, document);
-        return true;
-      },
-    },
-    {
-      key: "Shift-Enter",
-      run(view) {
+    })),
+    ...lineEvalKeys.map((key) => ({
+      key,
+      run(view: EditorView) {
         evaluateLine(view, document);
         return true;
       },
-    },
+    })),
+    ...documentEvalKeys.map((key) => ({
+      key,
+      run(view: EditorView) {
+        evaluateDocument(view, document);
+        return true;
+      },
+    })),
   ]);
 }
