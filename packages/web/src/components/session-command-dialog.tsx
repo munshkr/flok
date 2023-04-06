@@ -99,7 +99,7 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
           </CommandItem> */}
           <Link to={changeLogUrl} reloadDocument target="_blank">
             <CommandItem>
-              <span className="ml-7">Show Release Notes</span>
+              <span>Show Release Notes</span>
             </CommandItem>
           </Link>
           <Link to={repoUrl} reloadDocument target="_blank">

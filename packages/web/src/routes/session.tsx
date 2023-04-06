@@ -11,7 +11,6 @@ import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ConfigureDialog from "@/components/configure-dialog";
-import SessionMenu from "@/components/session-menu";
 import TargetSelect from "@/components/target-select";
 import { Helmet } from "react-helmet-async";
 import { isWebglSupported } from "@/lib/webgl-detector";
@@ -74,8 +73,9 @@ export default function SessionPage() {
       setDocuments(documents);
     });
 
-    let connected = false;
+    let connected = true;
     newSession.on("pubsub:open", () => {
+      if (connected) return;
       connected = true;
       toast({
         title: "Connected to server",
@@ -109,12 +109,18 @@ export default function SessionPage() {
         console.log("eval hydra", body);
         if (hydra) hydra.tryEval(body);
       });
-    } else {
-      console.warn(
-        "WebGL is disabled or not supported in this browser, so Hydra was not initialized."
-      );
     }
   }, [session, hydraCanvasRef]);
+
+  useEffect(() => {
+    if (hasWebGl) return;
+    toast({
+      variant: "warning",
+      title: "WebGL not available",
+      description:
+        "WebGL is disabled or not supported, so Hydra was not initialized",
+    });
+  }, [hasWebGl]);
 
   useEffect(() => {
     if (!session) return;
