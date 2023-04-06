@@ -20,11 +20,33 @@ const langExtensionsByLanguage: { [lang: string]: any } = {
 };
 
 const baseTheme = EditorView.baseTheme({
-  ".cm-scroller": { fontFamily: "Inconsolata", fontWeight: 600 },
-  "&.cm-editor": { background: "transparent" },
-  "&.cm-editor:focus": { boxShadow: "none", boder: "none" },
-  ".cm-line *": { background: "#00000040" },
-  ".cm-selectionBackground": { opacity: 0.5 },
+  "&.cm-editor": {
+    background: "transparent",
+    fontSize: "16px",
+    color: "white",
+    fontFamily: `Inconsolata`,
+    fontWeight: 600,
+  },
+  "& .cm-scroller": {
+    fontFamily: `Inconsolata`,
+  },
+  "& .cm-line": {
+    maxWidth: "fit-content",
+    background: "rgba(0, 0, 0, 0.7)",
+  },
+  "& .cm-activeLine": {
+    backgroundColor: "rgba(0, 0, 0, 0.7) !important",
+  },
+  "& .ͼo": {
+    color: "white",
+  },
+  "&.cm-focused": {
+    outline: "none",
+  },
+  ".cm-selectionBackground": {
+    backgroundColor: "rgba(255, 0, 255, 0.5) !important",
+    opacity: 0.5,
+  },
 });
 
 interface IEditorProps extends ReactCodeMirrorProps {
