@@ -1,3 +1,5 @@
+import Hydra from "hydra-synth";
+
 declare global {
   interface Window {
     global: Window;
@@ -25,18 +27,12 @@ class HydraWrapper {
     // For some reason on Android mobile, Chrome has this object undefined:
     if (!window.navigator.mediaDevices) return;
 
-    // Needed by Hydra?
-    window.global = window;
-
-    const { default: Hydra } = await import("hydra-synth");
     const { P5 } = await import("./p5-wrapper.js");
 
-    this.hydra = new Hydra({ canvas });
-
-    // Some globals...
     window.P5 = P5;
-    window.H = this.hydra;
+    window.global = window;
 
+    this.hydra = new Hydra({ canvas });
     this.initialized = true;
   }
 
@@ -48,14 +44,9 @@ class HydraWrapper {
       return;
     }
 
-    let evalCode: string = code;
-
-    console.debug(evalCode);
-    // FIXME Should remove this after this function ends
-    window.H = this.hydra;
+    console.debug(code);
     try {
-      // eslint-disable-next-line no-eval
-      eval.call(window, evalCode);
+      this.hydra.eval(code);
       this.onError("");
     } catch (error) {
       this.onError(String(error));
