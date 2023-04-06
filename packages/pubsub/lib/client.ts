@@ -11,6 +11,8 @@ type MessageType =
   | "unsubscribe-all"
   | "state";
 
+type ClientEvent = "open" | "close" | "error" | "message" | `message:${string}`;
+
 export class PubSubClient {
   readonly url: string;
   reconnectTimeout: number = 1000;
@@ -54,15 +56,15 @@ export class PubSubClient {
     debug("destroyed");
   }
 
-  on(eventName: string | symbol, cb: (...args: any[]) => void) {
+  on(eventName: ClientEvent, cb: (...args: any[]) => void) {
     this._emitter.on(eventName, cb);
   }
 
-  off(eventName: string | symbol, cb: (...args: any[]) => void) {
+  off(eventName: ClientEvent, cb: (...args: any[]) => void) {
     this._emitter.off(eventName, cb);
   }
 
-  once(eventName: string | symbol, cb: (...args: any[]) => void) {
+  once(eventName: ClientEvent, cb: (...args: any[]) => void) {
     this._emitter.once(eventName, cb);
   }
 
@@ -78,7 +80,7 @@ export class PubSubClient {
     if (this._connected) this._send("subscribe", { topic });
     this._subscriptions.add(topic);
     if (cb) {
-      const event = `message:${topic}`;
+      const event: ClientEvent = `message:${topic}`;
       this.removeAllListeners(event);
       this.on(event, cb);
     }
