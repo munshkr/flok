@@ -47,6 +47,14 @@ const baseTheme = EditorView.baseTheme({
     backgroundColor: "rgba(255, 0, 255, 0.5) !important",
     opacity: 0.5,
   },
+  ".cm-ySelectionInfo": {
+    opacity: "1",
+    fontFamily: "sans-serif",
+    color: "black",
+    padding: "3px 4px",
+    fontSize: "0.8rem",
+    top: "1.1em",
+  },
 });
 
 interface IEditorProps extends ReactCodeMirrorProps {
