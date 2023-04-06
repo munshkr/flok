@@ -37,7 +37,7 @@ export default function SessionMenu({
       <MenubarMenu>
         <MenubarTrigger>Session</MenubarTrigger>
         <MenubarContent>
-          <MenubarItem onSelect={onSessionConfigure}>
+          <MenubarItem disabled onSelect={onSessionConfigure}>
             Configure<MenubarShortcut>⌘C</MenubarShortcut>
           </MenubarItem>
           <MenubarItem onSelect={onSessionChangeUsername}>
