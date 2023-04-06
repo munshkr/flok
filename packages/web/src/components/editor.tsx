@@ -29,10 +29,14 @@ const baseTheme = EditorView.baseTheme({
   },
   "& .cm-scroller": {
     fontFamily: `Inconsolata`,
+    overflow: "auto",
+    minHeight: "100vh",
+    paddingLeft: "2px !important",
   },
   "& .cm-line": {
     maxWidth: "fit-content",
     background: "rgba(0, 0, 0, 0.7)",
+    padding: 0,
   },
   "& .cm-activeLine": {
     backgroundColor: "rgba(0, 0, 0, 0.7) !important",
