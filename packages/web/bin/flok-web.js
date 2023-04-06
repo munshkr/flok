@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import process from "process";
 import path from "path";
 import fs from "fs";
