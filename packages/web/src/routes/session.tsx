@@ -165,7 +165,7 @@ export default function SessionPage() {
             <TargetSelect
               triggerProps={{
                 className:
-                  "w-auto h-6 border-none focus:ring-0 focus:ring-offset-0 p-1",
+                  "w-auto h-6 border-none focus:ring-0 focus:ring-offset-0 p-1 bg-slate-900 bg-opacity-50",
               }}
               value={doc.target}
               onValueChange={(t) => handleTargetSelectChange(doc, t)}

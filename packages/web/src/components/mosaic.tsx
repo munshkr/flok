@@ -46,7 +46,7 @@ export default function Mosaic({ items }: IMosaicProps) {
   const rows = useMemo(() => itemsByRows(items), [items]);
 
   return (
-    <div className="flex flex-col items-stretch h-[calc(100vh-40px)]">
+    <div className="flex flex-col items-stretch h-[calc(100vh-40px)] p-1">
       {rows.map((rowItems, i) => (
         <div
           className={cn("flex flex-row", rows.length > 1 ? "h-1/2" : "h-full")}
