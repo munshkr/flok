@@ -28,14 +28,14 @@ const program = new Command();
 
 program.version(packageInfo.version);
 program
-  .option("-t, --type <type>", "Type of REPL", "command")
-  .option("-H, --hub <url>", "Hub address", "ws://localhost:3000")
+  .option("-t, --types <types...>", "Type/s of REPL", "command")
+  .option("-H, --hub <url>", "Server (or \"hub\") address", "ws://localhost:3000")
   .option("-s, --session-name <name>", "Session name", "default")
   .option("-n, --target-name <name>", "Use the specified target name")
-  .option("--path <path>", "Evaluation WebSockets server path", "/pubsub")
-  .option("--list-types", "List all known types of REPLs")
   .option("--config <configfile>", "JSON configuration file")
   .option("--extra <options>", "Extra options in JSON")
+  .option("--list-types", "List all known types of REPLs")
+  .option("--path <path>", "Evaluation WebSockets server path", "/pubsub")
   .parse(process.argv);
 
 const opts = program.opts();
@@ -46,52 +46,53 @@ const config = configPath ? readConfig(configPath) : {};
 
 // Override config with command line options
 const options = [
-  "type",
+  "types",
   "hub",
   "sessionName",
   "targetName",
   "path",
 ];
-for (let i = 0; i < options.length; i++) {
-  const opt = options[i];
+options.forEach(opt => {
   config[opt] = config[opt] || opts[opt];
-}
+});
 
 const {
-  type,
   hub,
   sessionName,
   targetName,
   path: pubSubPath,
 } = config;
 
+// Remove duplicates
+const types = [...new Set(config.types)];
+
 // Prepare command and arguments
 const cmd = program.args[0];
 const args = program.args.slice(1);
 
-// If asked to list type, print and exit
+// If asked to list types, print and exit
 if (opts.listTypes) {
   console.log("Known types:", knownTypes);
   process.exit(0);
 }
 
-const useDefaultREPL = type === "command";
+const useDefaultREPL = types.some(type => type === "command");
 
 // If using default REPL and no command was specified, throw error
 if (useDefaultREPL && !cmd) {
-  console.error("Missing REPL command (e.g.: flok-repl -- cat)");
+  console.error("You specified a 'command' type, but forgot to specify a REPL command (e.g.: flok-repl -- cat)");
   program.outputHelp();
   process.exit(1);
 }
 
-// Check if type is one of knownTypes
-if (!useDefaultREPL && !knownTypes.includes(type)) {
-  console.error(`Unknown type ${type}. Must be one of:`, knownTypes);
-  process.exit(1);
+// Check if all types are known
+if (!useDefaultREPL) {
+  const unknownTypes = [...new Set(types.filter(type => !knownTypes.includes(type)))];
+  if (unknownTypes.length > 0) {
+    console.error(`Unknown types: ${unknownTypes.join(', ')}. Must be one of:`, knownTypes);
+    process.exit(1);
+  }
 }
-
-// Set target based on name or type
-const target = targetName || (useDefaultREPL ? cmd : type);
 
 // Extra options
 const { extra } = opts;
@@ -106,49 +107,56 @@ if (extra) {
 }
 
 // Start...
-debug(`Hub address: ${hub}`);
-debug(`Session name: ${sessionName}`);
-debug(`Target name: ${target}`);
-debug(`Type: ${type}`);
-debug(`Extra options:`, extraOptions);
+console.log("Hub address:", hub);
+console.log("Session name:", sessionName);
+if (targetName) console.log("Target name:", targetName);
+console.log("Types:", types);
+if (Object.keys(extraOptions).length > 0) console.log("Extra options:", extraOptions);
 
-let replClient;
-if (useDefaultREPL) {
-  replClient = new CommandREPL({
-    command: cmd,
-    args: args,
-    target,
-    session: sessionName,
-    hub,
-    pubSubPath,
-    extraOptions,
-  });
-} else {
-  const replClass = replClasses[type];
-  replClient = new replClass({
-    target,
-    session: sessionName,
-    hub,
-    pubSubPath,
-    extraOptions,
-  });
-}
+types.forEach(type => {
+  const useDefaultREPL = type === "command";
 
-replClient.start();
+  // Set target based on name or type
+  const target = targetName || (useDefaultREPL ? cmd : type);
 
-replClient.emitter.on("data", (data) => {
-  const line = data.lines.join("\n");
-  if (line) {
-    if (data.type === "stdin") {
-      console.log(`< ${line}`);
-    } else if (data.type === "stdout") {
-      console.log(`> ${line}`);
-    } else if (data.type === "stderr") {
-      console.error(`> ${line}`);
-    }
+  let replClient;
+  if (useDefaultREPL) {
+    replClient = new CommandREPL({
+      command: cmd,
+      args: args,
+      target,
+      session: sessionName,
+      hub,
+      pubSubPath,
+      extraOptions,
+    });
+  } else {
+    const replClass = replClasses[type];
+    replClient = new replClass({
+      target,
+      session: sessionName,
+      hub,
+      pubSubPath,
+      extraOptions,
+    });
   }
-});
 
-replClient.emitter.on("close", ({ code }) => {
-  process.exit(code);
-});
+  replClient.start();
+
+  replClient.emitter.on("data", (data) => {
+    const line = data.lines.join("\n");
+    if (line) {
+      if (data.type === "stdin") {
+        console.log(`< ${line}`);
+      } else if (data.type === "stdout") {
+        console.log(`> ${line}`);
+      } else if (data.type === "stderr") {
+        console.error(`> ${line}`);
+      }
+    }
+  });
+
+  replClient.emitter.on("close", ({ code }) => {
+    process.exit(code);
+  });
+})
