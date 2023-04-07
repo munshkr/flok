@@ -3,8 +3,7 @@
   "version": "1.0.0-alpha.1",
   "description": "TidalCycles language support for CodeMirror",
   "scripts": {
-    "build": "rollup -c",
-    "test": "mocha test/test.js"
+    "build": "rollup -c"
   },
   "type": "module",
   "main": "dist/index.cjs",
@@ -17,6 +16,7 @@
   "sideEffects": false,
   "dependencies": {
     "@codemirror/language": "^6.0.0",
+    "@codemirror/legacy-modes": "^6.3.2",
     "@lezer/highlight": "^1.0.0",
     "@lezer/lr": "^1.0.0"
   },

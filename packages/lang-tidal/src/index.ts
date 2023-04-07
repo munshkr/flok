@@ -1,37 +1,7 @@
-import { parser } from "./syntax.grammar";
-import {
-  LRLanguage,
-  LanguageSupport,
-  indentNodeProp,
-  foldNodeProp,
-  foldInside,
-  delimitedIndent,
-} from "@codemirror/language";
-import { styleTags, tags as t } from "@lezer/highlight";
+import { StreamLanguage } from "@codemirror/language";
+import { haskell } from "@codemirror/legacy-modes/mode/haskell";
+import { indentation } from "./indentation";
 
-export const haskellLanguage = LRLanguage.define({
-  parser: parser.configure({
-    props: [
-      indentNodeProp.add({
-        Application: delimitedIndent({ closing: ")", align: false }),
-      }),
-      foldNodeProp.add({
-        Application: foldInside,
-      }),
-      styleTags({
-        Identifier: t.variableName,
-        Boolean: t.bool,
-        String: t.string,
-        LineComment: t.lineComment,
-        "( )": t.paren,
-      }),
-    ],
-  }),
-  languageData: {
-    commentTokens: { line: ";" },
-  },
-});
-
-export function haskell() {
-  return new LanguageSupport(haskellLanguage);
+export function tidal() {
+  return [indentation(), StreamLanguage.define(haskell)];
 }
