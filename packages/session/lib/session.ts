@@ -14,6 +14,7 @@ const debug = debugModule("flok:session");
 
 type Provider = "webrtc" | "websocket" | "indexeddb";
 type SessionEvent =
+  | "sync"
   | "eval"
   | "message"
   | "change"
@@ -69,6 +70,7 @@ export class Session {
   yDoc: Doc;
   awareness: Awareness;
 
+  _synced: boolean = false;
   _user: string;
   _userColor: UserColor;
   _providers: Provider[];
@@ -202,6 +204,7 @@ export class Session {
     ["error", "open", "close"].forEach((e) =>
       this._pubSubClient.removeAllListeners(e)
     );
+    this._synced = false;
     this._pubSubClient.destroy();
     if (this._wsProvider && this._wsProvider.wsconnected)
       this._wsProvider.destroy();
@@ -230,7 +233,11 @@ export class Session {
     if (this._providers.includes("indexeddb")) {
       this._idbProvider = new IndexeddbPersistence(this.name, this.yDoc);
       this._idbProvider.on("synced", () => {
-        debug("Synced data from IndexedDB");
+        if (!this._synced) {
+          this._synced = true;
+          this._emitter.emit("sync");
+          debug("Synced first with IndexedDB");
+        }
       });
     }
 
@@ -238,6 +245,13 @@ export class Session {
       this._webrtcProvider = new WebrtcProvider(this.name, this.yDoc, {
         awareness: this.awareness,
         signaling: [`${this.wsUrl}/signal`, ...this._extraSignalingServers],
+      });
+      this._webrtcProvider.on("synced", () => {
+        if (!this._synced) {
+          this._synced = true;
+          this._emitter.emit("sync");
+          debug("Synced first with WebRTC");
+        }
       });
     }
 
@@ -248,6 +262,13 @@ export class Session {
         this.yDoc,
         { awareness: this.awareness }
       );
+      this._webrtcProvider.on("sync", () => {
+        if (!this._synced) {
+          this._synced = true;
+          this._emitter.emit("sync");
+          debug("Synced first with WebSockets");
+        }
+      });
     }
   }
 
