@@ -69,17 +69,13 @@ export default function SessionPage() {
     setSession(newSession);
 
     // Default documents
-    newSession.setActiveDocuments([{ id: "1", target: defaultTarget }]);
-    setDocuments(newSession.getDocuments());
+    newSession.on("sync", () => {
+      if (newSession.getDocuments().length > 0) return;
+      console.log("Create a default document");
+      newSession.setActiveDocuments([{ id: "1", target: defaultTarget }]);
+    });
 
-    // Load and set saved username, if available
-    const savedUsername = store.get("username");
-    if (!savedUsername) {
-      setUsernameDialogOpen(true);
-    } else {
-      setUsername(savedUsername);
-    }
-
+    // If documents change on server, update state
     newSession.on("change", (documents) => {
       setDocuments(documents);
     });
@@ -103,6 +99,14 @@ export default function SessionPage() {
         description: "Remote evaluations will be ignored until reconnected.",
       });
     });
+
+    // Load and set saved username, if available
+    const savedUsername = store.get("username");
+    if (!savedUsername) {
+      setUsernameDialogOpen(true);
+    } else {
+      setUsername(savedUsername);
+    }
 
     return () => newSession.destroy();
   }, [name]);
