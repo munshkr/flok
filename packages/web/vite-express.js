@@ -4,12 +4,20 @@ import fs from "fs";
 import path from "path";
 import pc from "picocolors";
 import http from "http";
-import * as Vite from "vite";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+let Vite;
+try {
+  Vite = await import("vite");
+} catch (err) { }
 
 const { NODE_ENV } = process.env;
 
 const Config = {
-  mode: (NODE_ENV === "production" ? "production" : "development"),
+  mode: ((NODE_ENV === "production" || !Vite) ? "production" : "development"),
   vitePort: 5173,
   viteServerSecure: false,
 };
@@ -38,8 +46,9 @@ async function serveStatic(app) {
   app.use(compression());
 
   if (Config.mode === "production") {
-    const config = await Vite.resolveConfig({}, "build");
-    const distPath = path.resolve(config.root, config.build.outDir);
+    const root = path.resolve(__dirname);
+    const distPath = path.resolve(root, "dist");
+
     app.use(express.static(distPath));
 
     if (!fs.existsSync(distPath)) {
@@ -78,8 +87,8 @@ async function startDevServer() {
 
 async function serveHTML(app) {
   if (Config.mode === "production") {
-    const config = await Vite.resolveConfig({}, "build");
-    const distPath = path.resolve(config.root, config.build.outDir);
+    const root = path.resolve(__dirname);
+    const distPath = path.resolve(root, "dist");
 
     app.use("*", (_, res) => {
       res.sendFile(path.resolve(distPath, "index.html"));
@@ -146,7 +155,7 @@ export async function createServer(
   await serveHTML(app);
 
   let server;
-  if (Config.mode === "development") {
+  if (Vite && Config.mode === "development") {
     const devServer = await startDevServer();
     server = devServer.httpServer;
   } else {

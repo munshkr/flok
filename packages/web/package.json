@@ -6,6 +6,12 @@
   "license": "GPL-3.0+",
   "type": "module",
   "bin": "./bin/flok-web.js",
+  "files": [
+    "bin",
+    "dist",
+    "server.js",
+    "vite-express.js"
+  ],
   "scripts": {
     "dev": "node ./bin/flok-web.js",
     "build": "tsc && vite build",
