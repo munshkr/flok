@@ -127,7 +127,12 @@ function Editor({ document, ...props }: IEditorProps) {
     <CodeMirror
       value={document.content}
       theme={themeName}
-      extensions={[baseTheme, flokSetup(document), languageExtension()]}
+      extensions={[
+        baseTheme,
+        EditorView.lineWrapping,
+        flokSetup(document),
+        languageExtension(),
+      ]}
       basicSetup={{
         foldGutter: false,
         lineNumbers: false,
