@@ -34,15 +34,12 @@ export default function withFlokServer(server: http.Server): FlokServer {
       pubsubWss.handleUpgrade(request, socket, head, (...args: any[]) => {
         pubsubWss.emit("connection", ...args);
       });
-    } else {
-      debug("Ignoring request to path:", pathname);
-      socket.destroy();
     }
   });
 
-  wss.on("connection", (conn: WebSocket) =>
-    onSignalingWsConnection(conn, topics)
-  );
+  wss.on("connection", (conn: WebSocket) => {
+    onSignalingWsConnection(conn, topics);
+  });
   docWss.on("connection", (conn: WebSocket, req: http.IncomingMessage) => {
     onYjsWsConnection(conn, req);
   });
