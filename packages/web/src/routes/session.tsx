@@ -106,8 +106,8 @@ export default function SessionPage() {
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      e.preventDefault();
       if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
         setCommandsDialogOpen((open) => !open);
       }
     };
@@ -176,8 +176,8 @@ export default function SessionPage() {
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      e.preventDefault();
       if (e.key === "." && (e.metaKey || e.ctrlKey) && e.shiftKey) {
+        e.preventDefault();
         documents.forEach((doc) => {
           const panicCode = panicCodes[doc.target];
           if (panicCode) doc.evaluate(panicCode, { from: 0, to: 0 });
