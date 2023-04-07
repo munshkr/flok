@@ -50,6 +50,7 @@ export default defineConfig({
             "@codemirror/theme-one-dark",
             "@codemirror/view",
           ],
+          hydra: ["hydra-synth"],
         },
       },
     },
