@@ -8,11 +8,10 @@ import ViteExpress, { info } from "./vite-express.js";
 
 export async function startServer({ onReady, staticDir, ...opts }) {
   try {
-    const app = express();
-    const server = withFlokServer(http.createServer(app))
-
     ViteExpress.config({ vitePort: opts.port })
-    ViteExpress.bind(app, server);
+
+    const viteServer = await ViteExpress.createServer();
+    const server = withFlokServer(viteServer);
 
     if (staticDir) {
       info(`Serving extra static files at ${pc.gray(staticDir)}`)

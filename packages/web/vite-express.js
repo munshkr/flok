@@ -3,6 +3,7 @@ import compression from "compression";
 import fs from "fs";
 import path from "path";
 import pc from "picocolors";
+import http from "http";
 import * as Vite from "vite";
 
 const { NODE_ENV } = process.env;
@@ -63,7 +64,7 @@ async function startDevServer() {
   const server = await Vite.createServer({
     clearScreen: false,
     server: { port: Config.vitePort },
-  }).then((server) => server.listen());
+  });
 
   const vitePort = server.config.server.port;
   if (vitePort && vitePort !== Config.vitePort) Config.vitePort = vitePort;
@@ -136,4 +137,27 @@ async function build() {
   info("Build completed!");
 }
 
-export default { config, bind, listen, build };
+export async function createServer(
+  callback
+) {
+  const app = express();
+
+  await serveStatic(app);
+  await serveHTML(app);
+
+  let server;
+  if (Config.mode === "development") {
+    const devServer = await startDevServer();
+    server = devServer.httpServer;
+  } else {
+    server = http.createServer(app);
+  }
+
+  info(`Visit ${pc.bold(pc.green(getViteHost()))}`);
+
+  callback?.();
+
+  return server;
+}
+
+export default { config, bind, listen, build, createServer };
