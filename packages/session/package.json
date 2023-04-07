@@ -1,6 +1,6 @@
 {
   "name": "@flok/session",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "description": "Flok Session package",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
@@ -22,13 +22,13 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@flok/pubsub": "*",
+    "@flok/pubsub": "^1.0.0-alpha.0",
     "debug": "^4.3.4",
     "events": "^3.3.0"
   },
   "devDependencies": {
-    "typescript": "^4.9.4",
-    "@types/debug": "^4.1.7"
+    "@types/debug": "^4.1.7",
+    "typescript": "^4.9.4"
   },
   "peerDependencies": {
     "y-indexeddb": "^9.0.9",

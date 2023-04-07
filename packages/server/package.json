@@ -1,6 +1,6 @@
 {
   "name": "@flok/server",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "description": "Flok server, handles WebSocket connections and WebRTC signaling",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
@@ -13,7 +13,7 @@
     "start": "node bin/flok-server.js"
   },
   "dependencies": {
-    "@flok/server-middleware": "*",
+    "@flok/server-middleware": "^1.0.0-alpha.0",
     "debug": "^4.3.4",
     "lib0": "^0.2.63",
     "y-protocols": "^1.0.5",

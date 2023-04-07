@@ -1,6 +1,6 @@
 {
   "name": "@flok/repl",
-  "version": "1.0.0",
+  "version": "1.0.0-alpha.0",
   "description": "REPL client for Flok",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
@@ -24,7 +24,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@flok/pubsub": "*",
+    "@flok/pubsub": "^1.0.0-alpha.0",
     "command-exists": "^1.2.9",
     "commander": "^10.0.0",
     "debug": "^4.3.4",

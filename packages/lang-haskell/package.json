@@ -1,6 +1,6 @@
 {
   "name": "@flok/lang-haskell",
-  "version": "0.1.0",
+  "version": "1.0.0-alpha.0",
   "description": "Haskell language support for CodeMirror",
   "scripts": {
     "build": "rollup -c",
