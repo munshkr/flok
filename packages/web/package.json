@@ -1,5 +1,5 @@
 {
-  "name": "@flok-editor/web",
+  "name": "flok-web",
   "version": "1.0.0-alpha.1",
   "description": "Web server for Flok",
   "author": "Damián Silvani <munshkr@gmail.com>",

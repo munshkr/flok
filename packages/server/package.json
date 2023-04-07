@@ -1,5 +1,5 @@
 {
-  "name": "@flok-editor/server",
+  "name": "flok-server",
   "version": "1.0.0-alpha.1",
   "description": "Flok server, handles WebSocket connections and WebRTC signaling",
   "author": "Damián Silvani <munshkr@gmail.com>",

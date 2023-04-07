@@ -9,9 +9,9 @@ to be a full rewrite/refactor. Work in progress**
 
 ### App packages
 
-* [`@flok-editor/web`](packages/web): Web server for Flok
-* [`@flok-editor/repl`](packages/repl): REPL client for Flok
-* [`@flok-editor/server`](packages/server): Flok server, handles WebSocket connections
+* [`flok-web`](packages/web): Web server for Flok
+* [`flok-repl`](packages/repl): REPL client for Flok
+* [`flok-server`](packages/server): Flok server, handles WebSocket connections
   and WebRTC signaling
 
 ### Lib packages

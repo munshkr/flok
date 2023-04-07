@@ -1,5 +1,5 @@
 {
-  "name": "@flok-editor/repl",
+  "name": "flok-repl",
   "version": "1.0.0-alpha.1",
   "description": "REPL client for Flok",
   "author": "Damián Silvani <munshkr@gmail.com>",
