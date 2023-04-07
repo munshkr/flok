@@ -102,7 +102,7 @@ const flokSetup = (doc: Document) => {
     remoteEvalFlash(doc),
     Prec.high(evalKeymap(doc, { defaultMode })),
     panicKeymap(doc),
-    yCollab(text, doc.session.awareness, { undoManager }),
+    yCollab(text, doc.session.awareness, { undoManager, showLocalCaret: true }),
   ];
 };
 
