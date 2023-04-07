@@ -21,9 +21,9 @@ const readConfig = (path) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const packageInfo = readConfig(path.resolve(__dirname, "../package.json"));
-const knownTypes = Object.keys(replClasses).filter(
+const knownTypes = ["command", ...Object.keys(replClasses).filter(
   (repl) => repl !== "default"
-);
+)];
 const program = new Command();
 
 program.version(packageInfo.version);
@@ -103,7 +103,7 @@ if (!useDefaultREPL && !knownTypes.includes(type)) {
 }
 
 // Set target based on name or type
-const target = targetName || (useDefaultREPL ? "default" : type);
+const target = targetName || (useDefaultREPL ? cmd : type);
 
 // Extra options
 const { extra } = opts;
