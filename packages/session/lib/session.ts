@@ -213,6 +213,11 @@ export class Session {
     this.awareness.destroy();
   }
 
+  get wsUrl() {
+    const schema = this.isSecure ? `wss` : `ws`;
+    return `${schema}://${this.hostname}${this.port ? `:${this.port}` : ""}`;
+  }
+
   _prepareYjs() {
     this.yDoc = new Doc();
     this.awareness = new Awareness(this.yDoc);
@@ -232,13 +237,13 @@ export class Session {
     if (this._providers.includes("webrtc")) {
       this._webrtcProvider = new WebrtcProvider(this.name, this.yDoc, {
         awareness: this.awareness,
-        signaling: [`${this._wsUrl}/signal`, ...this._extraSignalingServers],
+        signaling: [`${this.wsUrl}/signal`, ...this._extraSignalingServers],
       });
     }
 
     if (this._providers.includes("websocket")) {
       this._wsProvider = new WebsocketProvider(
-        `${this._wsUrl}/doc`,
+        `${this.wsUrl}/doc`,
         this.name,
         this.yDoc,
         { awareness: this.awareness }
@@ -247,7 +252,7 @@ export class Session {
   }
 
   _preparePubSub() {
-    this._pubSubClient = new PubSubClient({ url: `${this._wsUrl}/pubsub` });
+    this._pubSubClient = new PubSubClient({ url: `${this.wsUrl}/pubsub` });
     this._pubSubClient.on("error", (err) => {
       debug("error on pubsub", err);
       this._emitter.emit("pubsub:error", err);
@@ -350,11 +355,6 @@ export class Session {
     });
 
     this._emitter.emit("change", this.getDocuments());
-  }
-
-  get _wsUrl() {
-    const schema = this.isSecure ? `wss` : `ws`;
-    return `${schema}://${this.hostname}${this.port ? `:${this.port}` : ""}`;
   }
 
   _yTargets(): Y.Map<string> {
