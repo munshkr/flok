@@ -13,13 +13,15 @@ import { useNavigate } from "react-router-dom";
 import ConfigureDialog from "@/components/configure-dialog";
 import TargetSelect from "@/components/target-select";
 import { CommandsButton } from "@/components/commands-button";
+import { ReplsButton } from "@/components/repls-button";
 import { Helmet } from "react-helmet-async";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import HydraCanvas from "@/components/hydra-canvas";
 import type { HydraWrapper } from "@/lib/hydra-wrapper";
 import type { StrudelWrapper } from "@/lib/strudel-wrapper";
-import { defaultTarget } from "@/settings.json";
+import { defaultTarget, webTargets } from "@/settings.json";
 import { panicCodes as panicCodesUntyped } from "@/settings.json";
+import { ReplsDialog } from "@/components/repls-dialog";
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -39,6 +41,7 @@ export default function SessionPage() {
   const [session, setSession] = useState<Session | null>(null);
 
   const [commandsDialogOpen, setCommandsDialogOpen] = useState<boolean>(false);
+  const [replsDialogOpen, setReplsDialogOpen] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
@@ -190,6 +193,14 @@ export default function SessionPage() {
     return () => document.removeEventListener("keydown", down);
   }, [documents]);
 
+  const replTargets = useMemo(
+    () =>
+      [...new Set(documents.map((doc) => doc.target))].filter(
+        (t) => !webTargets.includes(t)
+      ),
+    [documents]
+  );
+
   const handleViewLayoutAdd = useCallback(() => {
     if (!session) return;
     const newDocs = [
@@ -246,6 +257,15 @@ export default function SessionPage() {
         open={configureDialogOpen}
         onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
       />
+      {session && replTargets.length > 0 && (
+        <ReplsDialog
+          targets={replTargets}
+          sessionUrl={session.wsUrl}
+          sessionName={session.name}
+          open={replsDialogOpen}
+          onOpenChange={(isOpen) => setReplsDialogOpen(isOpen)}
+        />
+      )}
       <Mosaic
         items={documents.map((doc, i) => (
           <Pane key={doc.id}>
@@ -264,7 +284,12 @@ export default function SessionPage() {
       {hasWebGl && hydraCanvasRef && (
         <HydraCanvas ref={hydraCanvasRef} fullscreen />
       )}
-      <CommandsButton onClick={() => setCommandsDialogOpen(true)} />
+      <div className="fixed top-1 right-1 flex m-1">
+        {replTargets.length > 0 && (
+          <ReplsButton onClick={() => setReplsDialogOpen(true)} />
+        )}
+        <CommandsButton onClick={() => setCommandsDialogOpen(true)} />
+      </div>
       <Toaster />
     </>
   );
