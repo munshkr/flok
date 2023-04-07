@@ -1,7 +1,7 @@
 {
-  "name": "@flok-editor/lang-haskell",
+  "name": "@flok-editor/lang-tidal",
   "version": "1.0.0-alpha.1",
-  "description": "Haskell language support for CodeMirror",
+  "description": "TidalCycles language support for CodeMirror",
   "scripts": {
     "build": "rollup -c",
     "test": "mocha test/test.js"

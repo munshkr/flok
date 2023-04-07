@@ -3,7 +3,7 @@ import { EditorView, keymap } from "@codemirror/view";
 import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-import { haskell } from "@flok-editor/lang-haskell";
+import { tidal } from "@flok-editor/lang-tidal";
 import { flashField, remoteEvalFlash, evalKeymap } from "@flok-editor/cm-eval";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
@@ -20,7 +20,7 @@ const langByTarget = langByTargetUntyped as { [lang: string]: string };
 const langExtensionsByLanguage: { [lang: string]: any } = {
   javascript: javascript,
   python: python,
-  haskell: haskell,
+  tidal: tidal,
 };
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 

@@ -14,9 +14,9 @@
     "hydra": "javascript",
     "mercury": "javascript",
     "sardine": "python",
-    "sclang": "smalltalk",
+    "sclang": "javascript",
     "strudel": "javascript",
-    "tidal": "haskell"
+    "tidal": "tidal"
   },
   "targetsWithDocumentEvalMode": ["mercury", "strudel"],
   "panicCodes": {
