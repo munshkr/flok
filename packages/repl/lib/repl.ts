@@ -15,8 +15,6 @@ type BaseREPLContext = {
   session: string;
   hub: string;
   pubSubPath: string;
-  nickname: string;
-  notifyToAll: boolean;
   extraOptions?: { [option: string]: any };
 };
 
@@ -30,8 +28,6 @@ abstract class BaseREPL {
   session: string;
   hub: string;
   pubSubPath: string;
-  nickname: string;
-  notifyToAll: boolean;
   extraOptions: { [option: string]: any };
 
   emitter: EventEmitter;
@@ -40,22 +36,12 @@ abstract class BaseREPL {
   _buffers: { stdout: string; stderr: string };
 
   constructor(ctx: BaseREPLContext) {
-    const {
-      target,
-      session,
-      hub,
-      pubSubPath,
-      nickname,
-      notifyToAll,
-      extraOptions,
-    } = ctx;
+    const { target, session, hub, pubSubPath, extraOptions } = ctx;
 
     this.target = target || "default";
     this.session = session || "default";
     this.hub = hub || "ws://localhost:3000";
     this.pubSubPath = pubSubPath || "/pubsub";
-    this.nickname = nickname;
-    this.notifyToAll = notifyToAll;
     this.extraOptions = extraOptions || {};
 
     this.emitter = new EventEmitter();
@@ -102,22 +88,12 @@ class CommandREPL extends BaseREPL {
   repl: ChildProcess;
 
   constructor(ctx: CommandREPLContext) {
-    const {
-      target,
-      session,
-      hub,
-      pubSubPath,
-      nickname,
-      notifyToAll,
-      extraOptions,
-    } = ctx;
+    const { target, session, hub, pubSubPath, extraOptions } = ctx;
     super({
       target,
       session,
       hub,
       pubSubPath,
-      nickname,
-      notifyToAll,
       extraOptions,
     });
 
@@ -163,7 +139,7 @@ class CommandREPL extends BaseREPL {
   }
 
   _handleData(data: any, type: string) {
-    const { target, session, nickname, notifyToAll } = this;
+    const { target, session } = this;
     const newBuffer = this._buffers[type].concat(data.toString());
     const rawLines = newBuffer.split("\n");
 
@@ -175,13 +151,10 @@ class CommandREPL extends BaseREPL {
 
     this.emitter.emit("data", { type, lines });
 
-    const mustPublish = lines.length > 0 && (notifyToAll || nickname);
+    const mustPublish = lines.length > 0;
 
     if (mustPublish) {
-      const path = notifyToAll
-        ? `${basePath}:out`
-        : `${basePath}:user:${nickname}:out`;
-      this.pubSub.publish(path, {
+      this.pubSub.publish(`${basePath}:out`, {
         target,
         type,
         body: lines,

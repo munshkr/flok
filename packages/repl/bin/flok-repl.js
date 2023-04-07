@@ -32,14 +32,6 @@ program
   .option("-H, --hub <url>", "Hub address", "ws://localhost:3000")
   .option("-s, --session-name <name>", "Session name", "default")
   .option("-n, --target-name <name>", "Use the specified target name")
-  .option(
-    "-N, --nickname <nickname>",
-    "Send output/error messages to named user"
-  )
-  .option(
-    "--notify-to-all",
-    "Notify output/error messages to all connected users"
-  )
   .option("--path <path>", "Evaluation WebSockets server path", "/pubsub")
   .option("--list-types", "List all known types of REPLs")
   .option("--config <configfile>", "JSON configuration file")
@@ -59,8 +51,6 @@ const options = [
   "sessionName",
   "targetName",
   "path",
-  "nickname",
-  "notifyToAll",
 ];
 for (let i = 0; i < options.length; i++) {
   const opt = options[i];
@@ -73,8 +63,6 @@ const {
   sessionName,
   targetName,
   path: pubSubPath,
-  nickname,
-  notifyToAll,
 } = config;
 
 // Prepare command and arguments
@@ -122,12 +110,6 @@ debug(`Hub address: ${hub}`);
 debug(`Session name: ${sessionName}`);
 debug(`Target name: ${target}`);
 debug(`Type: ${type}`);
-if (notifyToAll) {
-  debug(`Notify messages to all users`);
-}
-if (nickname) {
-  debug(`Notify messages to user named "${nickname}"`);
-}
 debug(`Extra options:`, extraOptions);
 
 let replClient;
@@ -139,8 +121,6 @@ if (useDefaultREPL) {
     session: sessionName,
     hub,
     pubSubPath,
-    nickname,
-    notifyToAll,
     extraOptions,
   });
 } else {
@@ -150,8 +130,6 @@ if (useDefaultREPL) {
     session: sessionName,
     hub,
     pubSubPath,
-    nickname,
-    notifyToAll,
     extraOptions,
   });
 }
