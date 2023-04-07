@@ -1,6 +1,6 @@
 import { ChildProcess, spawn } from "child_process";
 import { EventEmitter } from "events";
-import { PubSubClient } from "@flok/pubsub";
+import { PubSubClient } from "@flok-editor/pubsub";
 import debugModule from "debug";
 
 const debug = debugModule("flok:repl");

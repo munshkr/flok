@@ -3,8 +3,8 @@ import { javascript } from "@codemirror/lang-javascript";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorState, Prec } from "@codemirror/state";
 import { yCollab } from "y-codemirror.next";
-import { Session } from "@flok/session";
-import { flashField, evalKeymap, remoteEvalFlash } from "@flok/cm-eval";
+import { Session } from "@flok-editor/session";
+import { flashField, evalKeymap, remoteEvalFlash } from "@flok-editor/cm-eval";
 import { UndoManager } from "yjs";
 
 import "./style.css";

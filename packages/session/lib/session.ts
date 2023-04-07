@@ -5,7 +5,7 @@ import { IndexeddbPersistence } from "y-indexeddb";
 import { WebrtcProvider } from "y-webrtc";
 import { WebsocketProvider } from "y-websocket";
 import { Awareness } from "y-protocols/awareness.js";
-import { PubSubClient } from "@flok/pubsub";
+import { PubSubClient } from "@flok-editor/pubsub";
 import { Doc } from "yjs";
 import debugModule from "debug";
 import { Document } from "./document.js";

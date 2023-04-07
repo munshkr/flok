@@ -1,5 +1,5 @@
 {
-  "name": "@flok/session",
+  "name": "@flok-editor/session",
   "version": "1.0.0-alpha.0",
   "description": "Flok Session package",
   "author": "Damián Silvani <munshkr@gmail.com>",
@@ -22,7 +22,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@flok/pubsub": "^1.0.0-alpha.0",
+    "@flok-editor/pubsub": "^1.0.0-alpha.0",
     "debug": "^4.3.4",
     "events": "^3.3.0"
   },

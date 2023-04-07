@@ -3,12 +3,12 @@ import { EditorView, keymap } from "@codemirror/view";
 import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-import { haskell } from "@flok/lang-haskell";
-import { flashField, remoteEvalFlash, evalKeymap } from "@flok/cm-eval";
+import { haskell } from "@flok-editor/lang-haskell";
+import { flashField, remoteEvalFlash, evalKeymap } from "@flok-editor/cm-eval";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
 import { Prec } from "@codemirror/state";
-import type { Document } from "@flok/session";
+import type { Document } from "@flok-editor/session";
 import {
   langByTarget as langByTargetUntyped,
   targetsWithDocumentEvalMode,

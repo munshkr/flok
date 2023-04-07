@@ -6,7 +6,7 @@ import fs from "fs";
 import http from "http";
 import { Command } from "commander";
 import { fileURLToPath } from "url";
-import withFlokServer from "@flok/server-middleware";
+import withFlokServer from "@flok-editor/server-middleware";
 
 const readConfig = (path) => {
   const raw = fs.readFileSync(path);

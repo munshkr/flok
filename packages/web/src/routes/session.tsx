@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import UsernameDialog from "@/components/username-dialog";
 import { store } from "@/lib/utils";
-import { Session, Document } from "@flok/session";
+import { Session, Document } from "@flok-editor/session";
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";

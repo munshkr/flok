@@ -1,4 +1,4 @@
-# @flok/pubsub
+# @flok-editor/pubsub
 
 WebSocket-based Pub/Sub client and server, used for remote code execution and
 message passing in Flok.
@@ -20,7 +20,7 @@ message passing in Flok.
 
 ```js
 import { WebSocketServer } from "ws"
-import { PubSubServer } from "@flok/pubsub"
+import { PubSubServer } from "@flok-editor/pubsub"
 
 // To use the server, you need to create a `WebSocketServer` and pass it to
 // `PubSubServer`.
@@ -33,7 +33,7 @@ console.log(`PubSub server listening on`, wss.address())
 ### Client
 
 ```js
-import { PubSubClient } from "@flok/pubsub"
+import { PubSubClient } from "@flok-editor/pubsub"
 
 const client = new PubSubClient({ url: "ws://localhost:4000" });
 

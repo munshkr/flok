@@ -1,7 +1,7 @@
 import { EditorView, keymap } from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 import { flash } from "./flashField.js";
-import type { Document } from "@flok/session";
+import type { Document } from "@flok-editor/session";
 
 interface EvalBlock {
   text: string;

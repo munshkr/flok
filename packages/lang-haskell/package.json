@@ -1,5 +1,5 @@
 {
-  "name": "@flok/lang-haskell",
+  "name": "@flok-editor/lang-haskell",
   "version": "1.0.0-alpha.0",
   "description": "Haskell language support for CodeMirror",
   "scripts": {

@@ -9,19 +9,19 @@ to be a full rewrite/refactor. Work in progress**
 
 ### App packages
 
-* [`@flok/web`](packages/web): Web server for Flok
-* [`@flok/repl`](packages/repl): REPL client for Flok
-* [`@flok/server`](packages/server): Flok server, handles WebSocket connections
+* [`@flok-editor/web`](packages/web): Web server for Flok
+* [`@flok-editor/repl`](packages/repl): REPL client for Flok
+* [`@flok-editor/server`](packages/server): Flok server, handles WebSocket connections
   and WebRTC signaling
 
 ### Lib packages
 
-* [`@flok/pubsub`](packages/pubsub): Pub/Sub client-server, used for remote code
+* [`@flok-editor/pubsub`](packages/pubsub): Pub/Sub client-server, used for remote code
   execution and message passing on Flok
-* [`@flok/session`](packages/session): Flok session package
-* [`@flok/server-middleware`](packages/server-middleware): Server middleware for
+* [`@flok-editor/session`](packages/session): Flok session package
+* [`@flok-editor/server-middleware`](packages/server-middleware): Server middleware for
   Flok, handles WebSocket connections and WebRTC signaling
-* [`@flok/cm-eval`](packages/cm-eval): CodeMirror 6 extension for code evaluation
+* [`@flok-editor/cm-eval`](packages/cm-eval): CodeMirror 6 extension for code evaluation
 
 ### Examples
 
@@ -39,10 +39,10 @@ to be a full rewrite/refactor. Work in progress**
     * Now supports CodeMirror 6:
       [y-codemirror.next](https://github.com/yjs/y-codemirror.next)
 * More modular and extensible, similar to CodeMirror extensions, e.g.:
-    * Line/block-based evaluation: `@flok/cm-eval`
-    * TidalCycles pattern and RMS decorators: `@flok/cm-tidalcycles-decorators`
-    * TidalCycles autocompletion: `@flok/cm-tidalcycles-autocompletion`
-    * Hydra synth autocompletion: `@flok/cm-hydra-autocompletion`
+    * Line/block-based evaluation: `@flok-editor/cm-eval`
+    * TidalCycles pattern and RMS decorators: `@flok-editor/cm-tidalcycles-decorators`
+    * TidalCycles autocompletion: `@flok-editor/cm-tidalcycles-autocompletion`
+    * Hydra synth autocompletion: `@flok-editor/cm-hydra-autocompletion`
 * Better UI for customizing editor and session configuration
     * Menu, toast, dialogs
 * *nice to have* Import external JS libraries dynamically, instead of bundling

@@ -1,5 +1,5 @@
 {
-  "name": "@flok/cm-eval",
+  "name": "@flok-editor/cm-eval",
   "version": "1.0.0-alpha.0",
   "description": "CodeMirror 6 extension for code evaluation",
   "author": "Damián Silvani <munshkr@gmail.com>",
@@ -35,7 +35,7 @@
     "@codemirror/commands": "^6.2.2",
     "@codemirror/state": "^6.2.0",
     "@codemirror/view": "^6.9.2",
-    "@flok/session": "*",
+    "@flok-editor/session": "*",
     "codemirror": "^6.0.1"
   }
 }

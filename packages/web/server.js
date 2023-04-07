@@ -3,7 +3,7 @@ import http from "http";
 import process from "process";
 import { networkInterfaces } from "os";
 import pc from "picocolors";
-import withFlokServer from "@flok/server-middleware";
+import withFlokServer from "@flok-editor/server-middleware";
 import ViteExpress, { info } from "./vite-express.js";
 
 export async function startServer({ onReady, staticDir, ...opts }) {
