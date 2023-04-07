@@ -11,7 +11,7 @@ declare global {
 
 type ErrorHandler = (err: string) => void;
 
-class HydraWrapper {
+export class HydraWrapper {
   initialized: boolean = false;
 
   protected _canvas: HTMLCanvasElement;
@@ -57,5 +57,3 @@ class HydraWrapper {
     }
   }
 }
-
-export default HydraWrapper;

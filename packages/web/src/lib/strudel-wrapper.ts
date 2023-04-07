@@ -9,7 +9,7 @@ import {
 
 export type ErrorHandler = (error: string) => void;
 
-class StrudelWrapper {
+export class StrudelWrapper {
   initialized: boolean = false;
 
   protected _onError: ErrorHandler;
@@ -66,5 +66,3 @@ class StrudelWrapper {
     }
   }
 }
-
-export default StrudelWrapper;

@@ -15,9 +15,9 @@ import TargetSelect from "@/components/target-select";
 import { CommandsButton } from "@/components/commands-button";
 import { Helmet } from "react-helmet-async";
 import { isWebglSupported } from "@/lib/webgl-detector";
-import HydraWrapper from "@/lib/hydra-wrapper";
 import HydraCanvas from "@/components/hydra-canvas";
-import type StrudelWrapper from "@/lib/strudel-wrapper";
+import type { HydraWrapper } from "@/lib/hydra-wrapper";
+import type { StrudelWrapper } from "@/lib/strudel-wrapper";
 import { defaultTarget } from "@/settings.json";
 import { panicCodes as panicCodesUntyped } from "@/settings.json";
 
@@ -115,45 +115,46 @@ export default function SessionPage() {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
+  // Load and initialize external libraries: Strudel, Hydra
   useEffect(() => {
-    if (!hydraCanvasRef.current || !session) return;
+    if (!session) return;
 
-    if (hasWebGl && !hydra && documents.some((doc) => doc.target === "hydra")) {
-      console.log("Create HydraWrapper");
-      const hydra = new HydraWrapper({
-        canvas: hydraCanvasRef.current,
-        onError: handleHydraError,
-      });
-      setHydra(hydra);
-
-      session.on("eval:hydra", ({ body }) => {
-        console.log("eval hydra", body);
-        if (hydra) hydra.tryEval(body);
-      });
-    }
-  }, [session, documents, hydraCanvasRef, hydra]);
-
-  useEffect(() => {
-    if (!session || !documents) return;
-
-    (async () => {
-      if (!strudel && documents.some((doc) => doc.target === "strudel")) {
-        console.log("Create StrudelWrapper and import Strudel");
-        const { default: StrudelWrapper } = await import(
-          "@/lib/strudel-wrapper"
-        );
+    if (!strudel) {
+      (async () => {
+        console.log("Create StrudelWrapper");
+        const { StrudelWrapper } = await import("@/lib/strudel-wrapper");
 
         const strudel = new StrudelWrapper({ onError: handleHydraError });
         setStrudel(strudel);
+
+        console.log("Import Strudel modules");
         await strudel.importModules();
 
         session.on("eval:strudel", ({ body }) => {
           console.log("eval strudel", body);
-          if (strudel) strudel.tryEval(body);
+          strudel.tryEval(body);
         });
-      }
-    })();
-  }, [session, documents, strudel]);
+      })();
+    }
+
+    if (!hydra && hasWebGl && hydraCanvasRef.current) {
+      (async () => {
+        console.log("Create HydraWrapper");
+        const { HydraWrapper } = await import("@/lib/hydra-wrapper");
+
+        const hydra = new HydraWrapper({
+          canvas: hydraCanvasRef.current!,
+          onError: handleHydraError,
+        });
+        setHydra(hydra);
+
+        session.on("eval:hydra", ({ body }) => {
+          console.log("eval hydra", body);
+          hydra.tryEval(body);
+        });
+      })();
+    }
+  }, [session, hydraCanvasRef, hydra, strudel]);
 
   useEffect(() => {
     if (hasWebGl) return;
