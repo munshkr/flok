@@ -1,10 +1,11 @@
 import WebSocket from "isomorphic-ws";
 import debugModule from "debug";
 import { EventEmitter } from "events";
+import type { ServerMessage } from "./server.js";
 
 const debug = debugModule("flok:pubsub:client");
 
-type MessageType =
+type ClientMessageType =
   | "publish"
   | "subscribe"
   | "unsubscribe"
@@ -21,6 +22,7 @@ export class PubSubClient {
   protected _started: boolean = false;
   protected _connected: boolean = false;
   protected _subscriptions: Set<string> = new Set();
+  protected _clientId: string;
   protected _emitter: EventEmitter = new EventEmitter();
 
   constructor({
@@ -97,6 +99,10 @@ export class PubSubClient {
     this._subscriptions.clear();
   }
 
+  get id() {
+    return this._clientId;
+  }
+
   protected _connect() {
     debug("create WebSocket on", this.url);
     this._ws = new WebSocket(this.url);
@@ -126,11 +132,26 @@ export class PubSubClient {
 
     this._ws.onmessage = (event) => {
       if (!this._ws) return;
-      const data = JSON.parse(event.data.toString());
-      const { topic, payload } = data;
-      debug("message", topic, payload);
-      this._emitter.emit("message", topic, payload);
-      this._emitter.emit(`message:${topic}`, payload);
+      const data: ServerMessage = JSON.parse(event.data.toString());
+      const { type, payload } = data;
+      switch (type) {
+        case "id": {
+          const { id } = payload;
+          debug("id", id);
+          this._clientId = id;
+          break;
+        }
+        case "publish": {
+          const { topic, message } = payload;
+          debug("message", topic, message);
+          this._emitter.emit("message", topic, message);
+          this._emitter.emit(`message:${topic}`, message);
+          break;
+        }
+        default: {
+          debug("ignoring unknown message", type);
+        }
+      }
     };
   }
 
@@ -139,7 +160,7 @@ export class PubSubClient {
   }
 
   protected _send(
-    type: MessageType,
+    type: ClientMessageType,
     payload?: any,
     cb?: (err?: Error) => void
   ) {

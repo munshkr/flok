@@ -1,4 +1,4 @@
-import { PubSubClient } from "./dist/index.js"
+import { PubSubClient } from "../dist/index.js"
 
 const client = new PubSubClient({ url: "ws://localhost:4000" });
 
