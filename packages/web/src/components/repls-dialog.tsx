@@ -41,19 +41,22 @@ export function ReplsDialog({
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>REPL Configuration</DialogTitle>
+
           <DialogDescription>
             This session has one or more targets that need an external REPL
             process to run on your computer. To run code executed on these
             targets, you will need to run <code>flok-repl</code> on a terminal,
             like this:
-            <div className="flex items-center mt-4 mb-4">
-              <pre className="rounded bg-slate-800 mr-3 p-3 whitespace-pre-wrap">
-                {replCommand}
-              </pre>
-              <Button variant="outline" onClick={copyToClipboard}>
-                {copied ? <Check size="sm" /> : <Copy size="sm" />}
-              </Button>
-            </div>
+          </DialogDescription>
+          <div className="flex items-center mt-4 mb-4">
+            <pre className="rounded bg-slate-800 mr-3 p-3 whitespace-pre-wrap">
+              {replCommand}
+            </pre>
+            <Button variant="outline" onClick={copyToClipboard} size="sm">
+              {copied ? <Check size={16} /> : <Copy size={16} />}
+            </Button>
+          </div>
+          <DialogDescription>
             For more information, read{" "}
             <Link
               to="https://github.com/munshkr/flok#connect-repls-to-flok"
