@@ -90,6 +90,9 @@ abstract class BaseREPL {
     this.pubSub.on("error", (err) => {
       debug("error", err);
     });
+    this.pubSub.on("open", () => {
+      debug("open");
+    });
   }
 }
 

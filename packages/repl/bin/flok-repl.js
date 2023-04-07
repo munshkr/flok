@@ -159,12 +159,15 @@ if (useDefaultREPL) {
 replClient.start();
 
 replClient.emitter.on("data", (data) => {
-  const shortClientId = replClient.pubSub._id
-    ? replClient.pubSub._id.slice(0, 7)
-    : "unknown";
   const line = data.lines.join("\n");
   if (line) {
-    debug(`[${shortClientId} ${data.type}]`, line);
+    if (data.type === "stdin") {
+      console.log(`< ${line}`);
+    } else if (data.type === "stdout") {
+      console.log(`> ${line}`);
+    } else if (data.type === "stderr") {
+      console.error(`> ${line}`);
+    }
   }
 });
 
