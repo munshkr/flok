@@ -17,6 +17,7 @@ import { Helmet } from "react-helmet-async";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import HydraWrapper from "@/lib/hydra-wrapper";
 import HydraCanvas from "@/components/hydra-canvas";
+import type StrudelWrapper from "@/lib/strudel-wrapper";
 import { defaultTarget } from "@/settings.json";
 import { panicCodes as panicCodesUntyped } from "@/settings.json";
 
@@ -47,6 +48,8 @@ export default function SessionPage() {
 
   const [hydra, setHydra] = useState<HydraWrapper | null>(null);
   const hydraCanvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  const [strudel, setStrudel] = useState<StrudelWrapper | null>(null);
 
   const { toast } = useToast();
 
@@ -115,18 +118,42 @@ export default function SessionPage() {
   useEffect(() => {
     if (!hydraCanvasRef.current || !session) return;
 
-    if (hasWebGl) {
+    if (hasWebGl && !hydra && documents.some((doc) => doc.target === "hydra")) {
       console.log("Create HydraWrapper");
-      const hydra = new HydraWrapper({ onError: handleHydraError });
+      const hydra = new HydraWrapper({
+        canvas: hydraCanvasRef.current,
+        onError: handleHydraError,
+      });
       setHydra(hydra);
-      hydra.initialize(hydraCanvasRef.current);
 
       session.on("eval:hydra", ({ body }) => {
         console.log("eval hydra", body);
         if (hydra) hydra.tryEval(body);
       });
     }
-  }, [session, hydraCanvasRef]);
+  }, [session, documents, hydraCanvasRef, hydra]);
+
+  useEffect(() => {
+    if (!session || !documents) return;
+
+    (async () => {
+      if (!strudel && documents.some((doc) => doc.target === "strudel")) {
+        console.log("Create StrudelWrapper and import Strudel");
+        const { default: StrudelWrapper } = await import(
+          "@/lib/strudel-wrapper"
+        );
+
+        const strudel = new StrudelWrapper({ onError: handleHydraError });
+        setStrudel(strudel);
+        await strudel.importModules();
+
+        session.on("eval:strudel", ({ body }) => {
+          console.log("eval strudel", body);
+          if (strudel) strudel.tryEval(body);
+        });
+      }
+    })();
+  }, [session, documents, strudel]);
 
   useEffect(() => {
     if (hasWebGl) return;

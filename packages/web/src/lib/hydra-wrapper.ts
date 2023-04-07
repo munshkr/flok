@@ -12,16 +12,24 @@ declare global {
 type ErrorHandler = (err: string) => void;
 
 class HydraWrapper {
-  initialized: boolean;
-  hydra: any;
-  onError: ErrorHandler;
+  initialized: boolean = false;
 
-  constructor({ onError }: { onError: ErrorHandler }) {
-    this.onError = onError || (() => {});
-    this.initialized = false;
+  protected _canvas: HTMLCanvasElement;
+  protected _hydra: any;
+  protected _onError: ErrorHandler;
+
+  constructor({
+    canvas,
+    onError,
+  }: {
+    canvas: HTMLCanvasElement;
+    onError?: ErrorHandler;
+  }) {
+    this._canvas = canvas;
+    this._onError = onError || (() => {});
   }
 
-  async initialize(canvas: HTMLCanvasElement) {
+  async initialize() {
     if (this.initialized) return;
 
     // For some reason on Android mobile, Chrome has this object undefined:
@@ -32,26 +40,22 @@ class HydraWrapper {
     window.P5 = P5;
     window.global = window;
 
-    this.hydra = new Hydra({ canvas });
+    this._hydra = new Hydra({ canvas: this._canvas });
     this.initialized = true;
+    console.log("Hydra initialized");
   }
 
-  tryEval = (code: string) => {
-    if (!this.initialized) {
-      console.warn(
-        "HydraWrapper is not initialized. Run initialize() to import modules"
-      );
-      return;
-    }
+  async tryEval(code: string) {
+    if (!this.initialized) await this.initialize();
 
-    console.debug(code);
     try {
-      this.hydra.eval(code);
-      this.onError("");
+      this._hydra.eval(code);
+      this._onError("");
     } catch (error) {
-      this.onError(String(error));
+      console.error(error);
+      this._onError(`${error}`);
     }
-  };
+  }
 }
 
 export default HydraWrapper;
