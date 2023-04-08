@@ -2,23 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  /* Disable the rubberbanding effect on MacOS when overscrolling */
-  overscroll-behavior: none;
-}
-
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 ::-webkit-scrollbar-track {
   background: transparent;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  border-radius: 10px;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-track:hover {
+  background: rgb(51, 65, 85, 30%) !important;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(51 65 85) !important;
+  background: rgb(51, 65, 85, 70%) !important;
 }

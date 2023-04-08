@@ -1,6 +1,5 @@
-import Editor from "@/components/editor";
-import Mosaic from "@/components/mosaic";
-import Pane from "@/components/pane";
+import { Mosaic } from "@/components/mosaic";
+import { Pane } from "@/components/pane";
 import SessionCommandDialog from "@/components/session-command-dialog";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
@@ -11,7 +10,6 @@ import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ConfigureDialog from "@/components/configure-dialog";
-import TargetSelect from "@/components/target-select";
 import { CommandsButton } from "@/components/commands-button";
 import { ReplsButton } from "@/components/repls-button";
 import { Helmet } from "react-helmet-async";
@@ -272,17 +270,12 @@ export default function SessionPage() {
       )}
       <Mosaic
         items={documents.map((doc, i) => (
-          <Pane key={doc.id}>
-            <TargetSelect
-              triggerProps={{
-                className:
-                  "w-auto h-6 border-none focus:ring-0 focus:ring-offset-0 p-1 bg-slate-900 bg-opacity-50",
-              }}
-              value={doc.target}
-              onValueChange={(t) => handleTargetSelectChange(doc, t)}
-            />
-            <Editor document={doc} autoFocus={i === 0} className="flex-grow" />
-          </Pane>
+          <Pane
+            key={doc.id}
+            document={doc}
+            autoFocus={i == 0}
+            onTargetChange={handleTargetSelectChange}
+          />
         ))}
       />
       {hasWebGl && hydraCanvasRef && (

@@ -1,11 +1,11 @@
-import { ReactNode, useMemo } from "react";
+import { ReactNode, useMemo, cloneElement } from "react";
 import { cn } from "@/lib/utils";
 
-interface IMosaicProps {
+interface MosaicProps {
   items: ReactNode[];
 }
 
-export default function Mosaic({ items }: IMosaicProps) {
+export function Mosaic({ items }: MosaicProps) {
   const itemsByRows = (items: ReactNode[]) => {
     let rows: ReactNode[][] = [];
 
@@ -44,20 +44,24 @@ export default function Mosaic({ items }: IMosaicProps) {
   };
 
   const rows = useMemo(() => itemsByRows(items), [items]);
+  const halfHeight = rows.length > 1;
 
   return (
-    <div className="flex flex-col items-stretch h-[calc(100vh-40px)] p-1">
+    <div className="flex flex-col items-stretch p-1 h-screen gap-1">
       {rows.map((rowItems, i) => (
         <div
-          className={cn("flex flex-row", rows.length > 1 ? "h-1/2" : "h-full")}
+          className={cn(
+            "flex flex-row gap-1",
+            halfHeight ? "h-[50vh]" : "h-screen"
+          )}
           key={i}
         >
           {rowItems.map((item: any, j: number) => (
             <div
               key={`${i}-${j}`}
-              className="flex-grow bg-transparent overflow-auto basis-full"
+              className="flex-grow bg-transparent basis-full"
             >
-              {item}
+              {cloneElement(item, { halfHeight })}
             </div>
           ))}
         </div>

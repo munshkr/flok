@@ -28,20 +28,19 @@ const panicCodes = panicCodesUntyped as { [target: string]: string };
 const baseTheme = EditorView.baseTheme({
   "&.cm-editor": {
     background: "transparent",
+    fontFamily: `Inconsolata`,
     fontSize: "16px",
     color: "white",
-    fontFamily: `Inconsolata`,
     fontWeight: 600,
   },
   "& .cm-scroller": {
     fontFamily: `Inconsolata`,
-    overflow: "auto",
-    minHeight: "100vh",
     paddingLeft: "2px !important",
+    minHeight: "100vh",
   },
   "& .cm-line": {
-    maxWidth: "fit-content",
     background: "rgba(0, 0, 0, 0.7)",
+    maxWidth: "fit-content",
     padding: 0,
   },
   "& .cm-activeLine": {
@@ -87,7 +86,7 @@ const panicKeymap = (doc: Document, keys: string[] = ["Cmd-.", "Ctrl-."]) => {
   );
 };
 
-interface IEditorProps extends ReactCodeMirrorProps {
+export interface EditorProps extends ReactCodeMirrorProps {
   document?: Document;
 }
 
@@ -108,7 +107,7 @@ const flokSetup = (doc: Document) => {
   ];
 };
 
-function Editor({ document, ...props }: IEditorProps) {
+function Editor({ document, ...props }: EditorProps) {
   const [mounted, setMounted] = useState(false);
 
   const themeName = "dark";
