@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  /* Disable the rubberbanding effect on MacOS when overscrolling */
+  overscroll-behavior: none;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
 }
