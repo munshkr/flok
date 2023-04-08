@@ -9,6 +9,8 @@ export type PublishServerMessage = {
   payload: {
     topic: string;
     message: object;
+    publisher: string;
+    fromMe: boolean;
   };
 };
 
@@ -75,7 +77,7 @@ export class PubSubServer {
       switch (type) {
         case "publish": {
           const { topic, msg } = payload;
-          this._publish(topic, msg);
+          this._publish(topic, msg, id);
           break;
         }
         case "subscribe": {
@@ -149,14 +151,14 @@ export class PubSubServer {
     });
   }
 
-  protected _publish(topic: string, msg: object) {
+  protected _publish(topic: string, msg: object, publisher: string) {
     const subs = this._subscribers;
     if (!(topic in subs) || subs[topic].size === 0) return;
 
     subs[topic].forEach((id) => {
       const dataObj: PublishServerMessage = {
         type: "publish",
-        payload: { topic, message: msg },
+        payload: { topic, message: msg, publisher, fromMe: id === publisher },
       };
       const data = JSON.stringify(dataObj);
       this._clients[id].send(data, (err) => {

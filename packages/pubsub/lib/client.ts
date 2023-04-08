@@ -136,16 +136,16 @@ export class PubSubClient {
       const { type, payload } = data;
       switch (type) {
         case "id": {
+          debug("id", payload);
           const { id } = payload;
-          debug("id", id);
           this._clientId = id;
           break;
         }
         case "publish": {
-          const { topic, message } = payload;
-          debug("message", topic, message);
-          this._emitter.emit("message", topic, message);
-          this._emitter.emit(`message:${topic}`, message);
+          debug("message", payload);
+          const { topic } = payload;
+          this._emitter.emit("message", payload);
+          this._emitter.emit(`message:${topic}`, payload);
           break;
         }
         default: {

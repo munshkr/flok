@@ -13,6 +13,7 @@ import {
   langByTarget as langByTargetUntyped,
   targetsWithDocumentEvalMode,
   panicCodes as panicCodesUntyped,
+  webTargets,
 } from "@/settings.json";
 
 const defaultLanguage = "javascript";
@@ -96,11 +97,12 @@ const flokSetup = (doc: Document) => {
   const defaultMode = targetsWithDocumentEvalMode.includes(doc.target)
     ? "document"
     : "block";
+  const web = webTargets.includes(doc.target);
 
   return [
     flashField(),
     remoteEvalFlash(doc),
-    Prec.high(evalKeymap(doc, { defaultMode })),
+    Prec.high(evalKeymap(doc, { defaultMode, web })),
     panicKeymap(doc),
     yCollab(text, doc.session.awareness, { undoManager, showLocalCaret: true }),
   ];

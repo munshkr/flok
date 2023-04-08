@@ -46,8 +46,13 @@ export interface EvalContext {
   to: number | null;
 }
 
+export type EvalMode =
+  | "default" // publish to :eval and :in topics (for REPL targets)
+  | "web" // emit eval events directly and publish to :eval topic (for Web targets)
+  | "webLocal"; // emit eval events directly, do not publish to :eval topic
+
 export interface EvalMessage extends EvalContext {
-  editorId: string;
+  docId: string;
   body: string;
   user: string;
 }
@@ -167,21 +172,32 @@ export class Session {
   }
 
   evaluate(
-    editorId: string,
+    docId: string,
     target: string,
     body: string,
-    context: EvalContext
+    context: EvalContext,
+    mode: EvalMode = "default"
   ) {
     const msg: EvalMessage = {
-      editorId,
+      docId,
       body,
       user: this.user,
       ...context,
     };
-    this._pubSubClient.publish(
-      `session:${this.name}:target:${target}:eval`,
-      msg
-    );
+
+    // If evaluating on browser, emit events directly
+    if (mode === "web" || mode === "webLocal") {
+      this._emitter.emit(`eval`, msg);
+      this._emitter.emit(`eval:${target}`, msg);
+    }
+
+    // If not evaluating locally, publish to :eval topic
+    if (mode !== "webLocal") {
+      this._pubSubClient.publish(
+        `session:${this.name}:target:${target}:eval`,
+        msg
+      );
+    }
   }
 
   on(eventName: SessionEvent, cb: (...args: any[]) => void) {
@@ -295,13 +311,23 @@ export class Session {
       `session:${this.name}:target:${target}:eval`,
       (args) => {
         debug(`session:${this.name}:target:${target}:eval`, args);
-        this._emitter.emit(`eval`, args);
-        this._emitter.emit(`eval:${target}`, args);
+
+        const { mode, fromMe, message } = args;
+
+        // If mode is web or webLocal, and message is from me, do not emit
+        // event because we already did it when calling .evaluate()
+        if ((mode === "web" || mode === "webLocal") && fromMe) return;
+
+        this._emitter.emit(`eval`, message);
+        this._emitter.emit(`eval:${target}`, message);
+
+        // If mode is web or webLocal, do not publish to :in topics (not a REPL target)
+        if (mode === "web" || mode === "webLocal") return;
 
         // Notify to flok-repls
         this._pubSubClient.publish(
           `session:${this.name}:target:${target}:in`,
-          args
+          message
         );
       }
     );

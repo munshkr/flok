@@ -56,7 +56,7 @@ abstract class BaseREPL {
     const { target, session } = this;
     this.pubSub.subscribe(
       `session:${session}:target:${target}:in`,
-      (message: Message) => {
+      ({ message }: { message: Message }) => {
         const { body } = message;
         this.write(body);
       }

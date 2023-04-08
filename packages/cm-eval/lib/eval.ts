@@ -50,7 +50,11 @@ export function getBlock(state: EditorState): EvalBlock {
   return { text, from, to };
 }
 
-export const evaluateBlockOrSelection = (view: EditorView, doc: Document) => {
+export const evaluateBlockOrSelection = (
+  view: EditorView,
+  doc: Document,
+  web: boolean = false
+) => {
   const { state } = view;
   const selection = getSelection(state);
   if (selection.text) {
@@ -60,24 +64,32 @@ export const evaluateBlockOrSelection = (view: EditorView, doc: Document) => {
   } else {
     const { text, from, to } = getBlock(state);
     flash(view, from, to);
-    doc.evaluate(text, { from, to });
+    doc.evaluate(text, { from, to }, web ? "web" : "default");
   }
 };
 
-export const evaluateLine = (view: EditorView, doc: Document) => {
+export const evaluateLine = (
+  view: EditorView,
+  doc: Document,
+  web: boolean = false
+) => {
   const { state } = view;
   const { text, from, to } = getLine(state);
   flash(view, from, to);
-  doc.evaluate(text, { from, to });
+  doc.evaluate(text, { from, to }, web ? "web" : "default");
 };
 
-export const evaluateDocument = (view: EditorView, doc: Document) => {
+export const evaluateDocument = (
+  view: EditorView,
+  doc: Document,
+  web: boolean = false
+) => {
   const { state } = view;
   const { from } = state.doc.line(1);
   const { to } = state.doc.line(state.doc.lines);
   const text = state.doc.sliceString(from, to);
   flash(view, from, to);
-  doc.evaluate(text, { from, to });
+  doc.evaluate(text, { from, to }, web ? "web" : "default");
 };
 
 export function evalKeymap(
@@ -87,6 +99,13 @@ export function evalKeymap(
     lineEvalKeys = ["Shift-Enter"],
     documentEvalKeys = ["Alt-Enter", "Ctrl-Shift-Enter", "Cmd-Shift-Enter"],
     defaultMode = "block",
+    web = false,
+  }: {
+    defaultEvalKeys?: string[];
+    lineEvalKeys?: string[];
+    documentEvalKeys?: string[];
+    defaultMode?: "block" | "document";
+    web?: boolean;
   } = {}
 ) {
   return keymap.of([
@@ -94,9 +113,9 @@ export function evalKeymap(
       key,
       run(view: EditorView) {
         if (defaultMode === "block") {
-          evaluateBlockOrSelection(view, document);
+          evaluateBlockOrSelection(view, document, web);
         } else {
-          evaluateDocument(view, document);
+          evaluateDocument(view, document, web);
         }
         return true;
       },
@@ -104,14 +123,14 @@ export function evalKeymap(
     ...lineEvalKeys.map((key) => ({
       key,
       run(view: EditorView) {
-        evaluateLine(view, document);
+        evaluateLine(view, document, web);
         return true;
       },
     })),
     ...documentEvalKeys.map((key) => ({
       key,
       run(view: EditorView) {
-        evaluateDocument(view, document);
+        evaluateDocument(view, document, web);
         return true;
       },
     })),

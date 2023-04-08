@@ -1,4 +1,4 @@
-import type { Session, EvalContext } from "./index.js";
+import type { Session, EvalContext, EvalMode } from "./index.js";
 import type * as Y from "yjs";
 
 export class Document {
@@ -31,8 +31,8 @@ export class Document {
     return this;
   }
 
-  evaluate(body: string, context: EvalContext) {
-    return this.session.evaluate(this.id, this.target, body, context);
+  evaluate(body: string, context: EvalContext, mode: EvalMode = "default") {
+    return this.session.evaluate(this.id, this.target, body, context, mode);
   }
 }
 
