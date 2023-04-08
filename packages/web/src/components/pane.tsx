@@ -29,7 +29,10 @@ export function Pane({
       <Editor
         document={document}
         autoFocus={autoFocus}
-        className="absolute top-6 overflow-auto flex-grow h-[calc(100%-24px)] w-full"
+        className={cn(
+          "absolute top-6 overflow-auto flex-grow w-full",
+          halfHeight ? "h-[calc(100%-24px)]" : "h-full"
+        )}
       />
     </div>
   );
