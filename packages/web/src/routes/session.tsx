@@ -187,7 +187,7 @@ export default function SessionPage() {
         e.preventDefault();
         documents.forEach((doc) => {
           const panicCode = panicCodes[doc.target];
-          if (panicCode) doc.evaluate(panicCode, { from: 0, to: 0 });
+          if (panicCode) doc.evaluate(panicCode, { from: null, to: null });
         });
         toast({ title: "Panic!", duration: 1000 });
       }

@@ -79,7 +79,7 @@ const panicKeymap = (doc: Document, keys: string[] = ["Cmd-.", "Ctrl-."]) => {
       ...keys.map((key) => ({
         key,
         run() {
-          doc.evaluate(panicCode, { from: 0, to: 0 });
+          doc.evaluate(panicCode, { from: null, to: null });
           return true;
         },
       })),
