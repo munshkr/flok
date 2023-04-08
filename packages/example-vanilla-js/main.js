@@ -42,6 +42,7 @@ const createEditor = doc => {
   });
 
   const targetEl = document.querySelector(`#${doc.id} .target`);
+  targetEl.value = doc.target;
 
   targetEl.addEventListener("change", (e) => {
     doc.target = e.target.value;
@@ -65,14 +66,19 @@ const handleEvalHydra = (msg) => {
 const session = new Session("default", { port: 3000 });
 window.session = session
 
+session.on("change", (...args) => console.log("change", ...args));
 session.on("message", handleMessage);
-session.on("message-user", handleMessage);
 session.on("eval:hydra", handleEvalHydra);
 
-session.setActiveDocuments([
-  { id: "slot1", target: "tidal" },
-  { id: "slot2", target: "hydra" },
-])
+session.on("sync", () => {
+  // If session is empty, create two documents
+  if (session.getDocuments().length === 0) {
+    session.setActiveDocuments([
+      { id: "slot1", target: "tidal" },
+      { id: "slot2", target: "hydra" },
+    ])
+  }
 
-// Create two editors, one for each of the targets
-session.getDocuments().map(doc => createEditor(doc))
+  // Create editors for each document
+  session.getDocuments().map(doc => createEditor(doc))
+})
