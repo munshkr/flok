@@ -12,12 +12,14 @@ import "./style.css";
 const flokBasicSetup = (doc) => {
   const text = doc.getText();
   const undoManager = new UndoManager(text);
+  // if target is hydra, use "web" mode to evaluate on browser only, not REPLs
+  const web = doc.target === "hydra"
 
   return [
     flashField(),
     remoteEvalFlash(doc),
-    Prec.high(evalKeymap(doc)),
-    yCollab(text, doc.session.awareness, { undoManager }),
+    Prec.high(evalKeymap(doc, { web })),
+    yCollab(text, doc.session.awareness, { undoManager, showLocalCaret: true }),
   ];
 };
 
@@ -57,6 +59,7 @@ const handleMessage = (msg) => {
 
 const handleEvalHydra = (msg) => {
   console.log("eval:hydra", msg);
+  // evaluate hydra code here...
 };
 
 const session = new Session("default", { port: 3000 });
