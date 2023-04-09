@@ -16,11 +16,11 @@ import { Helmet } from "react-helmet-async";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import HydraCanvas from "@/components/hydra-canvas";
 import type { HydraWrapper } from "@/lib/hydra-wrapper";
-import type { StrudelWrapper } from "@/lib/strudel-wrapper";
 import { defaultTarget, webTargets } from "@/settings.json";
 import { panicCodes as panicCodesUntyped } from "@/settings.json";
 import { ReplsDialog } from "@/components/repls-dialog";
 import { useShortcut } from "@/hooks/use-shortcut";
+import { useStrudel } from "@/hooks/use-strudel";
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -50,8 +50,6 @@ export default function SessionPage() {
 
   const [hydra, setHydra] = useState<HydraWrapper | null>(null);
   const hydraCanvasRef = useRef<HTMLCanvasElement | null>(null);
-
-  const [strudel, setStrudel] = useState<StrudelWrapper | null>(null);
 
   const { toast } = useToast();
 
@@ -110,24 +108,11 @@ export default function SessionPage() {
     return () => newSession.destroy();
   }, [name]);
 
-  // Load and initialize external libraries: Strudel, Hydra
+  useStrudel(session, (err) => handleWebError("Strudel", err));
+
+  // Load and initialize Hydra
   useEffect(() => {
     if (!session) return;
-
-    if (!strudel) {
-      (async () => {
-        console.log("Create StrudelWrapper");
-        const { StrudelWrapper } = await import("@/lib/strudel-wrapper");
-
-        const strudel = new StrudelWrapper({
-          onError: (e) => handleWebError("Strudel error", e),
-        });
-        setStrudel(strudel);
-
-        console.log("Import Strudel modules");
-        await strudel.importModules();
-      })();
-    }
 
     if (!hydra && hasWebGl && hydraCanvasRef.current) {
       (async () => {
@@ -147,7 +132,7 @@ export default function SessionPage() {
         setHydra(hydra);
       })();
     }
-  }, [session, hydraCanvasRef, hydra, strudel]);
+  }, [session, hydraCanvasRef, hydra]);
 
   useEffect(() => {
     if (!session || !hydra) return;
@@ -161,19 +146,6 @@ export default function SessionPage() {
       session.removeAllListeners("eval:hydra");
     };
   }, [session, hydra]);
-
-  useEffect(() => {
-    if (!session || !strudel) return;
-
-    session.on("eval:strudel", ({ body }) => {
-      console.log("eval strudel", body);
-      strudel.tryEval(body);
-    });
-
-    return () => {
-      session.removeAllListeners("eval:strudel");
-    };
-  }, [session, strudel]);
 
   useEffect(() => {
     if (hasWebGl) return;
@@ -257,12 +229,12 @@ export default function SessionPage() {
     );
   };
 
-  const handleWebError = (title: string, error: string) => {
+  const handleWebError = (title: string, error: unknown) => {
     if (!error) return;
     toast({
       variant: "destructive",
       title,
-      description: <pre className="whitespace-pre-wrap">{error}</pre>,
+      description: <pre className="whitespace-pre-wrap">{String(error)}</pre>,
     });
   };
 
