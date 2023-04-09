@@ -70,20 +70,19 @@ const baseTheme = EditorView.baseTheme({
 });
 
 const panicKeymap = (doc: Document, keys: string[] = ["Cmd-.", "Ctrl-."]) => {
-  const panicCode: string | null = panicCodes[doc.target];
+  const panicCode = panicCodes[doc.target];
 
-  return (
-    panicCode &&
-    keymap.of([
-      ...keys.map((key) => ({
-        key,
-        run() {
-          doc.evaluate(panicCode, { from: null, to: null });
-          return true;
-        },
-      })),
-    ])
-  );
+  return panicCode
+    ? keymap.of([
+        ...keys.map((key) => ({
+          key,
+          run() {
+            doc.evaluate(panicCode, { from: null, to: null });
+            return true;
+          },
+        })),
+      ])
+    : [];
 };
 
 export interface EditorProps extends ReactCodeMirrorProps {
