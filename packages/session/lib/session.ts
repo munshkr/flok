@@ -55,6 +55,7 @@ export interface EvalMessage extends EvalContext {
   docId: string;
   body: string;
   user: string;
+  mode: EvalMode;
 }
 
 export interface SessionOptions {
@@ -187,6 +188,7 @@ export class Session {
       docId,
       body,
       user: this.user,
+      mode,
       ...context,
     };
 
@@ -317,7 +319,8 @@ export class Session {
       (args) => {
         debug(`session:${this.name}:target:${target}:eval`, args);
 
-        const { mode, fromMe, message } = args;
+        const { fromMe, message } = args;
+        const { mode } = message;
 
         // If mode is web or webLocal, and message is from me, do not emit
         // event because we already did it when calling .evaluate()
