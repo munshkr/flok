@@ -221,7 +221,6 @@ export default function SessionPage() {
       ...documents.map((doc) => ({ id: doc.id, target: doc.target })),
       { id: String(documents.length + 1), target: defaultTarget },
     ];
-    console.log("newDocs", newDocs);
     session.setActiveDocuments(newDocs);
   }, [session, documents]);
 
@@ -238,9 +237,12 @@ export default function SessionPage() {
     document.target = newTarget;
   };
 
+  const handleEvaluateButtonClick = (document: Document) => {
+    document.evaluate(document.content, { from: null, to: null });
+  };
+
   const handleConfigureAccept = (targets: string[]) => {
     if (!session) return;
-    console.log("New targets:", targets);
     session.setActiveDocuments(
       targets
         .filter((t) => t)
@@ -303,6 +305,7 @@ export default function SessionPage() {
             document={doc}
             autoFocus={i == 0}
             onTargetChange={handleTargetSelectChange}
+            onEvaluateButtonClick={handleEvaluateButtonClick}
           />
         ))}
       />

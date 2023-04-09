@@ -62,7 +62,6 @@ export function ConfigureDialog({
         .filter((t) => knownTargets.includes(t)),
     [targetsValue]
   );
-  console.log("newTargets", newTargets);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
