@@ -41,7 +41,6 @@ export function ReplsDialog({
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>REPL Configuration</DialogTitle>
-
           <DialogDescription>
             This session has one or more targets that need an external REPL
             process to run on your computer. To run code executed on these

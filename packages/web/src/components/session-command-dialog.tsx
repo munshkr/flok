@@ -62,11 +62,11 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Layout">
-          {/* <CommandItem disabled onSelect={wrapHandler(props.onLayoutConfigure)}>
+          <CommandItem onSelect={wrapHandler(props.onLayoutConfigure)}>
             <Settings className="mr-2 h-4 w-4" />
             <span>Configure</span>
-            <CommandShortcut>⌘C</CommandShortcut>
-          </CommandItem> */}
+            <CommandShortcut>⌃P</CommandShortcut>
+          </CommandItem>
           <CommandItem onSelect={wrapHandler(props.onLayoutAdd)}>
             <Plus className="mr-2 h-4 w-4" />
             <span>Add Pane</span>
@@ -102,8 +102,8 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
       </CommandList>
       <span className="text-xs text-slate-500 ml-3 mr-3 mt-4 mb-2">
         Tip: Press <kbd>⌘</kbd>
-        <kbd>J</kbd> or <kbd>Ctrl</kbd>-<kbd>J</kbd> to open or close this
-        prompt
+        <kbd>J</kbd> or <kbd>Ctrl</kbd>
+        <kbd>J</kbd> to open or close this prompt
       </span>
     </CommandDialog>
   );

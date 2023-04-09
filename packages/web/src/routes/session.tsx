@@ -9,7 +9,7 @@ import { Session, Document } from "@flok-editor/session";
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useLoaderData } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import ConfigureDialog from "@/components/configure-dialog";
+import { ConfigureDialog } from "@/components/configure-dialog";
 import { CommandsButton } from "@/components/commands-button";
 import { ReplsButton } from "@/components/repls-button";
 import { Helmet } from "react-helmet-async";
@@ -115,6 +115,11 @@ export default function SessionPage() {
         e.preventDefault();
         setCommandsDialogOpen((open) => !open);
       }
+
+      if (e.key === "p" && e.ctrlKey) {
+        e.preventDefault();
+        setConfigureDialogOpen((open) => !open);
+      }
     };
 
     document.addEventListener("keydown", down);
@@ -203,6 +208,11 @@ export default function SessionPage() {
     [documents]
   );
 
+  const targetsList = useMemo(
+    () => documents.map((doc) => doc.target),
+    [documents]
+  );
+
   const handleViewLayoutAdd = useCallback(() => {
     if (!session) return;
     const newDocs = [
@@ -224,6 +234,16 @@ export default function SessionPage() {
 
   const handleTargetSelectChange = (document: Document, newTarget: string) => {
     document.target = newTarget;
+  };
+
+  const handleConfigureAccept = (targets: string[]) => {
+    if (!session) return;
+    console.log("New targets:", targets);
+    session.setActiveDocuments(
+      targets
+        .filter((t) => t)
+        .map((target, i) => ({ id: String(i + 1), target }))
+    );
   };
 
   const handleHydraError = (error: string) => {
@@ -256,8 +276,10 @@ export default function SessionPage() {
         onOpenChange={(isOpen) => setUsernameDialogOpen(isOpen)}
       />
       <ConfigureDialog
+        targets={targetsList}
         open={configureDialogOpen}
         onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
+        onAccept={handleConfigureAccept}
       />
       {session && replTargets.length > 0 && (
         <ReplsDialog
