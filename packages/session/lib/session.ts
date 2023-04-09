@@ -126,6 +126,7 @@ export class Session {
 
   setActiveDocuments(items: { id: string; target?: string }[]) {
     const targets = this._yTargets();
+    const oldTargets = Object.fromEntries(targets.entries());
 
     // Remove duplicates on items (duplicate ids) by creating an object/map
     const newTargets = Object.fromEntries(
@@ -136,11 +137,15 @@ export class Session {
     const newIds = Object.keys(newTargets);
     const oldIds = Array.from(targets.keys());
     const toDelete = oldIds.filter((id) => !newIds.includes(id));
-    const toAdd = newIds.filter((id) => !oldIds.includes(id));
+    const toAddOrUpdate = newIds.filter(
+      (id) => !oldIds.includes(id) || oldTargets[id] !== newTargets[id]
+    );
+    debug("toDelete", toDelete);
+    debug("toAddOrUpdate", toAddOrUpdate);
 
     this.yDoc.transact(() => {
       toDelete.forEach((id) => targets.delete(id));
-      toAdd.forEach((id) => targets.set(id, newTargets[id]));
+      toAddOrUpdate.forEach((id) => targets.set(id, newTargets[id]));
     });
   }
 
