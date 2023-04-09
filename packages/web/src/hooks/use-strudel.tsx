@@ -7,8 +7,8 @@ export function useStrudel(
   onError?: (err: unknown) => void
 ) {
   return useWebTarget<StrudelWrapper>(
-    session,
     "strudel",
+    session,
     async () => {
       console.log("Create StrudelWrapper");
       const strudel = new StrudelWrapper({ onError });

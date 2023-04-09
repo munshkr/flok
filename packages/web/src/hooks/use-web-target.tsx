@@ -2,8 +2,8 @@ import type { EvalMessage, Session } from "@flok-editor/session";
 import { useEffect, useState } from "react";
 
 export function useWebTarget<Controller>(
-  session: Session | null,
   target: string,
+  session: Session | null,
   load: () => Promise<Controller | null>,
   {
     deps,

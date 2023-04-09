@@ -1,8 +1,7 @@
 import { useWebTarget } from "@/hooks/use-web-target";
 import { HydraWrapper } from "@/lib/hydra-wrapper";
-import { isWebglSupported } from "@/lib/webgl-detector";
 import type { Session } from "@flok-editor/session";
-import { useMemo, useRef } from "react";
+import { useRef } from "react";
 
 export function useHydra(
   session: Session | null,
@@ -10,11 +9,10 @@ export function useHydra(
   onWarning?: (msg: string) => void
 ) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const hasWebGl = useMemo(() => isWebglSupported(), []);
 
   const webTarget = useWebTarget<HydraWrapper>(
-    session,
     "hydra",
+    session,
     async () => {
       console.log("Create HydraWrapper");
 
@@ -25,8 +23,8 @@ export function useHydra(
       });
     },
     {
-      deps: [hasWebGl, canvasRef],
-      loadIf: ([hasWebGl, canvasRef]) => hasWebGl && canvasRef.current,
+      deps: [canvasRef],
+      loadIf: ([canvasRef]) => canvasRef.current,
       onEval: (instance, { body }) => {
         console.log("eval hydra");
         instance.tryEval(body);

@@ -1,4 +1,5 @@
 import Hydra from "hydra-synth";
+import { isWebglSupported } from "@/lib/webgl-detector.js";
 
 declare global {
   interface Window {
@@ -35,6 +36,11 @@ export class HydraWrapper {
 
   async initialize() {
     if (this.initialized) return;
+
+    if (!isWebglSupported()) {
+      this._onError("WebGL is not supported on this browser.");
+      return;
+    }
 
     // For some reason on Android mobile, Chrome has this object undefined:
     if (!window.navigator.mediaDevices) {

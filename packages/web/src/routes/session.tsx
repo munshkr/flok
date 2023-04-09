@@ -14,14 +14,13 @@ import { CommandsButton } from "@/components/commands-button";
 import { ReplsButton } from "@/components/repls-button";
 import { Helmet } from "react-helmet-async";
 import { isWebglSupported } from "@/lib/webgl-detector";
-import HydraCanvas from "@/components/hydra-canvas";
-import type { HydraWrapper } from "@/lib/hydra-wrapper";
 import { defaultTarget, webTargets } from "@/settings.json";
 import { panicCodes as panicCodesUntyped } from "@/settings.json";
 import { ReplsDialog } from "@/components/repls-dialog";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
 import { useHydra } from "@/hooks/use-hydra";
+import HydraCanvas from "@/components/hydra-canvas";
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -108,14 +107,15 @@ export default function SessionPage() {
 
   // Show a warning if WebGL is not enabled
   useEffect(() => {
-    if (hasWebGl) return;
+    if (!session || hasWebGl) return;
+
     toast({
       variant: "warning",
       title: "WebGL not available",
       description:
         "WebGL is disabled or not supported, so Hydra was not initialized",
     });
-  }, [hasWebGl]);
+  }, [session, hasWebGl]);
 
   useEffect(() => {
     if (!session) return;
