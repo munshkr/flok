@@ -21,6 +21,7 @@ import { panicCodes as panicCodesUntyped } from "@/settings.json";
 import { ReplsDialog } from "@/components/repls-dialog";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
+import { useHydra } from "@/hooks/use-hydra";
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -47,9 +48,6 @@ export default function SessionPage() {
   const [documents, setDocuments] = useState<Document[]>([]);
 
   const hasWebGl = useMemo(() => isWebglSupported(), []);
-
-  const [hydra, setHydra] = useState<HydraWrapper | null>(null);
-  const hydraCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const { toast } = useToast();
 
@@ -110,42 +108,11 @@ export default function SessionPage() {
 
   useStrudel(session, (err) => handleWebError("Strudel", err));
 
-  // Load and initialize Hydra
-  useEffect(() => {
-    if (!session) return;
-
-    if (!hydra && hasWebGl && hydraCanvasRef.current) {
-      (async () => {
-        console.log("Create HydraWrapper");
-        const { HydraWrapper } = await import("@/lib/hydra-wrapper");
-
-        const hydra = new HydraWrapper({
-          canvas: hydraCanvasRef.current!,
-          onError: (e) => handleWebError("Hydra error", e),
-          onWarning: (msg) =>
-            toast({
-              variant: "warning",
-              title: "Hydra warning",
-              description: msg,
-            }),
-        });
-        setHydra(hydra);
-      })();
-    }
-  }, [session, hydraCanvasRef, hydra]);
-
-  useEffect(() => {
-    if (!session || !hydra) return;
-
-    session.on("eval:hydra", ({ body }) => {
-      console.log("eval hydra", body);
-      hydra.tryEval(body);
-    });
-
-    return () => {
-      session.removeAllListeners("eval:hydra");
-    };
-  }, [session, hydra]);
+  const { canvasRef: hydraCanvasRef } = useHydra(
+    session,
+    (err) => handleWebError("Hydra", err),
+    (msg) => handleWebWarning("Hydra", msg)
+  );
 
   useEffect(() => {
     if (hasWebGl) return;
@@ -235,6 +202,15 @@ export default function SessionPage() {
       variant: "destructive",
       title,
       description: <pre className="whitespace-pre-wrap">{String(error)}</pre>,
+    });
+  };
+
+  const handleWebWarning = (title: string, msg: string) => {
+    if (!msg) return;
+    toast({
+      variant: "warning",
+      title,
+      description: msg,
     });
   };
 

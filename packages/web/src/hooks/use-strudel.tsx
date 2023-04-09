@@ -45,4 +45,6 @@ export function useStrudel(
       session.off("eval:strudel", evalHandler);
     };
   }, [session, instance]);
+
+  return { instance };
 }
