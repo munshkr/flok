@@ -20,6 +20,7 @@ import type { StrudelWrapper } from "@/lib/strudel-wrapper";
 import { defaultTarget, webTargets } from "@/settings.json";
 import { panicCodes as panicCodesUntyped } from "@/settings.json";
 import { ReplsDialog } from "@/components/repls-dialog";
+import { useShortcut } from "@/hooks/use-shortcut";
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -109,23 +110,6 @@ export default function SessionPage() {
     return () => newSession.destroy();
   }, [name]);
 
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "j" && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setCommandsDialogOpen((open) => !open);
-      }
-
-      if (e.key === "p" && e.ctrlKey) {
-        e.preventDefault();
-        setConfigureDialogOpen((open) => !open);
-      }
-    };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, []);
-
   // Load and initialize external libraries: Strudel, Hydra
   useEffect(() => {
     if (!session) return;
@@ -208,21 +192,22 @@ export default function SessionPage() {
     store.set("username", username);
   }, [session, username]);
 
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === "." && (e.metaKey || e.ctrlKey) && e.shiftKey) {
-        e.preventDefault();
-        documents.forEach((doc) => {
-          const panicCode = panicCodes[doc.target];
-          if (panicCode) doc.evaluate(panicCode, { from: null, to: null });
-        });
-        toast({ title: "Panic!", duration: 1000 });
-      }
-    };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, [documents]);
+  // Global shortcuts
+  useShortcut(["Control-J", "Meta-J"], () =>
+    setCommandsDialogOpen((open) => !open)
+  );
+  useShortcut(["Control-P"], () => setConfigureDialogOpen((open) => !open));
+  useShortcut(
+    ["Control-Shift-.", "Meta-Shift-."],
+    () => {
+      documents.forEach((doc) => {
+        const panicCode = panicCodes[doc.target];
+        if (panicCode) doc.evaluate(panicCode, { from: null, to: null });
+      });
+      toast({ title: "Panic!", duration: 1000 });
+    },
+    [documents]
+  );
 
   const replTargets = useMemo(
     () =>
