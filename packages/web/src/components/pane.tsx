@@ -38,7 +38,7 @@ export function Pane({
         )}
       />
       <EvaluateButton
-        className="absolute z-10 right-4 bottom-4 md:hidden"
+        className="absolute z-10 right-4 top-6 md:hidden"
         onClick={() => onEvaluateButtonClick(document)}
       />
     </div>
