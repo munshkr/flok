@@ -5,8 +5,8 @@ import { isWebglSupported } from "@/lib/webgl-detector";
 
 export function useHydra(
   session: Session | null,
-  onError: (err: unknown) => void,
-  onWarning: (msg: string) => void
+  onError?: (err: unknown) => void,
+  onWarning?: (msg: string) => void
 ) {
   const [instance, setInstance] = useState<HydraWrapper | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -30,7 +30,7 @@ export function useHydra(
       if (!abort) setInstance(hydra);
     };
 
-    load().catch((err) => onError(err));
+    load().catch((err) => onError && onError(err));
 
     return () => {
       abort = true;

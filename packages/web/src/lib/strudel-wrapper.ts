@@ -15,7 +15,7 @@ export class StrudelWrapper {
   protected _onError: ErrorHandler;
   protected _repl: any;
 
-  constructor({ onError }: { onError: ErrorHandler }) {
+  constructor({ onError }: { onError?: ErrorHandler }) {
     this._onError = onError || (() => {});
   }
 

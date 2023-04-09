@@ -4,7 +4,7 @@ import type { EvalMessage, Session } from "@flok-editor/session";
 
 export function useStrudel(
   session: Session | null,
-  onError: (err: unknown) => void
+  onError?: (err: unknown) => void
 ) {
   const [instance, setInstance] = useState<StrudelWrapper | null>(null);
 
@@ -24,7 +24,7 @@ export function useStrudel(
       if (!abort) setInstance(strudel);
     };
 
-    load().catch((err) => onError(err));
+    load().catch((err) => onError && onError(err));
 
     return () => {
       abort = true;
