@@ -135,7 +135,9 @@ export default function SessionPage() {
         console.log("Create StrudelWrapper");
         const { StrudelWrapper } = await import("@/lib/strudel-wrapper");
 
-        const strudel = new StrudelWrapper({ onError: handleHydraError });
+        const strudel = new StrudelWrapper({
+          onError: (e) => handleWebError("Strudel error", e),
+        });
         setStrudel(strudel);
 
         console.log("Import Strudel modules");
@@ -155,7 +157,7 @@ export default function SessionPage() {
 
         const hydra = new HydraWrapper({
           canvas: hydraCanvasRef.current!,
-          onError: handleHydraError,
+          onError: (e) => handleWebError("Hydra error", e),
         });
         setHydra(hydra);
 
@@ -246,11 +248,11 @@ export default function SessionPage() {
     );
   };
 
-  const handleHydraError = (error: string) => {
+  const handleWebError = (title: string, error: string) => {
     if (!error) return;
     toast({
       variant: "destructive",
-      title: "Hydra error",
+      title,
       description: <pre className="whitespace-pre-wrap">{error}</pre>,
     });
   };
