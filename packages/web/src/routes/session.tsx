@@ -142,11 +142,6 @@ export default function SessionPage() {
 
         console.log("Import Strudel modules");
         await strudel.importModules();
-
-        session.on("eval:strudel", ({ body }) => {
-          console.log("eval strudel", body);
-          strudel.tryEval(body);
-        });
       })();
     }
 
@@ -166,14 +161,35 @@ export default function SessionPage() {
             }),
         });
         setHydra(hydra);
-
-        session.on("eval:hydra", ({ body }) => {
-          console.log("eval hydra", body);
-          hydra.tryEval(body);
-        });
       })();
     }
   }, [session, hydraCanvasRef, hydra, strudel]);
+
+  useEffect(() => {
+    if (!session || !hydra) return;
+
+    session.on("eval:hydra", ({ body }) => {
+      console.log("eval hydra", body);
+      hydra.tryEval(body);
+    });
+
+    return () => {
+      session.removeAllListeners("eval:hydra");
+    };
+  }, [session, hydra]);
+
+  useEffect(() => {
+    if (!session || !strudel) return;
+
+    session.on("eval:strudel", ({ body }) => {
+      console.log("eval strudel", body);
+      strudel.tryEval(body);
+    });
+
+    return () => {
+      session.removeAllListeners("eval:strudel");
+    };
+  }, [session, strudel]);
 
   useEffect(() => {
     if (hasWebGl) return;
