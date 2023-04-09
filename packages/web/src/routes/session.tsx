@@ -158,6 +158,12 @@ export default function SessionPage() {
         const hydra = new HydraWrapper({
           canvas: hydraCanvasRef.current!,
           onError: (e) => handleWebError("Hydra error", e),
+          onWarning: (msg) =>
+            toast({
+              variant: "warning",
+              title: "Hydra warning",
+              description: msg,
+            }),
         });
         setHydra(hydra);
 

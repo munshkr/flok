@@ -17,23 +17,31 @@ export class HydraWrapper {
   protected _canvas: HTMLCanvasElement;
   protected _hydra: any;
   protected _onError: ErrorHandler;
+  protected _onWarning: ErrorHandler;
 
   constructor({
     canvas,
     onError,
+    onWarning,
   }: {
     canvas: HTMLCanvasElement;
     onError?: ErrorHandler;
+    onWarning?: ErrorHandler;
   }) {
     this._canvas = canvas;
     this._onError = onError || (() => {});
+    this._onWarning = onWarning || (() => {});
   }
 
   async initialize() {
     if (this.initialized) return;
 
     // For some reason on Android mobile, Chrome has this object undefined:
-    if (!window.navigator.mediaDevices) return;
+    if (!window.navigator.mediaDevices) {
+      this._onWarning(
+        "navigator.mediaDevices is not defined. You won't be able to use the Webcam or screen capturing."
+      );
+    }
 
     const { P5 } = await import("./p5-wrapper.js");
 
