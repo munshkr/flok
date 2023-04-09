@@ -277,12 +277,16 @@ export default function SessionPage() {
         onAccept={(name) => setUsername(name)}
         onOpenChange={(isOpen) => setUsernameDialogOpen(isOpen)}
       />
-      <ConfigureDialog
-        targets={targetsList}
-        open={configureDialogOpen}
-        onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
-        onAccept={handleConfigureAccept}
-      />
+      {session && (
+        <ConfigureDialog
+          targets={targetsList}
+          sessionUrl={session.wsUrl}
+          sessionName={session.name}
+          open={configureDialogOpen}
+          onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
+          onAccept={handleConfigureAccept}
+        />
+      )}
       {session && replTargets.length > 0 && (
         <ReplsDialog
           targets={replTargets}
