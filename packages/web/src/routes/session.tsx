@@ -106,14 +106,7 @@ export default function SessionPage() {
     return () => newSession.destroy();
   }, [name]);
 
-  useStrudel(session, (err) => handleWebError("Strudel", err));
-
-  const { canvasRef: hydraCanvasRef } = useHydra(
-    session,
-    (err) => handleWebError("Hydra", err),
-    (msg) => handleWebWarning("Hydra", msg)
-  );
-
+  // Show a warning if WebGL is not enabled
   useEffect(() => {
     if (hasWebGl) return;
     toast({
@@ -130,6 +123,14 @@ export default function SessionPage() {
     session.user = username;
     store.set("username", username);
   }, [session, username]);
+
+  // Load external libraries
+  useStrudel(session, (err) => handleWebError("Strudel", err));
+  const { canvasRef: hydraCanvasRef } = useHydra(
+    session,
+    (err) => handleWebError("Hydra", err),
+    (msg) => handleWebWarning("Hydra", msg)
+  );
 
   // Global shortcuts
   useShortcut(["Control-J", "Meta-J"], () =>

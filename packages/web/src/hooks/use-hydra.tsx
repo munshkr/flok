@@ -1,56 +1,39 @@
+import { useWebTarget } from "@/hooks/use-web-target";
 import { HydraWrapper } from "@/lib/hydra-wrapper";
-import type { EvalMessage, Session } from "@flok-editor/session";
-import { useEffect, useState, useRef, useMemo } from "react";
 import { isWebglSupported } from "@/lib/webgl-detector";
+import type { Session } from "@flok-editor/session";
+import { useMemo, useRef } from "react";
 
 export function useHydra(
   session: Session | null,
   onError?: (err: unknown) => void,
   onWarning?: (msg: string) => void
 ) {
-  const [instance, setInstance] = useState<HydraWrapper | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const hasWebGl = useMemo(() => isWebglSupported(), []);
 
-  // Load and initialize external library
-  useEffect(() => {
-    if (!session || instance || !hasWebGl || !canvasRef.current) return;
-
-    let abort = false;
-
-    const load = async () => {
+  const webTarget = useWebTarget<HydraWrapper>(
+    session,
+    "hydra",
+    async () => {
       console.log("Create HydraWrapper");
 
-      const hydra = new HydraWrapper({
+      return new HydraWrapper({
         canvas: canvasRef.current!,
         onError,
         onWarning,
       });
+    },
+    {
+      deps: [hasWebGl, canvasRef],
+      loadIf: ([hasWebGl, canvasRef]) => hasWebGl && canvasRef.current,
+      onEval: (instance, { body }) => {
+        console.log("eval hydra");
+        instance.tryEval(body);
+      },
+      onError,
+    }
+  );
 
-      if (!abort) setInstance(hydra);
-    };
-
-    load().catch((err) => onError && onError(err));
-
-    return () => {
-      abort = true;
-    };
-  }, [session, instance, canvasRef, hasWebGl]);
-
-  // Handle eval messages
-  useEffect(() => {
-    if (!session || !instance) return;
-
-    const evalHandler = ({ body }: EvalMessage) => {
-      console.log("eval hydra", body);
-      instance.tryEval(body);
-    };
-
-    session.on("eval:hydra", evalHandler);
-    return () => {
-      session.off("eval:hydra", evalHandler);
-    };
-  }, [session, instance]);
-
-  return { instance, canvasRef };
+  return { ...webTarget, canvasRef };
 }
