@@ -2,10 +2,11 @@ import { ReactNode, useMemo, cloneElement } from "react";
 import { cn } from "@/lib/utils";
 
 interface MosaicProps {
+  className: string;
   items: ReactNode[];
 }
 
-export function Mosaic({ items }: MosaicProps) {
+export function Mosaic({ className, items }: MosaicProps) {
   const itemsByRows = (items: ReactNode[]) => {
     let rows: ReactNode[][] = [];
 
@@ -47,7 +48,12 @@ export function Mosaic({ items }: MosaicProps) {
   const halfHeight = rows.length > 1;
 
   return (
-    <div className="flex flex-col items-stretch p-1 h-screen gap-1">
+    <div
+      className={cn(
+        "flex flex-col items-stretch p-1 h-screen gap-1",
+        className
+      )}
+    >
       {rows.map((rowItems, i) => (
         <div
           className={cn(

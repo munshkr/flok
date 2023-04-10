@@ -52,6 +52,7 @@ export default function SessionPage() {
   const editorRefs = Array.from({ length: 8 }).map(() =>
     useRef<ReactCodeMirrorRef>(null)
   );
+  const [hidden, setHidden] = useState<boolean>(false);
 
   const hasWebGl = useMemo(() => isWebglSupported(), []);
 
@@ -195,6 +196,9 @@ export default function SessionPage() {
     },
     [documents, ...editorRefs]
   );
+  useShortcut(["Meta-Shift-H", "Control-Shift-H"], () => {
+    setHidden((p) => !p);
+  });
 
   const replTargets = useMemo(
     () =>
@@ -304,6 +308,10 @@ export default function SessionPage() {
         />
       )}
       <Mosaic
+        className={cn(
+          "transition-opacity",
+          hidden ? "opacity-0" : "opacity-100"
+        )}
         items={documents.map((doc, i) => (
           <Pane
             key={doc.id}
@@ -326,7 +334,13 @@ export default function SessionPage() {
       {hasWebGl && hydraCanvasRef && (
         <HydraCanvas ref={hydraCanvasRef} fullscreen />
       )}
-      <div className="fixed top-1 right-1 flex m-1">
+      <div
+        className={cn(
+          "fixed top-1 right-1 flex m-1",
+          "transition-opacity",
+          hidden ? "opacity-0" : "opacity-100"
+        )}
+      >
         {replTargets.length > 0 && (
           <ReplsButton onClick={() => setReplsDialogOpen(true)} />
         )}
