@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react";
-import { EditorView, keymap } from "@codemirror/view";
-import CodeMirror, { ReactCodeMirrorProps } from "@uiw/react-codemirror";
-import { javascript } from "@codemirror/lang-javascript";
-import { python } from "@codemirror/lang-python";
-import { tidal } from "@flok-editor/lang-tidal";
-import { flashField, remoteEvalFlash, evalKeymap } from "@flok-editor/cm-eval";
-import { yCollab } from "y-codemirror.next";
-import { UndoManager } from "yjs";
-import { Prec } from "@codemirror/state";
-import type { Document } from "@flok-editor/session";
 import {
   langByTarget as langByTargetUntyped,
-  targetsWithDocumentEvalMode,
   panicCodes as panicCodesUntyped,
+  targetsWithDocumentEvalMode,
   webTargets,
 } from "@/settings.json";
+import { javascript } from "@codemirror/lang-javascript";
+import { python } from "@codemirror/lang-python";
+import { Prec } from "@codemirror/state";
+import { EditorView, keymap } from "@codemirror/view";
+import { evalKeymap, flashField, remoteEvalFlash } from "@flok-editor/cm-eval";
+import { tidal } from "@flok-editor/lang-tidal";
+import type { Document } from "@flok-editor/session";
+import CodeMirror, {
+  ReactCodeMirrorProps,
+  ReactCodeMirrorRef,
+} from "@uiw/react-codemirror";
+import React, { useEffect, useState } from "react";
+import { yCollab } from "y-codemirror.next";
+import { UndoManager } from "yjs";
 
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
@@ -85,10 +88,6 @@ const panicKeymap = (doc: Document, keys: string[] = ["Cmd-.", "Ctrl-."]) => {
     : [];
 };
 
-export interface EditorProps extends ReactCodeMirrorProps {
-  document?: Document;
-}
-
 const flokSetup = (doc: Document) => {
   const text = doc.getText();
   const undoManager = new UndoManager(text);
@@ -102,39 +101,50 @@ const flokSetup = (doc: Document) => {
     remoteEvalFlash(doc),
     Prec.high(evalKeymap(doc, { defaultMode, web })),
     panicKeymap(doc),
-    yCollab(text, doc.session.awareness, { undoManager, showLocalCaret: true }),
+    yCollab(text, doc.session.awareness, {
+      undoManager,
+      showLocalCaret: true,
+    }),
   ];
 };
 
-function Editor({ document, ...props }: EditorProps) {
-  const [mounted, setMounted] = useState(false);
-
-  const themeName = "dark";
-
-  // useEffect only runs on the client, so now we can safely show the UI
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted || !document) {
-    return null;
-  }
-
-  const language: string = langByTarget[document.target] || defaultLanguage;
-  const languageExtension = langExtensionsByLanguage[language] || javascript;
-
-  return (
-    <CodeMirror
-      value={document.content}
-      theme={themeName}
-      extensions={[baseTheme, flokSetup(document), languageExtension()]}
-      basicSetup={{
-        foldGutter: false,
-        lineNumbers: false,
-      }}
-      {...props}
-    />
-  );
+export interface EditorProps extends ReactCodeMirrorProps {
+  document?: Document;
 }
 
-export default Editor;
+export const Editor = React.forwardRef(
+  (
+    { document, ...props }: EditorProps,
+    ref: React.ForwardedRef<ReactCodeMirrorRef>
+  ) => {
+    const [mounted, setMounted] = useState(false);
+
+    const themeName = "dark";
+
+    // useEffect only runs on the client, so now we can safely show the UI
+    useEffect(() => {
+      setMounted(true);
+    }, []);
+
+    if (!mounted || !document) {
+      return null;
+    }
+
+    const language: string = langByTarget[document.target] || defaultLanguage;
+    const languageExtension = langExtensionsByLanguage[language] || javascript;
+
+    return (
+      <CodeMirror
+        ref={ref}
+        value={document.content}
+        theme={themeName}
+        extensions={[baseTheme, flokSetup(document), languageExtension()]}
+        basicSetup={{
+          foldGutter: false,
+          lineNumbers: false,
+        }}
+        {...props}
+      />
+    );
+  }
+);

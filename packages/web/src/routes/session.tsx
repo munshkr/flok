@@ -1,26 +1,30 @@
+import { CommandsButton } from "@/components/commands-button";
+import { ConfigureDialog } from "@/components/configure-dialog";
+import { Editor } from "@/components/editor";
+import HydraCanvas from "@/components/hydra-canvas";
 import { Mosaic } from "@/components/mosaic";
 import { Pane } from "@/components/pane";
+import { ReplsButton } from "@/components/repls-button";
+import { ReplsDialog } from "@/components/repls-dialog";
 import SessionCommandDialog from "@/components/session-command-dialog";
 import { Toaster } from "@/components/ui/toaster";
-import { useToast } from "@/hooks/use-toast";
 import UsernameDialog from "@/components/username-dialog";
-import { store } from "@/lib/utils";
-import { Session, Document } from "@flok-editor/session";
-import { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { useLoaderData } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
-import { ConfigureDialog } from "@/components/configure-dialog";
-import { CommandsButton } from "@/components/commands-button";
-import { ReplsButton } from "@/components/repls-button";
-import { Helmet } from "react-helmet-async";
-import { isWebglSupported } from "@/lib/webgl-detector";
-import { defaultTarget, webTargets } from "@/settings.json";
-import { panicCodes as panicCodesUntyped } from "@/settings.json";
-import { ReplsDialog } from "@/components/repls-dialog";
+import { useHydra } from "@/hooks/use-hydra";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
-import { useHydra } from "@/hooks/use-hydra";
-import HydraCanvas from "@/components/hydra-canvas";
+import { useToast } from "@/hooks/use-toast";
+import { cn, store, mod } from "@/lib/utils";
+import { isWebglSupported } from "@/lib/webgl-detector";
+import {
+  defaultTarget,
+  panicCodes as panicCodesUntyped,
+  webTargets,
+} from "@/settings.json";
+import { Document, Session } from "@flok-editor/session";
+import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Helmet } from "react-helmet-async";
+import { useLoaderData, useNavigate } from "react-router-dom";
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -45,6 +49,9 @@ export default function SessionPage() {
   const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const editorRefs = Array.from({ length: 8 }).map(() =>
+    useRef<ReactCodeMirrorRef>(null)
+  );
 
   const hasWebGl = useMemo(() => isWebglSupported(), []);
 
@@ -132,6 +139,21 @@ export default function SessionPage() {
     (msg) => handleWebWarning("Hydra", msg)
   );
 
+  const focusEditor = (i: number) => {
+    const ref = editorRefs[i].current;
+    if (!ref) return;
+    const { editor, view } = ref;
+    console.log("focus", i, ref, editor, view);
+    view?.focus();
+  };
+
+  const getFocusedEditorIndex = (): number => {
+    const i = editorRefs.findIndex(
+      (ref) => ref.current && ref.current.view?.hasFocus
+    );
+    return i;
+  };
+
   // Global shortcuts
   useShortcut(["Control-J", "Meta-J"], () =>
     setCommandsDialogOpen((open) => !open)
@@ -147,6 +169,31 @@ export default function SessionPage() {
       toast({ title: "Panic!", duration: 1000 });
     },
     [documents]
+  );
+  Array.from({ length: 8 }).map((_, i) => {
+    useShortcut([`Control-${i}`], () => focusEditor(i - 1), [...editorRefs]);
+  });
+  useShortcut(
+    ["Control-["],
+    () => {
+      const curIndex = getFocusedEditorIndex();
+      if (curIndex < 0) return;
+      const newIndex = mod(curIndex - 1, documents.length);
+      console.log("focusedEditorIndex", curIndex, newIndex);
+      focusEditor(newIndex);
+    },
+    [documents, ...editorRefs]
+  );
+  useShortcut(
+    ["Control-]"],
+    () => {
+      const curIndex = getFocusedEditorIndex();
+      if (curIndex < 0) return;
+      const newIndex = mod(curIndex + 1, documents.length);
+      console.log("focusedEditorIndex", curIndex, newIndex);
+      focusEditor(newIndex);
+    },
+    [documents, ...editorRefs]
   );
 
   const replTargets = useMemo(
@@ -215,6 +262,8 @@ export default function SessionPage() {
     });
   };
 
+  const halfHeight = useMemo(() => documents.length > 2, [documents]);
+
   return (
     <>
       <Helmet>
@@ -259,10 +308,19 @@ export default function SessionPage() {
           <Pane
             key={doc.id}
             document={doc}
-            autoFocus={i == 0}
             onTargetChange={handleTargetSelectChange}
             onEvaluateButtonClick={handleEvaluateButtonClick}
-          />
+          >
+            <Editor
+              ref={editorRefs[i]}
+              document={doc}
+              autoFocus={i === 0}
+              className={cn(
+                "absolute top-6 overflow-auto flex-grow w-full",
+                halfHeight ? "h-[calc(100%-24px)]" : "h-full"
+              )}
+            />
+          </Pane>
         ))}
       />
       {hasWebGl && hydraCanvasRef && (

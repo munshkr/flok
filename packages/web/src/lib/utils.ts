@@ -37,3 +37,7 @@ export const store = {
     localStorage.setItem(key, JSON.stringify(value));
   },
 };
+
+export function mod(n: number, m: number): number {
+  return ((n % m) + m) % m;
+}
