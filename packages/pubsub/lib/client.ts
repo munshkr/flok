@@ -12,7 +12,14 @@ type ClientMessageType =
   | "unsubscribe-all"
   | "state";
 
-type ClientEvent = "open" | "close" | "error" | "message" | `message:${string}`;
+type ClientEvent =
+  | "start"
+  | "stop"
+  | "open"
+  | "close"
+  | "error"
+  | "message"
+  | `message:${string}`;
 
 export class PubSubClient {
   readonly url: string;
@@ -40,6 +47,7 @@ export class PubSubClient {
     if (this._started) return;
     this._connect();
     this._started = true;
+    this._emitter.emit("start");
     debug("started");
   }
 
@@ -49,6 +57,7 @@ export class PubSubClient {
     this._subscriptions.clear();
     this._started = false;
     this._ws = null;
+    this._emitter.emit("stop");
     debug("stopped");
   }
 
