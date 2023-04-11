@@ -21,7 +21,8 @@ type SessionEvent =
   | `eval:${string}`
   | `message:${string}`
   | `change-target:${string}`
-  | "ws:status"
+  | "ws:connect"
+  | "ws:disconnect"
   | "pubsub:start"
   | "pubsub:stop"
   | "pubsub:open"
@@ -81,6 +82,7 @@ export class Session {
 
   _initialized: boolean = false;
   _synced: boolean = false;
+  _wsConnected: boolean = false;
   _user: string;
   _userColor: UserColor;
   _providers: Provider[];
@@ -255,6 +257,14 @@ export class Session {
     return `${schema}://${this.hostname}${this.port ? `:${this.port}` : ""}`;
   }
 
+  get synced() {
+    return this._synced;
+  }
+
+  get wsConnected() {
+    return this._wsConnected;
+  }
+
   _prepareYjs() {
     this.yDoc = new Doc();
     this.awareness = new Awareness(this.yDoc);
@@ -296,7 +306,7 @@ export class Session {
         this.yDoc,
         { awareness: this.awareness }
       );
-      this._wsProvider.on("sync", () => {
+      this._wsProvider.on("synced", () => {
         if (!this._synced) {
           this._synced = true;
           this._emitter.emit("sync");
@@ -304,7 +314,13 @@ export class Session {
         }
       });
       this._wsProvider.on("status", ({ status }) => {
-        this._emitter.emit("status", status);
+        if (status === "connected") {
+          this._wsConnected = true;
+          this._emitter.emit("ws:connect");
+        } else if (status === "disconnected") {
+          this._wsConnected = false;
+          this._emitter.emit("ws:disconnect");
+        }
       });
     }
   }

@@ -9,6 +9,7 @@ import { ReplsDialog } from "@/components/repls-dialog";
 import SessionCommandDialog from "@/components/session-command-dialog";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
+import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { useHydra } from "@/hooks/use-hydra";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
@@ -42,6 +43,8 @@ export default function SessionPage() {
   const navigate = useNavigate();
 
   const [session, setSession] = useState<Session | null>(null);
+  const [pubSubState, setPubSubState] = useState<PubSubState>("disconnected");
+  const [syncState, setSyncState] = useState<SyncState>("syncing");
 
   const [commandsDialogOpen, setCommandsDialogOpen] = useState<boolean>(false);
   const [replsDialogOpen, setReplsDialogOpen] = useState<boolean>(false);
@@ -68,13 +71,21 @@ export default function SessionPage() {
       port: parseInt(port),
       isSecure,
     });
-    setSession(newSession);
 
     // Default documents
     newSession.on("sync", () => {
+      setSyncState(newSession.wsConnected ? "synced" : "partiallySynced");
       if (newSession.getDocuments().length > 0) return;
       console.log("Create a default document");
       newSession.setActiveDocuments([{ id: "1", target: defaultTarget }]);
+    });
+
+    newSession.on("ws:connect", () => {
+      setSyncState(newSession.synced ? "synced" : "partiallySynced");
+    });
+
+    newSession.on("ws:disconnect", () => {
+      setSyncState(newSession.synced ? "partiallySynced" : "syncing");
     });
 
     // If documents change on server, update state
@@ -82,8 +93,17 @@ export default function SessionPage() {
       setDocuments(documents);
     });
 
+    newSession.on("pubsub:start", () => {
+      setPubSubState("connecting");
+    });
+
+    newSession.on("pubsub:stop", () => {
+      setPubSubState("disconnected");
+    });
+
     let connected = true;
     newSession.on("pubsub:open", () => {
+      setPubSubState("connected");
       if (connected) return;
       connected = true;
       toast({
@@ -93,6 +113,7 @@ export default function SessionPage() {
     });
 
     newSession.on("pubsub:close", () => {
+      setPubSubState("connecting");
       if (!connected) return;
       connected = false;
       toast({
@@ -101,6 +122,9 @@ export default function SessionPage() {
         description: "Remote evaluations will be ignored until reconnected.",
       });
     });
+
+    newSession.initialize();
+    setSession(newSession);
 
     // Load and set saved username, if available
     const savedUsername = store.get("username");
@@ -346,6 +370,7 @@ export default function SessionPage() {
         )}
         <CommandsButton onClick={() => setCommandsDialogOpen(true)} />
       </div>
+      <StatusBar pubSubState={pubSubState} syncState={syncState} />
       <Toaster />
     </>
   );
