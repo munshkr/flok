@@ -21,6 +21,7 @@ type SessionEvent =
   | `eval:${string}`
   | `message:${string}`
   | `change-target:${string}`
+  | "ws:status"
   | "pubsub:start"
   | "pubsub:stop"
   | "pubsub:open"
@@ -295,12 +296,15 @@ export class Session {
         this.yDoc,
         { awareness: this.awareness }
       );
-      this._webrtcProvider.on("sync", () => {
+      this._wsProvider.on("sync", () => {
         if (!this._synced) {
           this._synced = true;
           this._emitter.emit("sync");
           debug("Synced first with WebSockets");
         }
+      });
+      this._wsProvider.on("status", ({ status }) => {
+        this._emitter.emit("status", status);
       });
     }
   }
