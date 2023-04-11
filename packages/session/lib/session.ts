@@ -21,6 +21,8 @@ type SessionEvent =
   | `eval:${string}`
   | `message:${string}`
   | `change-target:${string}`
+  | "pubsub:start"
+  | "pubsub:stop"
   | "pubsub:open"
   | "pubsub:close"
   | "pubsub:error";
@@ -76,6 +78,7 @@ export class Session {
   yDoc: Doc;
   awareness: Awareness;
 
+  _initialized: boolean = false;
   _synced: boolean = false;
   _user: string;
   _userColor: UserColor;
@@ -102,9 +105,15 @@ export class Session {
     this._extraSignalingServers = opts?.extraSignalingServers || [];
 
     this._handleObserveSharedTypes = this._handleObserveSharedTypes.bind(this);
+  }
 
+  initialize() {
+    if (this._initialized) return;
     this._prepareYjs();
     this._preparePubSub();
+    this._initialized = true;
+    this._emitter.emit("init");
+    debug("initialized");
   }
 
   get user(): string {
@@ -228,6 +237,7 @@ export class Session {
       this._pubSubClient.removeAllListeners(e)
     );
     this._synced = false;
+    this._initialized = false;
     this._pubSubClient.destroy();
     if (this._wsProvider && this._wsProvider.wsconnected)
       this._wsProvider.destroy();
@@ -297,6 +307,12 @@ export class Session {
 
   _preparePubSub() {
     this._pubSubClient = new PubSubClient({ url: `${this.wsUrl}/pubsub` });
+    this._pubSubClient.on("start", () => {
+      this._emitter.emit("pubsub:start");
+    });
+    this._pubSubClient.on("stop", () => {
+      this._emitter.emit("pubsub:stop");
+    });
     this._pubSubClient.on("error", (err) => {
       debug("error on pubsub", err);
       this._emitter.emit("pubsub:error", err);
