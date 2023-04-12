@@ -14,6 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { ReactElement, cloneElement } from "react";
+import { cn } from "@/lib/utils";
 
 export type PubSubState = "disconnected" | "connected" | "connecting";
 export type SyncState = "syncing" | "synced" | "partiallySynced";
@@ -98,15 +99,22 @@ function SyncIndicator({ state }: { state: SyncState }) {
 }
 
 export function StatusBar({
+  className,
   pubSubState,
   syncState,
 }: {
+  className?: string;
   pubSubState?: PubSubState;
   syncState?: SyncState;
 }) {
   return (
     <TooltipProvider delayDuration={50}>
-      <div className="fixed bottom-0 left-0 z-10 h-6 w-screen p-1 pl-2 pr-2 text-xs flex flex-row">
+      <div
+        className={cn(
+          "fixed bottom-0 left-0 z-10 h-6 w-screen p-1 pl-2 pr-2 text-xs flex flex-row",
+          className
+        )}
+      >
         {pubSubState && (
           <div>
             <PubSubIndicator state={pubSubState} />

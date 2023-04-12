@@ -370,7 +370,14 @@ export default function SessionPage() {
         )}
         <CommandsButton onClick={() => setCommandsDialogOpen(true)} />
       </div>
-      <StatusBar pubSubState={pubSubState} syncState={syncState} />
+      <StatusBar
+        className={cn(
+          "transition-opacity",
+          hidden ? "opacity-0" : "opacity-100"
+        )}
+        pubSubState={pubSubState}
+        syncState={syncState}
+      />
       <Toaster />
     </>
   );
