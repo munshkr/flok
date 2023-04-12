@@ -1,6 +1,6 @@
 {
   "name": "@flok-editor/cm-eval",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.4",
   "description": "CodeMirror 6 extension for code evaluation",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
