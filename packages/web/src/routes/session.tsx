@@ -123,6 +123,18 @@ export default function SessionPage() {
       });
     });
 
+    newSession.on("message", ({ message }) => {
+      const { target, type, body } = message;
+      const content = body.join("\n").trim();
+      if (content) {
+        console.log(
+          `%c${target}` + `%c ${content}`,
+          "font-weight: bold",
+          type === "stderr" ? "color: #ff5f6b" : ""
+        );
+      }
+    });
+
     newSession.initialize();
     setSession(newSession);
 
