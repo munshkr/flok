@@ -21,7 +21,7 @@ export function ReplsInfo({
   if (replTargets.length === 0) return null;
 
   const replCommand =
-    `npx flok-repl -H ${sessionUrl} ` +
+    `npx flok-repl@latest -H ${sessionUrl} ` +
     `-s ${sessionName} ` +
     `-t ${replTargets.join(" ")}`;
 
