@@ -26,6 +26,7 @@ import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import { MessagesPanel } from "@/components/messages-panel";
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -33,9 +34,10 @@ interface SessionLoaderParams {
   name: string;
 }
 
-interface Pane {
+export interface Message {
   target: string;
-  content: string;
+  type: "stdout" | "stderr";
+  body: string[];
 }
 
 export default function SessionPage() {
@@ -45,17 +47,21 @@ export default function SessionPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [pubSubState, setPubSubState] = useState<PubSubState>("disconnected");
   const [syncState, setSyncState] = useState<SyncState>("syncing");
-
   const [commandsDialogOpen, setCommandsDialogOpen] = useState<boolean>(false);
   const [replsDialogOpen, setReplsDialogOpen] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [hidden, setHidden] = useState<boolean>(false);
+  const [messagesPanelExpanded, setMessagesPanelExpanded] =
+    useState<boolean>(true);
+  const [messagesCount, setMessagesCount] = useState<number>(0);
+  const [messages, setMessages] = useState<Message[]>([]);
+
   const editorRefs = Array.from({ length: 8 }).map(() =>
     useRef<ReactCodeMirrorRef>(null)
   );
-  const [hidden, setHidden] = useState<boolean>(false);
 
   const hasWebGl = useMemo(() => isWebglSupported(), []);
 
@@ -91,6 +97,12 @@ export default function SessionPage() {
     // If documents change on server, update state
     newSession.on("change", (documents) => {
       setDocuments(documents);
+    });
+
+    newSession.on("message", ({ message, topic, publisher }) => {
+      console.log("message", message, topic, publisher);
+      setMessages((messages) => [...messages, message as Message]);
+      setMessagesCount((count) => (messagesPanelExpanded ? 0 : count + 1));
     });
 
     newSession.on("pubsub:start", () => {
@@ -382,6 +394,15 @@ export default function SessionPage() {
         )}
         <CommandsButton onClick={() => setCommandsDialogOpen(true)} />
       </div>
+      {messagesPanelExpanded && (
+        <MessagesPanel
+          className={cn(
+            "transition-opacity",
+            hidden || messages.length === 0 ? "opacity-0" : "opacity-100"
+          )}
+          messages={messages}
+        />
+      )}
       <StatusBar
         className={cn(
           "transition-opacity",
@@ -389,6 +410,8 @@ export default function SessionPage() {
         )}
         pubSubState={pubSubState}
         syncState={syncState}
+        messagesCount={messagesCount}
+        onExpandClick={() => setMessagesPanelExpanded(!messagesPanelExpanded)}
       />
       <Toaster />
     </>

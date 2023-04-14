@@ -13,6 +13,11 @@
 
 ::-webkit-scrollbar-thumb {
   border-radius: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-corner {
+  color: transparent;
 }
 
 ::-webkit-scrollbar-track:hover {
@@ -21,4 +26,9 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(51, 65, 85, 70%) !important;
+}
+
+.text-stroke {
+  text-shadow: -1px -1px 0 #000, 0 -1px 0 #000, 1px -1px 0 #000, 1px 0 0 #000,
+    1px 1px 0 #000, 0 1px 0 #000, -1px 1px 0 #000, -1px 0 0 #000;
 }

@@ -22,16 +22,16 @@ export function generateRandomSessionName() {
 }
 
 export const store = {
-  get: (key: string): any | null => {
+  get: (key: string, defaultValue?: any): any | null => {
     const value = localStorage.getItem(key);
     if (value !== null) {
       try {
         return JSON.parse(value);
       } catch (err) {
-        return;
+        return defaultValue;
       }
     }
-    return;
+    return defaultValue;
   },
   set: (key: string, value: any) => {
     localStorage.setItem(key, JSON.stringify(value));

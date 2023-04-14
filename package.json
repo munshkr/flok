@@ -28,5 +28,8 @@
   },
   "workspaces": [
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "react-rnd": "^10.4.1"
+  }
 }
