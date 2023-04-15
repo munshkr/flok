@@ -55,7 +55,7 @@ export function MessagesPanel({
   return (
     <Rnd
       className={cn(
-        "overflow-hidden pl-1 pr-1 pb-2 border border-gray-800 shadow-lg shadow-black/50 text-slate-50 font-mono text-xs bg-black bg-opacity-70 backdrop-blur-xl z-20",
+        "overflow-hidden rounded-md pl-1 pr-1 pb-2 border border-gray-800 shadow-lg shadow-black/50 text-slate-50 font-mono text-xs bg-black bg-opacity-70 backdrop-blur-xl z-20",
         className
       )}
       size={size}
@@ -82,11 +82,11 @@ export function MessagesPanel({
         <div className="messages-header font-bold sticky top-0 cursor-move pb-1">
           Messages
         </div>
-        <ul ref={containerRef} className="h-full overflow-auto">
-          {messages.map(({ target, body, type }) => (
-            <li>
-              {body.map((line) => (
-                <p className={cn(type === "stderr" && "text-red-400")}>
+        <ul ref={containerRef} className="h-[calc(100%-16px)] overflow-auto">
+          {messages.map(({ target, body, type }, i) => (
+            <li key={i}>
+              {body.map((line, j) => (
+                <p key={j} className={cn(type === "stderr" && "text-red-400")}>
                   [{target}] {line}
                 </p>
               ))}

@@ -55,7 +55,7 @@ export default function SessionPage() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
-    useState<boolean>(true);
+    useState<boolean>(false);
   const [messagesCount, setMessagesCount] = useState<number>(0);
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -411,7 +411,10 @@ export default function SessionPage() {
         pubSubState={pubSubState}
         syncState={syncState}
         messagesCount={messagesCount}
-        onExpandClick={() => setMessagesPanelExpanded(!messagesPanelExpanded)}
+        onExpandClick={() => {
+          setMessagesPanelExpanded(!messagesPanelExpanded);
+          setMessagesCount(0);
+        }}
       />
       <Toaster />
     </>

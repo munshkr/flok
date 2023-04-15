@@ -120,11 +120,8 @@ function SyncIndicator({ state }: { state: SyncState }) {
 
 function MessagesPanelToggle({ onClick }: { onClick?: () => void }) {
   return (
-    <button
-      className="bg-black bg-opacity-50 hover:bg-slate-800 hover:bg-opacity-100 rounded-md p-1"
-      onClick={onClick}
-    >
-      <ChevronUp size={14} />
+    <button className="rounded-md p-1" onClick={onClick}>
+      <Mail size={14} />
     </button>
   );
 }
@@ -161,19 +158,14 @@ export function StatusBar({
           </div>
         )}
         <div className="grow" />
-        {messagesCount && messagesCount > 0 ? (
-          <>
-            <div className="ml-2 mr-2 flex flex-row items-center bg-black bg-opacity-50 pl-2 pr-2 rounded-md">
-              <MessagesCounter tooltip="Total unseen messages">
-                <Mail size={14} className="mr-1" />
-                {messagesCount}
-              </MessagesCounter>
-            </div>
-            <div>
-              <MessagesPanelToggle onClick={onExpandClick} />
-            </div>
-          </>
-        ) : null}
+        <div className="flex flex-row items-center bg-black bg-opacity-50 rounded-md">
+          {messagesCount && messagesCount > 0 ? (
+            <MessagesCounter tooltip="Total unseen messages">
+              {messagesCount}
+            </MessagesCounter>
+          ) : null}
+          <MessagesPanelToggle onClick={onExpandClick} />
+        </div>
       </div>
     </TooltipProvider>
   );
