@@ -247,6 +247,9 @@ export default function SessionPage() {
   useShortcut(["Meta-Shift-H", "Control-Shift-H"], () => {
     setHidden((p) => !p);
   });
+  useShortcut(["Control-,", "Meta-,"], () => {
+    setMessagesPanelExpanded((v) => !v);
+  });
 
   const replTargets = useMemo(
     () =>
@@ -412,7 +415,7 @@ export default function SessionPage() {
         syncState={syncState}
         messagesCount={messagesCount}
         onExpandClick={() => {
-          setMessagesPanelExpanded(!messagesPanelExpanded);
+          setMessagesPanelExpanded((v) => !v);
           setMessagesCount(0);
         }}
       />
