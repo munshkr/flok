@@ -2,19 +2,20 @@ import { CommandsButton } from "@/components/commands-button";
 import { ConfigureDialog } from "@/components/configure-dialog";
 import { Editor } from "@/components/editor";
 import HydraCanvas from "@/components/hydra-canvas";
+import { MessagesPanel } from "@/components/messages-panel";
 import { Mosaic } from "@/components/mosaic";
 import { Pane } from "@/components/pane";
 import { ReplsButton } from "@/components/repls-button";
 import { ReplsDialog } from "@/components/repls-dialog";
 import SessionCommandDialog from "@/components/session-command-dialog";
+import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
-import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { useHydra } from "@/hooks/use-hydra";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
 import { useToast } from "@/hooks/use-toast";
-import { cn, store, mod } from "@/lib/utils";
+import { cn, mod, store } from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import {
   defaultTarget,
@@ -26,7 +27,6 @@ import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { MessagesPanel } from "@/components/messages-panel";
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -55,9 +55,12 @@ export default function SessionPage() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
-    useState<boolean>(true);
+    useState<boolean>(false);
   const [messagesCount, setMessagesCount] = useState<number>(0);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [autoShowMessages, setAutoShowMessages] = useState<boolean>(
+    store.get("messages:autoshow", true)
+  );
 
   const editorRefs = Array.from({ length: 8 }).map(() =>
     useRef<ReactCodeMirrorRef>(null)
@@ -179,6 +182,10 @@ export default function SessionPage() {
     session.user = username;
     store.set("username", username);
   }, [session, username]);
+
+  useEffect(() => {
+    if (autoShowMessages && messages.length > 0) setMessagesPanelExpanded(true);
+  }, [messages]);
 
   // Load external libraries
   useStrudel(session, (err) => handleWebError("Strudel", err));
@@ -317,6 +324,11 @@ export default function SessionPage() {
     });
   };
 
+  const handleAutoShowToggleClick = useCallback((pressed: boolean) => {
+    store.set("messages:autoshow", pressed);
+    setAutoShowMessages(pressed);
+  }, []);
+
   const halfHeight = useMemo(() => documents.length > 2, [documents]);
 
   return (
@@ -401,9 +413,11 @@ export default function SessionPage() {
         <MessagesPanel
           className={cn(
             "transition-opacity",
-            hidden || messages.length === 0 ? "opacity-0" : "opacity-100"
+            hidden ? "opacity-0" : "opacity-100"
           )}
           messages={messages}
+          autoShowMessages={autoShowMessages}
+          onAutoShowToggleClick={handleAutoShowToggleClick}
         />
       )}
       <StatusBar

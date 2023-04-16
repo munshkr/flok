@@ -1,17 +1,34 @@
-import { FloatingPanel } from "@/components/ui/floating-panel";
-import { cn } from "@/lib/utils";
+import {
+  FloatingPanel,
+  FloatingPanelProps,
+} from "@/components/ui/floating-panel";
+import { cn, store } from "@/lib/utils";
 import { Message } from "@/routes/session";
-import { useEffect, useMemo, useRef } from "react";
+import {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
+import { FloatingPanelToggle } from "@/components/ui/floating-panel";
+import { View, Repeat } from "lucide-react";
 
 type ExtMessage = Message & { sameTarget: boolean };
+
+interface MessagesPanelProps {
+  className?: string;
+  messages: Message[];
+  autoShowMessages: boolean;
+  onAutoShowToggleClick?: (pressed: boolean) => void;
+}
 
 export function MessagesPanel({
   className,
   messages,
-}: {
-  className?: string;
-  messages: Message[];
-}) {
+  autoShowMessages,
+  onAutoShowToggleClick,
+}: MessagesPanelProps) {
   const containerRef = useRef<HTMLUListElement>(null);
 
   // Scroll container to the end automatically when there are new messages
@@ -37,7 +54,23 @@ export function MessagesPanel({
   }, [messages]);
 
   return (
-    <FloatingPanel id="messages" header="Messages" className={className}>
+    <FloatingPanel
+      id="messages"
+      header="Messages"
+      headerToolbar={
+        <>
+          <FloatingPanelToggle
+            className="p-1 focus:ring-0"
+            tooltip="Auto-show panel when receiving new messages"
+            pressed={autoShowMessages}
+            onPressedChange={onAutoShowToggleClick}
+          >
+            <View size={12} />
+          </FloatingPanelToggle>
+        </>
+      }
+      className={className}
+    >
       <ul ref={containerRef} className="h-[calc(100%-16px)] overflow-auto">
         {messagesPrev.map(({ sameTarget, target, body, type }, i) => (
           <li key={i} className="block">
