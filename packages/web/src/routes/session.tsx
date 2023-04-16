@@ -105,7 +105,7 @@ export default function SessionPage() {
     newSession.on("message", ({ message, topic, publisher }) => {
       console.log("message", message, topic, publisher);
       setMessages((messages) => [...messages, message as Message]);
-      setMessagesCount((count) => (messagesPanelExpanded ? 0 : count + 1));
+      setMessagesCount((count) => count + 1);
     });
 
     newSession.on("pubsub:start", () => {
@@ -182,6 +182,9 @@ export default function SessionPage() {
     session.user = username;
     store.set("username", username);
   }, [session, username]);
+
+  // Reset messages count when panel is expanded (mark all messages as read)
+  useEffect(() => setMessagesCount(0), [messagesPanelExpanded]);
 
   useEffect(() => {
     if (autoShowMessages && messages.length > 0) setMessagesPanelExpanded(true);
@@ -427,10 +430,9 @@ export default function SessionPage() {
         )}
         pubSubState={pubSubState}
         syncState={syncState}
-        messagesCount={messagesCount}
+        messagesCount={messagesPanelExpanded ? 0 : messagesCount}
         onExpandClick={() => {
           setMessagesPanelExpanded((v) => !v);
-          setMessagesCount(0);
         }}
       />
       <Toaster />
