@@ -55,7 +55,7 @@ export default function SessionPage() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
-    useState<boolean>(false);
+    useState<boolean>(true);
   const [messagesCount, setMessagesCount] = useState<number>(0);
   const [messages, setMessages] = useState<Message[]>([]);
 
