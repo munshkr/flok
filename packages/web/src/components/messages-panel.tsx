@@ -1,18 +1,12 @@
-import {
-  FloatingPanel,
-  FloatingPanelProps,
-} from "@/components/ui/floating-panel";
-import { cn, store } from "@/lib/utils";
+import { FloatingPanel } from "@/components/ui/floating-panel";
+import { cn } from "@/lib/utils";
 import { Message } from "@/routes/session";
+import { useEffect, useMemo, useRef } from "react";
 import {
-  MouseEventHandler,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-} from "react";
-import { FloatingPanelToggle } from "@/components/ui/floating-panel";
-import { View, Repeat, EyeOff } from "lucide-react";
+  FloatingPanelButton,
+  FloatingPanelToggle,
+} from "@/components/ui/floating-panel";
+import { View, EyeOff, X } from "lucide-react";
 
 type ExtMessage = Message & { sameTarget: boolean };
 
@@ -23,6 +17,7 @@ interface MessagesPanelProps {
   hideMessagesOnEval: boolean;
   onAutoShowToggleClick?: (pressed: boolean) => void;
   onHideMessagesOnEvalClick?: (pressed: boolean) => void;
+  onClearMessagesClick?: () => void;
 }
 
 export function MessagesPanel({
@@ -32,6 +27,7 @@ export function MessagesPanel({
   hideMessagesOnEval,
   onAutoShowToggleClick,
   onHideMessagesOnEvalClick,
+  onClearMessagesClick,
 }: MessagesPanelProps) {
   const containerRef = useRef<HTMLUListElement>(null);
 
@@ -63,6 +59,7 @@ export function MessagesPanel({
       header="Messages"
       headerToolbar={
         <>
+          <div className="flex-grow"></div>
           <FloatingPanelToggle
             tooltip="Show panel when receiving new messages"
             pressed={autoShowMessages}
@@ -77,6 +74,12 @@ export function MessagesPanel({
           >
             <EyeOff size={16} />
           </FloatingPanelToggle>
+          <FloatingPanelButton
+            tooltip="Clear messages"
+            onClick={onClearMessagesClick}
+          >
+            <X size={12} />
+          </FloatingPanelButton>
         </>
       }
       className={className}

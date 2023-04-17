@@ -16,6 +16,40 @@ import {
   useState,
 } from "react";
 import { Rnd } from "react-rnd";
+import { Button, ButtonProps } from "@/components/ui/button";
+
+export interface FloatingPanelButtonProps extends ButtonProps {
+  tooltip?: string;
+}
+
+export function FloatingPanelButton({
+  children,
+  tooltip,
+  className,
+  ...props
+}: FloatingPanelButtonProps) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          aria-label={tooltip}
+          className={cn("h-4 mt-[1px] p-0.5 mr-1 focus:ring-0", className)}
+          {...props}
+        >
+          {children}
+        </Button>
+      </TooltipTrigger>
+      {tooltip && (
+        <TooltipPortal>
+          <TooltipContent>
+            <p>{tooltip}</p>
+          </TooltipContent>
+        </TooltipPortal>
+      )}
+    </Tooltip>
+  );
+}
 
 export interface FloatingPanelToggleProps extends ToggleProps {
   tooltip?: string;

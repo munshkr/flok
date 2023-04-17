@@ -349,6 +349,11 @@ export default function SessionPage() {
     setHideMessagesOnEval(pressed);
   }, []);
 
+  const handleClearMessagesClick = useCallback(() => {
+    setMessages([]);
+    setMessagesPanelExpanded(false);
+  }, []);
+
   const halfHeight = useMemo(() => documents.length > 2, [documents]);
 
   return (
@@ -440,6 +445,7 @@ export default function SessionPage() {
           hideMessagesOnEval={hideMessagesOnEval}
           onAutoShowToggleClick={handleAutoShowToggleClick}
           onHideMessagesOnEvalClick={handleHideMessagesOnEvalClick}
+          onClearMessagesClick={handleClearMessagesClick}
         />
       )}
       <StatusBar
