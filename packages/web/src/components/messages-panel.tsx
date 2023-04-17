@@ -64,20 +64,18 @@ export function MessagesPanel({
       headerToolbar={
         <>
           <FloatingPanelToggle
-            className="p-1 focus:ring-0"
-            tooltip="Auto-show panel when receiving new messages"
+            tooltip="Show panel when receiving new messages"
             pressed={autoShowMessages}
             onPressedChange={onAutoShowToggleClick}
           >
-            <View size={12} />
+            <View size={16} />
           </FloatingPanelToggle>
           <FloatingPanelToggle
-            className="p-1 focus:ring-0"
             tooltip="Hide panel after evaluation"
             pressed={hideMessagesOnEval}
             onPressedChange={onHideMessagesOnEvalClick}
           >
-            <EyeOff size={12} />
+            <EyeOff size={16} />
           </FloatingPanelToggle>
         </>
       }

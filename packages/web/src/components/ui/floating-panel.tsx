@@ -29,11 +29,12 @@ export function FloatingPanelToggle({
 }: FloatingPanelToggleProps) {
   return (
     <Tooltip>
-      <TooltipTrigger asChild>
+      <TooltipTrigger>
         <Toggle
+          asChild
           variant="outline"
           aria-label={tooltip}
-          className={cn("h-4 ml-4", className)}
+          className={cn("h-4 p-0.5 mr-1", className)}
           {...props}
         >
           {children}
@@ -164,7 +165,7 @@ export function FloatingPanel({
           )}
         >
           <div className="flex flex-row">
-            {header}
+            <span className="mr-2">{header}</span>
             <TooltipProvider delayDuration={100}>
               {headerToolbar}
             </TooltipProvider>
