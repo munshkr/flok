@@ -61,6 +61,9 @@ export default function SessionPage() {
   const [autoShowMessages, setAutoShowMessages] = useState<boolean>(
     store.get("messages:autoshow", true)
   );
+  const [hideMessagesOnEval, setHideMessagesOnEval] = useState<boolean>(
+    store.get("messages:hide-on-eval", true)
+  );
 
   const editorRefs = Array.from({ length: 8 }).map(() =>
     useRef<ReactCodeMirrorRef>(null)
@@ -102,12 +105,6 @@ export default function SessionPage() {
       setDocuments(documents);
     });
 
-    newSession.on("message", ({ message, topic, publisher }) => {
-      console.log("message", message, topic, publisher);
-      setMessages((messages) => [...messages, message as Message]);
-      setMessagesCount((count) => count + 1);
-    });
-
     newSession.on("pubsub:start", () => {
       setPubSubState("connecting");
     });
@@ -136,6 +133,11 @@ export default function SessionPage() {
         title: "Disconnected from server",
         description: "Remote evaluations will be ignored until reconnected.",
       });
+    });
+
+    newSession.on("message", ({ message }) => {
+      setMessages((messages) => [...messages, message as Message]);
+      setMessagesCount((count) => count + 1);
     });
 
     newSession.on("message", ({ message }) => {
@@ -186,9 +188,22 @@ export default function SessionPage() {
   // Reset messages count when panel is expanded (mark all messages as read)
   useEffect(() => setMessagesCount(0), [messagesPanelExpanded]);
 
+  // Show messages panel if autoShowMessages is enabled and there are messages
   useEffect(() => {
     if (autoShowMessages && messages.length > 0) setMessagesPanelExpanded(true);
   }, [messages]);
+
+  // Hide messages panel after evaluation if hideMessagesOnEval is enabled
+  useEffect(() => {
+    if (!session || !hideMessagesOnEval) return;
+
+    const evalHandler = () => {
+      setMessagesPanelExpanded(false);
+    };
+
+    session.on("eval", evalHandler);
+    return () => session.off("eval", evalHandler);
+  }, [session, hideMessagesOnEval]);
 
   // Load external libraries
   useStrudel(session, (err) => handleWebError("Strudel", err));
@@ -328,8 +343,15 @@ export default function SessionPage() {
   };
 
   const handleAutoShowToggleClick = useCallback((pressed: boolean) => {
+    console.log("pressed", pressed);
     store.set("messages:autoshow", pressed);
     setAutoShowMessages(pressed);
+  }, []);
+
+  const handleHideMessagesOnEvalClick = useCallback((pressed: boolean) => {
+    console.log("pressed", pressed);
+    store.set("messages:hide-on-eval", pressed);
+    setHideMessagesOnEval(pressed);
   }, []);
 
   const halfHeight = useMemo(() => documents.length > 2, [documents]);
@@ -420,7 +442,9 @@ export default function SessionPage() {
           )}
           messages={messages}
           autoShowMessages={autoShowMessages}
+          hideMessagesOnEval={hideMessagesOnEval}
           onAutoShowToggleClick={handleAutoShowToggleClick}
+          onHideMessagesOnEvalClick={handleHideMessagesOnEvalClick}
         />
       )}
       <StatusBar

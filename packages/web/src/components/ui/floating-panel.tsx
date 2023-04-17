@@ -29,7 +29,7 @@ export function FloatingPanelToggle({
 }: FloatingPanelToggleProps) {
   return (
     <Tooltip>
-      <TooltipTrigger className="h-full">
+      <TooltipTrigger asChild>
         <Toggle
           variant="outline"
           aria-label={tooltip}

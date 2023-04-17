@@ -7,7 +7,6 @@ import {
   LucideProps,
   HelpCircle,
   Mail,
-  ChevronUp,
 } from "lucide-react";
 import {
   Tooltip,
@@ -17,7 +16,6 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { PropsWithChildren, ReactElement, cloneElement } from "react";
-import { Button } from "./ui/button";
 
 export type PubSubState = "disconnected" | "connected" | "connecting";
 export type SyncState = "syncing" | "synced" | "partiallySynced";

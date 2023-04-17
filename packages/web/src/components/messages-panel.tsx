@@ -12,7 +12,7 @@ import {
   useRef,
 } from "react";
 import { FloatingPanelToggle } from "@/components/ui/floating-panel";
-import { View, Repeat } from "lucide-react";
+import { View, Repeat, EyeOff } from "lucide-react";
 
 type ExtMessage = Message & { sameTarget: boolean };
 
@@ -20,14 +20,18 @@ interface MessagesPanelProps {
   className?: string;
   messages: Message[];
   autoShowMessages: boolean;
+  hideMessagesOnEval: boolean;
   onAutoShowToggleClick?: (pressed: boolean) => void;
+  onHideMessagesOnEvalClick?: (pressed: boolean) => void;
 }
 
 export function MessagesPanel({
   className,
   messages,
   autoShowMessages,
+  hideMessagesOnEval,
   onAutoShowToggleClick,
+  onHideMessagesOnEvalClick,
 }: MessagesPanelProps) {
   const containerRef = useRef<HTMLUListElement>(null);
 
@@ -66,6 +70,14 @@ export function MessagesPanel({
             onPressedChange={onAutoShowToggleClick}
           >
             <View size={12} />
+          </FloatingPanelToggle>
+          <FloatingPanelToggle
+            className="p-1 focus:ring-0"
+            tooltip="Hide panel after evaluation"
+            pressed={hideMessagesOnEval}
+            onPressedChange={onHideMessagesOnEvalClick}
+          >
+            <EyeOff size={12} />
           </FloatingPanelToggle>
         </>
       }
