@@ -55,6 +55,8 @@ export class HydraWrapper {
     window.global = window;
 
     this._hydra = new Hydra({ canvas: this._canvas });
+    window.H = this._hydra;
+
     this.initialized = true;
     console.log("Hydra initialized");
   }
