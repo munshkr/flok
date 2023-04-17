@@ -26,7 +26,6 @@ export function useHydra(
       deps: [canvasRef],
       loadIf: ([canvasRef]) => canvasRef.current,
       onEval: (instance, { body }) => {
-        console.log("eval hydra");
         instance.tryEval(body);
       },
       onError,

@@ -216,8 +216,7 @@ export default function SessionPage() {
   const focusEditor = (i: number) => {
     const ref = editorRefs[i].current;
     if (!ref) return;
-    const { editor, view } = ref;
-    console.log("focus", i, ref, editor, view);
+    const { view } = ref;
     view?.focus();
   };
 
@@ -253,7 +252,6 @@ export default function SessionPage() {
       const curIndex = getFocusedEditorIndex();
       if (curIndex < 0) return;
       const newIndex = mod(curIndex - 1, documents.length);
-      console.log("focusedEditorIndex", curIndex, newIndex);
       focusEditor(newIndex);
     },
     [documents, ...editorRefs]
@@ -264,7 +262,6 @@ export default function SessionPage() {
       const curIndex = getFocusedEditorIndex();
       if (curIndex < 0) return;
       const newIndex = mod(curIndex + 1, documents.length);
-      console.log("focusedEditorIndex", curIndex, newIndex);
       focusEditor(newIndex);
     },
     [documents, ...editorRefs]
@@ -343,13 +340,11 @@ export default function SessionPage() {
   };
 
   const handleAutoShowToggleClick = useCallback((pressed: boolean) => {
-    console.log("pressed", pressed);
     store.set("messages:autoshow", pressed);
     setAutoShowMessages(pressed);
   }, []);
 
   const handleHideMessagesOnEvalClick = useCallback((pressed: boolean) => {
-    console.log("pressed", pressed);
     store.set("messages:hide-on-eval", pressed);
     setHideMessagesOnEval(pressed);
   }, []);

@@ -28,10 +28,7 @@ export function useWebTarget<Controller>(
 
     const _load = async () => {
       const instance = await load();
-      if (!abort && instance) {
-        console.log("web target", instance);
-        setInstance(instance);
-      }
+      if (!abort && instance) setInstance(instance);
     };
 
     _load().catch((err) => onError && onError(err));
