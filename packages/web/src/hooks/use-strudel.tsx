@@ -4,14 +4,15 @@ import { StrudelWrapper } from "@/lib/strudel-wrapper";
 
 export function useStrudel(
   session: Session | null,
-  onError?: (err: unknown) => void
+  onError?: (err: unknown) => void,
+  onWarning?: (msg: string) => void
 ) {
   return useWebTarget<StrudelWrapper>(
     "strudel",
     session,
     async () => {
       console.log("Create StrudelWrapper");
-      const strudel = new StrudelWrapper({ onError });
+      const strudel = new StrudelWrapper({ onError, onWarning });
 
       console.log("Import Strudel modules");
       await strudel.importModules();

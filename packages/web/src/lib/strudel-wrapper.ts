@@ -13,10 +13,18 @@ export class StrudelWrapper {
   initialized: boolean = false;
 
   protected _onError: ErrorHandler;
+  protected _onWarning: ErrorHandler;
   protected _repl: any;
 
-  constructor({ onError }: { onError?: ErrorHandler }) {
+  constructor({
+    onError,
+    onWarning,
+  }: {
+    onError?: ErrorHandler;
+    onWarning?: ErrorHandler;
+  }) {
     this._onError = onError || (() => {});
+    this._onWarning = onWarning || (() => {});
   }
 
   async importModules() {
@@ -33,10 +41,14 @@ export class StrudelWrapper {
       import("@strudel.cycles/xen"),
       controls
     );
-    await samples(
-      "https://strudel.tidalcycles.org/EmuSP12.json",
-      "https://strudel.tidalcycles.org/EmuSP12/"
-    );
+    try {
+      await samples(
+        "https://strudel.tidalcycles.org/EmuSP12.json",
+        "https://strudel.tidalcycles.org/EmuSP12/"
+      );
+    } catch (err) {
+      this._onWarning(`Failed to load default samples EmuSP12: ${err}`);
+    }
   }
 
   async initialize() {

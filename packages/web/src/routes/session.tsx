@@ -206,7 +206,11 @@ export default function SessionPage() {
   }, [session, hideMessagesOnEval]);
 
   // Load external libraries
-  useStrudel(session, (err) => handleWebError("Strudel", err));
+  useStrudel(
+    session,
+    (err) => handleWebError("Strudel", err),
+    (msg) => handleWebWarning("Strudel", msg)
+  );
   const { canvasRef: hydraCanvasRef } = useHydra(
     session,
     (err) => handleWebError("Hydra", err),
