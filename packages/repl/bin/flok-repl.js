@@ -32,6 +32,7 @@ program
   .option("-H, --hub <url>", "Server (or \"hub\") address", "ws://localhost:3000")
   .option("-s, --session-name <name>", "Session name", "default")
   .option("-n, --target-name <name>", "Use the specified target name")
+  .option("-T, --tags <tags...>", "Tags for REPL messages")
   .option("--config <configfile>", "JSON configuration file")
   .option("--extra <options>", "Extra options in JSON")
   .option("--list-types", "List all known types of REPLs")
@@ -50,6 +51,7 @@ const options = [
   "hub",
   "sessionName",
   "targetName",
+  "tags",
   "path",
 ];
 options.forEach(opt => {
@@ -60,6 +62,7 @@ const {
   hub,
   sessionName,
   targetName,
+  tags,
   path: pubSubPath,
 } = config;
 
@@ -126,6 +129,7 @@ types.forEach(type => {
       args: args,
       target,
       session: sessionName,
+      tags,
       hub,
       pubSubPath,
       extraOptions,
@@ -135,6 +139,7 @@ types.forEach(type => {
     replClient = new replClass({
       target,
       session: sessionName,
+      tags,
       hub,
       pubSubPath,
       extraOptions,

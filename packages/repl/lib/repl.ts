@@ -13,6 +13,7 @@ type Message = {
 type BaseREPLContext = {
   target: string;
   session: string;
+  tags: string[];
   hub: string;
   pubSubPath: string;
   extraOptions?: { [option: string]: any };
@@ -26,6 +27,7 @@ type CommandREPLContext = BaseREPLContext & {
 abstract class BaseREPL {
   target: string;
   session: string;
+  tags: string[];
   hub: string;
   pubSubPath: string;
   extraOptions: { [option: string]: any };
@@ -36,10 +38,11 @@ abstract class BaseREPL {
   _buffers: { stdout: string; stderr: string };
 
   constructor(ctx: BaseREPLContext) {
-    const { target, session, hub, pubSubPath, extraOptions } = ctx;
+    const { target, session, tags, hub, pubSubPath, extraOptions } = ctx;
 
     this.target = target || "default";
     this.session = session || "default";
+    this.tags = tags || [];
     this.hub = hub || "ws://localhost:3000";
     this.pubSubPath = pubSubPath || "/pubsub";
     this.extraOptions = extraOptions || {};
@@ -88,10 +91,11 @@ class CommandREPL extends BaseREPL {
   repl: ChildProcess;
 
   constructor(ctx: CommandREPLContext) {
-    const { target, session, hub, pubSubPath, extraOptions } = ctx;
+    const { target, session, tags, hub, pubSubPath, extraOptions } = ctx;
     super({
       target,
       session,
+      tags,
       hub,
       pubSubPath,
       extraOptions,
@@ -139,7 +143,7 @@ class CommandREPL extends BaseREPL {
   }
 
   _handleData(data: any, type: string) {
-    const { target, session } = this;
+    const { target, session, tags } = this;
     const newBuffer = this._buffers[type].concat(data.toString());
     const rawLines = newBuffer.split("\n");
 
@@ -158,6 +162,7 @@ class CommandREPL extends BaseREPL {
         target,
         type,
         body: lines,
+        tags,
       });
     }
   }
