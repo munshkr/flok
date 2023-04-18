@@ -41,11 +41,12 @@ export function ReplsInfo({
         to run on your computer. To run code executed on these targets, you will
         need to run <code>flok-repl</code> on a terminal, like this:
       </p>
-      <div className="flex items-center mt-4 mb-4">
-        <pre className="rounded bg-slate-800 mr-3 p-3 whitespace-pre-wrap">
+      <div className="mt-4 mb-4 relative">
+        <pre className="rounded bg-slate-800 mr-3 p-3 whitespace-pre-wrap w-full">
           {replCommand}
         </pre>
         <Button
+          className="absolute top-3 right-3 dark:hover:bg-slate-700"
           variant="outline"
           onClick={copyToClipboard}
           size="sm"
