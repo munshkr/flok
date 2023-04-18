@@ -8,12 +8,14 @@ interface ReplsInfoProps {
   targets: string[];
   sessionUrl: string;
   sessionName: string;
+  userName: string;
 }
 
 export function ReplsInfo({
   targets,
   sessionUrl,
   sessionName,
+  userName,
 }: ReplsInfoProps) {
   const [copied, setCopied] = useState(false);
 
@@ -21,9 +23,10 @@ export function ReplsInfo({
   if (replTargets.length === 0) return null;
 
   const replCommand =
-    `npx flok-repl@latest -H ${sessionUrl} ` +
-    `-s ${sessionName} ` +
-    `-t ${replTargets.join(" ")}`;
+    `npx flok-repl@latest -H ${sessionUrl} \\\n` +
+    `  -s ${sessionName} \\\n` +
+    `  -t ${replTargets.join(" ")} \\\n` +
+    `  -T user:${userName}`;
 
   const copyToClipboard = () => {
     setCopied(true);

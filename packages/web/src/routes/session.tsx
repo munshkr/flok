@@ -36,6 +36,7 @@ interface SessionLoaderParams {
 
 export interface Message {
   target: string;
+  tags: string[];
   type: "stdout" | "stderr";
   body: string[];
 }
@@ -385,6 +386,7 @@ export default function SessionPage() {
           targets={targetsList}
           sessionUrl={session.wsUrl}
           sessionName={session.name}
+          userName={username}
           open={configureDialogOpen}
           onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
           onAccept={handleConfigureAccept}
@@ -395,6 +397,7 @@ export default function SessionPage() {
           targets={replTargets}
           sessionUrl={session.wsUrl}
           sessionName={session.name}
+          userName={username}
           open={replsDialogOpen}
           onOpenChange={(isOpen) => setReplsDialogOpen(isOpen)}
         />

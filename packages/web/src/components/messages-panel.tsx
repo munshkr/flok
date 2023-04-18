@@ -85,12 +85,19 @@ export function MessagesPanel({
       className={className}
     >
       <ul ref={containerRef} className="h-[calc(100%-16px)] overflow-auto">
-        {messagesPrev.map(({ sameTarget, target, body, type }, i) => (
+        {messagesPrev.map(({ sameTarget, target, body, type, tags }, i) => (
           <li key={i} className="block">
             {!sameTarget && (
-              <p className="rounded-lg bg-gray-900 bg-opacity-20 p-1 mt-1 font-bold">
-                {target}
-              </p>
+              <div className="mt-1 mb-1">
+                {[target, ...tags].map((key) => (
+                  <span
+                    key={key}
+                    className="rounded-lg bg-gray-400 bg-opacity-20 p-1 font-bold"
+                  >
+                    {key}
+                  </span>
+                ))}
+              </div>
             )}
             {body.map((line, j) => (
               <pre key={j} className={cn(type === "stderr" && "text-red-400")}>

@@ -11,12 +11,14 @@ interface ReplsDialogProps extends DialogProps {
   targets: string[];
   sessionUrl: string;
   sessionName: string;
+  userName: string;
 }
 
 export function ReplsDialog({
   targets,
   sessionUrl,
   sessionName,
+  userName,
   ...props
 }: ReplsDialogProps) {
   return (
@@ -28,6 +30,7 @@ export function ReplsDialog({
             targets={targets}
             sessionName={sessionName}
             sessionUrl={sessionUrl}
+            userName={userName}
           />
         </DialogHeader>
       </DialogContent>
