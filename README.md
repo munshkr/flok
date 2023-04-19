@@ -2,9 +2,6 @@
 
 Web-based P2P collaborative editor for live coding music and graphics
 
-**NOTE: This branch is for the next major version of Flok v1.0, which is meant
-to be a full rewrite/refactor. Work in progress**
-
 ## Packages
 
 ### App packages
@@ -22,6 +19,8 @@ to be a full rewrite/refactor. Work in progress**
 * [`@flok-editor/server-middleware`](packages/server-middleware): Server middleware for
   Flok, handles WebSocket connections and WebRTC signaling
 * [`@flok-editor/cm-eval`](packages/cm-eval): CodeMirror 6 extension for code evaluation
+* [`@flok-editor/lang-tidal`](packages/lang-tidal): TidalCycles language support
+  for CodeMirror 6
 
 ### Examples
 
