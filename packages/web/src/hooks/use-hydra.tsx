@@ -16,11 +16,15 @@ export function useHydra(
     async () => {
       console.log("Create HydraWrapper");
 
-      return new HydraWrapper({
+      const hydra = new HydraWrapper({
         canvas: canvasRef.current!,
         onError,
         onWarning,
       });
+
+      hydra.initialize();
+
+      return hydra;
     },
     {
       deps: [canvasRef],
