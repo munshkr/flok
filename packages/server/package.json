@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@flok-editor/server-middleware": "^1.0.0-alpha.4",
+    "commander": "^10.0.1",
     "debug": "^4.3.4",
     "lib0": "^0.2.63",
     "y-protocols": "^1.0.5",
