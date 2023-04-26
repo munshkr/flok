@@ -82,3 +82,5 @@ session.on("sync", () => {
   // Create editors for each document
   session.getDocuments().map(doc => createEditor(doc))
 })
+
+session.initialize();
