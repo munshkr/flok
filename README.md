@@ -5,7 +5,9 @@
 
 Web-based P2P collaborative editor for live coding music and graphics
 
-*Work in progress*
+**New version v1.0 in the works. Visit branch [`flok-next`](https://github.com/munshkr/flok/tree/flok-next) for more info!**
+
+**Check out the new version (still WIP!) online here: https://next.flok.cc/**
 
 
 ## Features
