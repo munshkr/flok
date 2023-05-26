@@ -10,7 +10,7 @@ class SardineREPL extends CommandREPL {
 
   commandPath(): string {
     const { python } = this.extraOptions;
-    return python || 'fishery';
+    return python || 'sardine';
   }
 }
 
