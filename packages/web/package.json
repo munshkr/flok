@@ -65,7 +65,7 @@
     "tailwind-merge": "^1.10.0",
     "tailwindcss-animate": "^1.0.5",
     "unique-names-generator": "^4.7.1",
-    "y-codemirror.next": "github:munshkr/y-codemirror.next#show-local-caret",
+    "y-codemirror.next": "github:munshkr/y-codemirror.next#450e741154c41ce0bbf7181e74e54a80b5b46b2f",
     "y-indexeddb": "^9.0.9",
     "y-protocols": "^1.0.5",
     "y-webrtc": "^10.2.5",
