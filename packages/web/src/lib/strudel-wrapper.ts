@@ -1,13 +1,22 @@
 import { EvalMessage } from "@flok-editor/session";
-import { repl, controls, evalScope, stack } from "@strudel.cycles/core";
-import { evaluate } from "@strudel.cycles/transpiler";
-import { transpiler } from "@strudel.cycles/transpiler";
+import {
+  repl,
+  controls,
+  evalScope,
+  stack,
+  noteToMidi,
+  Pattern,
+  valueToMidi,
+} from "@strudel.cycles/core";
+import { evaluate, transpiler } from "@strudel.cycles/transpiler";
 import {
   getAudioContext,
   initAudioOnFirstClick,
   webaudioOutput,
   samples,
+  registerSynthSounds,
 } from "@strudel.cycles/webaudio";
+import { registerSoundfonts } from "@strudel.cycles/soundfonts";
 
 export type ErrorHandler = (error: string) => void;
 
@@ -38,18 +47,19 @@ export class StrudelWrapper {
       import("@strudel.cycles/core"),
       import("@strudel.cycles/midi"),
       import("@strudel.cycles/mini"),
+      import("@strudel.cycles/tonal"),
       import("@strudel.cycles/osc"),
       import("@strudel.cycles/serial"),
-      import("@strudel.cycles/tonal"),
+      import("@strudel.cycles/soundfonts"),
       import("@strudel.cycles/webaudio"),
-      import("@strudel.cycles/xen"),
       controls
     );
     try {
-      await samples(
-        "https://strudel.cc/EmuSP12.json",
-        "https://strudel.cc/EmuSP12/"
-      );
+      await Promise.all([
+        loadSamples(),
+        registerSynthSounds(),
+        registerSoundfonts(),
+      ]);
     } catch (err) {
       this._onWarning(`Failed to load default samples EmuSP12: ${err}`);
     }
@@ -84,3 +94,30 @@ export class StrudelWrapper {
     }
   }
 }
+
+async function loadSamples() {
+  const ds = "https://raw.githubusercontent.com/felixroos/dough-samples/main/";
+  return Promise.all([
+    samples(`${ds}/tidal-drum-machines.json`),
+    samples(`${ds}/piano.json`),
+    samples(`${ds}/Dirt-Samples.json`),
+    samples(`${ds}/EmuSP12.json`),
+    samples(`${ds}/vcsl.json`),
+  ]);
+}
+
+// this is a little bit awkward but the piano function has to be duplicated here..
+const maxPan = noteToMidi("C8");
+const panwidth = (pan: any, width: any) => pan * width + (1 - width) / 2;
+
+Pattern.prototype.piano = function () {
+  return this.fmap((v: any) => ({ ...v, clip: v.clip ?? 1 })) // set clip if not already set..
+    .s("piano")
+    .release(0.1)
+    .fmap((value: any) => {
+      const midi = valueToMidi(value);
+      // pan by pitch
+      const pan = panwidth(Math.min(Math.round(midi) / maxPan, 1), 0.5);
+      return { ...value, pan: (value.pan || 1) * pan };
+    });
+};
