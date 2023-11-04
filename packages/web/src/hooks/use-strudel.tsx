@@ -12,7 +12,7 @@ export function useStrudel(
     session,
     async () => {
       console.log("Create StrudelWrapper");
-      const strudel = new StrudelWrapper({ onError, onWarning });
+      const strudel = new StrudelWrapper({ onError, onWarning, session });
 
       console.log("Import Strudel modules");
       await strudel.importModules();
@@ -20,7 +20,7 @@ export function useStrudel(
       return strudel;
     },
     {
-      onEval: (instance, { body }) => instance.tryEval(body),
+      onEval: (instance, msg) => instance.tryEval(msg),
       onError,
     }
   );
