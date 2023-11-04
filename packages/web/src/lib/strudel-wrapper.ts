@@ -1,4 +1,4 @@
-import { EvalMessage, Session } from "@flok-editor/session";
+import { EvalMessage } from "@flok-editor/session";
 import { repl, controls, evalScope, stack } from "@strudel.cycles/core";
 import { evaluate } from "@strudel.cycles/transpiler";
 import { transpiler } from "@strudel.cycles/transpiler";
@@ -17,19 +17,15 @@ export class StrudelWrapper {
   protected _onError: ErrorHandler;
   protected _onWarning: ErrorHandler;
   protected _repl: any;
-  protected _session: Session | null;
   protected _docPatterns: any;
 
   constructor({
     onError,
     onWarning,
-    session,
   }: {
     onError?: ErrorHandler;
     onWarning?: ErrorHandler;
-    session: Session | null;
   }) {
-    this._session = session;
     this._docPatterns = {};
     this._onError = onError || (() => {});
     this._onWarning = onWarning || (() => {});
