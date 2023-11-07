@@ -43,8 +43,8 @@ export class StrudelWrapper {
     );
     try {
       await samples(
-        "https://strudel.tidalcycles.org/EmuSP12.json",
-        "https://strudel.tidalcycles.org/EmuSP12/"
+        "https://strudel.cc/EmuSP12.json",
+        "https://strudel.cc/EmuSP12/"
       );
     } catch (err) {
       this._onWarning(`Failed to load default samples EmuSP12: ${err}`);
