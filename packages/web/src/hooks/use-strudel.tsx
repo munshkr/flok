@@ -20,7 +20,7 @@ export function useStrudel(
       return strudel;
     },
     {
-      onEval: (instance, { body }) => instance.tryEval(body),
+      onEval: (instance, msg) => instance.tryEval(msg),
       onError,
     }
   );

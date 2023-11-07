@@ -1,4 +1,6 @@
-import { repl, controls, evalScope } from "@strudel.cycles/core";
+import { EvalMessage } from "@flok-editor/session";
+import { repl, controls, evalScope, stack } from "@strudel.cycles/core";
+import { evaluate } from "@strudel.cycles/transpiler";
 import { transpiler } from "@strudel.cycles/transpiler";
 import {
   getAudioContext,
@@ -15,6 +17,7 @@ export class StrudelWrapper {
   protected _onError: ErrorHandler;
   protected _onWarning: ErrorHandler;
   protected _repl: any;
+  protected _docPatterns: any;
 
   constructor({
     onError,
@@ -23,6 +26,7 @@ export class StrudelWrapper {
     onError?: ErrorHandler;
     onWarning?: ErrorHandler;
   }) {
+    this._docPatterns = {};
     this._onError = onError || (() => {});
     this._onWarning = onWarning || (() => {});
   }
@@ -63,14 +67,16 @@ export class StrudelWrapper {
     });
 
     this.initialized = true;
-    console.log("Strudel initialized");
   }
 
-  async tryEval(code: string) {
+  async tryEval(msg: EvalMessage) {
     if (!this.initialized) await this.initialize();
-
     try {
-      await this._repl.evaluate(code);
+      const { body: code, docId } = msg;
+      const { pattern } = await evaluate(code);
+      this._docPatterns[docId] = pattern;
+      const allPatterns = stack(...Object.values(this._docPatterns));
+      await this._repl.scheduler.setPattern(allPatterns, true);
       this._onError("");
     } catch (err) {
       console.error(err);
