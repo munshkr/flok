@@ -14,6 +14,7 @@ import UsernameDialog from "@/components/username-dialog";
 import { useHydra } from "@/hooks/use-hydra";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
+import { useMercury } from "@/hooks/use-mercury";
 import { useToast } from "@/hooks/use-toast";
 import { cn, mod, store } from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
@@ -212,6 +213,11 @@ export default function SessionPage() {
     (err) => handleWebError("Strudel", err),
     (msg) => handleWebWarning("Strudel", msg)
   );
+  useMercury(
+    session,
+    (err) => handleWebError("Mercury", err),
+    (msg) => handleWebWarning("Mercury", msg)
+  )
   const { canvasRef: hydraCanvasRef } = useHydra(
     session,
     (err) => handleWebError("Hydra", err),

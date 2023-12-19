@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
 import path from "path";
 import Unfonts from "unplugin-fonts/vite";
+import vitePluginRequire from "vite-plugin-require";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,6 +13,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    vitePluginRequire.default(),
     nodePolyfills({
       // Whether to polyfill `node:` protocol imports.
       protocolImports: true,
