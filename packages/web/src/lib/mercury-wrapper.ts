@@ -39,8 +39,14 @@ export class MercuryWrapper {
     if (!this.initialized) await this.initialize();
 
     try {
-      this._repl.code(code);
+      let parse = this._repl.code(code);
       this._onError('');
+
+      if (parse.errors.length > 0){
+        console.log(parse.errors);
+        // print the first error that needs fixing
+        this._onError(`${parse.errors[0]}`);
+      }
     } catch (error) {
       console.error(error);
       this._onError(`${error}`);
