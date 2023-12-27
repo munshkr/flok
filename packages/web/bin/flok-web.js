@@ -2,7 +2,7 @@
 
 const program = require("commander");
 const packageInfo = require("../package.json");
-const { Server } = require("../index");
+const Server = require("../lib/Server");
 const { networkInterfaces } = require("os");
 
 const getPossibleIpAddresses = () => {
