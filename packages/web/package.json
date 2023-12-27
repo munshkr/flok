@@ -49,7 +49,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.3.0",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@teamwork/websocket-json-stream": "^2.0.0",
-    "@types/react": "^16.9.19",
+    "@types/react": "^18.1.0",
     "codemirror": "^5.51.0",
     "core-js": "^2.6.11",
     "eslint": "7.32.0",
