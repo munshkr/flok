@@ -27,29 +27,36 @@ export class MercuryWrapper {
   async initialize() {
     if (this.initialized) { return; }
 
+    // set initialized to true only when samples are loaded
     this._repl = new Mercury({
-      onload: () => { console.log('Mercury loaded') },
-      onmidi: () => { console.log('MIDI Devices ready') }
+      onload: () => { 
+        this._onWarning(`Mercury ready!`);
+        // console.log('Mercury loaded');
+        this.initialized = true;
+      },
+      onmidi: () => { console.log('MIDI devices ready') }
     });
-
-    this.initialized = true;
   }
 
   async tryEval(code: string) {
-    if (!this.initialized) await this.initialize();
-
-    try {
-      let parse = this._repl.code(code);
-      this._onError('');
-
-      if (parse.errors.length > 0){
-        console.log(parse.errors);
-        // print the first error that needs fixing
-        this._onError(`${parse.errors[0]}`);
+    // if (!this.initialized) await this.initialize();
+    if (!this.initialized){
+      this._onWarning(`Engine still loading`);
+      this.initialize();
+    } else {
+      try {
+        let parse = this._repl.code(code);
+        this._onError('');
+  
+        if (parse.errors.length > 0){
+          console.log(parse.errors);
+          // print the first error that needs fixing
+          this._onError(`${parse.errors[0]}`);
+        }
+      } catch (error) {
+        console.error(error);
+        this._onError(`${error}`);
       }
-    } catch (error) {
-      console.error(error);
-      this._onError(`${error}`);
     }
   }
 }

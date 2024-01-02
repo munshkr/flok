@@ -27,7 +27,7 @@
     "remote_sclang": "CmdPeriod.run",
     "foxdot": "Clock.clear()",
     "mercury": "silence",
-    "mercury-web": "silence",
+    "mercury-web": " ",
     "hydra": "hush()",
     "strudel": "\"~\".out()",
     "sardine": "panic()"
