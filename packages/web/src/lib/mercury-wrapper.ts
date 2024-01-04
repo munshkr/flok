@@ -1,6 +1,6 @@
-// import { EvalMessage } from "@flok-editor/session";
-const { Mercury } = require('mercury-engine');
-// import Mercury from "mercury-engine?worker&inline";
+
+import { Mercury } from "mercury-engine";
+// const { Mercury } = require('mercury-engine');
 
 export type ErrorHandler = (error: string) => void;
 
@@ -48,10 +48,10 @@ export class MercuryWrapper {
         let parse = this._repl.code(code);
         this._onError('');
   
-        if (parse.errors.length > 0){
+        if (parse.errors){
           console.log(parse.errors);
           // print the first error that needs fixing
-          this._onError(`${parse.errors[0]}`);
+          this._onError(`${parse.errors}`);
         }
       } catch (error) {
         console.error(error);

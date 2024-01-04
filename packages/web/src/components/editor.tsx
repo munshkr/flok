@@ -72,7 +72,7 @@ const baseTheme = EditorView.baseTheme({
   },
 });
 
-const panicKeymap = (doc: Document, keys: string[] = ["Cmd-.", "Ctrl-."]) => {
+const panicKeymap = (doc: Document, keys: string[] = ["Cmd-.", "Ctrl-.", "Alt-."]) => {
   const panicCode = panicCodes[doc.target];
 
   return panicCode

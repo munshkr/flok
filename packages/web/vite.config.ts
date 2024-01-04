@@ -13,7 +13,8 @@ export default defineConfig({
     },
   },
   plugins: [
-    vitePluginRequire.default(),
+    // process.env.NODE_ENV !== "development" ? vitePluginRequire.default() : null,
+    // vitePluginRequire.default(),
     nodePolyfills({
       // Whether to polyfill `node:` protocol imports.
       protocolImports: true,
