@@ -9,6 +9,7 @@ export class MercuryWrapper {
   protected _onError: ErrorHandler;
   protected _onWarning: ErrorHandler;
   protected _repl: any;
+  protected _code: any;
   // protected _docPatterns: any;
 
   constructor({
@@ -32,12 +33,17 @@ export class MercuryWrapper {
         this._onWarning(`Mercury ready!`);
         // console.log('Mercury loaded');
         this.initialized = true;
+        // retry the evaluation
+        this.tryEval(this._code);
       },
       onmidi: () => { console.log('MIDI devices ready') }
     });
   }
 
   async tryEval(code: string) {
+    // store the code for retrying evaluation
+    this._code = code;
+    
     // if (!this.initialized) await this.initialize();
     if (!this.initialized){
       this._onWarning(`Engine still loading`);
