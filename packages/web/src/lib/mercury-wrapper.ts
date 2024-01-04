@@ -1,6 +1,5 @@
 
 import { Mercury } from "mercury-engine";
-// const { Mercury } = require('mercury-engine');
 
 export type ErrorHandler = (error: string) => void;
 
