@@ -50,6 +50,7 @@ export default defineConfig({
             "@codemirror/view",
           ],
           hydra: ["hydra-synth"],
+          mercury: ["mercury-engine"],
         },
       },
     },
