@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { webTargets } from "@/settings.json";
+import { webTargets, replVersion } from "@/settings.json";
 
 interface ReplsInfoProps {
   targets: string[];
@@ -23,7 +23,7 @@ export function ReplsInfo({
   if (replTargets.length === 0) return null;
 
   const replCommand =
-    `npx flok-repl@latest -H ${sessionUrl} \\\n` +
+    `npx flok-repl@${replVersion} -H ${sessionUrl} \\\n` +
     `  -s ${sessionName} \\\n` +
     `  -t ${replTargets.join(" ")} \\\n` +
     `  -T user:${userName}`;
