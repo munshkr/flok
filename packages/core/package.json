@@ -1,7 +1,7 @@
 {
   "name": "flok-core",
   "description": "Core package of flok, contains Pub/Sub functionality and CLI-based client",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "main": "./lib/index.js",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",

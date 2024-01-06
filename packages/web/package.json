@@ -1,7 +1,7 @@
 {
   "name": "flok-web",
   "description": "Web server for Flok",
-  "version": "0.4.11",
+  "version": "0.4.12",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0",
   "scripts": {
@@ -30,7 +30,7 @@
     "commander": "^2.20.0",
     "cross-env": "^7.0.0",
     "express": "^4.17.1",
-    "flok-core": "^0.4.11",
+    "flok-core": "^0.4.12",
     "lib0": "^0.2.26",
     "next": "12",
     "normalize.css": "^8.0.1",
