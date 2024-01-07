@@ -242,7 +242,9 @@ export default function SessionPage() {
   useShortcut(["Control-J", "Meta-J"], () =>
     setCommandsDialogOpen((open) => !open)
   );
-  useShortcut(["Control-P"], () => setConfigureDialogOpen((open) => !open));
+  useShortcut(["Control-P", "Meta-P"], () =>
+    setConfigureDialogOpen((open) => !open)
+  );
   useShortcut(
     ["Control-Shift-.", "Meta-Shift-."],
     () => {
