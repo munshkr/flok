@@ -17,7 +17,7 @@ import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
 import { useToast } from "@/hooks/use-toast";
-import { cn, mod, store } from "@/lib/utils";
+import { cn, generateRandomUserName, mod, store } from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import {
   defaultTarget,
@@ -171,11 +171,17 @@ export default function SessionPage() {
     setSession(newSession);
 
     // Load and set saved username, if available
-    const savedUsername = query.get("username") || store.get("username");
-    if (!savedUsername) {
-      setUsernameDialogOpen(true);
+    // If read only is enabled, use a random username
+    const readOnly = !!query.get("readOnly");
+    if (readOnly) {
+      setUsername(generateRandomUserName());
     } else {
-      setUsername(savedUsername);
+      const savedUsername = query.get("username") || store.get("username");
+      if (!savedUsername) {
+        setUsernameDialogOpen(true);
+      } else {
+        setUsername(savedUsername);
+      }
     }
 
     return () => newSession.destroy();
@@ -197,7 +203,10 @@ export default function SessionPage() {
     if (!session) return;
     console.log(`Setting user on session to '${username}'`);
     session.user = username;
-    store.set("username", username);
+    // Store username in local storage only if it's not random (read only mode)
+    if (!query.get("readOnly")) {
+      store.set("username", username);
+    }
   }, [session, username]);
 
   // Reset messages count when panel is expanded (mark all messages as read)
