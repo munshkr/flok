@@ -50,7 +50,7 @@ export function Mosaic({ className, items }: MosaicProps) {
   return (
     <div
       className={cn(
-        "flex flex-col items-stretch p-1 h-screen gap-1",
+        "flex flex-col items-stretch p-1 h-screen gap-1 overflow-hidden",
         className
       )}
     >
