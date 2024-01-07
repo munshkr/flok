@@ -54,7 +54,14 @@ export class HydraWrapper {
     window.P5 = P5;
     window.global = window;
 
-    this._hydra = new Hydra({ canvas: this._canvas });
+    try {
+      this._hydra = new Hydra({ canvas: this._canvas });
+    } catch (error) {
+      console.error(error);
+      this._onError(`${error}`);
+      return;
+    }
+
     window.H = this._hydra;
 
     this.initialized = true;
