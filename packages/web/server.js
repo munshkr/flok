@@ -1,8 +1,10 @@
 import withFlokServer from "@flok-editor/server-middleware";
 import express from "express";
+import fs from "fs";
+import http from "http";
+import https from "https";
 import { networkInterfaces } from "os";
 import pc from "picocolors";
-import http from "http";
 import process from "process";
 import ViteExpress from "vite-express";
 
@@ -17,7 +19,6 @@ function info(msg) {
 
 export async function startServer({ onReady, staticDir, ...opts }) {
   try {
-
     const app = express();
 
     if (staticDir) {
@@ -25,7 +26,16 @@ export async function startServer({ onReady, staticDir, ...opts }) {
       app.use(express.static(staticDir))
     }
 
-    const viteServer = http.createServer(app);
+    let viteServer;
+    if (opts.secure) {
+      info(`Using SSL certificate at ${pc.gray(opts.sslCert)} (key at ${pc.gray(opts.sslKey)})`)
+      const key = fs.readFileSync(opts.sslKey);
+      const cert = fs.readFileSync(opts.sslCert);
+      viteServer = https.createServer({ key, cert }, app);
+    } else {
+      viteServer = http.createServer(app);
+    }
+
     ViteExpress.config({ vitePort: opts.port });
     ViteExpress.bind(app, viteServer);
 
@@ -33,14 +43,16 @@ export async function startServer({ onReady, staticDir, ...opts }) {
 
     server.listen(opts.port, onReady || (() => {
       const netResults = getPossibleIpAddresses();
+      const schema = opts.secure ? "https" : "http";
+      info(`Listening on ${schema}://localhost:${opts.port}`);
       if (netResults.length > 1) {
         info("If on LAN, try sharing with your friends one of these URLs:");
         Object.entries(netResults).map(([k, v]) => {
-          info(`\t${k}: http://${v}:${opts.port}`);
+          info(`\t${k}: ${schema}://${v}:${opts.port}`);
         });
       } else {
         info(
-          `If on LAN, try sharing with your friends http://${Object.values(netResults)[0]}:${opts.port}`);
+          `If on LAN, try sharing with your friends ${schema}://${Object.values(netResults)[0]}:${opts.port}`);
       }
     }))
   } catch (err) {
