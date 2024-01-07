@@ -12,14 +12,16 @@ import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
 import { useHydra } from "@/hooks/use-hydra";
+import { useMercury } from "@/hooks/use-mercury";
+import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
-import { useMercury } from "@/hooks/use-mercury";
 import { useToast } from "@/hooks/use-toast";
 import { cn, mod, store } from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import {
   defaultTarget,
+  knownTargets,
   panicCodes as panicCodesUntyped,
   webTargets,
 } from "@/settings.json";
@@ -28,7 +30,6 @@ import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import { useQuery } from "@/hooks/use-query";
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -92,9 +93,18 @@ export default function SessionPage() {
     // Default documents
     newSession.on("sync", () => {
       setSyncState(newSession.wsConnected ? "synced" : "partiallySynced");
-      // If session is empty, show configure dialog
+
+      // If session is empty, first try to get list of targets from query parameter "targets".
+      // If parameter is not present or has no valid targets, show the configure dialog.
       if (newSession.getDocuments().length === 0) {
-        setConfigureDialogOpen(true);
+        const targets = query.get("targets")?.split(",") || [];
+        const validTargets = targets.filter((t) => knownTargets.includes(t));
+        console.log("TARGETS", targets, "VALID_TARGETS", validTargets);
+        if (validTargets.length > 0) {
+          setActiveDocuments(newSession, validTargets);
+        } else {
+          setConfigureDialogOpen(true);
+        }
       }
     });
 
@@ -331,6 +341,10 @@ export default function SessionPage() {
 
   const handleConfigureAccept = (targets: string[]) => {
     if (!session) return;
+    setActiveDocuments(session, targets);
+  };
+
+  const setActiveDocuments = (session: Session, targets: string[]) => {
     session.setActiveDocuments(
       targets
         .filter((t) => t)
