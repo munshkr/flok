@@ -39,6 +39,7 @@ function TargetsInput(props: InputProps) {
 }
 
 interface ConfigureDialogProps extends DialogProps {
+  isWelcome: boolean;
   targets: string[];
   sessionName: string;
   sessionUrl: string;
@@ -46,7 +47,10 @@ interface ConfigureDialogProps extends DialogProps {
   onAccept?: (targets: string[]) => void;
 }
 
+const defaultTarget = "hydra";
+
 export function ConfigureDialog({
+  isWelcome,
   targets,
   sessionName,
   sessionUrl,
@@ -54,7 +58,7 @@ export function ConfigureDialog({
   onAccept,
   ...props
 }: ConfigureDialogProps) {
-  const [targetsValue, setTargetsValue] = useState("hydra");
+  const [targetsValue, setTargetsValue] = useState(defaultTarget);
 
   const newTargets = useMemo(
     () =>
@@ -67,7 +71,10 @@ export function ConfigureDialog({
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (onAccept && newTargets.length > 0) {
+    setTargetsValue(newTargets.join(", "));
+    if (onAccept) {
+      if (newTargets.length === 0) newTargets.push(defaultTarget);
+      console.log("new targets", newTargets);
       onAccept(newTargets);
     }
     props.onOpenChange && props.onOpenChange(false);
@@ -78,9 +85,13 @@ export function ConfigureDialog({
       <DialogContent className="sm:max-w-xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Configure Layout</DialogTitle>
+            <DialogTitle>
+              {isWelcome ? "Welcome to Flok! ✨" : "Configure Layout"}
+            </DialogTitle>
             <DialogDescription>
-              Enter a list of targets, separated by comma.
+              {isWelcome
+                ? "This is a collaborative live coding editor. To get started, enter a list of targets, separated by comma."
+                : "Enter a list of targets, separated by comma."}
             </DialogDescription>
           </DialogHeader>
           <TargetsInput

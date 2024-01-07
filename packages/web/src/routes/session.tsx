@@ -390,6 +390,7 @@ export default function SessionPage() {
       />
       {session && (
         <ConfigureDialog
+          isWelcome={documents.length === 0}
           targets={targetsList}
           sessionUrl={session.wsUrl}
           sessionName={session.name}
