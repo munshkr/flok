@@ -99,7 +99,6 @@ export default function SessionPage() {
       if (newSession.getDocuments().length === 0) {
         const targets = query.get("targets")?.split(",") || [];
         const validTargets = targets.filter((t) => knownTargets.includes(t));
-        console.log("TARGETS", targets, "VALID_TARGETS", validTargets);
         if (validTargets.length > 0) {
           setActiveDocuments(newSession, validTargets);
         } else {

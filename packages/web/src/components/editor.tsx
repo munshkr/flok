@@ -1,3 +1,4 @@
+import { useQuery } from "@/hooks/use-query";
 import {
   langByTarget as langByTargetUntyped,
   panicCodes as panicCodesUntyped,
@@ -6,7 +7,7 @@ import {
 } from "@/settings.json";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-import { Prec } from "@codemirror/state";
+import { EditorState, Prec } from "@codemirror/state";
 import { EditorView, keymap } from "@codemirror/view";
 import { evalKeymap, flashField, remoteEvalFlash } from "@flok-editor/cm-eval";
 import { tidal } from "@flok-editor/lang-tidal";
@@ -72,7 +73,10 @@ const baseTheme = EditorView.baseTheme({
   },
 });
 
-const panicKeymap = (doc: Document, keys: string[] = ["Cmd-.", "Ctrl-.", "Alt-."]) => {
+const panicKeymap = (
+  doc: Document,
+  keys: string[] = ["Cmd-.", "Ctrl-.", "Alt-."]
+) => {
   const panicCode = panicCodes[doc.target];
 
   return panicCode
@@ -88,7 +92,14 @@ const panicKeymap = (doc: Document, keys: string[] = ["Cmd-.", "Ctrl-.", "Alt-."
     : [];
 };
 
-const flokSetup = (doc: Document) => {
+interface FlokSetupOptions {
+  readOnly?: boolean;
+}
+
+const flokSetup = (
+  doc: Document,
+  { readOnly = false }: FlokSetupOptions = {}
+) => {
   const text = doc.getText();
   const undoManager = new UndoManager(text);
   const defaultMode = targetsWithDocumentEvalMode.includes(doc.target)
@@ -103,6 +114,7 @@ const flokSetup = (doc: Document) => {
     panicKeymap(doc),
     yCollab(text, doc.session.awareness, {
       undoManager,
+      hideCaret: readOnly,
       showLocalCaret: true,
     }),
   ];
@@ -118,33 +130,48 @@ export const Editor = React.forwardRef(
     ref: React.ForwardedRef<ReactCodeMirrorRef>
   ) => {
     const [mounted, setMounted] = useState(false);
-
-    const themeName = "dark";
+    const query = useQuery();
 
     // useEffect only runs on the client, so now we can safely show the UI
     useEffect(() => {
+      // Make sure query parameters are set before loading the editor
+      if (!query) return;
       setMounted(true);
-    }, []);
+    }, [query]);
 
     if (!mounted || !document) {
       return null;
     }
 
+    const readOnly = !!query.get("readOnly");
+
     const language: string = langByTarget[document.target] || defaultLanguage;
     const languageExtension = langExtensionsByLanguage[language] || javascript;
 
+    const extensions = [
+      baseTheme,
+      flokSetup(document, { readOnly }),
+      languageExtension(),
+      readOnly ? EditorState.readOnly.of(true) : [],
+    ];
+
+    // If it's read-only, put a div in front of the editor so that the user
+    // can't interact with it.
     return (
-      <CodeMirror
-        ref={ref}
-        value={document.content}
-        theme={themeName}
-        extensions={[baseTheme, flokSetup(document), languageExtension()]}
-        basicSetup={{
-          foldGutter: false,
-          lineNumbers: false,
-        }}
-        {...props}
-      />
+      <>
+        {readOnly && <div className="absolute inset-0 z-10" />}
+        <CodeMirror
+          ref={ref}
+          value={document.content}
+          theme="dark"
+          extensions={extensions}
+          basicSetup={{
+            foldGutter: false,
+            lineNumbers: false,
+          }}
+          {...props}
+        />
+      </>
     );
   }
 );
