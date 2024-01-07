@@ -28,6 +28,7 @@ import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useLoaderData, useNavigate } from "react-router-dom";
+import { useQuery } from "@/hooks/use-query";
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -43,6 +44,8 @@ export interface Message {
 }
 
 export default function SessionPage() {
+  const query = useQuery();
+
   const { name } = useLoaderData() as SessionLoaderParams;
   const navigate = useNavigate();
 
@@ -159,7 +162,7 @@ export default function SessionPage() {
     setSession(newSession);
 
     // Load and set saved username, if available
-    const savedUsername = store.get("username");
+    const savedUsername = query.get("username") || store.get("username");
     if (!savedUsername) {
       setUsernameDialogOpen(true);
     } else {
