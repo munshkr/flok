@@ -1,33 +1,58 @@
+import withFlokServer from "@flok-editor/server-middleware";
 import express from "express";
+import fs from "fs";
 import http from "http";
-import process from "process";
+import https from "https";
 import { networkInterfaces } from "os";
 import pc from "picocolors";
-import withFlokServer from "@flok-editor/server-middleware";
-import ViteExpress, { info } from "./vite-express.js";
+import process from "process";
+import ViteExpress from "vite-express";
+
+function info(msg) {
+  const timestamp = new Date().toLocaleString("en-US").split(",")[1].trim();
+  console.log(
+    `${pc.dim(timestamp)} ${pc.bold(pc.cyan("[flok-web]"))} ${pc.green(
+      msg,
+    )}`,
+  );
+}
 
 export async function startServer({ onReady, staticDir, ...opts }) {
   try {
-    ViteExpress.config({ vitePort: opts.port })
-
-    const viteServer = await ViteExpress.createServer();
-    const server = withFlokServer(viteServer);
+    const app = express();
 
     if (staticDir) {
       info(`Serving extra static files at ${pc.gray(staticDir)}`)
       app.use(express.static(staticDir))
     }
 
+    let viteServer;
+    if (opts.secure) {
+      info(`Using SSL certificate at ${pc.gray(opts.sslCert)} (key at ${pc.gray(opts.sslKey)})`)
+      const key = fs.readFileSync(opts.sslKey);
+      const cert = fs.readFileSync(opts.sslCert);
+      viteServer = https.createServer({ key, cert }, app);
+    } else {
+      viteServer = http.createServer(app);
+    }
+
+    ViteExpress.config({ vitePort: opts.port });
+    ViteExpress.bind(app, viteServer);
+
+    const server = withFlokServer(viteServer);
+
     server.listen(opts.port, onReady || (() => {
       const netResults = getPossibleIpAddresses();
+      const schema = opts.secure ? "https" : "http";
+      info(`Listening on ${schema}://localhost:${opts.port}`);
       if (netResults.length > 1) {
         info("If on LAN, try sharing with your friends one of these URLs:");
         Object.entries(netResults).map(([k, v]) => {
-          info(`\t${k}: http://${v}:${opts.port}`);
+          info(`\t${k}: ${schema}://${v}:${opts.port}`);
         });
       } else {
         info(
-          `If on LAN, try sharing with your friends http://${Object.values(netResults)[0]}:${opts.port}`);
+          `If on LAN, try sharing with your friends ${schema}://${Object.values(netResults)[0]}:${opts.port}`);
       }
     }))
   } catch (err) {
