@@ -217,7 +217,7 @@ export default function SessionPage() {
     session,
     (err) => handleWebError("Mercury", err),
     (msg) => handleWebWarning("Mercury", msg)
-  )
+  );
   const { canvasRef: hydraCanvasRef } = useHydra(
     session,
     (err) => handleWebError("Hydra", err),
@@ -365,8 +365,6 @@ export default function SessionPage() {
     setMessagesPanelExpanded(false);
   }, []);
 
-  const halfHeight = useMemo(() => documents.length > 2, [documents]);
-
   return (
     <>
       <Helmet>
@@ -424,10 +422,7 @@ export default function SessionPage() {
               ref={editorRefs[i]}
               document={doc}
               autoFocus={i === 0}
-              className={cn(
-                "absolute top-6 overflow-auto flex-grow w-full",
-                halfHeight ? "h-[calc(100%-24px)]" : "h-full"
-              )}
+              className="absolute top-6 overflow-auto flex-grow w-full h-[calc(100%-32px)]"
             />
           </Pane>
         ))}

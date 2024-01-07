@@ -18,7 +18,12 @@ export const Pane = ({
   onTargetChange,
   onEvaluateButtonClick,
 }: PaneProps) => (
-  <div className={cn("relative", halfHeight ? "h-[50vh]" : "h-screen")}>
+  <div
+    className={cn(
+      "flex overflow-auto relative",
+      halfHeight ? "h-[50vh]" : "h-screen"
+    )}
+  >
     <TargetSelect
       triggerProps={{
         className:
