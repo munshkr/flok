@@ -65,7 +65,7 @@
     "tailwindcss-animate": "^1.0.5",
     "unique-names-generator": "^4.7.1",
     "vite-express": "^0.13.0",
-    "y-codemirror.next": "github:munshkr/y-codemirror.next#450e741154c41ce0bbf7181e74e54a80b5b46b2f",
+    "y-codemirror.next": "github:munshkr/y-codemirror.next#6041ad3c1cf8d25b2f34a03daf512341dceb6882",
     "y-indexeddb": "^9.0.9",
     "y-protocols": "^1.0.5",
     "y-webrtc": "^10.2.5",
