@@ -1,22 +1,35 @@
+import withFlokServer from "@flok-editor/server-middleware";
 import express from "express";
-import http from "http";
-import process from "process";
 import { networkInterfaces } from "os";
 import pc from "picocolors";
-import withFlokServer from "@flok-editor/server-middleware";
-import ViteExpress, { info } from "./vite-express.js";
+import http from "http";
+import process from "process";
+import ViteExpress from "vite-express";
+
+function info(msg) {
+  const timestamp = new Date().toLocaleString("en-US").split(",")[1].trim();
+  console.log(
+    `${pc.dim(timestamp)} ${pc.bold(pc.cyan("[flok-web]"))} ${pc.green(
+      msg,
+    )}`,
+  );
+}
 
 export async function startServer({ onReady, staticDir, ...opts }) {
   try {
-    ViteExpress.config({ vitePort: opts.port })
 
-    const viteServer = await ViteExpress.createServer();
-    const server = withFlokServer(viteServer);
+    const app = express();
 
     if (staticDir) {
       info(`Serving extra static files at ${pc.gray(staticDir)}`)
       app.use(express.static(staticDir))
     }
+
+    const viteServer = http.createServer(app);
+    ViteExpress.config({ vitePort: opts.port });
+    ViteExpress.bind(app, viteServer);
+
+    const server = withFlokServer(viteServer);
 
     server.listen(opts.port, onReady || (() => {
       const netResults = getPossibleIpAddresses();
