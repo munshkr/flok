@@ -89,9 +89,10 @@ export default function SessionPage() {
     // Default documents
     newSession.on("sync", () => {
       setSyncState(newSession.wsConnected ? "synced" : "partiallySynced");
-      if (newSession.getDocuments().length > 0) return;
-      console.log("Create a default document");
-      newSession.setActiveDocuments([{ id: "1", target: defaultTarget }]);
+      // If session is empty, show configure dialog
+      if (newSession.getDocuments().length === 0) {
+        setConfigureDialogOpen(true);
+      }
     });
 
     newSession.on("ws:connect", () => {
@@ -389,6 +390,7 @@ export default function SessionPage() {
       />
       {session && (
         <ConfigureDialog
+          isWelcome={documents.length === 0}
           targets={targetsList}
           sessionUrl={session.wsUrl}
           sessionName={session.name}
