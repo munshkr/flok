@@ -54,7 +54,7 @@ export function ConfigureDialog({
   onAccept,
   ...props
 }: ConfigureDialogProps) {
-  const [targetsValue, setTargetsValue] = useState("");
+  const [targetsValue, setTargetsValue] = useState("hydra");
 
   const newTargets = useMemo(
     () =>
@@ -85,7 +85,7 @@ export function ConfigureDialog({
           </DialogHeader>
           <TargetsInput
             value={targetsValue}
-            placeholder={targets.join(", ") || "hydra"}
+            placeholder={targets.join(", ")}
             onChange={(e) =>
               setTargetsValue(e.target.value.replace(/,\s*/g, ", ").trim())
             }
