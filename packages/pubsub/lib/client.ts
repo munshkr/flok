@@ -114,7 +114,7 @@ export class PubSubClient {
 
   protected _connect() {
     debug("create WebSocket on", this.url);
-    this._ws = new WebSocket(this.url, { rejectUnauthorized: false });
+    this._ws = new WebSocket(this.url);
 
     this._ws.onopen = () => {
       if (!this._ws) return;
