@@ -30,7 +30,7 @@ export class MercuryWrapper {
     // set initialized to true only when samples are loaded
     this._repl = new Mercury({
       onload: () => { 
-        this._onWarning(`Mercury ready!`);
+        this._onWarning(`Ready!`);
         // console.log('Mercury loaded');
         this.initialized = true;
         // retry the evaluation
@@ -53,7 +53,12 @@ export class MercuryWrapper {
         let parse = this._repl.code(code);
         this._onError('');
   
-        if (parse.errors){
+        let prints = parse.parseTree.print;
+        if (prints.length > 0){
+          // print prints from the code if there are any
+          this._onWarning(`${prints}`);
+        }
+        if (parse.errors.length > 0){
           console.log(parse.errors);
           // print the first error that needs fixing
           this._onError(`${parse.errors}`);
