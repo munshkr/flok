@@ -114,7 +114,15 @@ export class PubSubClient {
 
   protected _connect() {
     debug("create WebSocket on", this.url);
-    this._ws = new WebSocket(this.url);
+
+    // If on Node, we need to pass `rejectUnauthorized: false` to avoid "unable
+    // to verify certificate" error.  This is important when using a self-signed
+    // SSL certificate.
+    if (typeof window === "undefined") {
+      this._ws = new WebSocket(this.url, { rejectUnauthorized: false });
+    } else {
+      this._ws = new WebSocket(this.url);
+    }
 
     this._ws.onopen = () => {
       if (!this._ws) return;
