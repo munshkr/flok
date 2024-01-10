@@ -65,6 +65,48 @@ Web-based P2P collaborative editor for live coding music and graphics
   Options: `*`, `[webTarget]`. Eg: `?noWebEval=hydra` disables only Hydra.
   `?noWebEval=*` disables all web targets.
 
+## Window messages
+
+Flok will post messages to the parent window on specific events. This is useful
+for embedding Flok in a website, where the website can handle the evaluation of
+the code.
+
+### Events
+
+* `change`: When the session changes. This usually happens at the beginning,
+  when the session is empty, and when the user changes the targets.
+
+```json
+{
+  event: "change",
+  documents: [
+    {
+      id: "1",
+      target: "hydra",
+      content: "osc().out()"
+    },
+    {
+      id: "2",
+      target: "tidal",
+      content: "d1 $ s \"bd\""
+    }
+  ]
+}
+```
+
+* `eval`: On evaluation. This happens when the user presses the "Run" button or
+  when the user presses one of the shortcuts for evaluating (e.g. `Ctrl+Enter`)
+  on the editor.  Only the content of the document that was evaluated is sent.
+
+```json
+{
+  event: "eval",
+  id: "2",
+  content: "d1 silence",
+  user: "munshkr",
+}
+```
+
 ## Development
 
 Install all dependencies and build all subpackages with:

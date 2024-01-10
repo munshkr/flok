@@ -79,6 +79,10 @@ export default function SessionPage() {
 
   const { toast } = useToast();
 
+  const postMessageParentWindow = (message: any) => {
+    window.parent.postMessage(message, "*");
+  };
+
   useEffect(() => {
     if (!name) return;
 
@@ -118,6 +122,15 @@ export default function SessionPage() {
     // If documents change on server, update state
     newSession.on("change", (documents) => {
       setDocuments(documents);
+
+      postMessageParentWindow({
+        event: "change",
+        documents: documents.map((doc: Document) => ({
+          id: doc.id,
+          target: doc.target,
+          content: doc.content,
+        })),
+      });
     });
 
     newSession.on("pubsub:start", () => {
@@ -153,6 +166,11 @@ export default function SessionPage() {
     newSession.on("message", ({ message }) => {
       setMessages((messages) => [...messages, message as Message]);
       setMessagesCount((count) => count + 1);
+
+      postMessageParentWindow({
+        event: "message",
+        message,
+      });
     });
 
     newSession.on("message", ({ message }) => {
@@ -165,6 +183,15 @@ export default function SessionPage() {
           type === "stderr" ? "color: #ff5f6b" : ""
         );
       }
+    });
+
+    newSession.on("eval", ({ docId, body, user }) => {
+      postMessageParentWindow({
+        event: "eval",
+        id: docId,
+        content: body,
+        user,
+      });
     });
 
     newSession.initialize();
