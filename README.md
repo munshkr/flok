@@ -141,3 +141,6 @@ the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 ## License
 
 This project is licensed under GPL 3+. Refer to [LICENSE.txt](LICENSE.txt)
+
+Favicon based on "Origami" by Andrejs Kirma, from [Noun
+Project](https://thenounproject.com/browse/icons/term/origami/) (CC BY 3.0)
