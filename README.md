@@ -51,6 +51,20 @@ Web-based P2P collaborative editor for live coding music and graphics
       easily on new sketches
     * Connect to local filesystem for files and libraries
 
+## Query parameters
+
+* `username` (string): Default user name
+* `targets` (list of strings): If session is empty, configure it with the
+  specified targets by default. Eg: `?targets=hydra,strudel`
+* `readOnly` (boolean): Disable editing. If true, it won't ask for a user name
+  when loading.
+* `bgOpacity` (number): Background opacity. Valid range: [0, 1]
+* `noWebEval` (list of strings): Disable evaluation of the specified web
+  targets. Useful for embedding Flok in a website, where the website already has
+  its own evaluation mechanism. This still sends messages to parent window.
+  Options: `*`, `[webTarget]`. Eg: `?noWebEval=hydra` disables only Hydra.
+  `?noWebEval=*` disables all web targets.
+
 ## Development
 
 Install all dependencies and build all subpackages with:
