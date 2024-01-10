@@ -12,14 +12,16 @@ import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
 import { useHydra } from "@/hooks/use-hydra";
+import { useMercury } from "@/hooks/use-mercury";
+import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
-import { useMercury } from "@/hooks/use-mercury";
 import { useToast } from "@/hooks/use-toast";
-import { cn, mod, store } from "@/lib/utils";
+import { cn, generateRandomUserName, mod, store } from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import {
   defaultTarget,
+  knownTargets,
   panicCodes as panicCodesUntyped,
   webTargets,
 } from "@/settings.json";
@@ -43,6 +45,8 @@ export interface Message {
 }
 
 export default function SessionPage() {
+  const query = useQuery();
+
   const { name } = useLoaderData() as SessionLoaderParams;
   const navigate = useNavigate();
 
@@ -89,9 +93,17 @@ export default function SessionPage() {
     // Default documents
     newSession.on("sync", () => {
       setSyncState(newSession.wsConnected ? "synced" : "partiallySynced");
-      // If session is empty, show configure dialog
+
+      // If session is empty, first try to get list of targets from query parameter "targets".
+      // If parameter is not present or has no valid targets, show the configure dialog.
       if (newSession.getDocuments().length === 0) {
-        setConfigureDialogOpen(true);
+        const targets = query.get("targets")?.split(",") || [];
+        const validTargets = targets.filter((t) => knownTargets.includes(t));
+        if (validTargets.length > 0) {
+          setActiveDocuments(newSession, validTargets);
+        } else {
+          setConfigureDialogOpen(true);
+        }
       }
     });
 
@@ -159,11 +171,17 @@ export default function SessionPage() {
     setSession(newSession);
 
     // Load and set saved username, if available
-    const savedUsername = store.get("username");
-    if (!savedUsername) {
-      setUsernameDialogOpen(true);
+    // If read only is enabled, use a random username
+    const readOnly = !!query.get("readOnly");
+    if (readOnly) {
+      setUsername(generateRandomUserName());
     } else {
-      setUsername(savedUsername);
+      const savedUsername = query.get("username") || store.get("username");
+      if (!savedUsername) {
+        setUsernameDialogOpen(true);
+      } else {
+        setUsername(savedUsername);
+      }
     }
 
     return () => newSession.destroy();
@@ -185,7 +203,10 @@ export default function SessionPage() {
     if (!session) return;
     console.log(`Setting user on session to '${username}'`);
     session.user = username;
-    store.set("username", username);
+    // Store username in local storage only if it's not random (read only mode)
+    if (!query.get("readOnly")) {
+      store.set("username", username);
+    }
   }, [session, username]);
 
   // Reset messages count when panel is expanded (mark all messages as read)
@@ -328,6 +349,10 @@ export default function SessionPage() {
 
   const handleConfigureAccept = (targets: string[]) => {
     if (!session) return;
+    setActiveDocuments(session, targets);
+  };
+
+  const setActiveDocuments = (session: Session, targets: string[]) => {
     session.setActiveDocuments(
       targets
         .filter((t) => t)
@@ -368,8 +393,10 @@ export default function SessionPage() {
     setMessagesPanelExpanded(false);
   }, []);
 
+  const bgOpacity = query.get("bgOpacity") || "1.0";
+
   return (
-    <>
+    <div style={{ backgroundColor: `rgb(0 0 0 / ${bgOpacity})` }}>
       <Helmet>
         <title>{name} ~ Flok</title>
       </Helmet>
@@ -473,6 +500,6 @@ export default function SessionPage() {
         }}
       />
       <Toaster />
-    </>
+    </div>
   );
 }

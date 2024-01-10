@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { DialogProps } from "@radix-ui/react-dialog";
 import { Input, InputProps } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { knownTargets } from "@/settings.json";
+import { knownTargets, defaultTarget } from "@/settings.json";
 import { useState, useMemo, FormEvent } from "react";
 import { ReplsInfo } from "./repls-info";
 
@@ -46,8 +46,6 @@ interface ConfigureDialogProps extends DialogProps {
   userName: string;
   onAccept?: (targets: string[]) => void;
 }
-
-const defaultTarget = "hydra";
 
 export function ConfigureDialog({
   isWelcome,

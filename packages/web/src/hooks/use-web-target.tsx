@@ -1,5 +1,6 @@
 import type { EvalMessage, Session } from "@flok-editor/session";
 import { useEffect, useState } from "react";
+import { useQuery } from "./use-query";
 
 export function useWebTarget<Controller>(
   target: string,
@@ -17,6 +18,14 @@ export function useWebTarget<Controller>(
     onError?: (err: unknown) => void;
   }
 ) {
+  const query = useQuery();
+  const noWebEval = query.get("noWebEval")?.split(",") || [];
+
+  // Check if we should load the target
+  if (noWebEval.includes(target) || noWebEval.includes("*")) {
+    return { instance: null };
+  }
+
   const [instance, setInstance] = useState<Controller | null>(null);
 
   // Load and initialize external library

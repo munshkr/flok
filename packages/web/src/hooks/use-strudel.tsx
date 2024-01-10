@@ -1,6 +1,6 @@
 import { useWebTarget } from "@/hooks/use-web-target";
-import type { Session } from "@flok-editor/session";
 import { StrudelWrapper } from "@/lib/strudel-wrapper";
+import type { Session } from "@flok-editor/session";
 
 export function useStrudel(
   session: Session | null,
