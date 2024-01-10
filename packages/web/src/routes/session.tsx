@@ -480,7 +480,7 @@ export default function SessionPage() {
               ref={editorRefs[i]}
               document={doc}
               autoFocus={i === 0}
-              className="absolute top-6 overflow-auto flex-grow w-full h-[calc(100%-32px)]"
+              className="absolute top-6 overflow-auto flex-grow w-full h-[calc(100%-32px)] z-10"
             />
           </Pane>
         ))}

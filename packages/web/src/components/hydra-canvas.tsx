@@ -13,7 +13,7 @@ const HydraCanvas = React.forwardRef(
     <canvas
       ref={ref}
       className={cn(
-        "absolute top-0 left-0 -z-10",
+        "absolute top-0 left-0",
         fullscreen && "h-full w-full block overflow-hidden"
       )}
       width={1280}
