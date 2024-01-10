@@ -393,8 +393,10 @@ export default function SessionPage() {
     setMessagesPanelExpanded(false);
   }, []);
 
+  const bgOpacity = query.get("bgOpacity") || "1.0";
+
   return (
-    <>
+    <div style={{ backgroundColor: `rgb(0 0 0 / ${bgOpacity})` }}>
       <Helmet>
         <title>{name} ~ Flok</title>
       </Helmet>
@@ -498,6 +500,6 @@ export default function SessionPage() {
         }}
       />
       <Toaster />
-    </>
+    </div>
   );
 }
