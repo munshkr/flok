@@ -54,7 +54,7 @@
     "express": "^4.18.2",
     "hydra-synth": "^1.3.29",
     "lucide-react": "^0.128.0",
-    "mercury-engine": "^1.1.0",
+    "mercury-engine": "^1.2.0",
     "p5": "^1.6.0",
     "picocolors": "^1.0.0",
     "react": "^18.2.0",
