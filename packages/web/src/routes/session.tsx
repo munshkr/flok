@@ -11,6 +11,7 @@ import SessionCommandDialog from "@/components/session-command-dialog";
 import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
+import { WelcomeDialog } from "@/components/welcome-dialog";
 import { useHydra } from "@/hooks/use-hydra";
 import { useMercury } from "@/hooks/use-mercury";
 import { useQuery } from "@/hooks/use-query";
@@ -57,6 +58,7 @@ export default function SessionPage() {
   const [replsDialogOpen, setReplsDialogOpen] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);
+  const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
@@ -86,6 +88,12 @@ export default function SessionPage() {
   const firstTime = useMemo(() => store.get("firstTime", true), []);
 
   useEffect(() => {
+    if (!firstTime) return;
+    setWelcomeDialogOpen(true);
+    store.set("firstTime", false);
+  }, [firstTime]);
+
+  useEffect(() => {
     if (!name) return;
 
     const { hostname, port, protocol } = window.location;
@@ -109,10 +117,6 @@ export default function SessionPage() {
           setActiveDocuments(newSession, validTargets);
         } else {
           setActiveDocuments(newSession, [defaultTarget]);
-        }
-        if (firstTime) {
-          store.set("firstTime", false);
-          setConfigureDialogOpen(true);
         }
       }
     });
@@ -448,9 +452,12 @@ export default function SessionPage() {
         onAccept={(name) => setUsername(name)}
         onOpenChange={(isOpen) => setUsernameDialogOpen(isOpen)}
       />
+      <WelcomeDialog
+        open={welcomeDialogOpen}
+        onOpenChange={(isOpen) => setWelcomeDialogOpen(isOpen)}
+      />
       {session && (
         <ConfigureDialog
-          isWelcome={firstTime}
           targets={targetsList}
           sessionUrl={session.wsUrl}
           sessionName={session.name}

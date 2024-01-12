@@ -1,17 +1,17 @@
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DialogProps } from "@radix-ui/react-dialog";
 import { Input, InputProps } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { knownTargets, defaultTarget } from "@/settings.json";
-import { useState, useMemo, FormEvent, ChangeEvent, useEffect } from "react";
+import { defaultTarget, knownTargets } from "@/settings.json";
+import { DialogProps } from "@radix-ui/react-dialog";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import { ReplsInfo } from "./repls-info";
 
 function TargetsInput(props: InputProps) {
@@ -39,7 +39,6 @@ function TargetsInput(props: InputProps) {
 }
 
 interface ConfigureDialogProps extends DialogProps {
-  isWelcome: boolean;
   targets: string[];
   sessionName: string;
   sessionUrl: string;
@@ -48,7 +47,6 @@ interface ConfigureDialogProps extends DialogProps {
 }
 
 export function ConfigureDialog({
-  isWelcome,
   targets,
   sessionName,
   sessionUrl,
@@ -96,13 +94,9 @@ export function ConfigureDialog({
       <DialogContent className="sm:max-w-xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>
-              {isWelcome ? "Welcome to Flok! ✨" : "Configure Layout"}
-            </DialogTitle>
+            <DialogTitle>Configure Layout</DialogTitle>
             <DialogDescription>
-              {isWelcome
-                ? "This is a collaborative live coding editor. To get started, enter a list of targets, separated by comma."
-                : "Enter a list of targets, separated by comma."}
+              Enter a list of targets, separated by comma.
             </DialogDescription>
           </DialogHeader>
           <TargetsInput
