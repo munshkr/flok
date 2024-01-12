@@ -83,6 +83,8 @@ export default function SessionPage() {
     window.parent.postMessage(message, "*");
   };
 
+  const firstTime = useMemo(() => store.get("firstTime", true), []);
+
   useEffect(() => {
     if (!name) return;
 
@@ -99,14 +101,19 @@ export default function SessionPage() {
       setSyncState(newSession.wsConnected ? "synced" : "partiallySynced");
 
       // If session is empty, first try to get list of targets from query parameter "targets".
-      // If parameter is not present or has no valid targets, show the configure dialog.
+      // If parameter is not present or has no valid targets, show the configure/welcome dialog.
       if (newSession.getDocuments().length === 0) {
         const targets = query.get("targets")?.split(",") || [];
         const validTargets = targets.filter((t) => knownTargets.includes(t));
         if (validTargets.length > 0) {
           setActiveDocuments(newSession, validTargets);
         } else {
-          setConfigureDialogOpen(true);
+          if (firstTime) {
+            store.set("firstTime", false);
+            setConfigureDialogOpen(true);
+          } else {
+            setActiveDocuments(newSession, [defaultTarget]);
+          }
         }
       }
     });
@@ -444,7 +451,7 @@ export default function SessionPage() {
       />
       {session && (
         <ConfigureDialog
-          isWelcome={documents.length === 0}
+          isWelcome={firstTime}
           targets={targetsList}
           sessionUrl={session.wsUrl}
           sessionName={session.name}
