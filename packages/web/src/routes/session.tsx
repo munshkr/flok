@@ -108,12 +108,11 @@ export default function SessionPage() {
         if (validTargets.length > 0) {
           setActiveDocuments(newSession, validTargets);
         } else {
-          if (firstTime) {
-            store.set("firstTime", false);
-            setConfigureDialogOpen(true);
-          } else {
-            setActiveDocuments(newSession, [defaultTarget]);
-          }
+          setActiveDocuments(newSession, [defaultTarget]);
+        }
+        if (firstTime) {
+          store.set("firstTime", false);
+          setConfigureDialogOpen(true);
         }
       }
     });

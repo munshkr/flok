@@ -11,7 +11,7 @@ import { DialogProps } from "@radix-ui/react-dialog";
 import { Input, InputProps } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { knownTargets, defaultTarget } from "@/settings.json";
-import { useState, useMemo, FormEvent } from "react";
+import { useState, useMemo, FormEvent, ChangeEvent, useEffect } from "react";
 import { ReplsInfo } from "./repls-info";
 
 function TargetsInput(props: InputProps) {
@@ -56,7 +56,13 @@ export function ConfigureDialog({
   onAccept,
   ...props
 }: ConfigureDialogProps) {
-  const [targetsValue, setTargetsValue] = useState(defaultTarget);
+  const [targetsValue, setTargetsValue] = useState("");
+
+  useEffect(() => {
+    if (!props.open) {
+      setTargetsValue("");
+    }
+  }, [props.open]);
 
   const newTargets = useMemo(
     () =>
@@ -67,15 +73,22 @@ export function ConfigureDialog({
     [targetsValue]
   );
 
+  const newOrCurrentTargets = newTargets.length > 0 ? newTargets : targets;
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setTargetsValue(newTargets.join(", "));
+    setTargetsValue(newOrCurrentTargets.join(", "));
     if (onAccept) {
-      if (newTargets.length === 0) newTargets.push(defaultTarget);
-      console.log("new targets", newTargets);
-      onAccept(newTargets);
+      if (newOrCurrentTargets.length === 0)
+        newOrCurrentTargets.push(defaultTarget);
+      console.log("new targets", newOrCurrentTargets);
+      onAccept(newOrCurrentTargets);
     }
     props.onOpenChange && props.onOpenChange(false);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setTargetsValue(e.target.value.replace(/,\s*/g, ", ").trim());
   };
 
   return (
@@ -95,13 +108,11 @@ export function ConfigureDialog({
           <TargetsInput
             value={targetsValue}
             placeholder={targets.join(", ")}
-            onChange={(e) =>
-              setTargetsValue(e.target.value.replace(/,\s*/g, ", ").trim())
-            }
+            onChange={handleChange}
           />
-          {newTargets.length > 0 && (
+          {newOrCurrentTargets.length > 0 && (
             <ReplsInfo
-              targets={newTargets}
+              targets={newOrCurrentTargets}
               sessionName={sessionName}
               sessionUrl={sessionUrl}
               userName={userName}
