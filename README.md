@@ -335,17 +335,17 @@ the code.
 
 ```json
 {
-  event: "change",
-  documents: [
+  "event": "change",
+  "documents": [
     {
-      id: "1",
-      target: "hydra",
-      content: "osc().out()"
+      "id": "1",
+      "target": "hydra",
+      "content": "osc().out()"
     },
     {
-      id: "2",
-      target: "tidal",
-      content: "d1 $ s \"bd\""
+      "id": "2",
+      "target": "tidal",
+      "content": "d1 $ s \"bd\""
     }
   ]
 }
@@ -357,10 +357,10 @@ the code.
 
 ```json
 {
-  event: "eval",
-  id: "2",
-  content: "d1 silence",
-  user: "munshkr",
+  "event": "eval",
+  "id": "2",
+  "content": "d1 silence",
+  "user": "munshkr"
 }
 ```
 
