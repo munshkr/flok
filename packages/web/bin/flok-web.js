@@ -1,56 +1,46 @@
 #!/usr/bin/env node
 
-const program = require("commander");
-const packageInfo = require("../package.json");
-const Server = require("../lib/Server");
-const { networkInterfaces } = require("os");
+import process from "process";
+import path from "path";
+import fs from "fs";
+import { Command } from "commander";
+import { fileURLToPath } from "url";
+import { startServer } from "../server.js";
 
-const getPossibleIpAddresses = () => {
-  const nets = networkInterfaces();
-  const results = Object.create(null); // Or just '{}', an empty object
-
-  for (const name of Object.keys(nets)) {
-    for (const net of nets[name]) {
-      // Skip over non-IPv4 and internal (i.e. 127.0.0.1) addresses
-      if (net.family === "IPv4" && !net.internal) {
-        if (!results[name]) {
-          results[name] = [];
-        }
-        results[name].push(net.address);
-      }
-    }
-  }
-
-  return results;
+const readConfig = (path) => {
+  const raw = fs.readFileSync(path);
+  return JSON.parse(raw.toString());
 };
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const packageInfo = readConfig(path.resolve(__dirname, "../package.json"));
+const program = new Command();
+
+program.version(packageInfo.version);
 program
-  .version(packageInfo.version)
   .option("-H, --host [HOST]", "Server host", "0.0.0.0")
   .option("-P, --port [PORT]", "Server port", 3000)
   .option("-s, --secure", "Serve on https (use SSL)", false)
+  .option("--ssl-cert [PATH]", "Path to SSL certificate file (optional)")
+  .option("--ssl-key [PATH]", "Path to SSL key file (optional)")
   .option("--static-dir [PATH]", "Path to static files (optional)")
   .parse(process.argv);
 
-const server = new Server({
-  host: program.host,
-  port: program.port,
-  secure: program.secure,
-  staticDir: program.staticDir,
-});
+const opts = program.opts();
 
-server.start(() => {
-  const netResults = getPossibleIpAddresses();
-  if (netResults.length > 1) {
-    console.log("> Possible URLs to access from:");
-    Object.entries(netResults).map(([k, v]) => {
-      console.log(`\t${k}: ${server.scheme}://${v}:${server.port}`);
-    });
-  } else {
-    console.log(
-      `> Visit ${server.scheme}://${Object.values(netResults)[0]}:${
-        server.port
-      }`
-    );
-  }
-});
+if (!opts.sslKey) {
+  opts.sslKey = path.resolve(__dirname, "../cert/key.pem");
+}
+if (!opts.sslCert) {
+  opts.sslCert = path.resolve(__dirname, "../cert/cert.pem");
+}
+
+startServer({
+  hostname: opts.host,
+  port: opts.port,
+  secure: opts.secure,
+  sslCert: opts.sslCert,
+  sslKey: opts.sslKey,
+  staticDir: opts.staticDir
+})

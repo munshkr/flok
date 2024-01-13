@@ -1,28 +1,35 @@
 {
-  "name": "flok",
-  "description": "Web-based collaborative editor for live coding music and graphics",
-  "main": "index.js",
-  "repository": "git@github.com:munshkr/flok.git",
+  "name": "root",
+  "description": "Web-based P2P collaborative editor for live coding music and graphics",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/munshkr/flok.git"
+  },
+  "scripts": {
+    "build": "lerna run build",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "codemirror",
+    "webrtc",
+    "websockets",
+    "live-coding",
+    "collaborative-editing"
+  ],
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
-  "private": true,
-  "scripts": {
-    "dev": "cd packages/web && yarn dev",
-    "start": "cd packages/web && yarn start",
-    "test": "lerna run test",
-    "prepublishOnly": "lerna run prepublishOnly",
-    "new-version": "lerna version --force-publish",
-    "publish-all": "lerna run publish-current",
-    "release": "yarn new-version && yarn publish-all"
+  "bugs": {
+    "url": "https://github.com/munshkr/flok/issues"
   },
-  "husky": {
-    "hooks": {}
+  "homepage": "https://github.com/munshkr/flok#readme",
+  "devDependencies": {
+    "lerna": "^6.5.1"
   },
   "workspaces": [
     "packages/*"
   ],
-  "devDependencies": {
-    "husky": "^3.1.0",
-    "lerna": "^3.20.1"
+  "dependencies": {
+    "react-rnd": "^10.4.1"
   }
 }

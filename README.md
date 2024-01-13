@@ -1,18 +1,11 @@
 # Flok
 
-[![build status](https://img.shields.io/travis/munshkr/flok/master.svg?style=flat-square)](https://travis-ci.org/munshkr/flok)
-[![gitter chat](https://img.shields.io/gitter/room/munshkr/flok.svg?style=flat-square)](https://gitter.im/munshkr/flok)
-
 Web-based P2P collaborative editor for live coding music and graphics
-
-**New version v1.0 in the works. Visit branch [`flok-next`](https://github.com/munshkr/flok/tree/flok-next) for more info!**
-
-**Check out the new version (still WIP!) online here: https://next.flok.cc/**
-
 
 ## Features
 
 * Similar to Etherpad, but focused on code evaluation for livecoding.
+* Multiple separate slots for different languages and tools.
 * REPL plugins: allows user to locally evaluate code from interpreters (like
   Haskell, Ruby, Python, etc.):
   - [TidalCycles](https://tidalcycles.org/)
@@ -20,41 +13,14 @@ Web-based P2P collaborative editor for live coding music and graphics
   - [FoxDot](https://foxdot.org/)
   - [Mercury](#mercury)
   - [Sardine](https://sardine.raphaelforment.fr)
-  - [SonicPi](https://sonic-pi.net/) (*not implemented yet*)
+  - [SonicPi](https://sonic-pi.net/) (*not implemented yet*, see [#29](https://github.com/munshkr/flok/issues/29))
   - ... any interpreter with a REPL (Python, Ruby, etc.)
 * Web Plugins, for languages embedded in editor:
   - [Hydra](https://github.com/ojack/hydra)
   - [p5.js](https://p5js.org/)
+  - [Strudel](https://strudel.cc/)
+  - [Mercury Web](https://www.timohoogland.com/mercury-livecoding/)
   - [VEDA.js](https://github.com/fand/vedajs) (*not implemented yet*, see [#82](https://github.com/munshkr/flok/pull/82))
-  - [Tilt](https://github.com/munshkr/tilt) (*not implemented yet*)
-
-
-## Requirements
-
-Flok is written in TypeScript and Nodejs.  You will need to have installed Node
-versions 10+.  The LTS version (currently 14) is recommended.
-
-Go [here](https://nodejs.org/) to download Node.
-
-
-
-## Install
-
-Right now, the easiest way to use Flok is to install the `repl` and `web`
-packages.
-
-```sh
-npm install -g flok-repl flok-web
-```
-
-If this command fails with permission errors (known issue on some Debian/Ubuntu
-installs), you should follow [this
-guide](https://docs.npmjs.com/resolving-eacces-permissions-errors-when-installing-packages-globally).
-
-In the future there will also be a single portable [GUI
-application](https://github.com/munshkr/flok-gui) that will contain everything,
-but for now you'll have to use the terminal.
-
 
 ## Usage
 
@@ -64,92 +30,110 @@ but for now you'll have to use the terminal.
 can execute code on your computer via Flok, so *please* make sure you only
 share your session URL to trusted users and friends when you use a public
 server.  I will not be held responsible for any damaged caused by Flok.  You
-have been warned.  There is an
-[issue](https://github.com/munshkr/flok/issues/2) assigned to mitigate this
-security problem.
+have been warned.
 
-This is a list of known public servers (up-to-date):
+This is a list of known public servers:
 
 * [flok.cc](https://flok.cc)
 
 #### Create a session
 
-When you enter a Flok server, you will be prompted to enter a list of targets.
-A target is the language or tool that Flok will communicate to create sound
-through `flok-repl`.
+When you enter a Flok server, you will be shown an empty session with a single
+slot, with a _target_ selected (usually `hydra`).  You can either change the
+target by clicking on the target selector at the top-left corner of the slot, or
+add more slots by clicking on the *Command button* (at the top-right corner of the
+screen), and then clicking on *Add Pane*, or *Configure*.
 
-Enter the name of the targets, separated with commas.  You can use a target
-multiple times and Flok will create that many number of slots to write code.
-Currently the maximum number of slots is 8.
+A *target* is the language or tool that Flok will communicate to create sound or
+images within the web page, or through `flok-repl`.
+
+If you clicked on *Configure*, enter the name of the targets, separated with
+commas.  You can use a target multiple times and Flok will create that many
+number of slots to write code. Currently the maximum number of slots is 8.
 
 Examples:
 
-* `tidal,foxdot,hydra`: 3 slots, with tidal, foxdot and hydra respectively.
-* `sclang,sclang,sclang,hydra,hydra`: 5 slots total, the first 3 with `sclang`
-  and the last 2 with `hydra`.
+* `tidal, foxdot, hydra`: 3 slots, with tidal, foxdot and hydra respectively.
+* `sclang, sclang, sclang, hydra, hydra`: 5 slots total, the first 3 with
+  `sclang` and the last 2 with `hydra`.
 * `mercury, hydra`: 2 slots total, one with Mercury and one with Hydra.
 
-Now click on *Create session*.
+You will also be asked to enter a nickname.  This is the name that will be shown
+to other users under your cursor, when you write code.  You can change it any
+time by clicking on the *Change Username* inside the *Command* menu.
 
-You will now be shown a **token** and asked for a nickname. Save the token, as
-you will need it next for starting the REPL. Optionally copy the repl-code to
-easily paste in the terminal and hook up your repl. Enter your nickname and
-click on *Join*.
+Now, just copy the URL and share it with your friends!  They will be able to
+join the session and write code with you :-)
 
-You are ready to start writing.  Share the URL to your friends so they can join
-the session! :-)
+If you are using any target that requires a REPL, you will need to start it
+separately.  See the *Connect REPLs to Flok* section below.
 
 #### Connect REPLs to Flok
 
 The last step is to start `flok-repl`, to connect Flok with your REPLs.
 
-You will need to specify the server (prefixing with `wss://`) where you created
-the session (or where you were invited to), the session *token* and the kind of
-REPL you want to start.
-
-For example, if your session token is `1a0c2df3-5931-46dd-9c7c-52932de15a5d`,
-to start a `tidal` REPL, run the following:
+Just click on the *REPLs* button at the top-right corner of the screen, and
+copy the command shown there. It will look something like this:
 
 ```sh
-flok-repl -H wss://flok-hub.herokuapp.com -t tidal -s 1a0c2df3-5931-46dd-9c7c-52932de15a5d
+npx flok-repl@1.0.0-alpha.10 -H wss://next.flok.cc \
+  -s mammoth-tan-roundworm-17a5d501 \
+  -t tidal \
+  -T user:munshkr
 ```
 
-If you need to start multiple REPLs, you will need to run them on separate
-terminals as currently `flok-repl` supports only one REPL at a time.
+This command will automatically try to download and install `flok-repl` and
+start it, connecting it to your session.  If you have multiple different targets
+with REPLs, the command will start one process for each target from the same
+command.
 
 ### Local server
 
-In case you don't have an Internet connection and/or you don't want to play
-Flok on a public server, you can easily start a local Flok server.
+In case you want to use Flok without Internet connection and/or you don't want
+to play Flok on a public server, you can easily start a local Flok server.
 
 To start the server, simply run:
 
 ```sh
-flok-web
+npx flok-web@latest
 ```
+
+You can also install both `web` and `repl` packages beforehand (e.g. if you
+already know you won't have internet access on the venue) with:
+
+```sh
+npm install -g flok-web@latest flok-repl@latest
+```
+
+This will download and install the latest Flok web version and start a server.
 
 Your local server will be available on
-[http://localhost:3000](http://localhost:3000) from your computer.  To share
-the URL with your friends, change `localhost` with your local IP. See
-[how to find your local and external IP address](https://lifehacker.com/how-to-find-your-local-and-external-ip-address-5833108).
+[http://localhost:3000](http://localhost:3000) from your computer.  To share the
+URL with your friends, change `localhost` with your local LAN IP.  `flok-web`
+will try to guess your local IP in your LAN, and show it on the console, but it
+might not always work.
 
-Follow the instructions on *Remote server - Create a session* section above.
+#### Secure mode (https)
 
-When starting the REPL, make sure to use `ws://`, not `wss://`, because
-currently the local server runs only on http, not https.
-
-Using the same example as in the previous section:
-
-```sh
-flok-repl -h ws://localhost:3000 -t tidal -s 1a0c2df3-5931-46dd-9c7c-52932de15a5d
-```
-
-Your friends would need to use your local IP. Suppose your IP is 192.168.0.5,
-then they should run:
+In some cases, it's needed to run Flok in secure mode, using https.  This is
+needed for some browsers, like Chrome, to allow access to the microphone and
+camera (which might be needed for some targets, like Hydra).  You can easily
+run Flok in secure mode by passing the `--secure` parameter:
 
 ```sh
-flok-repl -h ws://192.168.0.5:3000 -t tidal -s 1a0c2df3-5931-46dd-9c7c-52932de15a5d
-```
+npx flok-web@latest --secure
+``` 
+
+#### Note about remote users (not LAN)
+
+Sharing your local server to other users in the Internet is a bit more
+complicated, and it depends on your router and network configuration.  You will
+need to configure your router to forward the port 3000 to your computer, and
+then share your public IP with your friends.  You can find your public IP by
+visiting [https://whatismyipaddress.com/](https://whatismyipaddress.com/).  Also
+make sure to check your firewall settings, to allow incoming connections to
+port 3000.  It's possible that some of your remote friends won't be able to
+connect to your local server, because of their own network configuration.
 
 ### Supported REPL targets
 
@@ -248,31 +232,137 @@ report [here](https://github.com/tmhglnd/mercury/issues/new)
 
 ## Development
 
-After unpacking or cloning, from the directory of the repository run:
+### Basic setup
+
+Install all dependencies and build all subpackages with:
 
 ```sh
-yarn
+npm install
 ```
 
-This will install dependencies from all packages, and prepare (build) packages.
+Then, to run web server:
 
-If you have Node 13+, you might have an error about an incompatible package
-(`meyda`).  Try running `yarn --ignore-engines` to skip that check.  You can
-also config yarn to ignore this automatically from now on, by running `yarn
-config set ignore-engines true`.
+```sh
+cd packages/web
+npm run dev
+```
 
-`web`, `repl` and `core` packages are stored on the `packages/` directory, and
-there is a root packaged managed by [Lerna](https://github.com/lerna/lerna).
+To build and run production build:
 
-Lerna allows us to manage interdependant packages easily. In the case of Flok,
-the `core` package is used both by `web` and `repl`, and even though they have
-`flok-core` dependency on their `package.json`, Lerna creates symbolic links to
-the local `core` package automatically.  It also makes it easy to publish new
-versions by bumping them together.
+```sh
+npm run build
+npm start
+```
 
-To bump a new version on all packages and release them together, run `yarn
-release`.
+### Packages overview
 
+This repository is a monorepo, with multiple modular packages.  Each package
+has its own README with more information.  Here is a brief overview of the
+packages:
+
+#### App packages
+
+* [`flok-web`](packages/web): Web Server for Flok
+* [`flok-repl`](packages/repl): REPL Client for Flok
+* [`flok-server`](packages/server): Flok server, handles sessions and
+  communication between clients.
+
+#### Lib packages
+
+* [`@flok-editor/pubsub`](packages/pubsub): Pub/Sub client-server, used for
+  remote code execution and message passing on Flok
+* [`@flok-editor/session`](packages/session): Flok session package
+* [`@flok-editor/server-middleware`](packages/server-middleware): Server
+  middleware for Flok, handles WebSocket connections and WebRTC signaling
+* [`@flok-editor/cm-eval`](packages/cm-eval): CodeMirror 6 extension for code
+  evaluation
+* [`@flok-editor/lang-tidal`](packages/lang-tidal): TidalCycles language support
+  for CodeMirror 6
+
+#### Examples
+
+* [`example-vanilla-js`](packages/example-vanilla-js): Example of a Flok-based
+  collaborative editor written in pure JS and Vite
+
+### Design constraints (v1.0)
+
+* Include a simplified vanilla JS example
+* Use [CodeMirror 6](https://codemirror.net/)
+    * Best code editor library for the Web
+    * Latest version (v6) comes with better extensibility and accesability
+* Use [Yjs](https://yjs.dev/) for collaborative editor
+    * Battle-tested and updated
+    * Now supports CodeMirror 6:
+      [y-codemirror.next](https://github.com/yjs/y-codemirror.next)
+* More modular and extensible, similar to CodeMirror extensions, e.g.:
+    * Line/block-based evaluation: `@flok-editor/cm-eval`
+    * TidalCycles pattern and RMS decorators: `@flok-editor/cm-tidalcycles-decorators`
+    * TidalCycles autocompletion: `@flok-editor/cm-tidalcycles-autocompletion`
+    * Hydra synth autocompletion: `@flok-editor/cm-hydra-autocompletion`
+* Better UI for customizing editor and session configuration
+    * Menu, toast, dialogs
+* *nice to have* Import external JS libraries dynamically, instead of bundling
+  them with Flok
+    * Similar to JS playgrounds, like [codesandbox.io](https://codesandbox.io/)
+    * User can have their own set of libraries to be loaded automatically or
+      easily on new sketches
+    * Connect to local filesystem for files and libraries
+
+### Query parameters
+
+* `username` (string): Default user name
+* `targets` (list of strings): If session is empty, configure it with the
+  specified targets by default. Eg: `?targets=hydra,strudel`
+* `readOnly` (boolean): Disable editing. If true, it won't ask for a user name
+  when loading.
+* `bgOpacity` (number): Background opacity. Valid range: [0, 1]
+* `noWebEval` (list of strings): Disable evaluation of the specified web
+  targets. Useful for embedding Flok in a website, where the website already has
+  its own evaluation mechanism. This still sends messages to parent window.
+  Options: `*`, `[webTarget]`. Eg: `?noWebEval=hydra` disables only Hydra.
+  `?noWebEval=*` disables all web targets.
+
+### Window messages
+
+Flok will post messages to the parent window on specific events. This is useful
+for embedding Flok in a website, where the website can handle the evaluation of
+the code.
+
+#### Events
+
+* `change`: When the session changes. This usually happens at the beginning,
+  when the session is empty, and when the user changes the targets.
+
+```json
+{
+  "event": "change",
+  "documents": [
+    {
+      "id": "1",
+      "target": "hydra",
+      "content": "osc().out()"
+    },
+    {
+      "id": "2",
+      "target": "tidal",
+      "content": "d1 $ s \"bd\""
+    }
+  ]
+}
+```
+
+* `eval`: On evaluation. This happens when the user presses the "Run" button or
+  when the user presses one of the shortcuts for evaluating (e.g. `Ctrl+Enter`)
+  on the editor.  Only the content of the document that was evaluated is sent.
+
+```json
+{
+  "event": "eval",
+  "id": "2",
+  "content": "d1 silence",
+  "user": "munshkr"
+}
+```
 
 ## Acknowledgments
 
@@ -292,3 +382,6 @@ the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 ## License
 
 This project is licensed under GPL 3+. Refer to [LICENSE.txt](LICENSE.txt)
+
+Favicon based on "Origami" by Andrejs Kirma, from [Noun
+Project](https://thenounproject.com/browse/icons/term/origami/) (CC BY 3.0)
