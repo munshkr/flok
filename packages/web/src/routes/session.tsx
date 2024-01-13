@@ -215,6 +215,7 @@ export default function SessionPage() {
     } else {
       const savedUsername = query.get("username") || store.get("username");
       if (!savedUsername) {
+        setUsername(generateRandomUserName());
         setUsernameDialogOpen(true);
       } else {
         setUsername(savedUsername);
