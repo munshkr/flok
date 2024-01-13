@@ -10,7 +10,8 @@
     "bin",
     "dist",
     "cert",
-    "server.js"
+    "server.js",
+    "vite-express.js"
   ],
   "scripts": {
     "dev": "node ./bin/flok-web.js",
@@ -64,7 +65,6 @@
     "tailwind-merge": "^1.10.0",
     "tailwindcss-animate": "^1.0.5",
     "unique-names-generator": "^4.7.1",
-    "vite-express": "^0.13.0",
     "y-codemirror.next": "github:munshkr/y-codemirror.next#dee71ac8d65bc640db60a188b916d1a0147a9439",
     "y-indexeddb": "^9.0.9",
     "y-protocols": "^1.0.5",
@@ -73,6 +73,7 @@
     "yjs": "^13.5.51"
   },
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/p5": "^1.6.0",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",

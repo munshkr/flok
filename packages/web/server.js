@@ -1,12 +1,13 @@
 import withFlokServer from "@flok-editor/server-middleware";
 import express from "express";
+import compression from "compression";
 import fs from "fs";
 import http from "http";
 import https from "https";
 import { networkInterfaces } from "os";
 import pc from "picocolors";
 import process from "process";
-import ViteExpress from "vite-express";
+import ViteExpress from "./vite-express.js";
 
 function info(msg) {
   const timestamp = new Date().toLocaleString("en-US").split(",")[1].trim();
@@ -20,6 +21,8 @@ function info(msg) {
 export async function startServer({ onReady, staticDir, ...opts }) {
   try {
     const app = express();
+
+    app.use(compression());
 
     if (staticDir) {
       info(`Serving extra static files at ${pc.gray(staticDir)}`)
