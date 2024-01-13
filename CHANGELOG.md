@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.12] - 2024-01-06
+
+### Added
+
+* web: Toggle comment with Ctrl-/ or Cmd-/
+* web(sardine): Free all sound for Sardine
+
+### Changed
+
+* repl(sardine): Changed interpreter name (fishery -> sardine)
+* web: Bugfixes related to the server script (flok-web)
+* web: Fixed @types/react wrong version
+
 ## [0.4.8] - 2022-05-26
 
 ### Added
