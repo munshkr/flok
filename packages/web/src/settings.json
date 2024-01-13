@@ -34,6 +34,5 @@
   },
   "webTargets": ["hydra", "strudel", "mercury-web"],
   "repoUrl": "https://github.com/munshkr/flok",
-  "changeLogUrl": "https://github.com/munshkr/flok/blob/main/CHANGELOG.md#changelog",
-  "replVersion": "1.0.0"
+  "changeLogUrl": "https://github.com/munshkr/flok/blob/main/CHANGELOG.md#changelog"
 }
