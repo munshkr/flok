@@ -1,6 +1,6 @@
 {
   "name": "@flok-editor/lang-tidal",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0",
   "description": "TidalCycles language support for CodeMirror",
   "scripts": {
     "build": "rollup -c"
