@@ -27,11 +27,11 @@
     "picocolors": "^1.0.0"
   },
   "devDependencies": {
-    "@codemirror/lang-javascript": "^6.1.4",
-    "@codemirror/lang-python": "^6.1.2",
-    "@codemirror/state": "^6.2.0",
-    "@codemirror/theme-one-dark": "^6.1.1",
-    "@codemirror/view": "^6.9.3",
+    "@codemirror/lang-javascript": "^6.2.1",
+    "@codemirror/lang-python": "^6.1.3",
+    "@codemirror/state": "^6.4.0",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "@codemirror/view": "^6.23.0",
     "@flok-editor/cm-eval": "^1.0.1",
     "@flok-editor/lang-tidal": "^1.0.1",
     "@flok-editor/session": "^1.0.1",
