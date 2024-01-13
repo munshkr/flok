@@ -1,6 +1,6 @@
 {
   "name": "@flok-editor/server-middleware",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Server middleware for Flok, handles WebSocket connections and WebRTC signaling",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
@@ -23,7 +23,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@flok-editor/pubsub": "^1.0.0",
+    "@flok-editor/pubsub": "^1.0.1",
     "debug": "^4.3.4"
   },
   "devDependencies": {
