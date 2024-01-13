@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2024-01-12
+
+Complete rewrite of Flok, with a new architecture and new features.  See
+[README.md](../README.md) for more information.
+
+* Started new web project, based on Vite, Tailwind, Radix UI and Shadcn CSS frameworks.
+* Upgraded CodeMirror to version 6
+* Upgraded Yjs to latest version
+* New modular architecture, with separate plugins related to codemirror
+  (following their new architecture as well)
+* Document layout is now part of the session state, and can be changed
+  dynamically, instead of being based on the query parameter `?layout`.
+* Improved REPL message handling and UI
+* Command palette for executing commands and configuring the editor
+* Added support for Strudel and Mercury as web targets
+
 ## [0.4.12] - 2024-01-06
 
 ### Added
