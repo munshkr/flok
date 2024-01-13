@@ -49,9 +49,9 @@ export class HydraWrapper {
       );
     }
 
-    const { P5 } = await import("./p5-wrapper.js");
+    const { P5Wrapper } = await import("./p5-wrapper.js");
 
-    window.P5 = P5;
+    window.P5 = P5Wrapper;
     window.global = window;
 
     try {
