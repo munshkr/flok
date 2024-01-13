@@ -9,8 +9,8 @@
   "files": [
     "bin",
     "dist",
-    "server.js",
-    "vite-express.js"
+    "cert",
+    "server.js"
   ],
   "scripts": {
     "dev": "node ./bin/flok-web.js",
