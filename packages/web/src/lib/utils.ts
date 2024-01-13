@@ -22,7 +22,10 @@ export function generateRandomSessionName() {
 }
 
 export function generateRandomUserName() {
-  return `Anonymous-${Math.floor(Math.random() * 100000)}`;
+  return uniqueNamesGenerator({
+    dictionaries: [colors, animals],
+    separator: "-",
+  });
 }
 
 export const store = {
