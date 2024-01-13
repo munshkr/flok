@@ -21,7 +21,14 @@ export function WelcomeDialog({
     <Dialog {...props}>
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
-          <DialogTitle>Welcome to Flok! ✨</DialogTitle>
+          <DialogTitle>
+            <img
+              src="/flok.svg"
+              alt="Flok logo"
+              className="w-8 h-8 mr-2 mt-[-8px] inline-block"
+            />
+            Welcome to Flok! ✨
+          </DialogTitle>
           <DialogDescription>
             This is a collaborative live coding editor. You can invite your
             friends to live code together in real-time, using a number of
