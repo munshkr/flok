@@ -28,7 +28,7 @@ const program = new Command();
 
 program.version(packageInfo.version);
 program
-  .option("-t, --types <types...>", "Type/s of REPL", "command")
+  .option("-t, --types <types...>", "Type/s of REPL", ["command"])
   .option("-H, --hub <url>", "Server (or \"hub\") address", "ws://localhost:3000")
   .option("-s, --session-name <name>", "Session name", "default")
   .option("-n, --target-name <name>", "Use the specified target name")
