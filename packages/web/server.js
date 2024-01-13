@@ -8,6 +8,11 @@ import { networkInterfaces } from "os";
 import pc from "picocolors";
 import process from "process";
 import ViteExpress from "./vite-express.js";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 function info(msg) {
   const timestamp = new Date().toLocaleString("en-US").split(",")[1].trim();
@@ -39,7 +44,13 @@ export async function startServer({ onReady, staticDir, ...opts }) {
       viteServer = http.createServer(app);
     }
 
-    ViteExpress.config({ vitePort: opts.port });
+    ViteExpress.config({
+      inlineViteConfig: {
+        root: path.resolve(__dirname),
+      },
+      viteConfigFile: path.resolve(__dirname, "vite.config.ts"),
+      vitePort: opts.port,
+    });
     ViteExpress.bind(app, viteServer);
 
     const server = withFlokServer(viteServer);
