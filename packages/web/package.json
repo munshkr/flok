@@ -83,10 +83,10 @@
     "vite": "^4.2.0",
     "vite-plugin-node-polyfills": "^0.7.0",
     "y-codemirror.next": "github:munshkr/y-codemirror.next#dee71ac8d65bc640db60a188b916d1a0147a9439",
-    "y-indexeddb": "^9.0.12",
-    "y-protocols": "^1.0.6",
-    "y-webrtc": "^10.3.0",
-    "y-websocket": "^1.5.1",
-    "yjs": "^13.6.10"
+    "y-indexeddb": "^9.0.9",
+    "y-protocols": "^1.0.5",
+    "y-webrtc": "^10.2.5",
+    "y-websocket": "^1.5.0",
+    "yjs": "^13.5.51"
   }
 }
