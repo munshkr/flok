@@ -205,18 +205,13 @@ installing and using it.
 
 #### Hydra
 
-Hydra is already included in the web App. You don't need to install anything as
-it runs on the browser.  Just use the `hydra` target to execute Hydra code.
+[Hydra](https://hydra.ojack.xyz/) is a video synth and coding environment, inspired in 
+analog video synthesis, that runs directly in the browser and is already included in 
+the web App.  You don't need to install anything as it runs on the browser.  Just use
+the `hydra` target to execute Hydra code.
 
-If you want to use the screen capturing feature, you will need to install a
-specific [Chrome
-extension](https://github.com/munshkr/flok-hydra-chrome-extension) for Flok,
-that gives permissions to capture the desktop screen from within the current
-public servers.
-
-Read
-[more](https://github.com/munshkr/flok-hydra-chrome-extension/blob/master/README.md)
-on how to install the extension.
+You can also use [p5.js](https://p5js.org/) within a `hydra` target, like you would in 
+the official Hydra editor.
 
 #### Mercury
 
