@@ -76,7 +76,7 @@ Just click on the *REPLs* button at the top-right corner of the screen, and
 copy the command shown there. It will look something like this:
 
 ```sh
-npx flok-repl@1.0.0-alpha.10 -H wss://next.flok.cc \
+npx flok-repl@latest -H wss://next.flok.cc \
   -s mammoth-tan-roundworm-17a5d501 \
   -t tidal \
   -T user:munshkr
