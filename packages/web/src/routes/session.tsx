@@ -79,7 +79,17 @@ export default function SessionPage() {
 
   const hasWebGl = useMemo(() => isWebglSupported(), []);
 
-  const { toast } = useToast();
+  const { toast: _toast } = useToast();
+  const hideErrors = !!query.get("hideErrors");
+
+  // Only call toast if query parameter "hideErrors" is not present
+  const toast = useCallback(
+    (options: Parameters<typeof _toast>[0]) => {
+      if (hideErrors) return;
+      _toast(options);
+    },
+    [_toast, hideErrors]
+  );
 
   const postMessageParentWindow = (message: any) => {
     window.parent.postMessage(message, "*");
