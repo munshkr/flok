@@ -1,17 +1,17 @@
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogHeader,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { DialogProps } from "@radix-ui/react-dialog";
 import { Input, InputProps } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { knownTargets } from "@/settings.json";
-import { useState, useMemo, FormEvent } from "react";
+import { defaultTarget, knownTargets } from "@/settings.json";
+import { DialogProps } from "@radix-ui/react-dialog";
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react";
 import { ReplsInfo } from "./repls-info";
 
 function TargetsInput(props: InputProps) {
@@ -39,7 +39,6 @@ function TargetsInput(props: InputProps) {
 }
 
 interface ConfigureDialogProps extends DialogProps {
-  isWelcome: boolean;
   targets: string[];
   sessionName: string;
   sessionUrl: string;
@@ -47,10 +46,7 @@ interface ConfigureDialogProps extends DialogProps {
   onAccept?: (targets: string[]) => void;
 }
 
-const defaultTarget = "hydra";
-
 export function ConfigureDialog({
-  isWelcome,
   targets,
   sessionName,
   sessionUrl,
@@ -58,7 +54,13 @@ export function ConfigureDialog({
   onAccept,
   ...props
 }: ConfigureDialogProps) {
-  const [targetsValue, setTargetsValue] = useState(defaultTarget);
+  const [targetsValue, setTargetsValue] = useState("");
+
+  useEffect(() => {
+    if (!props.open) {
+      setTargetsValue("");
+    }
+  }, [props.open]);
 
   const newTargets = useMemo(
     () =>
@@ -69,15 +71,22 @@ export function ConfigureDialog({
     [targetsValue]
   );
 
+  const newOrCurrentTargets = newTargets.length > 0 ? newTargets : targets;
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setTargetsValue(newTargets.join(", "));
+    setTargetsValue(newOrCurrentTargets.join(", "));
     if (onAccept) {
-      if (newTargets.length === 0) newTargets.push(defaultTarget);
-      console.log("new targets", newTargets);
-      onAccept(newTargets);
+      if (newOrCurrentTargets.length === 0)
+        newOrCurrentTargets.push(defaultTarget);
+      console.log("new targets", newOrCurrentTargets);
+      onAccept(newOrCurrentTargets);
     }
     props.onOpenChange && props.onOpenChange(false);
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setTargetsValue(e.target.value.replace(/,\s*/g, ", ").trim());
   };
 
   return (
@@ -85,25 +94,19 @@ export function ConfigureDialog({
       <DialogContent className="sm:max-w-xl">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>
-              {isWelcome ? "Welcome to Flok! ✨" : "Configure Layout"}
-            </DialogTitle>
+            <DialogTitle>Configure Layout</DialogTitle>
             <DialogDescription>
-              {isWelcome
-                ? "This is a collaborative live coding editor. To get started, enter a list of targets, separated by comma."
-                : "Enter a list of targets, separated by comma."}
+              Enter a list of targets, separated by comma.
             </DialogDescription>
           </DialogHeader>
           <TargetsInput
             value={targetsValue}
             placeholder={targets.join(", ")}
-            onChange={(e) =>
-              setTargetsValue(e.target.value.replace(/,\s*/g, ", ").trim())
-            }
+            onChange={handleChange}
           />
-          {newTargets.length > 0 && (
+          {newOrCurrentTargets.length > 0 && (
             <ReplsInfo
-              targets={newTargets}
+              targets={newOrCurrentTargets}
               sessionName={sessionName}
               sessionUrl={sessionUrl}
               userName={userName}

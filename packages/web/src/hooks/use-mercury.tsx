@@ -1,6 +1,6 @@
 import { useWebTarget } from "@/hooks/use-web-target";
-import type { Session } from "@flok-editor/session";
 import { MercuryWrapper } from "@/lib/mercury-wrapper";
+import type { Session } from "@flok-editor/session";
 
 export function useMercury(
   session: Session | null,
@@ -14,7 +14,7 @@ export function useMercury(
       console.log("Create Mercury Wrapper");
 
       const mercury = new MercuryWrapper({ onError, onWarning });
-      
+
       return mercury;
     },
     {

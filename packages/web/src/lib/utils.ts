@@ -21,6 +21,13 @@ export function generateRandomSessionName() {
   return `${namePrefix}-${uuid.slice(0, 8)}`;
 }
 
+export function generateRandomUserName() {
+  return uniqueNamesGenerator({
+    dictionaries: [colors, animals],
+    separator: "-",
+  });
+}
+
 export const store = {
   get: (key: string, defaultValue?: any): any | null => {
     const value = localStorage.getItem(key);
