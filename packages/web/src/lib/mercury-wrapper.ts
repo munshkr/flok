@@ -4,7 +4,7 @@ import { Mercury } from "mercury-engine";
 // global variable m for the main output sound from Mercury
 declare global {
   interface Window {
-    mcy : number;
+    m : number;
   }
 }
 
