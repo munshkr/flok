@@ -1,4 +1,4 @@
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import path from "path";
 import Unfonts from "unplugin-fonts/vite";
 import { defineConfig } from "vite";
