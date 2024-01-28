@@ -117,12 +117,35 @@ export default function SessionPage() {
     });
 
     // Default documents
-    newSession.on("sync", () => {
+    newSession.on("sync", (protocol: string) => {
       setSyncState(newSession.wsConnected ? "synced" : "partiallySynced");
 
-      // If session is empty, set default target.
+      console.log("Synced first with protocol:", protocol);
+
+      // If session is empty, set targets from hash parameter if present.
+      // Otherwise, use default target.
       if (newSession.getDocuments().length === 0) {
-        setActiveDocuments(newSession, [defaultTarget]);
+        console.log(
+          "Session is empty, setting targets and code from hash params"
+        );
+        // If `targets` hash param is present and has valid targets, set them as
+        // active documents.
+        const targets = hash["targets"]?.split(",") || [];
+        const validTargets = targets.filter((t) => knownTargets.includes(t));
+        console.log("Valid targets from hash:", validTargets);
+        if (validTargets.length > 0) {
+          setActiveDocuments(newSession, validTargets);
+        } else {
+          setActiveDocuments(newSession, [defaultTarget]);
+        }
+
+        // If `code` hash parameter is present, set first document content to it.
+        const defaultCode = hash["code"];
+        if (defaultCode) {
+          const firstDocument = newSession.getDocuments()[0];
+          console.log("Setting default code:", defaultCode);
+          if (firstDocument) firstDocument.content = defaultCode;
+        }
       }
     });
 
@@ -226,18 +249,6 @@ export default function SessionPage() {
         setUsername(savedUsername);
       }
     }
-
-    // If `targets` hash param is present and has valid targets, set them as active documents.
-    // Note: In an existing session, this overrides the already set layout.
-    const targets = hash["targets"]?.split(",") || [];
-    const validTargets = targets.filter((t) => knownTargets.includes(t));
-    console.log("Valid targets from hash:", validTargets);
-    if (validTargets.length > 0) {
-      setActiveDocuments(newSession, validTargets);
-    }
-
-    // Clear hash parameters
-    setHash((hash) => ({ ...hash, username: null, targets: null }));
 
     return () => newSession.destroy();
   }, [name]);
