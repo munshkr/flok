@@ -240,11 +240,12 @@ export class Session {
     this._emitter.once(eventName, cb);
   }
 
-  removeAllListeners(eventName: SessionEvent) {
+  removeAllListeners(eventName?: SessionEvent) {
     this._emitter.removeAllListeners(eventName);
   }
 
   destroy() {
+    this.removeAllListeners();
     ["error", "open", "close"].forEach((e) =>
       this._pubSubClient.removeAllListeners(e)
     );
