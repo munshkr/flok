@@ -12,6 +12,7 @@ import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
 import { WelcomeDialog } from "@/components/welcome-dialog";
+import { useHash } from "@/hooks/use-hash";
 import { useHydra } from "@/hooks/use-hydra";
 import { useMercury } from "@/hooks/use-mercury";
 import { useQuery } from "@/hooks/use-query";
@@ -47,6 +48,7 @@ export interface Message {
 
 export default function SessionPage() {
   const query = useQuery();
+  const [hash, setHash] = useHash();
 
   const { name } = useLoaderData() as SessionLoaderParams;
   const navigate = useNavigate();
@@ -223,13 +225,14 @@ export default function SessionPage() {
     if (readOnly) {
       setUsername(generateRandomUserName());
     } else {
-      const savedUsername = query.get("username") || store.get("username");
+      const savedUsername = hash["username"] || store.get("username");
       if (!savedUsername) {
         setUsername(generateRandomUserName());
         setUsernameDialogOpen(true);
       } else {
         setUsername(savedUsername);
       }
+      setHash({ ...hash, username: null });
     }
 
     return () => newSession.destroy();
