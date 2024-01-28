@@ -8,6 +8,7 @@ import { Pane } from "@/components/pane";
 import { ReplsButton } from "@/components/repls-button";
 import { ReplsDialog } from "@/components/repls-dialog";
 import SessionCommandDialog from "@/components/session-command-dialog";
+import { ShareUrlDialog } from "@/components/share-url-dialog";
 import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
@@ -19,7 +20,14 @@ import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
 import { useToast } from "@/hooks/use-toast";
-import { cn, generateRandomUserName, hash2code, mod, store } from "@/lib/utils";
+import {
+  cn,
+  code2hash,
+  generateRandomUserName,
+  hash2code,
+  mod,
+  store,
+} from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import {
   defaultTarget,
@@ -61,6 +69,7 @@ export default function SessionPage() {
   const [username, setUsername] = useState<string>("");
   const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
+  const [shareUrlDialogOpen, setShareUrlDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
@@ -74,6 +83,7 @@ export default function SessionPage() {
   const [hideMessagesOnEval, setHideMessagesOnEval] = useState<boolean>(
     store.get("messages:hide-on-eval", true)
   );
+  const [sessionUrl, setSessionUrl] = useState<string>("");
 
   const editorRefs = Array.from({ length: 8 }).map(() =>
     useRef<ReactCodeMirrorRef>(null)
@@ -308,6 +318,26 @@ export default function SessionPage() {
     return () => session.off("eval", evalHandler);
   }, [session, hideMessagesOnEval]);
 
+  useEffect(() => {
+    if (!shareUrlDialogOpen) return;
+    if (!session) return;
+
+    // Update sessionURL based on current session layout and documents
+    // We need: session documents, and documents contents
+    const documents = session.getDocuments();
+    const targets = documents.map((doc) => doc.target);
+    const contents = documents.map((doc) => doc.content);
+
+    const hash = {
+      targets: targets.join(","),
+      code: code2hash(contents[0]),
+    };
+    const hashString = new URLSearchParams(hash).toString();
+    const currentURL = window.location.href;
+
+    setSessionUrl(`${currentURL}${hashString}`);
+  }, [session, shareUrlDialogOpen]);
+
   // Load external libraries
   useStrudel(
     session,
@@ -484,6 +514,7 @@ export default function SessionPage() {
         onOpenChange={(isOpen) => setCommandsDialogOpen(isOpen)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
         onSessionNew={() => navigate("/")}
+        onSessionShareUrl={() => setShareUrlDialogOpen(true)}
         onLayoutAdd={handleViewLayoutAdd}
         onLayoutRemove={handleViewLayoutRemove}
         onLayoutConfigure={() => setConfigureDialogOpen(true)}
@@ -497,6 +528,11 @@ export default function SessionPage() {
       <WelcomeDialog
         open={welcomeDialogOpen}
         onOpenChange={(isOpen) => setWelcomeDialogOpen(isOpen)}
+      />
+      <ShareUrlDialog
+        url={sessionUrl}
+        open={shareUrlDialogOpen}
+        onOpenChange={(isOpen) => setShareUrlDialogOpen(isOpen)}
       />
       {session && (
         <ConfigureDialog

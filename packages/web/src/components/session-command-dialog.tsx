@@ -12,12 +12,21 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { changeLogUrl, repoUrl } from "@/settings.json";
-import { Edit2, FilePlus, Github, Minus, Plus, Settings } from "lucide-react";
+import {
+  Edit2,
+  FilePlus,
+  Github,
+  Minus,
+  Plus,
+  Settings,
+  Share,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 interface SessionCommandDialogProps extends CommandDialogProps {
   onSessionChangeUsername: () => void;
   onSessionNew: () => void;
+  onSessionShareUrl: () => void;
   onLayoutAdd: () => void;
   onLayoutRemove: () => void;
   onLayoutConfigure: () => void;
@@ -46,6 +55,10 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
           <CommandItem onSelect={wrapHandler(props.onSessionNew)}>
             <FilePlus className="mr-2 h-4 w-4" />
             <span>New</span>
+          </CommandItem>
+          <CommandItem onSelect={wrapHandler(props.onSessionShareUrl)}>
+            <Share className="mr-2 h-4 w-4" />
+            <span>Share URL</span>
           </CommandItem>
           {/* <CommandItem>
             <FolderOpen className="mr-2 h-4 w-4" />
