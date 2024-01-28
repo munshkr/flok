@@ -15,9 +15,9 @@
     "vite.config.ts"
   ],
   "scripts": {
-    "dev": "node ./bin/flok-web.js",
+    "dev": "cross-env NODE_ENV=development node ./bin/flok-web.js",
     "build": "tsc && vite build",
-    "start": "cross-env NODE_ENV=production node ./bin/flok-web.js"
+    "start": "node ./bin/flok-web.js"
   },
   "dependencies": {
     "@flok-editor/server-middleware": "^1.0.1",

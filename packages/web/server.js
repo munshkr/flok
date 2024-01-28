@@ -45,6 +45,7 @@ export async function startServer({ onReady, staticDir, ...opts }) {
     }
 
     ViteExpress.config({
+      mode: opts?.mode || "development",
       inlineViteConfig: {
         root: path.resolve(__dirname),
       },

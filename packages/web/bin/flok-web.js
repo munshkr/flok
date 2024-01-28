@@ -37,6 +37,7 @@ if (!opts.sslCert) {
 }
 
 startServer({
+  mode: process.env.NODE_ENV || "production",
   hostname: opts.host,
   port: opts.port,
   secure: opts.secure,
