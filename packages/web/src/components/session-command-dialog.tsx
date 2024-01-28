@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Edit2, FilePlus, Minus, Plus, Github, Settings } from "lucide-react";
 import {
   CommandDialog,
   CommandDialogProps,
@@ -13,8 +11,9 @@ import {
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
+import { changeLogUrl, repoUrl } from "@/settings.json";
+import { Edit2, FilePlus, Github, Minus, Plus, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
-import { repoUrl, changeLogUrl } from "@/settings.json";
 
 interface SessionCommandDialogProps extends CommandDialogProps {
   onSessionChangeUsername: () => void;

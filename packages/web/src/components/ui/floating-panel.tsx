@@ -1,3 +1,4 @@
+import { Button, ButtonProps } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import {
   Tooltip,
@@ -16,7 +17,6 @@ import {
   useState,
 } from "react";
 import { Rnd } from "react-rnd";
-import { Button, ButtonProps } from "@/components/ui/button";
 
 export interface FloatingPanelButtonProps extends ButtonProps {
   tooltip?: string;
@@ -173,14 +173,14 @@ export function FloatingPanel({
       dragHandleClassName={headerClassName}
       bounds="window"
       onDrag={(e) => e.preventDefault()}
-      onDragStop={(e, d) => {
+      onDragStop={(_e, d) => {
         const { x, y } = d;
         setPosition({
           x: clamp(x / innerWidth),
           y: clamp(y / innerHeight),
         });
       }}
-      onResizeStop={(e, direction, ref, delta, position) => {
+      onResizeStop={(_e, _direction, ref, _delta, position) => {
         setSize({
           width: clamp(+ref.style.width.replace("px", "") / innerWidth),
           height: clamp(+ref.style.height.replace("px", "") / innerHeight),
