@@ -17,7 +17,10 @@ const toObject = (hash: string) =>
       return { ...acc, [key]: value };
     }, {});
 
-export function useHash(): [HashRecord, (newHash: HashRecord) => void] {
+export function useHash(): [
+  HashRecord,
+  (newHash: HashRecord | React.SetStateAction<HashRecord>) => void
+] {
   const [hash, setHash] = useState<HashRecord>(() =>
     toObject(window.location.hash)
   );
@@ -34,8 +37,9 @@ export function useHash(): [HashRecord, (newHash: HashRecord) => void] {
   }, []);
 
   const updateHash = useCallback(
-    (newHash: HashRecord) => {
-      if (newHash != hash) window.location.hash = fromObject(newHash);
+    (newHash: HashRecord | React.SetStateAction<HashRecord>) => {
+      if (typeof newHash === "function") newHash = newHash(hash);
+      window.location.hash = fromObject(newHash);
     },
     [hash]
   );

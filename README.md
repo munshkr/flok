@@ -305,12 +305,12 @@ packages:
 
 ### Hash parameters
 
-* `username` (string): Default user name
+* `username` (string): Default user name. Eg: `#username=arbor`
+* `targets` (list of strings): If session is empty, configure it with the
+  specified targets by default. Eg: `#targets=hydra,strudel`
 
 ### Query parameters
 
-* `targets` (list of strings): If session is empty, configure it with the
-  specified targets by default. Eg: `?targets=hydra,strudel`
 * `readOnly` (boolean): Disable editing. If true, it won't ask for a user name
   when loading.
 * `bgOpacity` (number): Background opacity. Valid range: [0, 1]

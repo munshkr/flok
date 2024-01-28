@@ -120,16 +120,9 @@ export default function SessionPage() {
     newSession.on("sync", () => {
       setSyncState(newSession.wsConnected ? "synced" : "partiallySynced");
 
-      // If session is empty, first try to get list of targets from query parameter "targets".
-      // If parameter is not present or has no valid targets, show the configure/welcome dialog.
+      // If session is empty, set default target.
       if (newSession.getDocuments().length === 0) {
-        const targets = query.get("targets")?.split(",") || [];
-        const validTargets = targets.filter((t) => knownTargets.includes(t));
-        if (validTargets.length > 0) {
-          setActiveDocuments(newSession, validTargets);
-        } else {
-          setActiveDocuments(newSession, [defaultTarget]);
-        }
+        setActiveDocuments(newSession, [defaultTarget]);
       }
     });
 
@@ -232,8 +225,19 @@ export default function SessionPage() {
       } else {
         setUsername(savedUsername);
       }
-      setHash({ ...hash, username: null });
     }
+
+    // If `targets` hash param is present and has valid targets, set them as active documents.
+    // Note: In an existing session, this overrides the already set layout.
+    const targets = hash["targets"]?.split(",") || [];
+    const validTargets = targets.filter((t) => knownTargets.includes(t));
+    console.log("Valid targets from hash:", validTargets);
+    if (validTargets.length > 0) {
+      setActiveDocuments(newSession, validTargets);
+    }
+
+    // Clear hash parameters
+    setHash((hash) => ({ ...hash, username: null, targets: null }));
 
     return () => newSession.destroy();
   }, [name]);
