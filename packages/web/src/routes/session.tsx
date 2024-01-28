@@ -19,7 +19,7 @@ import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
 import { useToast } from "@/hooks/use-toast";
-import { cn, generateRandomUserName, mod, store } from "@/lib/utils";
+import { cn, generateRandomUserName, hash2code, mod, store } from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import {
   defaultTarget,
@@ -140,12 +140,25 @@ export default function SessionPage() {
         }
 
         // If `code` hash parameter is present, set first document content to it.
-        const defaultCode = hash["code"];
-        if (defaultCode) {
+        const defaultCodeBase64 = hash["code"];
+        if (defaultCodeBase64) {
           const firstDocument = newSession.getDocuments()[0];
-          console.log("Setting default code:", defaultCode);
-          if (firstDocument) firstDocument.content = defaultCode;
+          try {
+            const defaultCode = hash2code(defaultCodeBase64);
+            console.log("Setting default code:", defaultCode);
+            if (firstDocument) firstDocument.content = defaultCode;
+          } catch (err) {
+            console.error("Error parsing default code:", err);
+          }
         }
+
+        // Clear hash parameters
+        setHash((hash) => ({
+          ...hash,
+          username: null,
+          targets: null,
+          code: null,
+        }));
       }
     });
 

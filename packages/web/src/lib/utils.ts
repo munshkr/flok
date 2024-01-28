@@ -48,3 +48,28 @@ export const store = {
 export function mod(n: number, m: number): number {
   return ((n % m) + m) % m;
 }
+
+export function unicodeToBase64(text: string) {
+  const utf8Bytes = new TextEncoder().encode(text);
+  const base64String = btoa(String.fromCharCode(...utf8Bytes));
+  return base64String;
+}
+
+export function base64ToUnicode(base64String: string) {
+  const utf8Bytes = new Uint8Array(
+    atob(base64String)
+      .split("")
+      .map((char) => char.charCodeAt(0))
+  );
+  const decoder = new TextDecoder("utf-8", { fatal: true });
+  const decodedText = decoder.decode(utf8Bytes);
+  return decodedText;
+}
+
+export function code2hash(code: string) {
+  return encodeURIComponent(unicodeToBase64(code));
+}
+
+export function hash2code(hash: string) {
+  return base64ToUnicode(decodeURIComponent(hash));
+}
