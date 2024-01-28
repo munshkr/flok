@@ -192,8 +192,10 @@ export class Session {
   setTextString(id: string, text: string) {
     const ytext = this._yText(id);
     if (ytext.toString() === text) return;
-    if (ytext.length > 0) ytext.delete(0, ytext.length);
-    ytext.insert(0, text);
+    this.yDoc.transact(() => {
+      ytext.delete(0, ytext.length);
+      ytext.insert(0, text);
+    });
   }
 
   evaluate(
