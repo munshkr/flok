@@ -289,7 +289,7 @@ export class Session {
       this._idbProvider.on("synced", () => {
         if (!this._synced) {
           this._synced = true;
-          this._emitter.emit("sync");
+          this._emitter.emit("sync", "indexeddb");
           debug("Synced first with IndexedDB");
         }
       });
@@ -303,7 +303,7 @@ export class Session {
       this._webrtcProvider.on("synced", () => {
         if (!this._synced) {
           this._synced = true;
-          this._emitter.emit("sync");
+          this._emitter.emit("sync", "webrtc");
           debug("Synced first with WebRTC");
         }
       });
@@ -319,7 +319,7 @@ export class Session {
       this._wsProvider.on("synced", () => {
         if (!this._synced) {
           this._synced = true;
-          this._emitter.emit("sync");
+          this._emitter.emit("sync", "websocket");
           debug("Synced first with WebSockets");
         }
       });
