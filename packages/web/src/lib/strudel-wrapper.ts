@@ -7,16 +7,16 @@ import {
   noteToMidi,
   Pattern,
   valueToMidi,
-} from "@strudel.cycles/core";
-import { evaluate, transpiler } from "@strudel.cycles/transpiler";
+} from "@strudel/core";
+import { evaluate, transpiler } from "@strudel/transpiler";
 import {
   getAudioContext,
   initAudioOnFirstClick,
   webaudioOutput,
   samples,
   registerSynthSounds,
-} from "@strudel.cycles/webaudio";
-import { registerSoundfonts } from "@strudel.cycles/soundfonts";
+} from "@strudel/webaudio";
+import { registerSoundfonts } from "@strudel/soundfonts";
 
 export type ErrorHandler = (error: string) => void;
 
@@ -44,14 +44,14 @@ export class StrudelWrapper {
     initAudioOnFirstClick();
     // import desired modules and add them to the eval scope
     await evalScope(
-      import("@strudel.cycles/core"),
-      import("@strudel.cycles/midi"),
-      import("@strudel.cycles/mini"),
-      import("@strudel.cycles/tonal"),
-      import("@strudel.cycles/osc"),
-      import("@strudel.cycles/serial"),
-      import("@strudel.cycles/soundfonts"),
-      import("@strudel.cycles/webaudio"),
+      import("@strudel/core"),
+      import("@strudel/midi"),
+      import("@strudel/mini"),
+      import("@strudel/tonal"),
+      import("@strudel/osc"),
+      import("@strudel/serial"),
+      import("@strudel/soundfonts"),
+      import("@strudel/webaudio"),
       controls
     );
     try {
