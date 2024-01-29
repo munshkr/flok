@@ -303,11 +303,18 @@ packages:
       easily on new sketches
     * Connect to local filesystem for files and libraries
 
+### Hash parameters
+
+* `username` (string): Default user name. Eg: `#username=arbor`
+* `targets` (list of strings): If session is empty, configure it with the
+  specified targets by default. Eg: `#targets=hydra,strudel`
+* `c0`, `c1`, ..., `c7`  (string): Default code to load on each document/pane
+  (if available). **Code must be encoded in Base64**. Eg:
+  `#c0=bm9pc2UoKS5vdXQoKQ%253D%253D` (decodes to `noise().out()`).
+* `code` (string): An alias of `c0` (see above)
+
 ### Query parameters
 
-* `username` (string): Default user name
-* `targets` (list of strings): If session is empty, configure it with the
-  specified targets by default. Eg: `?targets=hydra,strudel`
 * `readOnly` (boolean): Disable editing. If true, it won't ask for a user name
   when loading.
 * `bgOpacity` (number): Background opacity. Valid range: [0, 1]

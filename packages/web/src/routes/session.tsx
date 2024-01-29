@@ -8,17 +8,26 @@ import { Pane } from "@/components/pane";
 import { ReplsButton } from "@/components/repls-button";
 import { ReplsDialog } from "@/components/repls-dialog";
 import SessionCommandDialog from "@/components/session-command-dialog";
+import { ShareUrlDialog } from "@/components/share-url-dialog";
 import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
 import { WelcomeDialog } from "@/components/welcome-dialog";
+import { useHash } from "@/hooks/use-hash";
 import { useHydra } from "@/hooks/use-hydra";
 import { useMercury } from "@/hooks/use-mercury";
 import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudel } from "@/hooks/use-strudel";
 import { useToast } from "@/hooks/use-toast";
-import { cn, generateRandomUserName, mod, store } from "@/lib/utils";
+import {
+  cn,
+  code2hash,
+  generateRandomUserName,
+  hash2code,
+  mod,
+  store,
+} from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import {
   defaultTarget,
@@ -47,6 +56,7 @@ export interface Message {
 
 export default function SessionPage() {
   const query = useQuery();
+  const [hash, setHash] = useHash();
 
   const { name } = useLoaderData() as SessionLoaderParams;
   const navigate = useNavigate();
@@ -59,6 +69,7 @@ export default function SessionPage() {
   const [username, setUsername] = useState<string>("");
   const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
+  const [shareUrlDialogOpen, setShareUrlDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
@@ -72,6 +83,7 @@ export default function SessionPage() {
   const [hideMessagesOnEval, setHideMessagesOnEval] = useState<boolean>(
     store.get("messages:hide-on-eval", true)
   );
+  const [sessionUrl, setSessionUrl] = useState<string>("");
 
   const editorRefs = Array.from({ length: 8 }).map(() =>
     useRef<ReactCodeMirrorRef>(null)
@@ -115,19 +127,47 @@ export default function SessionPage() {
     });
 
     // Default documents
-    newSession.on("sync", () => {
+    newSession.on("sync", (protocol: string) => {
       setSyncState(newSession.wsConnected ? "synced" : "partiallySynced");
 
-      // If session is empty, first try to get list of targets from query parameter "targets".
-      // If parameter is not present or has no valid targets, show the configure/welcome dialog.
+      console.log("Synced first with protocol:", protocol);
+
+      // If session is empty, set targets from hash parameter if present.
+      // Otherwise, use default target.
       if (newSession.getDocuments().length === 0) {
-        const targets = query.get("targets")?.split(",") || [];
+        console.log(
+          "Session is empty, setting targets and code from hash params"
+        );
+        // If `targets` hash param is present and has valid targets, set them as
+        // active documents.
+        const targets = hash["targets"]?.split(",") || [];
         const validTargets = targets.filter((t) => knownTargets.includes(t));
+        console.log("Valid targets from hash:", validTargets);
         if (validTargets.length > 0) {
           setActiveDocuments(newSession, validTargets);
         } else {
           setActiveDocuments(newSession, [defaultTarget]);
         }
+
+        // For each valid target, set the corresponding document content from
+        // hash (if present). `code` is an alias of `c0`.
+        const documents = newSession.getDocuments();
+        validTargets.forEach((_, i) => {
+          let content = hash[`c${i}`];
+          if (i == 0) content = content || hash["code"];
+          if (content) {
+            try {
+              const code = hash2code(content);
+              console.log(`Setting code for target ${i}:`, code);
+              documents[i].content = code;
+            } catch (err) {
+              console.error(`Error parsing code ${i}`, err);
+            }
+          }
+        });
+
+        // Clear hash parameters
+        setHash({});
       }
     });
 
@@ -223,7 +263,7 @@ export default function SessionPage() {
     if (readOnly) {
       setUsername(generateRandomUserName());
     } else {
-      const savedUsername = query.get("username") || store.get("username");
+      const savedUsername = hash["username"] || store.get("username");
       if (!savedUsername) {
         setUsername(generateRandomUserName());
         setUsernameDialogOpen(true);
@@ -276,6 +316,30 @@ export default function SessionPage() {
     session.on("eval", evalHandler);
     return () => session.off("eval", evalHandler);
   }, [session, hideMessagesOnEval]);
+
+  useEffect(() => {
+    if (!shareUrlDialogOpen) return;
+    if (!session) return;
+
+    // Update sessionURL based on current session layout and documents
+    // We need: session documents, and documents contents
+    const documents = session.getDocuments();
+    const targets = documents.map((doc) => doc.target);
+    const contents = documents.map((doc) => doc.content);
+
+    const hash = {
+      targets: targets.join(","),
+      ...contents.reduce((acc: { [key: string]: string }, content, i) => {
+        acc[`c${i}`] = code2hash(content);
+        return acc;
+      }, {}),
+    };
+
+    const hashString = new URLSearchParams(hash).toString();
+    const currentURL = window.location.href;
+
+    setSessionUrl(`${currentURL}#${hashString}`);
+  }, [session, shareUrlDialogOpen]);
 
   // Load external libraries
   useStrudel(
@@ -453,6 +517,7 @@ export default function SessionPage() {
         onOpenChange={(isOpen) => setCommandsDialogOpen(isOpen)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
         onSessionNew={() => navigate("/")}
+        onSessionShareUrl={() => setShareUrlDialogOpen(true)}
         onLayoutAdd={handleViewLayoutAdd}
         onLayoutRemove={handleViewLayoutRemove}
         onLayoutConfigure={() => setConfigureDialogOpen(true)}
@@ -466,6 +531,11 @@ export default function SessionPage() {
       <WelcomeDialog
         open={welcomeDialogOpen}
         onOpenChange={(isOpen) => setWelcomeDialogOpen(isOpen)}
+      />
+      <ShareUrlDialog
+        url={sessionUrl}
+        open={shareUrlDialogOpen}
+        onOpenChange={(isOpen) => setShareUrlDialogOpen(isOpen)}
       />
       {session && (
         <ConfigureDialog

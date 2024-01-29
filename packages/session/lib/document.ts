@@ -14,6 +14,10 @@ export class Document {
     return this.session.getTextString(this.id);
   }
 
+  set content(newValue: string) {
+    this.session.setTextString(this.id, newValue);
+  }
+
   get target(): string {
     return this.session.getTarget(this.id);
   }

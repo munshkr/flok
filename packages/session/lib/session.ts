@@ -189,6 +189,15 @@ export class Session {
     return this.getText(id).toString();
   }
 
+  setTextString(id: string, text: string) {
+    const ytext = this._yText(id);
+    if (ytext.toString() === text) return;
+    this.yDoc.transact(() => {
+      ytext.delete(0, ytext.length);
+      ytext.insert(0, text);
+    });
+  }
+
   evaluate(
     docId: string,
     target: string,
@@ -231,11 +240,12 @@ export class Session {
     this._emitter.once(eventName, cb);
   }
 
-  removeAllListeners(eventName: SessionEvent) {
+  removeAllListeners(eventName?: SessionEvent) {
     this._emitter.removeAllListeners(eventName);
   }
 
   destroy() {
+    this.removeAllListeners();
     ["error", "open", "close"].forEach((e) =>
       this._pubSubClient.removeAllListeners(e)
     );
@@ -279,7 +289,7 @@ export class Session {
       this._idbProvider.on("synced", () => {
         if (!this._synced) {
           this._synced = true;
-          this._emitter.emit("sync");
+          this._emitter.emit("sync", "indexeddb");
           debug("Synced first with IndexedDB");
         }
       });
@@ -293,7 +303,7 @@ export class Session {
       this._webrtcProvider.on("synced", () => {
         if (!this._synced) {
           this._synced = true;
-          this._emitter.emit("sync");
+          this._emitter.emit("sync", "webrtc");
           debug("Synced first with WebRTC");
         }
       });
@@ -309,7 +319,7 @@ export class Session {
       this._wsProvider.on("synced", () => {
         if (!this._synced) {
           this._synced = true;
-          this._emitter.emit("sync");
+          this._emitter.emit("sync", "websocket");
           debug("Synced first with WebSockets");
         }
       });
