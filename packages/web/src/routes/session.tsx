@@ -149,26 +149,25 @@ export default function SessionPage() {
           setActiveDocuments(newSession, [defaultTarget]);
         }
 
-        // If `code` hash parameter is present, set first document content to it.
-        const defaultCodeBase64 = hash["code"];
-        if (defaultCodeBase64) {
-          const firstDocument = newSession.getDocuments()[0];
-          try {
-            const defaultCode = hash2code(defaultCodeBase64);
-            console.log("Setting default code:", defaultCode);
-            if (firstDocument) firstDocument.content = defaultCode;
-          } catch (err) {
-            console.error("Error parsing default code:", err);
+        // For each valid target, set the corresponding document content from
+        // hash (if present). `code` is an alias of `c0`.
+        const documents = newSession.getDocuments();
+        validTargets.forEach((_, i) => {
+          let content = hash[`c${i}`];
+          if (i == 0) content = content || hash["code"];
+          if (content) {
+            try {
+              const code = hash2code(content);
+              console.log(`Setting code for target ${i}:`, code);
+              documents[i].content = code;
+            } catch (err) {
+              console.error(`Error parsing code ${i}`, err);
+            }
           }
-        }
+        });
 
         // Clear hash parameters
-        setHash((hash) => ({
-          ...hash,
-          username: null,
-          targets: null,
-          code: null,
-        }));
+        setHash({});
       }
     });
 
@@ -330,8 +329,12 @@ export default function SessionPage() {
 
     const hash = {
       targets: targets.join(","),
-      code: code2hash(contents[0]),
+      ...contents.reduce((acc: { [key: string]: string }, content, i) => {
+        acc[`c${i}`] = code2hash(content);
+        return acc;
+      }, {}),
     };
+
     const hashString = new URLSearchParams(hash).toString();
     const currentURL = window.location.href;
 
