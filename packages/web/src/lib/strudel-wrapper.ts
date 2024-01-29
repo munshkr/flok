@@ -8,7 +8,7 @@ import {
   Pattern,
   valueToMidi,
 } from "@strudel/core";
-import { evaluate, transpiler } from "@strudel/transpiler";
+import { transpiler } from "@strudel/transpiler";
 import {
   getAudioContext,
   initAudioOnFirstClick,
