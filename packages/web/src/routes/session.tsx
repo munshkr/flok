@@ -338,7 +338,7 @@ export default function SessionPage() {
     const hashString = new URLSearchParams(hash).toString();
     const currentURL = window.location.href;
 
-    setSessionUrl(`${currentURL}${hashString}`);
+    setSessionUrl(`${currentURL}#${hashString}`);
   }, [session, shareUrlDialogOpen]);
 
   // Load external libraries
