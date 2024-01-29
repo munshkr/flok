@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2024-01-28
+
+### Bugfixes
+
+* web(hydra): Fixed issues with P5 not loading properly
+* web(hydra): `await` now works properly
+* web: Fixed issue with `flok-web` binary script running in development mode
+
+### New Features
+
+* web: Share URL command for sharing session URL along with current layout and
+  code.
+* web: `hideErrors` query parameter option for hiding errors of web targets
+* web: `code` and `c0`..`c7` hash parameters to set code for each editor
+
+### Changed
+
+* web(hydra): Updated P5 to 1.9.0
+* web(mercury): Updated Mercury to 0.14.0
+* web(strudel): Updated Strudel to 1.0.0
+* web: Updated Codemirror and related packages
+* web: Updated Yjs and related packages
+* web: Updated Vite 5
+* web: Moved `username` and `targets` query parameters as hash parameters
+
 ## [1.0.2] - 2024-01-13
 
 ### Changed
