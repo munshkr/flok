@@ -5,7 +5,7 @@ type HashRecord = Record<string, string | null>;
 const fromObject = (obj: HashRecord) =>
   Object.entries(obj)
     .filter(([_, value]) => value != null)
-    .map(([key, value]) => `${key}=${value}`)
+    .map(([key, value]) => `${key}=${encodeURIComponent(value!)}`)
     .join("&");
 
 const toObject = (hash: string) =>
@@ -14,7 +14,7 @@ const toObject = (hash: string) =>
     .split("&")
     .reduce((acc, curr) => {
       const [key, value] = curr.split("=");
-      return { ...acc, [key]: value };
+      return { ...acc, [key]: decodeURIComponent(value) };
     }, {});
 
 export function useHash(): [
