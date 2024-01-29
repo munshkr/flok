@@ -83,7 +83,7 @@ export class StrudelWrapper {
     if (!this.initialized) await this.initialize();
     try {
       const { body: code, docId } = msg;
-      const { pattern } = await evaluate(code);
+      const pattern = await this._repl.evaluate(code);
       this._docPatterns[docId] = pattern;
       const allPatterns = stack(...Object.values(this._docPatterns));
       await this._repl.scheduler.setPattern(allPatterns, true);
