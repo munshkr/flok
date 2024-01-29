@@ -1,6 +1,6 @@
 {
   "name": "flok-web",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Web server for Flok",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
