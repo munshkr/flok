@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2024-01-29
+
+### Bugfixes
+
+* web(strudel): Use REPL evaluate method, this fixes the "`setcps` is not defined" error.
+
 ## [1.1.0] - 2024-01-28
 
 ### Bugfixes
