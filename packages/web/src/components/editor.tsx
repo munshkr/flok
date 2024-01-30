@@ -7,7 +7,7 @@ import {
 } from "@/settings.json";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-import { EditorState, Prec, Compartment } from "@codemirror/state";
+import { EditorState, Prec, Compartment, Extension } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { evalKeymap, flashField, remoteEvalFlash } from "@flok-editor/cm-eval";
 import { tidal } from "@flok-editor/lang-tidal";
