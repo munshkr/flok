@@ -7,8 +7,8 @@ import {
 } from "@/settings.json";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-import { EditorState, Prec } from "@codemirror/state";
-import { EditorView, keymap } from "@codemirror/view";
+import { EditorState, Prec, Compartment, Extension } from "@codemirror/state";
+import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { evalKeymap, flashField, remoteEvalFlash } from "@flok-editor/cm-eval";
 import { tidal } from "@flok-editor/lang-tidal";
 import type { Document } from "@flok-editor/session";
@@ -124,6 +124,26 @@ export interface EditorProps extends ReactCodeMirrorProps {
   document?: Document;
 }
 
+// Code example from:
+// https://codemirror.net/examples/config/#dynamic-configuration
+// Allows toggling of extensions based on string shortkey
+// 
+const toggleWith = (key: string, extension: Extension) => {
+  let comp = new Compartment;
+
+  function toggle(view: EditorView) {
+    let on = comp.get(view.state) == extension;
+    view.dispatch({
+      effects: comp.reconfigure(on ? [] : extension)
+    })
+    return true;
+  }
+  return [
+    comp.of([]),
+    keymap.of([{key, run: toggle}])
+  ]
+}
+
 export const Editor = React.forwardRef(
   (
     { document, ...props }: EditorProps,
@@ -153,6 +173,10 @@ export const Editor = React.forwardRef(
       flokSetup(document, { readOnly }),
       languageExtension(),
       readOnly ? EditorState.readOnly.of(true) : [],
+      // toggle linenumbers on/off
+      toggleWith('shift-ctrl-l', lineNumbers()),
+      // toggle linewrapping on/off
+      toggleWith('shift-ctrl-w', EditorView.lineWrapping) 
     ];
 
     // If it's read-only, put a div in front of the editor so that the user
