@@ -29,7 +29,7 @@
     "mercury": "silence",
     "mercury-web": "silence",
     "hydra": "hush()",
-    "strudel": "\"~\".out()",
+    "strudel": "silence",
     "sardine": "panic()"
   },
   "webTargets": ["hydra", "strudel", "mercury-web"],

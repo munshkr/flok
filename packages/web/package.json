@@ -46,6 +46,7 @@
     "@radix-ui/react-tooltip": "^1.0.5",
     "@strudel/core": "^1.0.0",
     "@strudel/midi": "^1.0.0",
+    "@strudel/codemirror": "^1.0.0",
     "@strudel/mini": "^1.0.0",
     "@strudel/osc": "^1.0.0",
     "@strudel/serial": "^1.0.0",
