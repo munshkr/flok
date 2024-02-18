@@ -26,6 +26,8 @@ import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 
 export type ErrorHandler = (error: string) => void;
 
+controls.createParam("docId");
+
 export class StrudelWrapper {
   initialized: boolean = false;
 
@@ -59,29 +61,32 @@ export class StrudelWrapper {
           lastFrame = phase;
           return;
         }
-        if (this._editorRefs) {
-          Object.entries(this._docPatterns).forEach(([docId, pat]: any) => {
-            const editorRef = this._editorRefs?.[Number(docId) - 1];
-            if (editorRef?.current) {
-              const haps = pat.queryArc(
-                Math.max(lastFrame!, phase - 1 / 10), // make sure query is not larger than 1/10 s
-                phase
-              );
-              const currentFrame = haps.filter(
-                (hap: any) =>
-                  phase >= hap.whole.begin && phase <= hap.endClipped
-              );
-              highlightMiniLocations(
-                editorRef.current.view,
-                phase,
-                currentFrame
-              );
-            }
-          });
+        if (!this._editorRefs) {
+          return;
         }
+        // queries the stack of strudel patterns for the current time
+        const allHaps = this._repl.scheduler.pattern.queryArc(
+          Math.max(lastFrame!, phase - 1 / 10), // make sure query is not larger than 1/10 s
+          phase
+        );
+        // filter out haps that are not active right now
+        const currentFrame = allHaps.filter(
+          (hap: any) => phase >= hap.whole.begin && phase <= hap.endClipped
+        );
+        // iterate over each strudel doc
+        Object.keys(this._docPatterns).forEach((docId: any) => {
+          const editorRef = this._editorRefs?.[Number(docId) - 1];
+          if (!editorRef?.current) {
+            return;
+          }
+          // filter out haps belonging to this document (docId is set in tryEval)
+          const haps = currentFrame.filter((h: any) => h.value.docId === docId);
+          // update codemirror view to highlight this frame's haps
+          highlightMiniLocations(editorRef.current.view, phase, haps);
+        });
       },
-      () => {
-        console.log("draw error");
+      (err: any) => {
+        console.error("strudel draw error", err);
       }
     );
   }
@@ -143,7 +148,7 @@ export class StrudelWrapper {
       // little hack that injects the docId at the end of the code to make it available in afterEval
       const pattern = await this._repl.evaluate(code + `//${docId}`);
       if (pattern) {
-        this._docPatterns[docId] = pattern;
+        this._docPatterns[docId] = pattern.docId(docId); // docId is needed for highlighting
         const allPatterns = stack(...Object.values(this._docPatterns));
         await this._repl.scheduler.setPattern(allPatterns, true);
         this._onError("");
