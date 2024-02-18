@@ -21,8 +21,6 @@ import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
 import { highlightExtension } from '@strudel/codemirror';
 
-console.log('highlightExtension', highlightExtension);
-
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
 const langExtensionsByLanguage: { [lang: string]: any } = {
