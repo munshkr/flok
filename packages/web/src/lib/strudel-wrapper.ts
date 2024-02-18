@@ -7,6 +7,7 @@ import {
   noteToMidi,
   Pattern,
   valueToMidi,
+  Framer,
 } from "@strudel/core";
 import { transpiler } from "@strudel/transpiler";
 import {
@@ -17,7 +18,10 @@ import {
   registerSynthSounds,
 } from "@strudel/webaudio";
 import { registerSoundfonts } from "@strudel/soundfonts";
-import { updateMiniLocations } from "@strudel/codemirror";
+import {
+  updateMiniLocations,
+  highlightMiniLocations,
+} from "@strudel/codemirror";
 import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 
 export type ErrorHandler = (error: string) => void;
@@ -30,6 +34,7 @@ export class StrudelWrapper {
   protected _repl: any;
   protected _docPatterns: any;
   protected _editorRefs?: React.RefObject<ReactCodeMirrorRef>[];
+  protected framer?: any;
 
   constructor({
     onError,
@@ -44,6 +49,41 @@ export class StrudelWrapper {
     this._onError = onError || (() => {});
     this._onWarning = onWarning || (() => {});
     this._editorRefs = editorRefs;
+
+    let lastFrame: number | null = null;
+
+    this.framer = new Framer(
+      () => {
+        const phase = this._repl.scheduler.now();
+        if (lastFrame === null) {
+          lastFrame = phase;
+          return;
+        }
+        if (this._editorRefs) {
+          Object.entries(this._docPatterns).forEach(([docId, pat]: any) => {
+            const editorRef = this._editorRefs?.[Number(docId) - 1];
+            if (editorRef?.current) {
+              const haps = pat.queryArc(
+                Math.max(lastFrame!, phase - 1 / 10), // make sure query is not larger than 1/10 s
+                phase
+              );
+              const currentFrame = haps.filter(
+                (hap: any) =>
+                  phase >= hap.whole.begin && phase <= hap.endClipped
+              );
+              highlightMiniLocations(
+                editorRef.current.view,
+                phase,
+                currentFrame
+              );
+            }
+          });
+        }
+      },
+      () => {
+        console.log("draw error");
+      }
+    );
   }
 
   async importModules() {
@@ -78,10 +118,10 @@ export class StrudelWrapper {
         // assumes docId is injected at end end as a comment
         const docId = Number(options.code.split("//").slice(-1)[0]);
         // assumes docId is the editorIndex + 1
-        const editor = this._editorRefs?.[docId - 1];
-        if (editor?.current) {
+        const editorRef = this._editorRefs?.[docId - 1];
+        if (editorRef?.current) {
           const miniLocations = options.meta?.miniLocations;
-          updateMiniLocations(editor.current.view, miniLocations);
+          updateMiniLocations(editorRef.current.view, miniLocations);
         }
         // TODO: find a good place to run an animation loop to call highlightMiniLocations(editor, time, haps);
       },
@@ -91,6 +131,7 @@ export class StrudelWrapper {
       getTime: () => getAudioContext().currentTime,
       transpiler,
     });
+    this.framer.start(); // TODO: when to start stop?
 
     this.initialized = true;
   }
