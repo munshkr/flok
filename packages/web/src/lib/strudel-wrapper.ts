@@ -17,6 +17,7 @@ import {
   registerSynthSounds,
 } from "@strudel/webaudio";
 import { registerSoundfonts } from "@strudel/soundfonts";
+import { updateMiniLocations } from "@strudel/codemirror";
 
 export type ErrorHandler = (error: string) => void;
 
@@ -38,6 +39,7 @@ export class StrudelWrapper {
     this._docPatterns = {};
     this._onError = onError || (() => {});
     this._onWarning = onWarning || (() => {});
+    console.log("strudel", this);
   }
 
   async importModules() {
@@ -68,7 +70,14 @@ export class StrudelWrapper {
   async initialize() {
     this._repl = repl({
       defaultOutput: webaudioOutput,
-      afterEval: () => {},
+      afterEval: (options: any) => {
+        console.log("strudel eval", options);
+        const miniLocations = options.meta?.miniLocations;
+        console.log("miniLocations", miniLocations, updateMiniLocations);
+        // TODO: find way to get a reference to the current editor
+        /*updateMiniLocations(editor, miniLocations); */
+        // TODO: find a good place to run an animation loop to call highlightMiniLocations(editor, time, haps);
+      },
       beforeEval: () => {},
       onSchedulerError: (e: unknown) => this._onError(`${e}`),
       onEvalError: (e: unknown) => this._onError(`${e}`),

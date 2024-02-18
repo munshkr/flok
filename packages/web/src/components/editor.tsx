@@ -19,6 +19,9 @@ import CodeMirror, {
 import React, { useEffect, useState } from "react";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
+import { highlightExtension } from '@strudel/codemirror';
+
+console.log('highlightExtension', highlightExtension);
 
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
@@ -172,6 +175,7 @@ export const Editor = React.forwardRef(
       baseTheme,
       flokSetup(document, { readOnly }),
       languageExtension(),
+      highlightExtension,
       readOnly ? EditorState.readOnly.of(true) : [],
       // toggle linenumbers on/off
       toggleWith('shift-ctrl-l', lineNumbers()),
