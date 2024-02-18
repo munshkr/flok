@@ -18,6 +18,7 @@ import {
 } from "@strudel/webaudio";
 import { registerSoundfonts } from "@strudel/soundfonts";
 import { updateMiniLocations } from "@strudel/codemirror";
+import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 
 export type ErrorHandler = (error: string) => void;
 
@@ -28,18 +29,21 @@ export class StrudelWrapper {
   protected _onWarning: ErrorHandler;
   protected _repl: any;
   protected _docPatterns: any;
+  protected _editorRefs?: React.RefObject<ReactCodeMirrorRef>[];
 
   constructor({
     onError,
     onWarning,
+    editorRefs,
   }: {
     onError?: ErrorHandler;
     onWarning?: ErrorHandler;
+    editorRefs?: React.RefObject<ReactCodeMirrorRef>[];
   }) {
     this._docPatterns = {};
     this._onError = onError || (() => {});
     this._onWarning = onWarning || (() => {});
-    console.log("strudel", this);
+    this._editorRefs = editorRefs;
   }
 
   async importModules() {
@@ -71,11 +75,14 @@ export class StrudelWrapper {
     this._repl = repl({
       defaultOutput: webaudioOutput,
       afterEval: (options: any) => {
-        console.log("strudel eval", options);
-        const miniLocations = options.meta?.miniLocations;
-        console.log("miniLocations", miniLocations, updateMiniLocations);
-        // TODO: find way to get a reference to the current editor
-        /*updateMiniLocations(editor, miniLocations); */
+        // assumes docId is injected at end end as a comment
+        const docId = Number(options.code.split("//").slice(-1)[0]);
+        // assumes docId is the editorIndex + 1
+        const editor = this._editorRefs?.[docId - 1];
+        if (editor?.current) {
+          const miniLocations = options.meta?.miniLocations;
+          updateMiniLocations(editor.current.view, miniLocations);
+        }
         // TODO: find a good place to run an animation loop to call highlightMiniLocations(editor, time, haps);
       },
       beforeEval: () => {},
@@ -92,7 +99,8 @@ export class StrudelWrapper {
     if (!this.initialized) await this.initialize();
     try {
       const { body: code, docId } = msg;
-      const pattern = await this._repl.evaluate(code);
+      // little hack that injects the docId at the end of the code to make it available in afterEval
+      const pattern = await this._repl.evaluate(code + `//${docId}`);
       if (pattern) {
         this._docPatterns[docId] = pattern;
         const allPatterns = stack(...Object.values(this._docPatterns));

@@ -345,7 +345,8 @@ export default function SessionPage() {
   useStrudel(
     session,
     (err) => handleWebError("Strudel", err),
-    (msg) => handleWebWarning("Strudel", msg)
+    (msg) => handleWebWarning("Strudel", msg),
+    editorRefs
   );
   useMercury(
     session,
