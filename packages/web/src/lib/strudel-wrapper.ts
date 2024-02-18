@@ -1,4 +1,4 @@
-import { EvalMessage } from "@flok-editor/session";
+import type { Session, EvalMessage } from "@flok-editor/session";
 import {
   repl,
   controls,
@@ -28,6 +28,9 @@ export type ErrorHandler = (error: string) => void;
 
 controls.createParam("docId");
 
+const getDocumentIndex = (docId: string, session: Session | null) =>
+  session?.getDocuments().findIndex((d) => d.id === docId) ?? -1;
+
 export class StrudelWrapper {
   initialized: boolean = false;
 
@@ -35,22 +38,26 @@ export class StrudelWrapper {
   protected _onWarning: ErrorHandler;
   protected _repl: any;
   protected _docPatterns: any;
-  protected _editorRefs?: React.RefObject<ReactCodeMirrorRef>[];
+  protected _editorRefs: React.RefObject<ReactCodeMirrorRef>[];
+  protected _session: Session | null;
   protected framer?: any;
 
   constructor({
     onError,
     onWarning,
     editorRefs,
+    session,
   }: {
-    onError?: ErrorHandler;
-    onWarning?: ErrorHandler;
-    editorRefs?: React.RefObject<ReactCodeMirrorRef>[];
+    onError: ErrorHandler;
+    onWarning: ErrorHandler;
+    editorRefs: React.RefObject<ReactCodeMirrorRef>[];
+    session: Session | null;
   }) {
     this._docPatterns = {};
     this._onError = onError || (() => {});
     this._onWarning = onWarning || (() => {});
     this._editorRefs = editorRefs;
+    this._session = session;
 
     let lastFrame: number | null = null;
 
@@ -75,13 +82,15 @@ export class StrudelWrapper {
         );
         // iterate over each strudel doc
         Object.keys(this._docPatterns).forEach((docId: any) => {
-          const editorRef = this._editorRefs?.[Number(docId) - 1];
-          if (!editorRef?.current) {
+          const index = getDocumentIndex(docId, this._session);
+          const editorRef = this._editorRefs?.[index];
+          if (!editorRef?.current?.view) {
             return;
           }
           // filter out haps belonging to this document (docId is set in tryEval)
           const haps = currentFrame.filter((h: any) => h.value.docId === docId);
           // update codemirror view to highlight this frame's haps
+
           highlightMiniLocations(editorRef.current.view, phase, haps);
         });
       },
@@ -121,14 +130,13 @@ export class StrudelWrapper {
       defaultOutput: webaudioOutput,
       afterEval: (options: any) => {
         // assumes docId is injected at end end as a comment
-        const docId = Number(options.code.split("//").slice(-1)[0]);
-        // assumes docId is the editorIndex + 1
-        const editorRef = this._editorRefs?.[docId - 1];
+        const docId = options.code.split("//").slice(-1)[0];
+        const index = getDocumentIndex(docId, this._session);
+        const editorRef = this._editorRefs?.[index];
         if (editorRef?.current) {
           const miniLocations = options.meta?.miniLocations;
           updateMiniLocations(editorRef.current.view, miniLocations);
         }
-        // TODO: find a good place to run an animation loop to call highlightMiniLocations(editor, time, haps);
       },
       beforeEval: () => {},
       onSchedulerError: (e: unknown) => this._onError(`${e}`),

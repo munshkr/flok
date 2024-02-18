@@ -5,16 +5,21 @@ import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 
 export function useStrudel(
   session: Session | null,
-  onError?: (err: unknown) => void,
-  onWarning?: (msg: string) => void,
-  editorRefs?: React.RefObject<ReactCodeMirrorRef>[]
+  onError: (err: unknown) => void,
+  onWarning: (msg: string) => void,
+  editorRefs: React.RefObject<ReactCodeMirrorRef>[]
 ) {
   return useWebTarget<StrudelWrapper>(
     "strudel",
     session,
     async () => {
       console.log("Create StrudelWrapper");
-      const strudel = new StrudelWrapper({ onError, onWarning, editorRefs });
+      const strudel = new StrudelWrapper({
+        onError,
+        onWarning,
+        editorRefs,
+        session,
+      });
 
       console.log("Import Strudel modules");
       await strudel.importModules();
