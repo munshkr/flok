@@ -27,7 +27,7 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
 
       - name: Build
-        run: ssh prod 'cd flok && git fetch && git reset --hard origin/main && yarn && yarn build'
+        run: ssh prod 'cd flok && git fetch && git reset --hard $GITHUB_SHA && npm install'
 
       - name: Restart server
         run: ssh prod 'sudo systemctl restart flok'
