@@ -47,10 +47,7 @@ jobs:
           remote_key: ${{ secrets.SSH_KEY }}
 
       - name: Restart server
-        run: ssh prod 'sudo systemctl restart flok'
-
-      - name: Check status
-        run: ssh prod 'sudo systemctl status flok'
+        run: ssh prod 'sudo systemctl restart flok && sleep 5 && sudo systemctl status flok'
 
       - name: Healthcheck
         run: curl -I https://flok.cc/ | grep "200 OK" || exit 1
