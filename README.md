@@ -233,6 +233,7 @@ Install all dependencies and build all subpackages with:
 
 ```sh
 npm install
+npm run build
 ```
 
 Then, to run web server:
@@ -242,10 +243,9 @@ cd packages/web
 npm run dev
 ```
 
-To build and run production build:
+To run production build:
 
 ```sh
-npm run build
 npm start
 ```
 
