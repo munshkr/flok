@@ -51,3 +51,7 @@ jobs:
 
       - name: Healthcheck
         run: curl -I https://flok.cc/ | grep "200 OK" || exit 1
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
