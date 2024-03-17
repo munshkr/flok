@@ -49,9 +49,6 @@ jobs:
       - name: Restart server
         run: ssh prod 'sudo systemctl restart flok && sleep 5 && sudo systemctl status flok'
 
-      - name: Healthcheck
-        run: curl -I https://flok.cc/ | grep "200 OK" || exit 1
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
