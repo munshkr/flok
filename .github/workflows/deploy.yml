@@ -1,3 +1,4 @@
+name: Build and Deploy to flok.cc
 on:
   push:
     branches:
@@ -6,7 +7,6 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to flok.cc
     runs-on: ubuntu-latest
     steps:
       - name: Configure SSH
