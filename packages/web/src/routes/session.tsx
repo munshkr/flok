@@ -11,6 +11,7 @@ import { ShareUrlDialog } from "@/components/share-url-dialog";
 import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
+import { WebTargetIframe } from "@/components/web-target-iframe";
 import { WelcomeDialog } from "@/components/welcome-dialog";
 import { useHash } from "@/hooks/use-hash";
 import { useMercury } from "@/hooks/use-mercury";
@@ -32,7 +33,7 @@ import {
   panicCodes as panicCodesUntyped,
   webTargets,
 } from "@/settings.json";
-import { Document, EvalMessage, Session } from "@flok-editor/session";
+import { Document, Session } from "@flok-editor/session";
 import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -337,26 +338,6 @@ export default function SessionPage() {
     (msg) => handleWebWarning("Mercury", msg)
   );
 
-  // Hydra iframe
-  const hydraRef = useRef<HTMLIFrameElement | null>(null);
-  useEffect(() => {
-    if (!session || !hydraRef.current) return;
-
-    const handler = (msg: EvalMessage) => {
-      const payload = {
-        type: "eval",
-        body: msg.body,
-      };
-      hydraRef.current?.contentWindow?.postMessage(payload, "*");
-    };
-
-    session.on(`eval:hydra`, handler);
-
-    return () => {
-      session.off(`eval:hydra`, handler);
-    };
-  }, [session, hydraRef]);
-
   // Handle toast messages from iframes
   useEffect(() => {
     const handler = (event: MessageEvent) => {
@@ -372,12 +353,6 @@ export default function SessionPage() {
       window.removeEventListener("message", handler);
     };
   }, []);
-
-  // const { canvasRef: hydraCanvasRef } = useHydra(
-  //   session,
-  //   (err) => handleWebError("Hydra", err),
-  //   (msg) => handleWebWarning("Hydra", msg)
-  // );
 
   const focusEditor = (i: number) => {
     const ref = editorRefs[i].current;
@@ -600,11 +575,7 @@ export default function SessionPage() {
           </Pane>
         ))}
       />
-      <iframe
-        ref={hydraRef}
-        src="/frames/hydra"
-        className="absolute inset-0 w-full h-full"
-      />
+      <WebTargetIframe session={session} target="hydra" />
       <div
         className={cn(
           "fixed top-1 right-1 flex m-1",

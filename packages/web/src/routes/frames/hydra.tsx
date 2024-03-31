@@ -1,25 +1,9 @@
 import HydraCanvas from "@/components/hydra-canvas";
+import { useEvalHandler } from "@/hooks/use-eval-handler";
 import { HydraWrapper } from "@/lib/hydra-wrapper";
+import { sendToast } from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import { useMemo, useRef, useEffect, useState } from "react";
-
-function toast(
-  variant: "warning" | "destructive",
-  title: string,
-  message: string
-) {
-  window.parent.postMessage(
-    {
-      type: "toast",
-      body: {
-        variant,
-        title,
-        message,
-      },
-    },
-    "*"
-  );
-}
 
 export default function HydraFrame() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -28,7 +12,7 @@ export default function HydraFrame() {
 
   useEffect(() => {
     if (hasWebGl) return;
-    toast(
+    sendToast(
       "warning",
       "WebGL not available",
       "WebGL is disabled or not supported, so Hydra was not initialized"
@@ -44,10 +28,10 @@ export default function HydraFrame() {
       const hydra = new HydraWrapper({
         canvas,
         onError: (err) => {
-          toast("destructive", "Hydra error", err.toString());
+          sendToast("destructive", "Hydra error", err.toString());
         },
         onWarning: (msg) => {
-          toast("warning", "Hydra warning", msg);
+          sendToast("warning", "Hydra warning", msg);
         },
       });
 
@@ -56,25 +40,13 @@ export default function HydraFrame() {
     })();
   }, []);
 
-  // Handle eval messages
-  useEffect(() => {
-    if (!instance) return;
-
-    const handleEval = (event: MessageEvent) => {
-      if (event.data.type === "eval") {
-        const { body } = event.data;
-        instance.tryEval(body);
-      }
-    };
-
-    window.addEventListener("message", handleEval);
-
-    return () => {
-      window.removeEventListener("message", handleEval);
-    };
-  }, [instance]);
-
-  return (
-    <>{hasWebGl && canvasRef && <HydraCanvas ref={canvasRef} fullscreen />}</>
+  useEvalHandler(
+    (msg) => {
+      if (!instance) return;
+      instance.tryEval(msg.body);
+    },
+    [instance]
   );
+
+  return hasWebGl && canvasRef && <HydraCanvas ref={canvasRef} fullscreen />;
 }

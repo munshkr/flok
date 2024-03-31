@@ -73,3 +73,21 @@ export function code2hash(code: string) {
 export function hash2code(hash: string) {
   return base64ToUnicode(decodeURIComponent(hash));
 }
+
+export function sendToast(
+  variant: "warning" | "destructive",
+  title: string,
+  message: string
+) {
+  window.parent.postMessage(
+    {
+      type: "toast",
+      body: {
+        variant,
+        title,
+        message,
+      },
+    },
+    "*"
+  );
+}
