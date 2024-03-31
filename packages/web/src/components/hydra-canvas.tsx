@@ -16,8 +16,9 @@ const HydraCanvas = React.forwardRef(
         "absolute top-0 left-0",
         fullscreen && "h-full w-full block overflow-hidden"
       )}
-      width={1280}
-      height={720}
+      style={{ imageRendering: "pixelated" }}
+      width={window.innerWidth}
+      height={window.innerHeight}
     />
   )
 );
