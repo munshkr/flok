@@ -8,7 +8,8 @@ export function useEvalHandler(
   useEffect(() => {
     const handleEval = (event: MessageEvent) => {
       if (event.data.type === "eval") {
-        cb && cb(event.data);
+        const msg = event.data.body as EvalMessage;
+        cb && cb(msg);
       }
     };
 

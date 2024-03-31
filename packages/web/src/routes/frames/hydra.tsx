@@ -5,7 +5,7 @@ import { sendToast } from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import { useMemo, useRef, useEffect, useState } from "react";
 
-export default function HydraFrame() {
+export function Component() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const hasWebGl = useMemo(() => isWebglSupported(), []);
   const [instance, setInstance] = useState<HydraWrapper | null>(null);

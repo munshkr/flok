@@ -7,11 +7,12 @@ import {
 } from "@/settings.json";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-import { EditorState, Prec, Compartment, Extension } from "@codemirror/state";
+import { Compartment, EditorState, Extension, Prec } from "@codemirror/state";
 import { EditorView, keymap, lineNumbers } from "@codemirror/view";
 import { evalKeymap, flashField, remoteEvalFlash } from "@flok-editor/cm-eval";
 import { tidal } from "@flok-editor/lang-tidal";
 import type { Document } from "@flok-editor/session";
+import { highlightExtension } from "@strudel/codemirror";
 import CodeMirror, {
   ReactCodeMirrorProps,
   ReactCodeMirrorRef,
@@ -19,7 +20,6 @@ import CodeMirror, {
 import React, { useEffect, useState } from "react";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
-import { highlightExtension } from '@strudel/codemirror';
 
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
@@ -121,28 +121,25 @@ const flokSetup = (
   ];
 };
 
-export interface EditorProps extends ReactCodeMirrorProps {
-  document?: Document;
-}
-
 // Code example from:
 // https://codemirror.net/examples/config/#dynamic-configuration
 // Allows toggling of extensions based on string shortkey
-// 
+//
 const toggleWith = (key: string, extension: Extension) => {
-  let comp = new Compartment;
+  let comp = new Compartment();
 
   function toggle(view: EditorView) {
     let on = comp.get(view.state) == extension;
     view.dispatch({
-      effects: comp.reconfigure(on ? [] : extension)
-    })
+      effects: comp.reconfigure(on ? [] : extension),
+    });
     return true;
   }
-  return [
-    comp.of([]),
-    keymap.of([{key, run: toggle}])
-  ]
+  return [comp.of([]), keymap.of([{ key, run: toggle }])];
+};
+
+export interface EditorProps extends ReactCodeMirrorProps {
+  document?: Document;
 }
 
 export const Editor = React.forwardRef(
@@ -175,10 +172,8 @@ export const Editor = React.forwardRef(
       languageExtension(),
       highlightExtension,
       readOnly ? EditorState.readOnly.of(true) : [],
-      // toggle linenumbers on/off
-      toggleWith('shift-ctrl-l', lineNumbers()),
-      // toggle linewrapping on/off
-      toggleWith('shift-ctrl-w', EditorView.lineWrapping) 
+      toggleWith("shift-ctrl-l", lineNumbers()), // toggle linenumbers on/off
+      toggleWith("shift-ctrl-w", EditorView.lineWrapping), // toggle linewrapping on/off
     ];
 
     // If it's read-only, put a div in front of the editor so that the user

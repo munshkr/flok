@@ -5,8 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./error-page";
 import "./index.css";
 import { loader as rootLoader } from "./routes/root";
-import SessionPage from "./routes/session";
-import HydraFrame from "./routes/frames/hydra";
+import { webTargets } from "@/settings.json";
 
 const router = createBrowserRouter([
   {
@@ -16,13 +15,12 @@ const router = createBrowserRouter([
   },
   {
     path: "s/:name",
-    element: <SessionPage />,
-    loader: ({ params: { name } }) => ({ name }),
+    lazy: () => import("./routes/session"),
   },
-  {
-    path: "frames/hydra",
-    element: <HydraFrame />,
-  },
+  ...webTargets.map((target) => ({
+    path: `frames/${target}`,
+    lazy: () => import(`./routes/frames/${target}.tsx`),
+  })),
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(

@@ -13,11 +13,10 @@ import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
 import { WebTargetIframe } from "@/components/web-target-iframe";
 import { WelcomeDialog } from "@/components/welcome-dialog";
+import { useAnimationFrame } from "@/hooks/use-animation-frame";
 import { useHash } from "@/hooks/use-hash";
-import { useMercury } from "@/hooks/use-mercury";
 import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
-import { useStrudel } from "@/hooks/use-strudel";
 import { useToast } from "@/hooks/use-toast";
 import {
   cn,
@@ -33,11 +32,29 @@ import {
   panicCodes as panicCodesUntyped,
   webTargets,
 } from "@/settings.json";
-import { Document, Session } from "@flok-editor/session";
-import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
+import { Session, type Document } from "@flok-editor/session";
+import {
+  highlightMiniLocations,
+  updateMiniLocations,
+} from "@strudel/codemirror";
+import { type ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import {
+  LoaderFunctionArgs,
+  useLoaderData,
+  useNavigate,
+} from "react-router-dom";
+
+declare global {
+  interface Window {
+    session: Session | null;
+    editorRefs: React.RefObject<ReactCodeMirrorRef>[];
+    miniLocations: any;
+    phase: any;
+    haps: any;
+  }
+}
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -52,7 +69,11 @@ export interface Message {
   body: string[];
 }
 
-export default function SessionPage() {
+export async function loader({ params }: LoaderFunctionArgs) {
+  return { name: params.name };
+}
+
+export function Component() {
   const query = useQuery();
   const [hash, setHash] = useHash();
 
@@ -85,6 +106,21 @@ export default function SessionPage() {
 
   const editorRefs = Array.from({ length: 8 }).map(() =>
     useRef<ReactCodeMirrorRef>(null)
+  );
+
+  useEffect(() => {
+    window.editorRefs = editorRefs;
+  }, [editorRefs]);
+
+  useAnimationFrame(
+    useCallback(() => {
+      editorRefs.forEach((editorRef) => {
+        const view = editorRef?.current?.view;
+        if (!view) return;
+        updateMiniLocations(view, window.miniLocations || []);
+        highlightMiniLocations(view, window.phase || 0, window.haps || []);
+      });
+    }, [editorRefs])
   );
 
   const { toast: _toast } = useToast();
@@ -121,6 +157,8 @@ export default function SessionPage() {
       port: parseInt(port),
       isSecure,
     });
+
+    window.session = newSession;
 
     // Default documents
     newSession.on("sync", (protocol: string) => {
@@ -325,32 +363,24 @@ export default function SessionPage() {
     setSessionUrl(`${currentURL}#${hashString}`);
   }, [session, shareUrlDialogOpen]);
 
-  // Load external libraries
-  useStrudel(
-    session,
-    (err) => handleWebError("Strudel", err),
-    (msg) => handleWebWarning("Strudel", msg),
-    editorRefs
-  );
-  useMercury(
-    session,
-    (err) => handleWebError("Mercury", err),
-    (msg) => handleWebWarning("Mercury", msg)
-  );
-
-  // Handle toast messages from iframes
+  // Handle window messages from iframes
   useEffect(() => {
-    const handler = (event: MessageEvent) => {
+    const messageHandler = (event: MessageEvent) => {
       if (event.data.type === "toast") {
-        const { variant, title, message } = event.data.body;
-        toast({ variant, title, description: message });
+        const { variant, title, message, pre } = event.data.body;
+        const description = pre ? (
+          <pre className="whitespace-pre-wrap">{message}</pre>
+        ) : (
+          message
+        );
+        toast({ variant, title, description });
       }
     };
 
-    window.addEventListener("message", handler);
+    window.addEventListener("message", messageHandler);
 
     return () => {
-      window.removeEventListener("message", handler);
+      window.removeEventListener("message", messageHandler);
     };
   }, []);
 
@@ -468,24 +498,6 @@ export default function SessionPage() {
     );
   };
 
-  const handleWebError = (title: string, error: unknown) => {
-    if (!error) return;
-    toast({
-      variant: "destructive",
-      title,
-      description: <pre className="whitespace-pre-wrap">{String(error)}</pre>,
-    });
-  };
-
-  const handleWebWarning = (title: string, msg: string) => {
-    if (!msg) return;
-    toast({
-      variant: "warning",
-      title,
-      description: msg,
-    });
-  };
-
   const handleAutoShowToggleClick = useCallback((pressed: boolean) => {
     store.set("messages:autoshow", pressed);
     setAutoShowMessages(pressed);
@@ -502,6 +514,14 @@ export default function SessionPage() {
   }, []);
 
   const bgOpacity = query.get("bgOpacity") || "1.0";
+
+  const activeWebTargets = useMemo(
+    () =>
+      webTargets.filter((target) =>
+        documents.some((doc) => doc.target === target)
+      ),
+    [documents]
+  );
 
   return (
     <div style={{ backgroundColor: `rgb(0 0 0 / ${bgOpacity})` }}>
@@ -575,7 +595,9 @@ export default function SessionPage() {
           </Pane>
         ))}
       />
-      <WebTargetIframe session={session} target="hydra" />
+      {activeWebTargets.map((target) => (
+        <WebTargetIframe key={target} session={session} target={target} />
+      ))}
       <div
         className={cn(
           "fixed top-1 right-1 flex m-1",

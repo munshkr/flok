@@ -5,14 +5,9 @@ import { useEffect, useRef } from "react";
 export interface WebTargetIframeProps {
   target: string;
   session: Session | null;
-  pageUrl?: string;
 }
 
-export const WebTargetIframe = ({
-  target,
-  session,
-  pageUrl,
-}: WebTargetIframeProps) => {
+export const WebTargetIframe = ({ target, session }: WebTargetIframeProps) => {
   const ref = useRef<HTMLIFrameElement | null>(null);
 
   const query = useQuery();
@@ -30,7 +25,7 @@ export const WebTargetIframe = ({
     const handler = (msg: EvalMessage) => {
       const payload = {
         type: "eval",
-        body: msg.body,
+        body: msg,
       };
       ref.current?.contentWindow?.postMessage(payload, "*");
     };
@@ -45,7 +40,7 @@ export const WebTargetIframe = ({
   return (
     <iframe
       ref={ref}
-      src={pageUrl || `/frames/${target}`}
+      src={`/frames/${target}`}
       className="absolute inset-0 w-full h-full"
     />
   );

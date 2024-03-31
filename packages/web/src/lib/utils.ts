@@ -77,7 +77,8 @@ export function hash2code(hash: string) {
 export function sendToast(
   variant: "warning" | "destructive",
   title: string,
-  message: string
+  message: string,
+  pre?: boolean
 ) {
   window.parent.postMessage(
     {
@@ -86,6 +87,7 @@ export function sendToast(
         variant,
         title,
         message,
+        pre,
       },
     },
     "*"
