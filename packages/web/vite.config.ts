@@ -23,4 +23,23 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes("@strudel/")) {
+            return "strudel";
+          } else if (id.includes("mercury-engine")) {
+            return "mercury";
+          } else if (id.includes("hydra-synth")) {
+            return "hydra";
+          } else if (id.includes("p5")) {
+            return "p5";
+          } else if (id.includes("node_modules")) {
+            return "vendor";
+          }
+        },
+      },
+    },
+  },
 });
