@@ -60,7 +60,6 @@ export class StrudelWrapper {
     this._session = session;
 
     let lastFrame: number | null = null;
-
     this.framer = new Framer(
       () => {
         const phase = this._repl.scheduler.now();
@@ -69,6 +68,9 @@ export class StrudelWrapper {
           return;
         }
         if (!this._editorRefs) {
+          return;
+        }
+        if (!this._repl.scheduler.pattern) {
           return;
         }
         // queries the stack of strudel patterns for the current time
@@ -144,7 +146,13 @@ export class StrudelWrapper {
       getTime: () => getAudioContext().currentTime,
       transpiler,
     });
+
     this.framer.start(); // TODO: when to start stop?
+
+    // For some reason, we need to make a no-op evaluation ("silence") to make
+    // sure everything is loaded correctly.
+    const pattern = await this._repl.evaluate(`silence`);
+    await this._repl.scheduler.setPattern(pattern, true);
 
     this.initialized = true;
   }
