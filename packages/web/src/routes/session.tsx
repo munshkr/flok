@@ -1,7 +1,6 @@
 import { CommandsButton } from "@/components/commands-button";
 import { ConfigureDialog } from "@/components/configure-dialog";
 import { Editor } from "@/components/editor";
-import HydraCanvas from "@/components/hydra-canvas";
 import { MessagesPanel } from "@/components/messages-panel";
 import { Mosaic } from "@/components/mosaic";
 import { Pane } from "@/components/pane";
@@ -14,7 +13,6 @@ import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
 import { WelcomeDialog } from "@/components/welcome-dialog";
 import { useHash } from "@/hooks/use-hash";
-import { useHydra } from "@/hooks/use-hydra";
 import { useMercury } from "@/hooks/use-mercury";
 import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
@@ -28,14 +26,13 @@ import {
   mod,
   store,
 } from "@/lib/utils";
-import { isWebglSupported } from "@/lib/webgl-detector";
 import {
   defaultTarget,
   knownTargets,
   panicCodes as panicCodesUntyped,
   webTargets,
 } from "@/settings.json";
-import { Document, Session } from "@flok-editor/session";
+import { Document, EvalMessage, Session } from "@flok-editor/session";
 import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -88,8 +85,6 @@ export default function SessionPage() {
   const editorRefs = Array.from({ length: 8 }).map(() =>
     useRef<ReactCodeMirrorRef>(null)
   );
-
-  const hasWebGl = useMemo(() => isWebglSupported(), []);
 
   const { toast: _toast } = useToast();
   const hideErrors = !!query.get("hideErrors");
@@ -275,18 +270,6 @@ export default function SessionPage() {
     return () => newSession.destroy();
   }, [name]);
 
-  // Show a warning if WebGL is not enabled
-  useEffect(() => {
-    if (!session || hasWebGl) return;
-
-    toast({
-      variant: "warning",
-      title: "WebGL not available",
-      description:
-        "WebGL is disabled or not supported, so Hydra was not initialized",
-    });
-  }, [session, hasWebGl]);
-
   useEffect(() => {
     if (!session) return;
     console.log(`Setting user on session to '${username}'`);
@@ -353,11 +336,48 @@ export default function SessionPage() {
     (err) => handleWebError("Mercury", err),
     (msg) => handleWebWarning("Mercury", msg)
   );
-  const { canvasRef: hydraCanvasRef } = useHydra(
-    session,
-    (err) => handleWebError("Hydra", err),
-    (msg) => handleWebWarning("Hydra", msg)
-  );
+
+  // Hydra iframe
+  const hydraRef = useRef<HTMLIFrameElement | null>(null);
+  useEffect(() => {
+    if (!session || !hydraRef.current) return;
+
+    const handler = (msg: EvalMessage) => {
+      const payload = {
+        type: "eval",
+        body: msg.body,
+      };
+      hydraRef.current?.contentWindow?.postMessage(payload, "*");
+    };
+
+    session.on(`eval:hydra`, handler);
+
+    return () => {
+      session.off(`eval:hydra`, handler);
+    };
+  }, [session, hydraRef]);
+
+  // Handle toast messages from iframes
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      if (event.data.type === "toast") {
+        const { variant, title, message } = event.data.body;
+        toast({ variant, title, description: message });
+      }
+    };
+
+    window.addEventListener("message", handler);
+
+    return () => {
+      window.removeEventListener("message", handler);
+    };
+  }, []);
+
+  // const { canvasRef: hydraCanvasRef } = useHydra(
+  //   session,
+  //   (err) => handleWebError("Hydra", err),
+  //   (msg) => handleWebWarning("Hydra", msg)
+  // );
 
   const focusEditor = (i: number) => {
     const ref = editorRefs[i].current;
@@ -580,9 +600,11 @@ export default function SessionPage() {
           </Pane>
         ))}
       />
-      {hasWebGl && hydraCanvasRef && (
-        <HydraCanvas ref={hydraCanvasRef} fullscreen />
-      )}
+      <iframe
+        ref={hydraRef}
+        src="/frames/hydra"
+        className="absolute inset-0 w-full h-full"
+      />
       <div
         className={cn(
           "fixed top-1 right-1 flex m-1",

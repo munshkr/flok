@@ -6,6 +6,7 @@ import ErrorPage from "./error-page";
 import "./index.css";
 import { loader as rootLoader } from "./routes/root";
 import SessionPage from "./routes/session";
+import HydraFrame from "./routes/frames/hydra";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
     path: "s/:name",
     element: <SessionPage />,
     loader: ({ params: { name } }) => ({ name }),
+  },
+  {
+    path: "frames/hydra",
+    element: <HydraFrame />,
   },
 ]);
 

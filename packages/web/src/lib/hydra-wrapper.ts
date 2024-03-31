@@ -73,7 +73,6 @@ export class HydraWrapper {
 
     try {
       await eval?.(`(async () => {\n${code}\n})()`);
-      this._onError("");
     } catch (error) {
       console.error(error);
       this._onError(`${error}`);
