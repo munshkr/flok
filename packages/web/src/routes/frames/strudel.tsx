@@ -16,8 +16,6 @@ export function Component() {
         onWarning: (msg) => {
           sendToast("warning", "Strudel warning", msg);
         },
-        session: window.parent.session,
-        editorRefs: window.parent.editorRefs,
       });
 
       await instance.importModules();

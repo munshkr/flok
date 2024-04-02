@@ -13,10 +13,10 @@ import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
 import { WebTargetIframe } from "@/components/web-target-iframe";
 import { WelcomeDialog } from "@/components/welcome-dialog";
-import { useAnimationFrame } from "@/hooks/use-animation-frame";
 import { useHash } from "@/hooks/use-hash";
 import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
+import { useStrudelCodemirrorExtensions } from "@/hooks/use-strudel-codemirror-extensions";
 import { useToast } from "@/hooks/use-toast";
 import {
   cn,
@@ -33,10 +33,6 @@ import {
   webTargets,
 } from "@/settings.json";
 import { Session, type Document } from "@flok-editor/session";
-import {
-  highlightMiniLocations,
-  updateMiniLocations,
-} from "@strudel/codemirror";
 import { type ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
@@ -48,11 +44,7 @@ import {
 
 declare global {
   interface Window {
-    session: Session | null;
-    editorRefs: React.RefObject<ReactCodeMirrorRef>[];
-    miniLocations: any;
-    phase: any;
-    haps: any;
+    documentsContext: { [docId: string]: any };
   }
 }
 
@@ -108,20 +100,7 @@ export function Component() {
     useRef<ReactCodeMirrorRef>(null)
   );
 
-  useEffect(() => {
-    window.editorRefs = editorRefs;
-  }, [editorRefs]);
-
-  useAnimationFrame(
-    useCallback(() => {
-      editorRefs.forEach((editorRef) => {
-        const view = editorRef?.current?.view;
-        if (!view) return;
-        updateMiniLocations(view, window.miniLocations || []);
-        highlightMiniLocations(view, window.phase || 0, window.haps || []);
-      });
-    }, [editorRefs])
-  );
+  useStrudelCodemirrorExtensions(session, editorRefs);
 
   const { toast: _toast } = useToast();
   const hideErrors = !!query.get("hideErrors");
@@ -157,8 +136,6 @@ export function Component() {
       port: parseInt(port),
       isSecure,
     });
-
-    window.session = newSession;
 
     // Default documents
     newSession.on("sync", (protocol: string) => {
