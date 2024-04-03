@@ -3,7 +3,7 @@ import { useEvalHandler } from "@/hooks/use-eval-handler";
 import { HydraWrapper } from "@/lib/hydra-wrapper";
 import { sendToast } from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
-import { useMemo, useRef, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export function Component() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -41,11 +41,13 @@ export function Component() {
   }, []);
 
   useEvalHandler(
-    (msg) => {
-      if (!instance) return;
-      instance.tryEval(msg.body);
-    },
-    [instance]
+    useCallback(
+      (msg) => {
+        if (!instance) return;
+        instance.tryEval(msg.body);
+      },
+      [instance]
+    )
   );
 
   return hasWebGl && canvasRef && <HydraCanvas ref={canvasRef} fullscreen />;

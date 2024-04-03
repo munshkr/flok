@@ -1,15 +1,12 @@
 import { EvalMessage } from "@flok-editor/session";
 import { useEffect } from "react";
 
-export function useEvalHandler(
-  cb: (evalMessage: EvalMessage) => void,
-  deps: any[]
-) {
+export function useEvalHandler(callback: (message: EvalMessage) => void) {
   useEffect(() => {
     const handleEval = (event: MessageEvent) => {
       if (event.data.type === "eval") {
         const msg = event.data.body as EvalMessage;
-        cb && cb(msg);
+        callback(msg);
       }
     };
 
@@ -18,7 +15,7 @@ export function useEvalHandler(
     return () => {
       window.removeEventListener("message", handleEval);
     };
-  }, deps);
+  }, [callback]);
 
   return;
 }
