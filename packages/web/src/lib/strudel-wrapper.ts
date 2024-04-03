@@ -1,35 +1,28 @@
-import type { Session, EvalMessage } from "@flok-editor/session";
+import type { EvalMessage } from "@flok-editor/session";
 import {
-  repl,
+  Framer,
+  Pattern,
   controls,
   evalScope,
-  stack,
   noteToMidi,
-  Pattern,
+  repl,
+  stack,
   valueToMidi,
-  Framer,
 } from "@strudel/core";
+import { registerSoundfonts } from "@strudel/soundfonts";
 import { transpiler } from "@strudel/transpiler";
 import {
   getAudioContext,
   initAudioOnFirstClick,
-  webaudioOutput,
-  samples,
   registerSynthSounds,
+  samples,
+  webaudioOutput,
 } from "@strudel/webaudio";
-import { registerSoundfonts } from "@strudel/soundfonts";
-import {
-  updateMiniLocations,
-  highlightMiniLocations,
-} from "@strudel/codemirror";
-import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
+import { updateDocumentsContext } from "./utils";
 
 export type ErrorHandler = (error: string) => void;
 
 controls.createParam("docId");
-
-const getDocumentIndex = (docId: string, session: Session | null) =>
-  session?.getDocuments().findIndex((d) => d.id === docId) ?? -1;
 
 export class StrudelWrapper {
   initialized: boolean = false;
@@ -38,68 +31,18 @@ export class StrudelWrapper {
   protected _onWarning: ErrorHandler;
   protected _repl: any;
   protected _docPatterns: any;
-  protected _editorRefs: React.RefObject<ReactCodeMirrorRef>[];
-  protected _session: Session | null;
   protected framer?: any;
 
   constructor({
     onError,
     onWarning,
-    editorRefs,
-    session,
   }: {
     onError: ErrorHandler;
     onWarning: ErrorHandler;
-    editorRefs: React.RefObject<ReactCodeMirrorRef>[];
-    session: Session | null;
   }) {
     this._docPatterns = {};
     this._onError = onError || (() => {});
     this._onWarning = onWarning || (() => {});
-    this._editorRefs = editorRefs;
-    this._session = session;
-
-    let lastFrame: number | null = null;
-    this.framer = new Framer(
-      () => {
-        const phase = this._repl.scheduler.now();
-        if (lastFrame === null) {
-          lastFrame = phase;
-          return;
-        }
-        if (!this._editorRefs) {
-          return;
-        }
-        if (!this._repl.scheduler.pattern) {
-          return;
-        }
-        // queries the stack of strudel patterns for the current time
-        const allHaps = this._repl.scheduler.pattern.queryArc(
-          Math.max(lastFrame!, phase - 1 / 10), // make sure query is not larger than 1/10 s
-          phase
-        );
-        // filter out haps that are not active right now
-        const currentFrame = allHaps.filter(
-          (hap: any) => phase >= hap.whole.begin && phase <= hap.endClipped
-        );
-        // iterate over each strudel doc
-        Object.keys(this._docPatterns).forEach((docId: any) => {
-          const index = getDocumentIndex(docId, this._session);
-          const editorRef = this._editorRefs?.[index];
-          if (!editorRef?.current?.view) {
-            return;
-          }
-          // filter out haps belonging to this document (docId is set in tryEval)
-          const haps = currentFrame.filter((h: any) => h.value.docId === docId);
-          // update codemirror view to highlight this frame's haps
-
-          highlightMiniLocations(editorRef.current.view, phase, haps);
-        });
-      },
-      (err: any) => {
-        console.error("strudel draw error", err);
-      }
-    );
   }
 
   async importModules() {
@@ -128,17 +71,49 @@ export class StrudelWrapper {
   }
 
   async initialize() {
+    if (this.initialized) return;
+
+    let lastFrame: number | null = null;
+    this.framer = new Framer(
+      () => {
+        const phase = this._repl.scheduler.now();
+        if (lastFrame === null) {
+          lastFrame = phase;
+          return;
+        }
+        if (!this._repl.scheduler.pattern) {
+          return;
+        }
+        // queries the stack of strudel patterns for the current time
+        const allHaps = this._repl.scheduler.pattern.queryArc(
+          Math.max(lastFrame!, phase - 1 / 10), // make sure query is not larger than 1/10 s
+          phase
+        );
+        // filter out haps that are not active right now
+        const currentFrame = allHaps.filter(
+          (hap: any) => phase >= hap.whole.begin && phase <= hap.endClipped
+        );
+        // iterate over each strudel doc
+        Object.keys(this._docPatterns).forEach((docId: any) => {
+          // filter out haps belonging to this document (docId is set in tryEval)
+          const haps = currentFrame.filter((h: any) => h.value.docId === docId);
+          // update codemirror view to highlight this frame's haps
+          updateDocumentsContext(docId, { haps, phase });
+        });
+      },
+      (err: any) => {
+        console.error("[strudel] draw error", err);
+      }
+    );
+
     this._repl = repl({
       defaultOutput: webaudioOutput,
       afterEval: (options: any) => {
         // assumes docId is injected at end end as a comment
         const docId = options.code.split("//").slice(-1)[0];
-        const index = getDocumentIndex(docId, this._session);
-        const editorRef = this._editorRefs?.[index];
-        if (editorRef?.current) {
-          const miniLocations = options.meta?.miniLocations;
-          updateMiniLocations(editorRef.current.view, miniLocations);
-        }
+        if (!docId) return;
+        const miniLocations = options.meta?.miniLocations;
+        updateDocumentsContext(docId, { miniLocations });
       },
       beforeEval: () => {},
       onSchedulerError: (e: unknown) => this._onError(`${e}`),
@@ -147,14 +122,20 @@ export class StrudelWrapper {
       transpiler,
     });
 
-    this.framer.start(); // TODO: when to start stop?
+    this.framer.start();
 
     // For some reason, we need to make a no-op evaluation ("silence") to make
     // sure everything is loaded correctly.
-    const pattern = await this._repl.evaluate(`silence`);
+    const pattern = await this._repl.evaluate(`silence//`);
     await this._repl.scheduler.setPattern(pattern, true);
 
     this.initialized = true;
+  }
+
+  async dispose() {
+    if (this.framer) {
+      this.framer.stop();
+    }
   }
 
   async tryEval(msg: EvalMessage) {
@@ -162,12 +143,11 @@ export class StrudelWrapper {
     try {
       const { body: code, docId } = msg;
       // little hack that injects the docId at the end of the code to make it available in afterEval
-      const pattern = await this._repl.evaluate(code + `//${docId}`);
+      const pattern = await this._repl.evaluate(`${code}//${docId}`);
       if (pattern) {
         this._docPatterns[docId] = pattern.docId(docId); // docId is needed for highlighting
         const allPatterns = stack(...Object.values(this._docPatterns));
         await this._repl.scheduler.setPattern(allPatterns, true);
-        this._onError("");
       }
     } catch (err) {
       console.error(err);
