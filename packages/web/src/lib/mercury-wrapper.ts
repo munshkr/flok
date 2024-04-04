@@ -1,10 +1,9 @@
-
 import { Mercury } from "mercury-engine";
 
 // global variable m for the main output sound from Mercury
 declare global {
   interface Window {
-    m : number;
+    m: number;
   }
 }
 
@@ -33,11 +32,13 @@ export class MercuryWrapper {
   }
 
   async initialize() {
-    if (this.initialized) { return; }
+    if (this.initialized) {
+      return;
+    }
 
     // set initialized to true only when samples are loaded
     this._repl = new Mercury({
-      onload: () => { 
+      onload: () => {
         this._onWarning(`Ready!`);
         // console.log('Mercury loaded');
         this.initialized = true;
@@ -47,31 +48,32 @@ export class MercuryWrapper {
         // initialize the meter
         this._repl.addMeter();
         // update the value every 16ms for 60fps
-        this._meter = setInterval(() => window.m = this._repl.getMeter(), 16);
+        this._meter = setInterval(() => (window.m = this._repl.getMeter()), 16);
       },
-      onmidi: () => { console.log('MIDI devices ready') }
+      onmidi: () => {
+        console.log("MIDI devices ready");
+      },
     });
   }
 
   async tryEval(code: string) {
     // store the code for retrying evaluation
     this._code = code;
-    
+
     // if (!this.initialized) await this.initialize();
-    if (!this.initialized){
+    if (!this.initialized) {
       this._onWarning(`Engine still loading`);
       this.initialize();
     } else {
       try {
         let parse = this._repl.code(code);
-        this._onError('');
-  
+
         let prints = parse.parseTree.print;
-        if (prints.length > 0){
+        if (prints.length > 0) {
           // print prints from the code if there are any
           this._onWarning(`${prints}`);
         }
-        if (parse.errors.length > 0){
+        if (parse.errors.length > 0) {
           console.log(parse.errors);
           // print the first error that needs fixing
           this._onError(`${parse.errors}`);
