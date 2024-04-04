@@ -37,6 +37,9 @@ export function Component() {
 
       await hydra.initialize();
       setInstance(hydra);
+
+      window.parent.hydra = window;
+      window.m = window.parent.mercury.m;
     })();
   }, []);
 

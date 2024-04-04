@@ -20,6 +20,8 @@ export function Component() {
 
       await instance.importModules();
       setInstance(instance);
+
+      window.parent.strudel = window;
     })();
   }, []);
 

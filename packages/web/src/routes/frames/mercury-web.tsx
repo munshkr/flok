@@ -19,6 +19,8 @@ export function Component() {
       });
 
       setInstance(instance);
+
+      window.parent.mercury = window;
     })();
   }, []);
 
