@@ -45,6 +45,9 @@ import {
 declare global {
   interface Window {
     documentsContext: { [docId: string]: any };
+    hydra: any;
+    mercury: any;
+    strudel: any;
   }
 }
 

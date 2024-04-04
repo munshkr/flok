@@ -4,6 +4,12 @@ import { sendToast } from "@/lib/utils";
 import { type EvalMessage } from "@flok-editor/session";
 import { useCallback, useEffect, useState } from "react";
 
+declare global {
+  interface Window {
+    m: number; // meter value
+  }
+}
+
 export function Component() {
   const [instance, setInstance] = useState<any>(null);
 
@@ -19,6 +25,8 @@ export function Component() {
       });
 
       setInstance(instance);
+
+      window.parent.mercury = window;
     })();
   }, []);
 
@@ -31,6 +39,16 @@ export function Component() {
       [instance]
     )
   );
+
+  useEffect(() => {
+    // update the value every 16ms for 60fps
+    const meter = setInterval(() => {
+      if (!instance) return;
+      window.m = instance.getMeter();
+    }, 16);
+
+    return () => clearInterval(meter);
+  });
 
   return null;
 }

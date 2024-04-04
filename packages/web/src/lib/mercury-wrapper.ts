@@ -1,12 +1,5 @@
 import { Mercury } from "mercury-engine";
 
-// global variable m for the main output sound from Mercury
-declare global {
-  interface Window {
-    m: number;
-  }
-}
-
 export type ErrorHandler = (error: string) => void;
 
 export class MercuryWrapper {
@@ -16,8 +9,6 @@ export class MercuryWrapper {
   protected _onWarning: ErrorHandler;
   protected _repl: any;
   protected _code: any;
-  protected _meter: any;
-  // protected _docPatterns: any;
 
   constructor({
     onError,
@@ -26,7 +17,6 @@ export class MercuryWrapper {
     onError?: ErrorHandler;
     onWarning?: ErrorHandler;
   }) {
-    // this._docPatterns = {};
     this._onError = onError || (() => {});
     this._onWarning = onWarning || (() => {});
   }
@@ -47,8 +37,6 @@ export class MercuryWrapper {
 
         // initialize the meter
         this._repl.addMeter();
-        // update the value every 16ms for 60fps
-        this._meter = setInterval(() => (window.m = this._repl.getMeter()), 16);
       },
       onmidi: () => {
         console.log("MIDI devices ready");
@@ -83,5 +71,10 @@ export class MercuryWrapper {
         this._onError(`${error}`);
       }
     }
+  }
+
+  getMeter() {
+    if (!this.initialized) return 0;
+    return this._repl.getMeter();
   }
 }
