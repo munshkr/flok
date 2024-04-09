@@ -159,12 +159,12 @@ object, like this:
 #### Sardine
 
 Use `flok-repl` with the `-t sardine` parameter. In order to make it work, 
-the `fishery` REPL must be included to your PATH. It should already be the
+the `sardine` REPL must be included to your PATH. It should already be the
 case if you followed a regular install.
 
 ##### Extra options
 
-* `python`: Path to your custom `fishery` Python REPL. Use this if you need
+* `python`: Path to your custom `sardine` Python REPL. Use this if you need
   to target a specific install of Sardine (Python version, different path, etc).
 
 #### FoxDot
