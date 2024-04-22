@@ -10,3 +10,4 @@ declare module "@strudel/transpiler";
 declare module "@strudel/webaudio";
 declare module "@strudel/webaudio/scheduler.mjs";
 declare module "@strudel/webaudio/webaudio.mjs";
+declare module "@strudel/codemirror";

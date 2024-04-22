@@ -1,10 +1,12 @@
+import { type Session } from "@flok-editor/session";
+import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
-  uniqueNamesGenerator,
   adjectives,
-  colors,
   animals,
+  colors,
+  uniqueNamesGenerator,
 } from "unique-names-generator";
 import { v4 as uuidv4 } from "uuid";
 
@@ -73,3 +75,48 @@ export function code2hash(code: string) {
 export function hash2code(hash: string) {
   return base64ToUnicode(decodeURIComponent(hash));
 }
+
+export function sendToast(
+  variant: "warning" | "destructive",
+  title: string,
+  message: string,
+  pre?: boolean
+) {
+  window.parent.postMessage(
+    {
+      type: "toast",
+      body: {
+        variant,
+        title,
+        message,
+        pre,
+      },
+    },
+    "*"
+  );
+}
+
+export function updateDocumentsContext(docId: string, context: object) {
+  if (typeof window.parent.documentsContext === "undefined") {
+    window.parent.documentsContext = {};
+  }
+  const prevContext = window.parent.documentsContext[docId] || {};
+  window.parent.documentsContext[docId] = { ...prevContext, ...context };
+}
+
+export function forEachDocumentContext(
+  callback: (context: any, editor: ReactCodeMirrorRef | null) => void,
+  session: Session,
+  editorRefs: React.RefObject<ReactCodeMirrorRef>[]
+) {
+  const documentsContext = window.documentsContext || {};
+  for (const docId in documentsContext) {
+    const context = documentsContext[docId];
+    const index = getDocumentIndex(docId, session);
+    const editor = editorRefs[index]?.current;
+    callback(context, editor);
+  }
+}
+
+export const getDocumentIndex = (docId: string, session: Session | null) =>
+  session?.getDocuments().findIndex((d) => d.id === docId) ?? -1;

@@ -1,7 +1,6 @@
 import { CommandsButton } from "@/components/commands-button";
 import { ConfigureDialog } from "@/components/configure-dialog";
 import { Editor } from "@/components/editor";
-import HydraCanvas from "@/components/hydra-canvas";
 import { MessagesPanel } from "@/components/messages-panel";
 import { Mosaic } from "@/components/mosaic";
 import { Pane } from "@/components/pane";
@@ -12,13 +11,12 @@ import { ShareUrlDialog } from "@/components/share-url-dialog";
 import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
+import { WebTargetIframe } from "@/components/web-target-iframe";
 import { WelcomeDialog } from "@/components/welcome-dialog";
 import { useHash } from "@/hooks/use-hash";
-import { useHydra } from "@/hooks/use-hydra";
-import { useMercury } from "@/hooks/use-mercury";
 import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
-import { useStrudel } from "@/hooks/use-strudel";
+import { useStrudelCodemirrorExtensions } from "@/hooks/use-strudel-codemirror-extensions";
 import { useToast } from "@/hooks/use-toast";
 import {
   cn,
@@ -28,18 +26,30 @@ import {
   mod,
   store,
 } from "@/lib/utils";
-import { isWebglSupported } from "@/lib/webgl-detector";
 import {
   defaultTarget,
   knownTargets,
   panicCodes as panicCodesUntyped,
   webTargets,
 } from "@/settings.json";
-import { Document, Session } from "@flok-editor/session";
-import { ReactCodeMirrorRef } from "@uiw/react-codemirror";
+import { Session, type Document } from "@flok-editor/session";
+import { type ReactCodeMirrorRef } from "@uiw/react-codemirror";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet-async";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import {
+  LoaderFunctionArgs,
+  useLoaderData,
+  useNavigate,
+} from "react-router-dom";
+
+declare global {
+  interface Window {
+    documentsContext: { [docId: string]: any };
+    hydra: any;
+    mercury: any;
+    strudel: any;
+  }
+}
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
@@ -54,7 +64,11 @@ export interface Message {
   body: string[];
 }
 
-export default function SessionPage() {
+export async function loader({ params }: LoaderFunctionArgs) {
+  return { name: params.name };
+}
+
+export function Component() {
   const query = useQuery();
   const [hash, setHash] = useHash();
 
@@ -89,7 +103,7 @@ export default function SessionPage() {
     useRef<ReactCodeMirrorRef>(null)
   );
 
-  const hasWebGl = useMemo(() => isWebglSupported(), []);
+  useStrudelCodemirrorExtensions(session, editorRefs);
 
   const { toast: _toast } = useToast();
   const hideErrors = !!query.get("hideErrors");
@@ -275,18 +289,6 @@ export default function SessionPage() {
     return () => newSession.destroy();
   }, [name]);
 
-  // Show a warning if WebGL is not enabled
-  useEffect(() => {
-    if (!session || hasWebGl) return;
-
-    toast({
-      variant: "warning",
-      title: "WebGL not available",
-      description:
-        "WebGL is disabled or not supported, so Hydra was not initialized",
-    });
-  }, [session, hasWebGl]);
-
   useEffect(() => {
     if (!session) return;
     console.log(`Setting user on session to '${username}'`);
@@ -341,22 +343,26 @@ export default function SessionPage() {
     setSessionUrl(`${currentURL}#${hashString}`);
   }, [session, shareUrlDialogOpen]);
 
-  // Load external libraries
-  useStrudel(
-    session,
-    (err) => handleWebError("Strudel", err),
-    (msg) => handleWebWarning("Strudel", msg)
-  );
-  useMercury(
-    session,
-    (err) => handleWebError("Mercury", err),
-    (msg) => handleWebWarning("Mercury", msg)
-  );
-  const { canvasRef: hydraCanvasRef } = useHydra(
-    session,
-    (err) => handleWebError("Hydra", err),
-    (msg) => handleWebWarning("Hydra", msg)
-  );
+  // Handle window messages from iframes
+  useEffect(() => {
+    const messageHandler = (event: MessageEvent) => {
+      if (event.data.type === "toast") {
+        const { variant, title, message, pre } = event.data.body;
+        const description = pre ? (
+          <pre className="whitespace-pre-wrap">{message}</pre>
+        ) : (
+          message
+        );
+        toast({ variant, title, description });
+      }
+    };
+
+    window.addEventListener("message", messageHandler);
+
+    return () => {
+      window.removeEventListener("message", messageHandler);
+    };
+  }, []);
 
   const focusEditor = (i: number) => {
     const ref = editorRefs[i].current;
@@ -472,24 +478,6 @@ export default function SessionPage() {
     );
   };
 
-  const handleWebError = (title: string, error: unknown) => {
-    if (!error) return;
-    toast({
-      variant: "destructive",
-      title,
-      description: <pre className="whitespace-pre-wrap">{String(error)}</pre>,
-    });
-  };
-
-  const handleWebWarning = (title: string, msg: string) => {
-    if (!msg) return;
-    toast({
-      variant: "warning",
-      title,
-      description: msg,
-    });
-  };
-
   const handleAutoShowToggleClick = useCallback((pressed: boolean) => {
     store.set("messages:autoshow", pressed);
     setAutoShowMessages(pressed);
@@ -506,6 +494,14 @@ export default function SessionPage() {
   }, []);
 
   const bgOpacity = query.get("bgOpacity") || "1.0";
+
+  const activeWebTargets = useMemo(
+    () =>
+      webTargets.filter((target) =>
+        documents.some((doc) => doc.target === target)
+      ),
+    [documents]
+  );
 
   return (
     <div style={{ backgroundColor: `rgb(0 0 0 / ${bgOpacity})` }}>
@@ -579,9 +575,9 @@ export default function SessionPage() {
           </Pane>
         ))}
       />
-      {hasWebGl && hydraCanvasRef && (
-        <HydraCanvas ref={hydraCanvasRef} fullscreen />
-      )}
+      {activeWebTargets.map((target) => (
+        <WebTargetIframe key={target} session={session} target={target} />
+      ))}
       <div
         className={cn(
           "fixed top-1 right-1 flex m-1",
