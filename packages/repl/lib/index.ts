@@ -7,6 +7,7 @@ import {
 import TidalREPL from "./repl/tidal.js";
 import SclangREPL, { RemoteSclangREPL } from "./repl/sclang.js";
 import FoxDotREPL from "./repl/foxdot.js";
+import RenardoREPL from "./repl/renardo.js";
 import MercuryREPL from "./repl/mercury.js";
 import SardineREPL from "./repl/sardine.js";
 
@@ -19,6 +20,7 @@ const replClasses = {
   sclang: SclangREPL,
   remote_sclang: RemoteSclangREPL,
   foxdot: FoxDotREPL,
+  renardo: RenardoREPL,
   mercury: MercuryREPL,
   sardine: SardineREPL,
 };
