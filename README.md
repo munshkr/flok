@@ -11,6 +11,7 @@ Web-based P2P collaborative editor for live coding music and graphics
   - [TidalCycles](https://tidalcycles.org/)
   - [SuperCollider](https://supercollider.github.io/) (sclang)
   - [FoxDot](https://foxdot.org/)
+  - [Renardo](https://renardo.org/)
   - [Mercury](#mercury)
   - [Sardine](https://sardine.raphaelforment.fr)
   - [SonicPi](https://sonic-pi.net/) (*not implemented yet*, see [#29](https://github.com/munshkr/flok/issues/29))
@@ -176,6 +177,16 @@ Use `flok-repl` with the `-t foxdot` parameter.
 * `python`: Path to Python binary. Use this if you need to use a custom Python
   version.
 
+#### Renardo
+
+[Renardo](https://renardo.org) is a new maintained fork of FoxDot with new features.
+
+Use `flok-repl` with the `-t renardo` parameter.
+
+##### Extra options
+
+* `python`: Path to Python binary. Use this if you need to use a custom Python
+  version.
 
 #### SuperCollider
 

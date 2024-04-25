@@ -1,6 +1,7 @@
 {
   "knownTargets": [
     "foxdot",
+    "renardo",
     "hydra",
     "mercury",
     "mercury-web",
@@ -12,6 +13,7 @@
   "defaultTarget": "hydra",
   "langByTarget": {
     "foxdot": "python",
+    "renardo": "python",
     "hydra": "javascript",
     "mercury": "javascript",
     "mercury-web": "javascript",
@@ -26,6 +28,7 @@
     "sclang": "CmdPeriod.run",
     "remote_sclang": "CmdPeriod.run",
     "foxdot": "Clock.clear()",
+    "renardo": "Clock.clear()",
     "mercury": "silence",
     "mercury-web": "silence",
     "hydra": "hush()",
