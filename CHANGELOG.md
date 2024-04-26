@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2024-04-26
+
+### New Features
+
+* Support for Renardo (Foxdot fork)
+* web: Sandbox web languages using iframes
+* web: Toggle line numbers with <kbd>Shift</kbd>-<kbd>Ctrl</kbd>-<kbd>W</kbd>
+  and linewrap with <kbd>Shift</kbd>-<kbd>Ctrl</kbd>-<kbd>W</kbd>.
+* web(strudel): Code highlighting
+
+### Bugfixes
+
+* repl: Use `sardine` instead of `fishery` when running Sardine REPL
+* web(hydra): Use correct canvas size by default + pixelated image rendering
+* web(strudel): Misc fixse
+* Lots of name clashing between hydra, strudel and mercury-web were solved with
+  language sandboxes.
+
 ## [1.1.1] - 2024-01-29
 
 ### Bugfixes
