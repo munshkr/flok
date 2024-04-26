@@ -1,6 +1,6 @@
 {
   "name": "flok-repl",
-  "version": "1.0.2",
+  "version": "1.2.0",
   "description": "REPL client for Flok",
   "author": "Damián Silvani <munshkr@gmail.com>",
   "license": "GPL-3.0+",
