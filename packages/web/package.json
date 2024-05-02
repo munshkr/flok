@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@flok-editor/server-middleware": "^1.0.1",
+    "@replit/codemirror-vim": "^6.2.1",
     "commander": "^10.0.0",
     "compression": "^1.7.4",
     "express": "^4.18.2",
