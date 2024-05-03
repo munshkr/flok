@@ -87,6 +87,9 @@ export function Component() {
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
+  const [lineNumbers, setLineNumbers] = useState<boolean>(false);
+  const [vimMode, setVimMode] = useState<boolean>(false);
+  const [wrapText, setWrapText] = useState<boolean>(false);
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
   const [messagesCount, setMessagesCount] = useState<number>(0);
@@ -425,6 +428,12 @@ export function Component() {
   useShortcut(["Control-,", "Meta-,"], () => {
     setMessagesPanelExpanded((v) => !v);
   });
+  useShortcut(["Control-$", "Meta-$"], () => {
+    setLineNumbers((lineNumbers) => !lineNumbers);
+  });
+  useShortcut(["Meta-V", "Control-V"], () => {
+    setVimMode((vimMode) => !vimMode);
+  });
 
   const replTargets = useMemo(
     () =>
@@ -512,6 +521,9 @@ export function Component() {
         open={commandsDialogOpen}
         onOpenChange={(isOpen) => setCommandsDialogOpen(isOpen)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
+        onVimMode={() => setVimMode((vimMode) => !vimMode)}
+        onLineNumbers={() => setLineNumbers((lineNumbers) => !lineNumbers)}
+        onWrapText={() => setWrapText((wrapText) => !wrapText)}
         onSessionNew={() => navigate("/")}
         onSessionShareUrl={() => setShareUrlDialogOpen(true)}
         onLayoutAdd={handleViewLayoutAdd}
@@ -570,6 +582,9 @@ export function Component() {
               ref={editorRefs[i]}
               document={doc}
               autoFocus={i === 0}
+              lineNumbers={lineNumbers}
+              vimMode={vimMode}
+              wrapText={wrapText}
               className="absolute top-6 overflow-auto flex-grow w-full h-[calc(100%-32px)] z-10"
             />
           </Pane>

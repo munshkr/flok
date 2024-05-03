@@ -15,7 +15,10 @@ import { changeLogUrl, repoUrl } from "@/settings.json";
 import {
   Edit2,
   FilePlus,
+  TextCursorIcon,
+  WrapText,
   Github,
+  FileDigit,
   Minus,
   Plus,
   Settings,
@@ -25,6 +28,9 @@ import { Link } from "react-router-dom";
 
 interface SessionCommandDialogProps extends CommandDialogProps {
   onSessionChangeUsername: () => void;
+  onVimMode: () => void;
+  onWrapText: () => void;
+  onLineNumbers: () => void;
   onSessionNew: () => void;
   onSessionShareUrl: () => void;
   onLayoutAdd: () => void;
@@ -47,6 +53,20 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
+        <CommandGroup heading="Editor">
+          <CommandItem onSelect={wrapHandler(props.onVimMode)}>
+            <TextCursorIcon className="mr-2 h-4 w-4" />
+            <span>Vim Mode</span>
+          </CommandItem>
+          <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
+            <FileDigit className="mr-2 h-4 w-4" />
+            <span>Line Numbers</span>
+          </CommandItem>
+          <CommandItem onSelect={wrapHandler(props.onWrapText)}>
+            <WrapText className="mr-2 h-4 w-4" />
+            <span>Wrap Lines</span>
+          </CommandItem>
+        </CommandGroup>
         <CommandGroup heading="Session">
           <CommandItem onSelect={wrapHandler(props.onSessionChangeUsername)}>
             <Edit2 className="mr-2 h-4 w-4" />

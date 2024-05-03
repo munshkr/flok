@@ -22,6 +22,7 @@ import { vim } from "@replit/codemirror-vim";
 import React, { useEffect, useState } from "react";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
+import { baseTheme } from "@/lib/theme";
 
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
@@ -32,50 +33,6 @@ const langExtensionsByLanguage: { [lang: string]: any } = {
 };
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
-const baseTheme = EditorView.baseTheme({
-  "&.cm-editor": {
-    background: "transparent",
-    fontFamily: `Inconsolata`,
-    fontSize: "16px",
-    color: "white",
-    fontWeight: 600,
-  },
-  "& .cm-scroller": {
-    fontFamily: `Inconsolata`,
-    paddingLeft: "2px !important",
-    minHeight: "100vh",
-  },
-  "& .cm-line": {
-    background: "rgba(0, 0, 0, 0.7)",
-    maxWidth: "fit-content",
-    padding: 0,
-  },
-  "& .cm-activeLine": {
-    backgroundColor: "rgba(0, 0, 0, 0.7) !important",
-  },
-  "& .ͼo": {
-    color: "white",
-  },
-  "&.cm-focused": {
-    outline: "none",
-  },
-  ".cm-selectionBackground": {
-    backgroundColor: "rgba(255, 0, 255, 0.5) !important",
-    opacity: 0.5,
-  },
-  ".cm-ySelectionInfo": {
-    opacity: "1",
-    fontFamily: "sans-serif",
-    color: "black",
-    padding: "3px 4px",
-    fontSize: "0.8rem",
-    top: "1.15em",
-  },
-  "& :focus .cm-ySelectionInfo": {
-    zIndex: "-1",
-  },
-});
-
 const panicKeymap = (
   doc: Document,
   keys: string[] = ["Cmd-.", "Ctrl-.", "Alt-."]
@@ -84,14 +41,14 @@ const panicKeymap = (
 
   return panicCode
     ? keymap.of([
-        ...keys.map((key) => ({
-          key,
-          run() {
-            doc.evaluate(panicCode, { from: null, to: null });
-            return true;
-          },
-        })),
-      ])
+      ...keys.map((key) => ({
+        key,
+        run() {
+          doc.evaluate(panicCode, { from: null, to: null });
+          return true;
+        },
+      })),
+    ])
     : [];
 };
 
@@ -142,6 +99,10 @@ const toggleWith = (key: string, extension: Extension) => {
 
 export interface EditorProps extends ReactCodeMirrorProps {
   document?: Document;
+  extensionSettings?: any;
+  vimMode: boolean;
+  lineNumbers: boolean;
+  wrapText: boolean;
 }
 
 export const Editor = React.forwardRef(
@@ -149,6 +110,7 @@ export const Editor = React.forwardRef(
     { document, ...props }: EditorProps,
     ref: React.ForwardedRef<ReactCodeMirrorRef>
   ) => {
+    console.log("Debug : " + props.vimMode);
     const [mounted, setMounted] = useState(false);
     const query = useQuery();
 
@@ -174,9 +136,12 @@ export const Editor = React.forwardRef(
       languageExtension(),
       highlightExtension,
       readOnly ? EditorState.readOnly.of(true) : [],
-      toggleWith("shift-ctrl-l", lineNumbers()), // toggle linenumbers on/off
-      toggleWith("shift-ctrl-w", EditorView.lineWrapping), // toggle linewrapping on/off
-      toggleWith("shift-ctrl-v", vim()), // toggle vim mode
+      // TODO: Read from extensionSettings to know if we should add line numbers
+      props.lineNumbers ? lineNumbers() : [],
+      props.vimMode ? vim() : [],
+      props.wrapText ? EditorView.lineWrapping: [],
+      // toggleWith("shift-ctrl-w", EditorView.lineWrapping), // toggle linewrapping on/off
+      // toggleWith("shift-ctrl-v", vim()), // toggle vim mode
     ];
 
     // If it's read-only, put a div in front of the editor so that the user
