@@ -27,12 +27,12 @@ import {
   Share,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { DropdownMenu, DropdownMenuItem, DropdownMenuLabel } from "./ui/dropdown-menu";
-import { DropdownMenuContent } from "@radix-ui/react-dropdown-menu";
 
 interface SessionCommandDialogProps extends CommandDialogProps {
   onSessionChangeUsername: () => void;
   onVimMode: () => void;
+  onFontChange: () => void;
+  onThemeChange: () => void;
   onWrapText: () => void;
   onLineNumbers: () => void;
   onSessionNew: () => void;
@@ -58,11 +58,11 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
       <CommandEmpty>No results found.</CommandEmpty>
       <CommandList>
         <CommandGroup heading="Editor">
-          <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
+          <CommandItem onSelect={props.onFontChange}>
             <Type className="mr-2 h-4 w-4" />
             <span>Font Family</span>
           </CommandItem>
-          <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
+          <CommandItem onSelect={props.onThemeChange}>
             <Palette className="mr-2 h-4 w-4" />
             <span>Theme</span>
           </CommandItem>
