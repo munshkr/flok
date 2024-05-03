@@ -19,12 +19,16 @@ import {
   WrapText,
   Github,
   FileDigit,
+  Type,
   Minus,
   Plus,
+  Palette,
   Settings,
   Share,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { DropdownMenu, DropdownMenuItem, DropdownMenuLabel } from "./ui/dropdown-menu";
+import { DropdownMenuContent } from "@radix-ui/react-dropdown-menu";
 
 interface SessionCommandDialogProps extends CommandDialogProps {
   onSessionChangeUsername: () => void;
@@ -51,21 +55,29 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
   return (
     <CommandDialog {...props}>
       <CommandInput placeholder="Type a command or search..." />
+      <CommandEmpty>No results found.</CommandEmpty>
       <CommandList>
-        <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Editor">
-          <CommandItem onSelect={wrapHandler(props.onVimMode)}>
-            <TextCursorIcon className="mr-2 h-4 w-4" />
-            <span>Vim Mode</span>
+          <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
+            <Type className="mr-2 h-4 w-4" />
+            <span>Font Family</span>
           </CommandItem>
           <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
+            <Palette className="mr-2 h-4 w-4" />
+            <span>Theme</span>
+          </CommandItem>
+         <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
             <FileDigit className="mr-2 h-4 w-4" />
             <span>Line Numbers</span>
-          </CommandItem>
-          <CommandItem onSelect={wrapHandler(props.onWrapText)}>
-            <WrapText className="mr-2 h-4 w-4" />
-            <span>Wrap Lines</span>
-          </CommandItem>
+         </CommandItem>
+        <CommandItem onSelect={wrapHandler(props.onWrapText)}>
+          <WrapText className="mr-2 h-4 w-4" />
+          <span>Wrap Lines</span>
+        </CommandItem>
+        <CommandItem onSelect={wrapHandler(props.onVimMode)}>
+          <TextCursorIcon className="mr-2 h-4 w-4" />
+          <span>Vim Mode</span>
+        </CommandItem>
         </CommandGroup>
         <CommandGroup heading="Session">
           <CommandItem onSelect={wrapHandler(props.onSessionChangeUsername)}>

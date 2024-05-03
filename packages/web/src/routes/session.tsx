@@ -428,12 +428,14 @@ export function Component() {
   useShortcut(["Control-,", "Meta-,"], () => {
     setMessagesPanelExpanded((v) => !v);
   });
+  /*
   useShortcut(["Control-$", "Meta-$"], () => {
     setLineNumbers((lineNumbers) => !lineNumbers);
   });
   useShortcut(["Meta-V", "Control-V"], () => {
     setVimMode((vimMode) => !vimMode);
   });
+  */
 
   const replTargets = useMemo(
     () =>
