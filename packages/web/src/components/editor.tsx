@@ -7,8 +7,8 @@ import {
 } from "@/settings.json";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
-import { Compartment, EditorState, Extension, Prec } from "@codemirror/state";
-import { EditorView, keymap, lineNumbers } from "@codemirror/view";
+import { EditorState, Prec } from "@codemirror/state";
+import { EditorView, keymap, lineNumbers as lineNumbersExtension } from "@codemirror/view";
 import { evalKeymap, flashField, remoteEvalFlash } from "@flok-editor/cm-eval";
 import { tidal } from "@flok-editor/lang-tidal";
 import type { Document } from "@flok-editor/session";
@@ -22,7 +22,7 @@ import { vim } from "@replit/codemirror-vim";
 import React, { useEffect, useState } from "react";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
-import { baseTheme } from "@/lib/theme";
+import * as themes from "@/lib/theme";
 
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
@@ -86,14 +86,14 @@ export interface EditorProps extends ReactCodeMirrorProps {
   vimMode: boolean;
   lineNumbers: boolean;
   wrapText: boolean;
+  customTheme: string;
 }
 
 export const Editor = React.forwardRef(
   (
-    { document, ...props }: EditorProps,
+    { document, lineNumbers, vimMode, wrapText, customTheme, ...props }: EditorProps,
     ref: React.ForwardedRef<ReactCodeMirrorRef>
   ) => {
-    console.log("Debug : " + props.vimMode);
     const [mounted, setMounted] = useState(false);
     const query = useQuery();
 
@@ -113,14 +113,14 @@ export const Editor = React.forwardRef(
     const language: string = langByTarget[document.target] || defaultLanguage;
     const languageExtension = langExtensionsByLanguage[language] || javascript;
     const extensions = [
-      baseTheme,
+      themes[customTheme] || themes.baseTheme,
       flokSetup(document, { readOnly }),
       languageExtension(),
       highlightExtension,
       readOnly ? EditorState.readOnly.of(true) : [],
-      props.lineNumbers ? lineNumbers() : [],
-      props.vimMode ? vim() : [],
-      props.wrapText ? EditorView.lineWrapping: [],
+      lineNumbers ? lineNumbersExtension() : [],
+      vimMode ? vim() : [],
+      wrapText ? EditorView.lineWrapping: [],
     ];
 
     // If it's read-only, put a div in front of the editor so that the user

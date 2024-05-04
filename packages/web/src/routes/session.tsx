@@ -90,6 +90,7 @@ export function Component() {
   const [lineNumbers, setLineNumbers] = useState<boolean>(false);
   const [vimMode, setVimMode] = useState<boolean>(false);
   const [fontFamily, setFontFamily] = useState<string>("monospace");
+  const [theme, setTheme] = useState<string>("monospace");
   const [wrapText, setWrapText] = useState<boolean>(false);
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
@@ -518,6 +519,8 @@ export function Component() {
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
         onVimMode={() => setVimMode((vimMode) => !vimMode)}
         onLineNumbers={() => setLineNumbers((lineNumbers) => !lineNumbers)}
+        onChangeFontFamily={(font) => setFontFamily(font)}
+        onChangeTheme={(theme) => setTheme(theme)}
         onWrapText={() => setWrapText((wrapText) => !wrapText)}
         onSessionNew={() => navigate("/")}
         onSessionShareUrl={() => setShareUrlDialogOpen(true)}
@@ -580,6 +583,7 @@ export function Component() {
               lineNumbers={lineNumbers}
               vimMode={vimMode}
               wrapText={wrapText}
+              customTheme={theme}
               className="absolute top-6 overflow-auto flex-grow w-full h-[calc(100%-32px)] z-10"
             />
           </Pane>

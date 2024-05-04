@@ -29,13 +29,15 @@ import {
   Share,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 
 interface SessionCommandDialogProps extends CommandDialogProps {
   onSessionChangeUsername: () => void;
   onVimMode: () => void;
   onWrapText: () => void;
+  onChangeFontFamily: (font: string) => void;
+  onChangeTheme: (theme: string) => void;
   onLineNumbers: () => void;
   onSessionNew: () => void;
   onSessionShareUrl: () => void;
@@ -59,11 +61,13 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
   const fontSelection = (font: string) => {
     // Return to top-level menu
     setPages([]);
+    wrapHandler(() => props.onChangeFontFamily(font));
   };
 
   const themeSelection = (font: string) => {
     // Return to top-level menu
     setPages([]);
+    wrapHandler(() => props.onChangeTheme(font));
   };
 
   return (
