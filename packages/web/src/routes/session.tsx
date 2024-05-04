@@ -8,8 +8,6 @@ import { ReplsButton } from "@/components/repls-button";
 import { ReplsDialog } from "@/components/repls-dialog";
 import SessionCommandDialog from "@/components/session-command-dialog";
 import { ShareUrlDialog } from "@/components/share-url-dialog";
-import { FontMenu } from "@/components/font-menu";
-import { ThemeMenu } from "@/components/theme-menu";
 import { PubSubState, StatusBar, SyncState } from "@/components/status-bar";
 import { Toaster } from "@/components/ui/toaster";
 import UsernameDialog from "@/components/username-dialog";
@@ -86,8 +84,6 @@ export function Component() {
   const [usernameDialogOpen, setUsernameDialogOpen] = useState(false);
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
   const [shareUrlDialogOpen, setShareUrlDialogOpen] = useState(false);
-  const [fontDialogOpen, setFontDialogOpen] = useState(false);
-  const [themeDialogOpen, setThemeDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
@@ -532,8 +528,6 @@ export function Component() {
         onWrapText={() => setWrapText((wrapText) => !wrapText)}
         onSessionNew={() => navigate("/")}
         onSessionShareUrl={() => setShareUrlDialogOpen(true)}
-        onFontChange={() => setFontDialogOpen(true)} 
-        onThemeChange={() => setThemeDialogOpen(true)} 
         onLayoutAdd={handleViewLayoutAdd}
         onLayoutRemove={handleViewLayoutRemove}
         onLayoutConfigure={() => setConfigureDialogOpen(true)}
@@ -552,14 +546,6 @@ export function Component() {
         url={sessionUrl}
         open={shareUrlDialogOpen}
         onOpenChange={(isOpen) => setShareUrlDialogOpen(isOpen)}
-      />
-      <FontMenu
-        open={fontDialogOpen}
-        onOpenChange={(isOpen) => setFontDialogOpen(isOpen)}
-      />
-      <ThemeMenu
-        open={themeDialogOpen}
-        onOpenChange={(isOpen) => setThemeDialogOpen(isOpen)}
       />
       {session && (
         <ConfigureDialog

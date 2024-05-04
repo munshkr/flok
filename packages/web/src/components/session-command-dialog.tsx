@@ -8,6 +8,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  Command,
   CommandSeparator,
   CommandShortcut,
 } from "@/components/ui/command";
@@ -17,6 +18,7 @@ import {
   FilePlus,
   TextCursorIcon,
   WrapText,
+  ArrowLeft,
   Github,
   FileDigit,
   Type,
@@ -27,12 +29,12 @@ import {
   Share,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useRef, useState } from "react";
+
 
 interface SessionCommandDialogProps extends CommandDialogProps {
   onSessionChangeUsername: () => void;
   onVimMode: () => void;
-  onFontChange: () => void;
-  onThemeChange: () => void;
   onWrapText: () => void;
   onLineNumbers: () => void;
   onSessionNew: () => void;
@@ -51,21 +53,72 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
       if (onOpenChange) onOpenChange(false);
     };
   };
+  const ref = useRef(null)
+  const [open, setOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const [pages, setPages] = useState([])
+  const page = pages[pages.length - 1]
 
   return (
     <CommandDialog {...props}>
       <CommandInput placeholder="Type a command or search..." />
       <CommandEmpty>No results found.</CommandEmpty>
-      <CommandList>
+        <CommandList>
+          <Command>
+          <CommandGroup heading="Customization">
+          <CommandList className="ml-2">
+            {!page && (
+              <>
+                <CommandItem onSelect={() => setPages([...pages, 'fonts'])}>
+                  <Type className="mr-2 h-4 w-4 inline" />
+                  <span>Font Family</span>
+                </CommandItem>
+                <CommandItem onSelect={() => setPages([...pages, 'themes'])}>
+                  <Palette className="mr-2 h-4 w-4" />
+                  <span>Theme</span>
+                </CommandItem>
+              </>
+            )}
+            {page === 'fonts' && (
+              <>
+                <CommandItem onSelect={() => setPages([])}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  <span>Back to menu</span>
+                </CommandItem>
+                <CommandItem>
+                  <Type className="mr-2 h-4 w-4 inline" />
+                  <span>Iosevka</span>
+                </CommandItem>
+                <CommandItem>
+                  <Type className="mr-2 h-4 w-4 inline" />
+                  <span>Fira Mono</span>
+                </CommandItem>
+                <CommandItem>
+                  <Type className="mr-2 h-4 w-4 inline" />
+                  <span>Hasklig</span>
+                </CommandItem>
+              </>
+            )}
+            {page === 'themes' && (
+              <>
+                <CommandItem onSelect={() => setPages([])}>
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  <span>Back to menu</span>
+                </CommandItem>
+                <CommandItem>
+                  <Palette className="mr-2 h-4 w-4" />
+                  <span>Dracula</span>
+                </CommandItem>
+                <CommandItem>
+                  <Palette className="mr-2 h-4 w-4" />
+                  <span>Idk</span>
+                </CommandItem>
+              </>
+            )}
+          </CommandList>
+          </CommandGroup>
+        </Command>
         <CommandGroup heading="Editor">
-          <CommandItem onSelect={props.onFontChange}>
-            <Type className="mr-2 h-4 w-4" />
-            <span>Font Family</span>
-          </CommandItem>
-          <CommandItem onSelect={props.onThemeChange}>
-            <Palette className="mr-2 h-4 w-4" />
-            <span>Theme</span>
-          </CommandItem>
          <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
             <FileDigit className="mr-2 h-4 w-4" />
             <span>Line Numbers</span>
