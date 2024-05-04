@@ -89,6 +89,7 @@ export function Component() {
   const [hidden, setHidden] = useState<boolean>(false);
   const [lineNumbers, setLineNumbers] = useState<boolean>(false);
   const [vimMode, setVimMode] = useState<boolean>(false);
+  const [fontFamily, setFontFamily] = useState<string>("monospace");
   const [wrapText, setWrapText] = useState<boolean>(false);
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
@@ -428,14 +429,6 @@ export function Component() {
   useShortcut(["Control-,", "Meta-,"], () => {
     setMessagesPanelExpanded((v) => !v);
   });
-  /*
-  useShortcut(["Control-$", "Meta-$"], () => {
-    setLineNumbers((lineNumbers) => !lineNumbers);
-  });
-  useShortcut(["Meta-V", "Control-V"], () => {
-    setVimMode((vimMode) => !vimMode);
-  });
-  */
 
   const replTargets = useMemo(
     () =>

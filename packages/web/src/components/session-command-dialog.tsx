@@ -56,6 +56,16 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
   const [pages, setPages] = useState([])
   const page = pages[pages.length - 1]
 
+  const fontSelection = (font: string) => {
+    // Return to top-level menu
+    setPages([]);
+  };
+
+  const themeSelection = (font: string) => {
+    // Return to top-level menu
+    setPages([]);
+  };
+
   return (
     <CommandDialog {...props}>
       <CommandInput placeholder="Type a command or search..." />
@@ -82,15 +92,15 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   <span>Back to menu</span>
                 </CommandItem>
-                <CommandItem>
+                <CommandItem onSelect={() => fontSelection("Iosevka")}>
                   <Type className="mr-2 h-4 w-4 inline" />
                   <span>Iosevka</span>
                 </CommandItem>
-                <CommandItem>
+                <CommandItem onSelect={() => fontSelection("Fira Mono")}>
                   <Type className="mr-2 h-4 w-4 inline" />
                   <span>Fira Mono</span>
                 </CommandItem>
-                <CommandItem>
+                <CommandItem onSelect={() => fontSelection("Hasklig")}>
                   <Type className="mr-2 h-4 w-4 inline" />
                   <span>Hasklig</span>
                 </CommandItem>
@@ -102,13 +112,17 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   <span>Back to menu</span>
                 </CommandItem>
-                <CommandItem>
+                <CommandItem onSelect={ () => themeSelection("Flok") }>
+                  <Palette className="mr-2 h-4 w-4" />
+                  <span>Flok</span>
+                </CommandItem>
+                <CommandItem onSelect={ () => themeSelection("Dracula")}>
                   <Palette className="mr-2 h-4 w-4" />
                   <span>Dracula</span>
                 </CommandItem>
-                <CommandItem>
+                <CommandItem onSelect={ () => themeSelection("Nord")}>
                   <Palette className="mr-2 h-4 w-4" />
-                  <span>Idk</span>
+                  <span>Nord</span>
                 </CommandItem>
               </>
             )}

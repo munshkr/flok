@@ -80,23 +80,6 @@ const flokSetup = (
   ];
 };
 
-// Code example from:
-// https://codemirror.net/examples/config/#dynamic-configuration
-// Allows toggling of extensions based on string shortkey
-//
-const toggleWith = (key: string, extension: Extension) => {
-  let comp = new Compartment();
-
-  function toggle(view: EditorView) {
-    let on = comp.get(view.state) == extension;
-    view.dispatch({
-      effects: comp.reconfigure(on ? [] : extension),
-    });
-    return true;
-  }
-  return [comp.of([]), keymap.of([{ key, run: toggle }])];
-};
-
 export interface EditorProps extends ReactCodeMirrorProps {
   document?: Document;
   extensionSettings?: any;
@@ -129,19 +112,15 @@ export const Editor = React.forwardRef(
 
     const language: string = langByTarget[document.target] || defaultLanguage;
     const languageExtension = langExtensionsByLanguage[language] || javascript;
-
     const extensions = [
       baseTheme,
       flokSetup(document, { readOnly }),
       languageExtension(),
       highlightExtension,
       readOnly ? EditorState.readOnly.of(true) : [],
-      // TODO: Read from extensionSettings to know if we should add line numbers
       props.lineNumbers ? lineNumbers() : [],
       props.vimMode ? vim() : [],
       props.wrapText ? EditorView.lineWrapping: [],
-      // toggleWith("shift-ctrl-w", EditorView.lineWrapping), // toggle linewrapping on/off
-      // toggleWith("shift-ctrl-v", vim()), // toggle vim mode
     ];
 
     // If it's read-only, put a div in front of the editor so that the user
