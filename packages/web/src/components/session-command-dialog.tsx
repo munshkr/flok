@@ -53,9 +53,6 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
       if (onOpenChange) onOpenChange(false);
     };
   };
-  const ref = useRef(null)
-  const [open, setOpen] = useState(false)
-  const [search, setSearch] = useState('')
   const [pages, setPages] = useState([])
   const page = pages[pages.length - 1]
 
@@ -115,23 +112,22 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
                 </CommandItem>
               </>
             )}
+            <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
+               <FileDigit className="mr-2 h-4 w-4" />
+               <span>Line Numbers</span>
+            </CommandItem>
+            <CommandItem onSelect={wrapHandler(props.onWrapText)}>
+              <WrapText className="mr-2 h-4 w-4" />
+              <span>Wrap Lines</span>
+            </CommandItem>
+            <CommandItem onSelect={wrapHandler(props.onVimMode)}>
+              <TextCursorIcon className="mr-2 h-4 w-4" />
+              <span>Vim Mode</span>
+            </CommandItem>
           </CommandList>
           </CommandGroup>
         </Command>
-        <CommandGroup heading="Editor">
-         <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
-            <FileDigit className="mr-2 h-4 w-4" />
-            <span>Line Numbers</span>
-         </CommandItem>
-        <CommandItem onSelect={wrapHandler(props.onWrapText)}>
-          <WrapText className="mr-2 h-4 w-4" />
-          <span>Wrap Lines</span>
-        </CommandItem>
-        <CommandItem onSelect={wrapHandler(props.onVimMode)}>
-          <TextCursorIcon className="mr-2 h-4 w-4" />
-          <span>Vim Mode</span>
-        </CommandItem>
-        </CommandGroup>
+        <CommandSeparator />
         <CommandGroup heading="Session">
           <CommandItem onSelect={wrapHandler(props.onSessionChangeUsername)}>
             <Edit2 className="mr-2 h-4 w-4" />
