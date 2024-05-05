@@ -6,4 +6,5 @@ export const themes = {
   "gruvbox": codeMirrorThemes.gruvbox,
   "ayuDark": codeMirrorThemes.ayuDark,
   "tokyo Night": codeMirrorThemes.tokyonight,
+  "nord": codeMirrorThemes.nord,
 }
