@@ -1,0 +1,18 @@
+@font-face {
+    font-family: 'BigBlue TerminalPlus';
+    src: url('BigBlue_TerminalPlus.woff2') format('woff2'),
+        url('BigBlue_TerminalPlus.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'BigBlue Terminal 437TT';
+    src: url('BigBlue_Terminal_437TT.woff2') format('woff2'),
+        url('BigBlue_Terminal_437TT.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+

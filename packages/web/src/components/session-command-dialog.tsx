@@ -109,7 +109,7 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
                 {Object.entries(fonts).map(([fontKey, fontValue]) => (
                   <CommandItem onSelect={wrapHandlerWithValue(fontSelection, fontValue)} key={fontKey}>
                     <Palette className="mr-2 h-4 w-4" />
-                    <span>{fontKey.charAt(0).toUpperCase() + fontKey.slice(1)}</span>
+                    <span style={{fontFamily: fontValue}}>{fontKey.charAt(0).toUpperCase() + fontKey.slice(1)}</span>
                   </CommandItem>
                 ))}
               </>

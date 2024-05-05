@@ -1,3 +1,11 @@
+import '../fonts/IBM Plex Mono/stylesheet.css';
+import '../fonts/BigBlue/stylesheet.css';
+import '../fonts/Monocraft/stylesheet.css';
+import '../fonts/JetBrains/stylesheet.css';
+import '../fonts/JGS/stylesheet.css';
+import '../fonts/StepsMono/stylesheet.css';
+
+
 import { useQuery } from "@/hooks/use-query";
 import {
   langByTarget as langByTargetUntyped,

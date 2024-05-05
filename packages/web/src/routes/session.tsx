@@ -89,7 +89,7 @@ export function Component() {
   const [hidden, setHidden] = useState<boolean>(false);
   const [lineNumbers, setLineNumbers] = useState<boolean>(false);
   const [vimMode, setVimMode] = useState<boolean>(false);
-  const [fontFamily, setFontFamily] = useState<string>("monospace");
+  const [fontFamily, setFontFamily] = useState<string>("IBM Plex Mono");
   const [theme, setTheme] = useState<string>("flok");
   const [wrapText, setWrapText] = useState<boolean>(false);
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
