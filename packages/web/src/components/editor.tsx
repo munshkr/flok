@@ -18,11 +18,10 @@ import CodeMirror, {
   ReactCodeMirrorRef,
 } from "@uiw/react-codemirror";
 import { vim } from "@replit/codemirror-vim";
-
 import React, { useEffect, useState } from "react";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
-import * as themes from "@/lib/theme";
+import { themes } from "@/lib/theme";
 
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
@@ -87,11 +86,12 @@ export interface EditorProps extends ReactCodeMirrorProps {
   lineNumbers: boolean;
   wrapText: boolean;
   customTheme: string;
+  fontFamily: string;
 }
 
 export const Editor = React.forwardRef(
   (
-    { document, lineNumbers, vimMode, wrapText, customTheme, ...props }: EditorProps,
+    { document, lineNumbers, vimMode, wrapText, customTheme, fontFamily, ...props }: EditorProps,
     ref: React.ForwardedRef<ReactCodeMirrorRef>
   ) => {
     const [mounted, setMounted] = useState(false);
@@ -107,13 +107,17 @@ export const Editor = React.forwardRef(
     if (!mounted || !document) {
       return null;
     }
-
     const readOnly = !!query.get("readOnly");
-
     const language: string = langByTarget[document.target] || defaultLanguage;
     const languageExtension = langExtensionsByLanguage[language] || javascript;
     const extensions = [
-      themes[customTheme] || themes.baseTheme,
+      EditorView.theme({
+        "&": { fontFamily: fontFamily },
+        ".cm-content": {
+          fontFamily: fontFamily,
+        },
+        ".cm-gutters": { fontFamily: fontFamily },
+      }),
       flokSetup(document, { readOnly }),
       languageExtension(),
       highlightExtension,
@@ -131,7 +135,7 @@ export const Editor = React.forwardRef(
         <CodeMirror
           ref={ref}
           value={document.content}
-          theme="dark"
+          theme={themes[customTheme] || themes["dracula"]}
           extensions={extensions}
           basicSetup={{
             foldGutter: false,

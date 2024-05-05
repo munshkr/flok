@@ -13,6 +13,7 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { changeLogUrl, repoUrl } from "@/settings.json";
+import { themes } from "@/lib/theme";
 import {
   Edit2,
   FilePlus,
@@ -47,27 +48,35 @@ interface SessionCommandDialogProps extends CommandDialogProps {
 }
 
 export default function SessionCommandDialog(props: SessionCommandDialogProps) {
+
   const wrapHandler = (callback: () => void) => {
     return () => {
       const { onOpenChange } = props;
-
       callback();
       if (onOpenChange) onOpenChange(false);
     };
   };
+
+  const wrapHandlerWithValue = (callback: (value: any) => void, data: any) => {
+    return () => {
+      const { onOpenChange } = props;
+      callback(data);
+      if (onOpenChange) onOpenChange(false);
+    };
+  };
+
+
   const [pages, setPages] = useState([])
   const page = pages[pages.length - 1]
 
   const fontSelection = (font: string) => {
-    // Return to top-level menu
     setPages([]);
-    wrapHandler(() => props.onChangeFontFamily(font));
+    wrapHandler(() => props.onChangeFontFamily(font))();
   };
 
-  const themeSelection = (font: string) => {
-    // Return to top-level menu
+  const themeSelection = (theme: string) => {
     setPages([]);
-    wrapHandler(() => props.onChangeTheme(font));
+    wrapHandler(() => props.onChangeTheme(theme))();
   };
 
   return (
@@ -92,42 +101,44 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
             )}
             {page === 'fonts' && (
               <>
-                <CommandItem onSelect={() => setPages([])}>
+                <CommandItem onSelect={() => setPages([])} key="fontMenu">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   <span>Back to menu</span>
                 </CommandItem>
-                <CommandItem onSelect={() => fontSelection("Iosevka")}>
+                <CommandItem onSelect={wrapHandlerWithValue(fontSelection, "Inconsolata")}>
                   <Type className="mr-2 h-4 w-4 inline" />
-                  <span>Iosevka</span>
+                  <span>Inconsolata</span>
                 </CommandItem>
-                <CommandItem onSelect={() => fontSelection("Fira Mono")}>
+                <CommandItem onSelect={wrapHandlerWithValue(fontSelection, "Courier")}>
                   <Type className="mr-2 h-4 w-4 inline" />
-                  <span>Fira Mono</span>
+                  <span>Courier</span>
                 </CommandItem>
-                <CommandItem onSelect={() => fontSelection("Hasklig")}>
+                <CommandItem onSelect={wrapHandlerWithValue(fontSelection, "Lucida")}>
                   <Type className="mr-2 h-4 w-4 inline" />
-                  <span>Hasklig</span>
+                  <span>Lucida</span>
+                </CommandItem>
+                <CommandItem onSelect={wrapHandlerWithValue(fontSelection, "Monaco")}>
+                  <Type className="mr-2 h-4 w-4 inline" />
+                  <span>Monaco</span>
+                </CommandItem>
+                <CommandItem onSelect={wrapHandlerWithValue(fontSelection, "Luminari")}>
+                  <Type className="mr-2 h-4 w-4 inline" />
+                  <span>Luminari</span>
                 </CommandItem>
               </>
             )}
             {page === 'themes' && (
               <>
-                <CommandItem onSelect={() => setPages([])}>
+                <CommandItem onSelect={() => setPages([])} key="themeMenu">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   <span>Back to menu</span>
                 </CommandItem>
-                <CommandItem onSelect={ () => themeSelection("Flok") }>
-                  <Palette className="mr-2 h-4 w-4" />
-                  <span>Flok</span>
-                </CommandItem>
-                <CommandItem onSelect={ () => themeSelection("Dracula")}>
-                  <Palette className="mr-2 h-4 w-4" />
-                  <span>Dracula</span>
-                </CommandItem>
-                <CommandItem onSelect={ () => themeSelection("Nord")}>
-                  <Palette className="mr-2 h-4 w-4" />
-                  <span>Nord</span>
-                </CommandItem>
+                {Object.keys(themes).map((themeKey) => (
+                  <CommandItem onSelect={wrapHandlerWithValue(themeSelection, themeKey)} key={themeKey}>
+                    <Palette className="mr-2 h-4 w-4" />
+                    <span>{themeKey.charAt(0).toUpperCase() + themeKey.slice(1)}</span>
+                  </CommandItem>
+                ))}
               </>
             )}
             <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>

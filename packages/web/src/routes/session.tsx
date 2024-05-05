@@ -90,7 +90,7 @@ export function Component() {
   const [lineNumbers, setLineNumbers] = useState<boolean>(false);
   const [vimMode, setVimMode] = useState<boolean>(false);
   const [fontFamily, setFontFamily] = useState<string>("monospace");
-  const [theme, setTheme] = useState<string>("monospace");
+  const [theme, setTheme] = useState<string>("flok");
   const [wrapText, setWrapText] = useState<boolean>(false);
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
@@ -582,6 +582,7 @@ export function Component() {
               autoFocus={i === 0}
               lineNumbers={lineNumbers}
               vimMode={vimMode}
+              fontFamily={fontFamily}
               wrapText={wrapText}
               customTheme={theme}
               className="absolute top-6 overflow-auto flex-grow w-full h-[calc(100%-32px)] z-10"
