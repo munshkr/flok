@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/command";
 import { changeLogUrl, repoUrl } from "@/settings.json";
 import { themes } from "@/lib/theme";
+import { fonts } from "@/lib/fonts";
 import {
   Edit2,
   FilePlus,
@@ -105,26 +106,12 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   <span>Back to menu</span>
                 </CommandItem>
-                <CommandItem onSelect={wrapHandlerWithValue(fontSelection, "Inconsolata")}>
-                  <Type className="mr-2 h-4 w-4 inline" />
-                  <span>Inconsolata</span>
-                </CommandItem>
-                <CommandItem onSelect={wrapHandlerWithValue(fontSelection, "Courier")}>
-                  <Type className="mr-2 h-4 w-4 inline" />
-                  <span>Courier</span>
-                </CommandItem>
-                <CommandItem onSelect={wrapHandlerWithValue(fontSelection, "Lucida")}>
-                  <Type className="mr-2 h-4 w-4 inline" />
-                  <span>Lucida</span>
-                </CommandItem>
-                <CommandItem onSelect={wrapHandlerWithValue(fontSelection, "Monaco")}>
-                  <Type className="mr-2 h-4 w-4 inline" />
-                  <span>Monaco</span>
-                </CommandItem>
-                <CommandItem onSelect={wrapHandlerWithValue(fontSelection, "Luminari")}>
-                  <Type className="mr-2 h-4 w-4 inline" />
-                  <span>Luminari</span>
-                </CommandItem>
+                {Object.entries(fonts).map(([fontKey, fontValue]) => (
+                  <CommandItem onSelect={wrapHandlerWithValue(fontSelection, fontValue)} key={fontKey}>
+                    <Palette className="mr-2 h-4 w-4" />
+                    <span>{fontKey.charAt(0).toUpperCase() + fontKey.slice(1)}</span>
+                  </CommandItem>
+                ))}
               </>
             )}
             {page === 'themes' && (

@@ -107,16 +107,21 @@ export const Editor = React.forwardRef(
     if (!mounted || !document) {
       return null;
     }
+    console.log(fontFamily);
     const readOnly = !!query.get("readOnly");
     const language: string = langByTarget[document.target] || defaultLanguage;
     const languageExtension = langExtensionsByLanguage[language] || javascript;
     const extensions = [
       EditorView.theme({
-        "&": { fontFamily: fontFamily },
+        "&": { 
+          fontFamily: fontFamily 
+        },
         ".cm-content": {
           fontFamily: fontFamily,
         },
-        ".cm-gutters": { fontFamily: fontFamily },
+        ".cm-gutters": { 
+          fontFamily: fontFamily 
+        },
       }),
       flokSetup(document, { readOnly }),
       languageExtension(),
