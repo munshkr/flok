@@ -2,7 +2,7 @@ import { createTheme } from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
 
 export const ayuDark = createTheme({
-  theme: 'ayuDark',
+  theme: 'dark',
   settings: {
     background: 'transparent',
     backgroundImage: '',

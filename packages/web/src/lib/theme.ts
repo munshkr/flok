@@ -1,6 +1,10 @@
 import { codeMirrorThemes } from "./themes"
 
-export const themes = {
+type Themes = {
+  [key: string]: any
+}
+
+export const themes: Themes = {
   "dracula": codeMirrorThemes.dracula,
   "monokai": codeMirrorThemes.monokai,
   "gruvbox": codeMirrorThemes.gruvbox,

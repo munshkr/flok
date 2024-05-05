@@ -67,7 +67,7 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
   };
 
 
-  const [pages, setPages] = useState([])
+  const [pages, setPages] = useState<string[]>([]);
   const page = pages[pages.length - 1]
 
   const fontSelection = (font: string) => {

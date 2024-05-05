@@ -14,7 +14,7 @@ export const defaultSettingsNord: CreateThemeOptions['settings'] = {
 };
 
 export const nord = createTheme({
-    theme: 'nord',
+    theme: 'dark',
     settings: {
       ...defaultSettingsNord,
     },

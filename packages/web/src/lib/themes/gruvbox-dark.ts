@@ -2,7 +2,7 @@ import { createTheme } from '@uiw/codemirror-themes';
 import { tags as t } from '@lezer/highlight';
 
 export const gruvboxDark = createTheme({
-  theme: 'gruvboxDark',
+  theme: 'dark',
   settings: {
     background: 'transparent',
     foreground: '#ebdbb2',

@@ -14,7 +14,7 @@ export const defaultSettingsTokyoNight: CreateThemeOptions['settings'] = {
 };
 
 export const tokyoNight = createTheme({
-    theme: 'tokyoNight',
+    theme: 'dark',
     settings: {
       ...defaultSettingsTokyoNight,
     },

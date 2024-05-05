@@ -28,7 +28,7 @@ const monokaiColors = {
 };
 
 export const monokai = createTheme({
-  theme: 'monokai-dimmed',
+  theme: 'dark',
   settings: {
     background: monokaiColors.background,
     foreground: monokaiColors.foreground,
