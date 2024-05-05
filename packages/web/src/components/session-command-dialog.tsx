@@ -86,62 +86,6 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
       <CommandEmpty>No results found.</CommandEmpty>
         <CommandList>
           <Command>
-          <CommandGroup heading="Customization">
-          <CommandList className="ml-2">
-            {!page && (
-              <>
-                <CommandItem onSelect={() => setPages([...pages, 'fonts'])}>
-                  <Type className="mr-2 h-4 w-4 inline" />
-                  <span>Font Family</span>
-                </CommandItem>
-                <CommandItem onSelect={() => setPages([...pages, 'themes'])}>
-                  <Palette className="mr-2 h-4 w-4" />
-                  <span>Theme</span>
-                </CommandItem>
-              </>
-            )}
-            {page === 'fonts' && (
-              <>
-                <CommandItem onSelect={() => setPages([])} key="fontMenu">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  <span>Back to menu</span>
-                </CommandItem>
-                {Object.entries(fonts).map(([fontKey, fontValue]) => (
-                  <CommandItem onSelect={wrapHandlerWithValue(fontSelection, fontValue)} key={fontKey}>
-                    <Palette className="mr-2 h-4 w-4" />
-                    <span style={{fontFamily: fontValue}}>{fontKey.charAt(0).toUpperCase() + fontKey.slice(1)}</span>
-                  </CommandItem>
-                ))}
-              </>
-            )}
-            {page === 'themes' && (
-              <>
-                <CommandItem onSelect={() => setPages([])} key="themeMenu">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  <span>Back to menu</span>
-                </CommandItem>
-                {Object.keys(themes).map((themeKey) => (
-                  <CommandItem onSelect={wrapHandlerWithValue(themeSelection, themeKey)} key={themeKey}>
-                    <Palette className="mr-2 h-4 w-4" />
-                    <span>{themeKey.charAt(0).toUpperCase() + themeKey.slice(1)}</span>
-                  </CommandItem>
-                ))}
-              </>
-            )}
-            <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
-               <FileDigit className="mr-2 h-4 w-4" />
-               <span>Line Numbers</span>
-            </CommandItem>
-            <CommandItem onSelect={wrapHandler(props.onWrapText)}>
-              <WrapText className="mr-2 h-4 w-4" />
-              <span>Wrap Lines</span>
-            </CommandItem>
-            <CommandItem onSelect={wrapHandler(props.onVimMode)}>
-              <TextCursorIcon className="mr-2 h-4 w-4" />
-              <span>Vim Mode</span>
-            </CommandItem>
-          </CommandList>
-          </CommandGroup>
         </Command>
         <CommandSeparator />
         <CommandGroup heading="Session">
@@ -184,6 +128,62 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
             <Minus className="mr-2 h-4 w-4" />
             <span>Remove Pane</span>
           </CommandItem>
+        </CommandGroup>
+        <CommandGroup heading="Customization">
+        <CommandList className="ml-2">
+          {!page && (
+            <>
+              <CommandItem onSelect={() => setPages([...pages, 'fonts'])}>
+                <Type className="mr-2 h-4 w-4 inline" />
+                <span>Font Family</span>
+              </CommandItem>
+              <CommandItem onSelect={() => setPages([...pages, 'themes'])}>
+                <Palette className="mr-2 h-4 w-4" />
+                <span>Theme</span>
+              </CommandItem>
+            </>
+          )}
+          {page === 'fonts' && (
+            <>
+              <CommandItem onSelect={() => setPages([])} key="fontMenu">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                <span>Back to menu</span>
+              </CommandItem>
+              {Object.entries(fonts).map(([fontKey, fontValue]) => (
+                <CommandItem onSelect={wrapHandlerWithValue(fontSelection, fontValue)} key={fontKey}>
+                  <Palette className="mr-2 h-4 w-4" />
+                  <span style={{fontFamily: fontValue}}>{fontKey.charAt(0).toUpperCase() + fontKey.slice(1)}</span>
+                </CommandItem>
+              ))}
+            </>
+          )}
+          {page === 'themes' && (
+            <>
+              <CommandItem onSelect={() => setPages([])} key="themeMenu">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                <span>Back to menu</span>
+              </CommandItem>
+              {Object.keys(themes).map((themeKey) => (
+                <CommandItem onSelect={wrapHandlerWithValue(themeSelection, themeKey)} key={themeKey}>
+                  <Palette className="mr-2 h-4 w-4" />
+                  <span>{themeKey.charAt(0).toUpperCase() + themeKey.slice(1)}</span>
+                </CommandItem>
+              ))}
+            </>
+          )}
+          <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
+             <FileDigit className="mr-2 h-4 w-4" />
+             <span>Line Numbers</span>
+          </CommandItem>
+          <CommandItem onSelect={wrapHandler(props.onWrapText)}>
+            <WrapText className="mr-2 h-4 w-4" />
+            <span>Wrap Lines</span>
+          </CommandItem>
+          <CommandItem onSelect={wrapHandler(props.onVimMode)}>
+            <TextCursorIcon className="mr-2 h-4 w-4" />
+            <span>Vim Mode</span>
+          </CommandItem>
+        </CommandList>
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Help">
