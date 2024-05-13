@@ -204,7 +204,8 @@ installing and using it.
 `remote_sclang`.
 
 * `remote_sclang` needs SC IDE to be running, and you need FlokQuark installed
-  and running there.
+  and running there. Be sure to start your flok-repl with both `-t remote_sclang`
+  and `-n sclang` flags.
 
 * If you use `remote_sclang`, you won't see Post messages from Flok, because
   FlokQuark does not currently capture Post messages and errors.  It is
