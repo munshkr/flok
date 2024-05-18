@@ -17,6 +17,8 @@ import CodeMirror, {
   ReactCodeMirrorProps,
   ReactCodeMirrorRef,
 } from "@uiw/react-codemirror";
+import { vim } from "@replit/codemirror-vim";
+
 import React, { useEffect, useState } from "react";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
@@ -174,6 +176,7 @@ export const Editor = React.forwardRef(
       readOnly ? EditorState.readOnly.of(true) : [],
       toggleWith("shift-ctrl-l", lineNumbers()), // toggle linenumbers on/off
       toggleWith("shift-ctrl-w", EditorView.lineWrapping), // toggle linewrapping on/off
+      toggleWith("shift-ctrl-v", vim()), // toggle vim mode
     ];
 
     // If it's read-only, put a div in front of the editor so that the user
