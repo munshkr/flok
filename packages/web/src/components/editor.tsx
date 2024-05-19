@@ -1,10 +1,9 @@
-import '../fonts/IBM Plex Mono/stylesheet.css';
-import '../fonts/BigBlue/stylesheet.css';
-import '../fonts/Monocraft/stylesheet.css';
-import '../fonts/JetBrains/stylesheet.css';
-import '../fonts/JGS/stylesheet.css';
-import '../fonts/StepsMono/stylesheet.css';
-
+import "../fonts/IBM Plex Mono/stylesheet.css";
+import "../fonts/BigBlue/stylesheet.css";
+import "../fonts/Monocraft/stylesheet.css";
+import "../fonts/JetBrains/stylesheet.css";
+import "../fonts/JGS/stylesheet.css";
+import "../fonts/StepsMono/stylesheet.css";
 
 import { useQuery } from "@/hooks/use-query";
 import {
@@ -16,7 +15,11 @@ import {
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { EditorState, Prec } from "@codemirror/state";
-import { EditorView, keymap, lineNumbers as lineNumbersExtension } from "@codemirror/view";
+import {
+  EditorView,
+  keymap,
+  lineNumbers as lineNumbersExtension,
+} from "@codemirror/view";
 import { evalKeymap, flashField, remoteEvalFlash } from "@flok-editor/cm-eval";
 import { tidal } from "@flok-editor/lang-tidal";
 import type { Document } from "@flok-editor/session";
@@ -29,7 +32,7 @@ import { vim } from "@replit/codemirror-vim";
 import React, { useEffect, useState } from "react";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
-import { themes } from "@/lib/theme";
+import themes from "@/lib/themes";
 
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
@@ -48,14 +51,14 @@ const panicKeymap = (
 
   return panicCode
     ? keymap.of([
-      ...keys.map((key) => ({
-        key,
-        run() {
-          doc.evaluate(panicCode, { from: null, to: null });
-          return true;
-        },
-      })),
-    ])
+        ...keys.map((key) => ({
+          key,
+          run() {
+            doc.evaluate(panicCode, { from: null, to: null });
+            return true;
+          },
+        })),
+      ])
     : [];
 };
 
@@ -99,7 +102,15 @@ export interface EditorProps extends ReactCodeMirrorProps {
 
 export const Editor = React.forwardRef(
   (
-    { document, lineNumbers, vimMode, wrapText, customTheme, fontFamily, ...props }: EditorProps,
+    {
+      document,
+      lineNumbers,
+      vimMode,
+      wrapText,
+      customTheme,
+      fontFamily,
+      ...props
+    }: EditorProps,
     ref: React.ForwardedRef<ReactCodeMirrorRef>
   ) => {
     const [mounted, setMounted] = useState(false);
@@ -121,14 +132,14 @@ export const Editor = React.forwardRef(
     const languageExtension = langExtensionsByLanguage[language] || javascript;
     const extensions = [
       EditorView.theme({
-        "&": { 
-          fontFamily: fontFamily 
+        "&": {
+          fontFamily: fontFamily,
         },
         ".cm-content": {
           fontFamily: fontFamily,
         },
-        ".cm-gutters": { 
-          fontFamily: fontFamily 
+        ".cm-gutters": {
+          fontFamily: fontFamily,
         },
       }),
       flokSetup(document, { readOnly }),
@@ -137,7 +148,7 @@ export const Editor = React.forwardRef(
       readOnly ? EditorState.readOnly.of(true) : [],
       lineNumbers ? lineNumbersExtension() : [],
       vimMode ? vim() : [],
-      wrapText ? EditorView.lineWrapping: [],
+      wrapText ? EditorView.lineWrapping : [],
     ];
 
     // If it's read-only, put a div in front of the editor so that the user

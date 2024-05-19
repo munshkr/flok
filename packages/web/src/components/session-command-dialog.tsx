@@ -13,8 +13,8 @@ import {
   CommandShortcut,
 } from "@/components/ui/command";
 import { changeLogUrl, repoUrl } from "@/settings.json";
-import { themes } from "@/lib/theme";
-import { fonts } from "@/lib/fonts";
+import themes from "@/lib/themes";
+import fonts from "@/lib/fonts";
 import {
   Edit2,
   FilePlus,
