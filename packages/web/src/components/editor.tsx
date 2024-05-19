@@ -4,6 +4,11 @@ import "../fonts/Monocraft/stylesheet.css";
 import "../fonts/JetBrains/stylesheet.css";
 import "../fonts/JGS/stylesheet.css";
 import "../fonts/StepsMono/stylesheet.css";
+import "../fonts/FiraCode/stylesheet.css";
+import "../fonts/SyneMono/stylesheet.css";
+import "../fonts/VT323/stylesheet.css";
+import "../fonts/RobotoMono/stylesheet.css";
+import "../fonts/UbuntuMono/stylesheet.css";
 
 import { useQuery } from "@/hooks/use-query";
 import {
