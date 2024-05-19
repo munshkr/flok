@@ -515,6 +515,9 @@ export function Component() {
       </Helmet>
       <SessionCommandDialog
         open={commandsDialogOpen}
+        vimMode={vimMode}
+        lineNumbers={lineNumbers}
+        wrapText={wrapText}
         onOpenChange={(isOpen) => setCommandsDialogOpen(isOpen)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
         onVimMode={() => setVimMode((vimMode) => !vimMode)}

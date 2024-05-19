@@ -34,6 +34,9 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 
 interface SessionCommandDialogProps extends CommandDialogProps {
+  vimMode: boolean;
+  lineNumbers: boolean;
+  wrapText: boolean;
   onSessionChangeUsername: () => void;
   onVimMode: () => void;
   onWrapText: () => void;
@@ -47,7 +50,12 @@ interface SessionCommandDialogProps extends CommandDialogProps {
   onLayoutConfigure: () => void;
 }
 
-export default function SessionCommandDialog(props: SessionCommandDialogProps) {
+export default function SessionCommandDialog({
+  vimMode,
+  lineNumbers,
+  wrapText,
+  ...props
+}: SessionCommandDialogProps) {
   const [pages, setPages] = useState<string[]>([]);
 
   const wrapHandler = (callback: () => void) => {
@@ -142,15 +150,15 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
                 </CommandItem>
                 <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
                   <FileDigit className="mr-2 h-4 w-4" />
-                  <span>Line Numbers</span>
+                  <span>{lineNumbers ? "Hide" : "Show"} Line Numbers</span>
                 </CommandItem>
                 <CommandItem onSelect={wrapHandler(props.onWrapText)}>
                   <WrapText className="mr-2 h-4 w-4" />
-                  <span>Wrap Lines</span>
+                  <span>{wrapText ? "Disable" : "Enable"} Word Wrapping</span>
                 </CommandItem>
                 <CommandItem onSelect={wrapHandler(props.onVimMode)}>
                   <TextCursorIcon className="mr-2 h-4 w-4" />
-                  <span>Vim Mode</span>
+                  <span>{vimMode ? "Disable" : "Enable"} Vim Mode</span>
                 </CommandItem>
               </CommandList>
             </CommandGroup>
