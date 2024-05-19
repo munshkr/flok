@@ -159,7 +159,7 @@ export const Editor = React.forwardRef(
         <CodeMirror
           ref={ref}
           value={document.content}
-          theme={themes[customTheme] || themes["dracula"]}
+          theme={themes[customTheme]?.ext || themes["dracula"]?.ext}
           extensions={extensions}
           basicSetup={{
             foldGutter: false,

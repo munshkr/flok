@@ -191,8 +191,8 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
                 key={fontKey}
               >
                 <Palette className="mr-2 h-4 w-4" />
-                <span style={{ fontFamily: fontValue }}>
-                  {fontKey.charAt(0).toUpperCase() + fontKey.slice(1)}
+                <span className="capitalize" style={{ fontFamily: fontValue }}>
+                  {fontKey}
                 </span>
               </CommandItem>
             ))}
@@ -205,15 +205,13 @@ export default function SessionCommandDialog(props: SessionCommandDialogProps) {
               <ArrowLeft className="mr-2 h-4 w-4" />
               <span>Back to menu</span>
             </CommandItem>
-            {Object.keys(themes).map((themeKey) => (
+            {Object.entries(themes).map(([key, { name }]) => (
               <CommandItem
-                onSelect={wrapHandlerWithValue(themeSelection, themeKey)}
-                key={themeKey}
+                onSelect={wrapHandlerWithValue(themeSelection, key)}
+                key={key}
               >
                 <Palette className="mr-2 h-4 w-4" />
-                <span>
-                  {themeKey.charAt(0).toUpperCase() + themeKey.slice(1)}
-                </span>
+                <span className="capitalize">{name}</span>
               </CommandItem>
             ))}
             {/* </CommandList> */}
