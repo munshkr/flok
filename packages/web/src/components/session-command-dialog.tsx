@@ -203,6 +203,7 @@ export default function SessionCommandDialog({
             </CommandItem>
             {Object.entries(fonts).map(([fontKey, fontValue]) => (
               <CommandItem
+                onMouseEnter={() => props.onChangeFontFamily(fontValue)}
                 onSelect={wrapHandlerWithValue(fontSelection, fontValue)}
                 key={fontKey}
               >
@@ -223,6 +224,7 @@ export default function SessionCommandDialog({
             </CommandItem>
             {Object.entries(themes).map(([key, { name }]) => (
               <CommandItem
+                onMouseEnter={() => props.onChangeTheme(key)}
                 onSelect={wrapHandlerWithValue(themeSelection, key)}
                 key={key}
               >
