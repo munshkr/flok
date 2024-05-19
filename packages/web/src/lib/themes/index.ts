@@ -6,6 +6,8 @@ import { monokai } from "./monokai-dimmed";
 import { nord } from "./nord";
 import { tokyoNight } from "./tokyo-night";
 
+import { oneDark } from "./one-dark";
+
 // some themes installed from react codemirror
 // https://uiwjs.github.io/react-codemirror/#/theme/home
 import { andromedaInit } from "@uiw/codemirror-theme-andromeda";
@@ -14,7 +16,7 @@ import { consoleDarkInit } from "@uiw/codemirror-theme-console";
 import { xcodeDarkInit } from "@uiw/codemirror-theme-xcode";
 import { solarizedDarkInit } from "@uiw/codemirror-theme-solarized";
 import { monokaiInit } from "@uiw/codemirror-theme-monokai";
-import { githubDark, githubDarkInit } from "@uiw/codemirror-theme-github";
+import { githubDarkInit } from "@uiw/codemirror-theme-github";
 
 interface Theme {
   name: string;
@@ -34,6 +36,7 @@ export const themes: { [key: string]: Theme } = {
   monokai : { name: "Monokai", ext: monokaiInit(noBackground) },
   monokaiDimmed: { name: "Monokai Dimmed", ext: monokai },
   nord: { name: "Nord", ext: nord },
+  oneDark: { name: "One Dark", ext: oneDark },
   solarizedDark : { name: "Solarized Dark", ext: solarizedDarkInit(noBackground) },
   tokyoNight: { name: "Tokyo Night", ext: tokyoNight },
   xcodeDark : { name: "XCode Dark", ext: xcodeDarkInit(noBackground) },
