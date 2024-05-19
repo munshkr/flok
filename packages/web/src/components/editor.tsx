@@ -140,7 +140,18 @@ export const Editor = React.forwardRef(
         },
         ".cm-gutters": {
           fontFamily: fontFamily,
+          "margin-right" : "10px"
         },
+        ".cm-line" : {
+          "font-size" : "100%",
+          "font-weight" : "500",
+          "background": "rgba(0, 0, 0, 0.7)",
+          "max-width" : "fit-content",
+          "padding" : "0px"
+        },
+        ".cm-activeLine" : {
+          "background-color" : "rgba(0, 0, 0, 1) !important",
+        }
       }),
       flokSetup(document, { readOnly }),
       languageExtension(),
