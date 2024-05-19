@@ -87,11 +87,14 @@ export function Component() {
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
+
+  // Editor settings
   const [lineNumbers, setLineNumbers] = useState<boolean>(false);
   const [vimMode, setVimMode] = useState<boolean>(false);
   const [fontFamily, setFontFamily] = useState<string>("IBM Plex Mono");
-  const [theme, setTheme] = useState<string>("flok");
+  const [theme, setTheme] = useState<string>("dracula");
   const [wrapText, setWrapText] = useState<boolean>(false);
+
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
   const [messagesCount, setMessagesCount] = useState<number>(0);

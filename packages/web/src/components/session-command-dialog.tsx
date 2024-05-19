@@ -138,7 +138,7 @@ export default function SessionCommandDialog({
                 <span>Remove Pane</span>
               </CommandItem>
             </CommandGroup>
-            <CommandGroup heading="Customization">
+            <CommandGroup heading="Editor">
               <CommandList className="ml-2">
                 <CommandItem onSelect={() => setPages([...pages, "fonts"])}>
                   <Type className="mr-2 h-4 w-4 inline" />
