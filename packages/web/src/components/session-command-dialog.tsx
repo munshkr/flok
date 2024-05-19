@@ -34,6 +34,8 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 
 interface SessionCommandDialogProps extends CommandDialogProps {
+  fontFamily: string;
+  theme: string;
   vimMode: boolean;
   lineNumbers: boolean;
   wrapText: boolean;
@@ -51,6 +53,8 @@ interface SessionCommandDialogProps extends CommandDialogProps {
 }
 
 export default function SessionCommandDialog({
+  fontFamily,
+  theme,
   vimMode,
   lineNumbers,
   wrapText,
@@ -142,11 +146,15 @@ export default function SessionCommandDialog({
               <CommandList className="ml-2">
                 <CommandItem onSelect={() => setPages([...pages, "fonts"])}>
                   <Type className="mr-2 h-4 w-4 inline" />
-                  <span>Font Family</span>
+                  <span>
+                    Change Font Family: <b>{fontFamily}</b>
+                  </span>
                 </CommandItem>
                 <CommandItem onSelect={() => setPages([...pages, "themes"])}>
                   <Palette className="mr-2 h-4 w-4" />
-                  <span>Theme</span>
+                  <span>
+                    Change Theme: <b>{themes[theme]?.name}</b>
+                  </span>
                 </CommandItem>
                 <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
                   <FileDigit className="mr-2 h-4 w-4" />

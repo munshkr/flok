@@ -518,6 +518,8 @@ export function Component() {
       </Helmet>
       <SessionCommandDialog
         open={commandsDialogOpen}
+        fontFamily={fontFamily}
+        theme={theme}
         vimMode={vimMode}
         lineNumbers={lineNumbers}
         wrapText={wrapText}
