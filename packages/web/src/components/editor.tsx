@@ -133,7 +133,7 @@ export const Editor = React.forwardRef(
     const extensions = [
       EditorView.theme({
         "&": {
-          fontFamily: fontFamily,
+          fontFamily: fontFamily
         },
         ".cm-content": {
           fontFamily: fontFamily,
