@@ -31,7 +31,7 @@ import {
   Share,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 interface SessionCommandDialogProps extends CommandDialogProps {
   onSessionChangeUsername: () => void;
