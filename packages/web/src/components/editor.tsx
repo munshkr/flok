@@ -157,7 +157,20 @@ export const Editor = React.forwardRef(
         },
         ".cm-activeLine" : {
           "background-color" : "rgba(0, 0, 0, 1) !important",
-        }
+        },
+        "& .cm-scroller" : {
+          "minHeight" : "100vh"
+        },
+        ".cm-ySelectionInfo" : {
+          opacity: "1",
+          fontFamily: fontFamily,
+          color: "black",
+          padding: "3px 4px",
+          fontSize: "0.8rem",
+          "font-weight": "bold",
+          top: "1.25em",
+          "z-index": "1000"
+        },
       }),
       flokSetup(document, { readOnly }),
       languageExtension(),
