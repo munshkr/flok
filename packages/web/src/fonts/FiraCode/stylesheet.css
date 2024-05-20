@@ -6,4 +6,5 @@
   /* font-weight requires a range: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Fonts/Variable_Fonts_Guide#Using_a_variable_font_font-face_changes */
   font-weight: 300 700;
   font-style: normal;
+  size-adjust: 87%;
 }

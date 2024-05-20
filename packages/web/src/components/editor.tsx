@@ -131,25 +131,26 @@ export const Editor = React.forwardRef(
     if (!mounted || !document) {
       return null;
     }
-    console.log(fontFamily);
+
     const readOnly = !!query.get("readOnly");
     const language: string = langByTarget[document.target] || defaultLanguage;
     const languageExtension = langExtensionsByLanguage[language] || javascript;
     const extensions = [
       EditorView.theme({
         "&": {
-          fontFamily: fontFamily
+          fontFamily: fontFamily,
         },
         ".cm-content": {
           fontFamily: fontFamily,
+          "font-size-adjust" : "ex-height 0.2"
         },
         ".cm-gutters": {
           fontFamily: fontFamily,
           "margin-right" : "10px"
         },
         ".cm-line" : {
-          "font-size" : "100%",
-          "font-weight" : "500",
+          "font-size" : "105%",
+          "font-weight" : "600",
           "background": "rgba(0, 0, 0, 0.7)",
           "max-width" : "fit-content",
           "padding" : "0px"
