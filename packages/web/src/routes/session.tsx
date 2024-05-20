@@ -91,8 +91,8 @@ export function Component() {
   // Editor settings
   const [lineNumbers, setLineNumbers] = useState<boolean>(false);
   const [vimMode, setVimMode] = useState<boolean>(false);
-  const [fontFamily, setFontFamily] = useState<string>("IBM Plex Mono");
-  const [theme, setTheme] = useState<string>("dracula");
+  const [fontFamily, setFontFamily] = useState<string>("Inconsolata");
+  const [theme, setTheme] = useState<string>("oneDark");
   const [wrapText, setWrapText] = useState<boolean>(false);
 
   const [messagesPanelExpanded, setMessagesPanelExpanded] =

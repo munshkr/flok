@@ -5,6 +5,7 @@
     font-weight: 100;
     font-style: normal;
     font-display: swap;
+    size-adjust: 100%;
 }
 
 @font-face {
@@ -14,5 +15,6 @@
     font-weight: normal;
     font-style: normal;
     font-display: swap;
+    size-adjust: 95%;
 }
 

@@ -4,6 +4,11 @@ import "../fonts/Monocraft/stylesheet.css";
 import "../fonts/JetBrains/stylesheet.css";
 import "../fonts/JGS/stylesheet.css";
 import "../fonts/StepsMono/stylesheet.css";
+import "../fonts/FiraCode/stylesheet.css";
+import "../fonts/SyneMono/stylesheet.css";
+import "../fonts/VT323/stylesheet.css";
+import "../fonts/RobotoMono/stylesheet.css";
+import "../fonts/UbuntuMono/stylesheet.css";
 
 import { useQuery } from "@/hooks/use-query";
 import {
@@ -126,7 +131,7 @@ export const Editor = React.forwardRef(
     if (!mounted || !document) {
       return null;
     }
-    console.log(fontFamily);
+
     const readOnly = !!query.get("readOnly");
     const language: string = langByTarget[document.target] || defaultLanguage;
     const languageExtension = langExtensionsByLanguage[language] || javascript;
@@ -137,10 +142,22 @@ export const Editor = React.forwardRef(
         },
         ".cm-content": {
           fontFamily: fontFamily,
+          "font-size-adjust" : "ex-height 0.2"
         },
         ".cm-gutters": {
           fontFamily: fontFamily,
+          "margin-right" : "10px"
         },
+        ".cm-line" : {
+          "font-size" : "105%",
+          "font-weight" : "600",
+          "background": "rgba(0, 0, 0, 0.7)",
+          "max-width" : "fit-content",
+          "padding" : "0px"
+        },
+        ".cm-activeLine" : {
+          "background-color" : "rgba(0, 0, 0, 1) !important",
+        }
       }),
       flokSetup(document, { readOnly }),
       languageExtension(),
