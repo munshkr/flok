@@ -439,6 +439,8 @@ export function Component() {
     [documents]
   );
 
+  const OS = (navigator.userAgent.indexOf("Windows") != -1) ? "windows" : "unix";
+
   const handleViewLayoutAdd = useCallback(() => {
     if (!session) return;
     const newDocs = [
@@ -539,6 +541,7 @@ export function Component() {
           sessionUrl={session.wsUrl}
           sessionName={session.name}
           userName={username}
+          OS={OS}
           open={configureDialogOpen}
           onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
           onAccept={handleConfigureAccept}
@@ -550,6 +553,7 @@ export function Component() {
           sessionUrl={session.wsUrl}
           sessionName={session.name}
           userName={username}
+          OS={OS}
           open={replsDialogOpen}
           onOpenChange={(isOpen) => setReplsDialogOpen(isOpen)}
         />
