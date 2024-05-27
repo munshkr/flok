@@ -12,6 +12,7 @@ interface ReplsDialogProps extends DialogProps {
   sessionUrl: string;
   sessionName: string;
   userName: string;
+  OS: string;
 }
 
 export function ReplsDialog({
@@ -19,6 +20,7 @@ export function ReplsDialog({
   sessionUrl,
   sessionName,
   userName,
+  OS,
   ...props
 }: ReplsDialogProps) {
   return (
@@ -31,6 +33,7 @@ export function ReplsDialog({
             sessionName={sessionName}
             sessionUrl={sessionUrl}
             userName={userName}
+            OS={OS}
           />
         </DialogHeader>
       </DialogContent>
