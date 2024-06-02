@@ -1,14 +1,14 @@
-import "../fonts/IBM Plex Mono/stylesheet.css";
-import "../fonts/BigBlue/stylesheet.css";
-import "../fonts/Monocraft/stylesheet.css";
-import "../fonts/JetBrains/stylesheet.css";
-import "../fonts/JGS/stylesheet.css";
-import "../fonts/StepsMono/stylesheet.css";
-import "../fonts/FiraCode/stylesheet.css";
-import "../fonts/SyneMono/stylesheet.css";
-import "../fonts/VT323/stylesheet.css";
-import "../fonts/RobotoMono/stylesheet.css";
-import "../fonts/UbuntuMono/stylesheet.css";
+import "../assets/fonts/IBM Plex Mono/stylesheet.css";
+import "../assets/fonts/BigBlue/stylesheet.css";
+import "../assets/fonts/Monocraft/stylesheet.css";
+import "../assets/fonts/JetBrains/stylesheet.css";
+import "../assets/fonts/JGS/stylesheet.css";
+import "../assets/fonts/StepsMono/stylesheet.css";
+import "../assets/fonts/FiraCode/stylesheet.css";
+import "../assets/fonts/SyneMono/stylesheet.css";
+import "../assets/fonts/VT323/stylesheet.css";
+import "../assets/fonts/RobotoMono/stylesheet.css";
+import "../assets/fonts/UbuntuMono/stylesheet.css";
 
 import { useQuery } from "@/hooks/use-query";
 import {
@@ -142,26 +142,26 @@ export const Editor = React.forwardRef(
         },
         ".cm-content": {
           fontFamily: fontFamily,
-          "font-size-adjust" : "ex-height 0.2"
+          "font-size-adjust": "ex-height 0.2",
         },
         ".cm-gutters": {
           fontFamily: fontFamily,
-          "margin-right" : "10px"
+          "margin-right": "10px",
         },
-        ".cm-line" : {
-          "font-size" : "105%",
-          "font-weight" : "600",
-          "background": "rgba(0, 0, 0, 0.7)",
-          "max-width" : "fit-content",
-          "padding" : "0px"
+        ".cm-line": {
+          "font-size": "105%",
+          "font-weight": "600",
+          background: "rgba(0, 0, 0, 0.7)",
+          "max-width": "fit-content",
+          padding: "0px",
         },
-        ".cm-activeLine" : {
-          "background-color" : "rgba(0, 0, 0, 1) !important",
+        ".cm-activeLine": {
+          "background-color": "rgba(0, 0, 0, 1) !important",
         },
-        "& .cm-scroller" : {
-          "minHeight" : "100vh"
+        "& .cm-scroller": {
+          minHeight: "100vh",
         },
-        ".cm-ySelectionInfo" : {
+        ".cm-ySelectionInfo": {
           opacity: "1",
           fontFamily: fontFamily,
           color: "black",
@@ -169,7 +169,7 @@ export const Editor = React.forwardRef(
           fontSize: "0.8rem",
           "font-weight": "bold",
           top: "1.25em",
-          "z-index": "1000"
+          "z-index": "1000",
         },
       }),
       flokSetup(document, { readOnly }),
