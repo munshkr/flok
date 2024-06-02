@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'Monocraft Nerd Font';
+    src: url('MonocraftNerdFontComplete-.woff2') format('woff2'),
+        url('MonocraftNerdFontComplete-.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+    size-adjust: 80%;
+}
+

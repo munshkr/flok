@@ -87,6 +87,14 @@ export function Component() {
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
+
+  // Editor settings
+  const [lineNumbers, setLineNumbers] = useState<boolean>(false);
+  const [vimMode, setVimMode] = useState<boolean>(false);
+  const [fontFamily, setFontFamily] = useState<string>("Inconsolata");
+  const [theme, setTheme] = useState<string>("oneDark");
+  const [wrapText, setWrapText] = useState<boolean>(false);
+
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
   const [messagesCount, setMessagesCount] = useState<number>(0);
@@ -512,8 +520,18 @@ export function Component() {
       </Helmet>
       <SessionCommandDialog
         open={commandsDialogOpen}
+        fontFamily={fontFamily}
+        theme={theme}
+        vimMode={vimMode}
+        lineNumbers={lineNumbers}
+        wrapText={wrapText}
         onOpenChange={(isOpen) => setCommandsDialogOpen(isOpen)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
+        onVimMode={() => setVimMode((vimMode) => !vimMode)}
+        onLineNumbers={() => setLineNumbers((lineNumbers) => !lineNumbers)}
+        onChangeFontFamily={(font) => setFontFamily(font)}
+        onChangeTheme={(theme) => setTheme(theme)}
+        onWrapText={() => setWrapText((wrapText) => !wrapText)}
         onSessionNew={() => navigate("/")}
         onSessionShareUrl={() => setShareUrlDialogOpen(true)}
         onLayoutAdd={handleViewLayoutAdd}
@@ -574,6 +592,11 @@ export function Component() {
               ref={editorRefs[i]}
               document={doc}
               autoFocus={i === 0}
+              lineNumbers={lineNumbers}
+              vimMode={vimMode}
+              fontFamily={fontFamily}
+              wrapText={wrapText}
+              customTheme={theme}
               className="absolute top-6 overflow-auto flex-grow w-full h-[calc(100%-32px)] z-10"
             />
           </Pane>
