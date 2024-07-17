@@ -27,6 +27,8 @@ Web-based P2P collaborative editor for live coding music and graphics
 
 ### Shortkeys
 
+*Some shortkeys may differ depending on the language/target you choose*
+
 | Keymap | Function |
 | - | - |
 | `Alt/Option` `Enter` | Evaluate all |
