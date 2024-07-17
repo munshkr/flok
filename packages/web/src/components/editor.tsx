@@ -164,12 +164,14 @@ export const Editor = React.forwardRef(
     const readOnly = !!query.get("readOnly");
 
     const language: string = langByTarget[document.target] || defaultLanguage;
-    const languageExtension = langExtensionsByLanguage[language] || javascript;
+    // if language is not defined choose null (no syntax highlighting is added)
+    const languageExtension = langExtensionsByLanguage[language] || null;
 
     const extensions = [
       baseTheme,
       flokSetup(document, { readOnly }),
-      languageExtension(),
+      // only add languageExtension if a function
+      languageExtension ? languageExtension() : [],
       highlightExtension,
       readOnly ? EditorState.readOnly.of(true) : [],
       toggleWith("shift-ctrl-l", lineNumbers()), // toggle linenumbers on/off

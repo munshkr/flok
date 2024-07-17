@@ -25,6 +25,15 @@ Web-based P2P collaborative editor for live coding music and graphics
 
 ## Usage
 
+### Shortkeys
+
+| Keymap | Function |
+| - | - |
+| `Alt/Option` `Enter` | Evaluate all |
+| `Ctrl/Cmd` `Enter` | Evaluate block, Evaluate selection |
+| `Shift` `Enter` | Evaluate line |
+| `Ctrl/Cmd/Option/Alt` `.` | Silence (output depends on language) |
+
 ### Public server
 
 **WARNING - Please Read**: Using a public server can be dangerous as *anyone*
@@ -137,6 +146,14 @@ port 3000.  It's possible that some of your remote friends won't be able to
 connect to your local server, because of their own network configuration.
 
 ### Supported REPL targets
+
+#### Dummy
+
+The Dummy target as a REPL target that does not have any syntax-highlighting and can be used for any purpose you like (for example if you like to use a language that is not yet supported in flok). 
+
+Use `flok-repl` with the `-t dummy` parameter. 
+
+You can now receive the code you evaluate on port `3001`. The code is send as a string (including all the linebreaks, whitespaces, etc) on the osc-address `/flok`. If you use the `panic` shortkey you will receive the osc-message `/flok silence`. You can use this to stop all your audio/visual processes.
 
 #### TidalCycles
 
@@ -259,6 +276,16 @@ To run production build:
 
 ```sh
 npm start
+```
+
+To run the repl while developing go to:
+
+```sh
+cd packages/repl/
+```
+
+```sh
+npm exec -- flok-repl -H ws://localhost:3000 -s <session> -t <target> -T user:<name>
 ```
 
 ### Packages overview

@@ -10,6 +10,7 @@ import FoxDotREPL from "./repl/foxdot.js";
 import RenardoREPL from "./repl/renardo.js";
 import MercuryREPL from "./repl/mercury.js";
 import SardineREPL from "./repl/sardine.js";
+import DummyREPL from "./repl/dummy.js";
 
 import path from "path";
 import fs from "fs";
@@ -23,6 +24,7 @@ const replClasses = {
   renardo: RenardoREPL,
   mercury: MercuryREPL,
   sardine: SardineREPL,
+  dummy: DummyREPL
 };
 
 function createREPLFor(repl: string, ctx: CommandREPLContext) {
