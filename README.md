@@ -25,16 +25,39 @@ Web-based P2P collaborative editor for live coding music and graphics
 
 ## Usage
 
-### Shortkeys
+### Keybindings
 
-*Some shortkeys may differ depending on the language/target you choose*
+*Some keybindings may differ depending on the language/target you choose*
 
-| Keymap | Function |
+| Keybinding | Function |
 | - | - |
-| `Alt/Option` `Enter` | Evaluate all |
-| `Ctrl/Cmd` `Enter` | Evaluate block, Evaluate selection |
-| `Shift` `Enter` | Evaluate line |
-| `Ctrl/Cmd/Option/Alt` `.` | Silence (output depends on language) |
+| `alt/option` `enter` | Evaluate all |
+| `ctrl/cmd` `enter` | Evaluate block, Evaluate selection |
+| `shift` `enter` | Evaluate line |
+| `ctrl/cmd/option/alt` `.` | Silence (output depends on language) |
+| `cmd/ctrl` `shift` `h` | Show/Hide editor panels |
+| `cmd/ctrl` `x` | Cut selected text |
+| `cmd/ctrl` `c` | Copy selected text |
+| `cmd/ctrl` `v` | Paste cut/copied text |
+| `cmd/ctrl` `z/u` | Undo edit |
+| `cmd/ctrl` `shift` `z/u` | Redo edit |
+| `cmd/ctrl` `}` | add indentation |
+| `cmd/ctrl` `{` | remove indentation |
+| `cmd/ctrl` `f` | search and replace |
+
+<!-- On Mac (not tested on Windows/Linux)
+
+| `ctrl` `e` | jump to end of the line |
+| `ctrl` `a` | jump to the beginning of the line |
+| `ctrl` `t` | move character one step right |
+| `ctrl` `y` | delete selected text |
+| `ctrl` `o` | insert linebreak |
+| `ctrl` `d` | delete character on the right of cursor |
+| `ctrl` `h` | backspace character on the left of cursor |
+| `ctrl` `l` | select whole line after cursor |
+| `ctrl` `v` | jump to bottom end |
+| `ctrl` `b` | move cursor to the left |
+| `ctrl` `n` | move cursor down | -->
 
 ### Public server
 
