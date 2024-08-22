@@ -16,7 +16,8 @@
   ],
   "scripts": {
     "dev": "cross-env NODE_ENV=development node ./bin/flok-web.js",
-    "build": "tsc && vite build",
+    "prebuild": "mkdir -p public/assets && cp ../../node_modules/@strudel/core/dist/assets/clockworker--4w5RvGG.js ./public/assets/",
+    "build": "npm run prebuild && tsc && vite build",
     "start": "node ./bin/flok-web.js"
   },
   "dependencies": {
