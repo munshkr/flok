@@ -45,7 +45,7 @@
     "@radix-ui/react-toast": "^1.1.3",
     "@radix-ui/react-toggle": "^1.0.2",
     "@radix-ui/react-tooltip": "^1.0.5",
-    "@strudel/codemirror": "^1.0.0",
+    "@strudel/codemirror": "^1.1.0",
     "@strudel/core": "^1.1.0",
     "@strudel/midi": "^1.1.0",
     "@strudel/mini": "^1.1.0",
