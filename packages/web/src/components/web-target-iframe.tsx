@@ -37,6 +37,23 @@ export const WebTargetIframe = ({ target, session }: WebTargetIframeProps) => {
     };
   }, [session, ref]);
 
+  // Handle user interactions
+  useEffect(() => {
+    const handleUserInteraction = () => {
+      if (!ref.current) return;
+      const interactionMessage = { type: "user-interaction" };
+      ref.current.contentWindow?.postMessage(interactionMessage, "*");
+    };
+
+    window.addEventListener("click", handleUserInteraction);
+    window.addEventListener("keydown", handleUserInteraction);
+
+    return () => {
+      window.removeEventListener("click", handleUserInteraction);
+      window.removeEventListener("keydown", handleUserInteraction);
+    };
+  }, [ref]);
+
   return (
     <iframe
       ref={ref}
