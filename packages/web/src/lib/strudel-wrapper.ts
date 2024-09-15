@@ -1,6 +1,5 @@
 import type { EvalMessage } from "@flok-editor/session";
 import {
-  Framer,
   Pattern,
   controls,
   evalScope,
@@ -9,6 +8,7 @@ import {
   stack,
   valueToMidi,
 } from "@strudel/core";
+import { Framer } from "@strudel/draw";
 import { registerSoundfonts } from "@strudel/soundfonts";
 import { transpiler } from "@strudel/transpiler";
 import {
