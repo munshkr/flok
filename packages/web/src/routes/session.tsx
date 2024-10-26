@@ -1,6 +1,6 @@
 import { CommandsButton } from "@/components/commands-button";
 import { ConfigureDialog } from "@/components/configure-dialog";
-import { Editor } from "@/components/editor";
+import { Editor, EditorSettings } from "@/components/editor";
 import { MessagesPanel } from "@/components/messages-panel";
 import { Mosaic } from "@/components/mosaic";
 import { Pane } from "@/components/pane";
@@ -53,6 +53,14 @@ declare global {
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
+const defaultEditorSettings: EditorSettings = {
+  lineNumbers: false,
+  vimMode: false,
+  fontFamily: "Inconsolata",
+  theme: "oneDark",
+  wrapText: true,
+};
+
 interface SessionLoaderParams {
   name: string;
 }
@@ -87,6 +95,25 @@ export function Component() {
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
+
+  // Editor settings: Try to restore from local storage or use default settings
+  const [editorSettings, setEditorSettings] = useState<EditorSettings>(() => {
+    const savedSettings = localStorage.getItem("editor-settings");
+    if (savedSettings) {
+      try {
+        return JSON.parse(savedSettings);
+      } catch (error) {
+        console.error("Error parsing saved editor settings:", error);
+      }
+    }
+    return defaultEditorSettings;
+  });
+
+  // Save editor settings to local storage
+  useEffect(() => {
+    localStorage.setItem("editor-settings", JSON.stringify(editorSettings));
+  }, [editorSettings]);
+
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
   const [messagesCount, setMessagesCount] = useState<number>(0);
@@ -439,7 +466,7 @@ export function Component() {
     [documents]
   );
 
-  const OS = (navigator.userAgent.indexOf("Windows") != -1) ? "windows" : "unix";
+  const OS = navigator.userAgent.indexOf("Windows") != -1 ? "windows" : "unix";
 
   const handleViewLayoutAdd = useCallback(() => {
     if (!session) return;
@@ -512,8 +539,12 @@ export function Component() {
       </Helmet>
       <SessionCommandDialog
         open={commandsDialogOpen}
+        editorSettings={editorSettings}
         onOpenChange={(isOpen) => setCommandsDialogOpen(isOpen)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
+        onEditorSettingsChange={(settings: EditorSettings) =>
+          setEditorSettings(settings)
+        }
         onSessionNew={() => navigate("/")}
         onSessionShareUrl={() => setShareUrlDialogOpen(true)}
         onLayoutAdd={handleViewLayoutAdd}
@@ -574,6 +605,7 @@ export function Component() {
               ref={editorRefs[i]}
               document={doc}
               autoFocus={i === 0}
+              settings={editorSettings}
               className="absolute top-6 overflow-auto flex-grow w-full h-[calc(100%-32px)] z-10"
             />
           </Pane>
