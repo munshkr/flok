@@ -142,7 +142,6 @@ export const Editor = React.forwardRef(
         },
         ".cm-content": {
           fontFamily: fontFamily,
-          "font-size-adjust": "ex-height 0.2",
         },
         ".cm-gutters": {
           fontFamily: fontFamily,
