@@ -53,6 +53,14 @@ declare global {
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 
+const defaultEditorSettings: EditorSettings = {
+  lineNumbers: false,
+  vimMode: false,
+  fontFamily: "Inconsolata",
+  theme: "oneDark",
+  wrapText: true,
+};
+
 interface SessionLoaderParams {
   name: string;
 }
@@ -88,14 +96,23 @@ export function Component() {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
 
-  // Editor settings
-  const [editorSettings, setEditorSettings] = useState<EditorSettings>({
-    lineNumbers: false,
-    vimMode: false,
-    fontFamily: "Inconsolata",
-    theme: "oneDark",
-    wrapText: true,
+  // Editor settings: Try to restore from local storage or use default settings
+  const [editorSettings, setEditorSettings] = useState<EditorSettings>(() => {
+    const savedSettings = localStorage.getItem("editor-settings");
+    if (savedSettings) {
+      try {
+        return JSON.parse(savedSettings);
+      } catch (error) {
+        console.error("Error parsing saved editor settings:", error);
+      }
+    }
+    return defaultEditorSettings;
   });
+
+  // Save editor settings to local storage
+  useEffect(() => {
+    localStorage.setItem("editor-settings", JSON.stringify(editorSettings));
+  }, [editorSettings]);
 
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
