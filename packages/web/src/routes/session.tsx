@@ -1,6 +1,6 @@
 import { CommandsButton } from "@/components/commands-button";
 import { ConfigureDialog } from "@/components/configure-dialog";
-import { Editor } from "@/components/editor";
+import { Editor, EditorSettings } from "@/components/editor";
 import { MessagesPanel } from "@/components/messages-panel";
 import { Mosaic } from "@/components/mosaic";
 import { Pane } from "@/components/pane";
@@ -89,11 +89,13 @@ export function Component() {
   const [hidden, setHidden] = useState<boolean>(false);
 
   // Editor settings
-  const [lineNumbers, setLineNumbers] = useState<boolean>(false);
-  const [vimMode, setVimMode] = useState<boolean>(false);
-  const [fontFamily, setFontFamily] = useState<string>("Inconsolata");
-  const [theme, setTheme] = useState<string>("oneDark");
-  const [wrapText, setWrapText] = useState<boolean>(true);
+  const [editorSettings, setEditorSettings] = useState<EditorSettings>({
+    lineNumbers: false,
+    vimMode: false,
+    fontFamily: "Inconsolata",
+    theme: "oneDark",
+    wrapText: true,
+  });
 
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
@@ -447,7 +449,7 @@ export function Component() {
     [documents]
   );
 
-  const OS = (navigator.userAgent.indexOf("Windows") != -1) ? "windows" : "unix";
+  const OS = navigator.userAgent.indexOf("Windows") != -1 ? "windows" : "unix";
 
   const handleViewLayoutAdd = useCallback(() => {
     if (!session) return;
@@ -520,18 +522,12 @@ export function Component() {
       </Helmet>
       <SessionCommandDialog
         open={commandsDialogOpen}
-        fontFamily={fontFamily}
-        theme={theme}
-        vimMode={vimMode}
-        lineNumbers={lineNumbers}
-        wrapText={wrapText}
+        editorSettings={editorSettings}
         onOpenChange={(isOpen) => setCommandsDialogOpen(isOpen)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
-        onVimMode={() => setVimMode((vimMode) => !vimMode)}
-        onLineNumbers={() => setLineNumbers((lineNumbers) => !lineNumbers)}
-        onChangeFontFamily={(font) => setFontFamily(font)}
-        onChangeTheme={(theme) => setTheme(theme)}
-        onWrapText={() => setWrapText((wrapText) => !wrapText)}
+        onEditorSettingsChange={(settings: EditorSettings) =>
+          setEditorSettings(settings)
+        }
         onSessionNew={() => navigate("/")}
         onSessionShareUrl={() => setShareUrlDialogOpen(true)}
         onLayoutAdd={handleViewLayoutAdd}
@@ -592,11 +588,7 @@ export function Component() {
               ref={editorRefs[i]}
               document={doc}
               autoFocus={i === 0}
-              lineNumbers={lineNumbers}
-              vimMode={vimMode}
-              fontFamily={fontFamily}
-              wrapText={wrapText}
-              customTheme={theme}
+              settings={editorSettings}
               className="absolute top-6 overflow-auto flex-grow w-full h-[calc(100%-32px)] z-10"
             />
           </Pane>

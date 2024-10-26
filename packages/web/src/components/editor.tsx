@@ -95,27 +95,23 @@ const flokSetup = (
   ];
 };
 
+export interface EditorSettings {
+  theme: string;
+  fontFamily: string;
+  lineNumbers: boolean;
+  wrapText: boolean;
+  vimMode: boolean;
+}
+
 export interface EditorProps extends ReactCodeMirrorProps {
   document?: Document;
   extensionSettings?: any;
-  vimMode: boolean;
-  lineNumbers: boolean;
-  wrapText: boolean;
-  customTheme: string;
-  fontFamily: string;
+  settings?: EditorSettings;
 }
 
 export const Editor = React.forwardRef(
   (
-    {
-      document,
-      lineNumbers,
-      vimMode,
-      wrapText,
-      customTheme,
-      fontFamily,
-      ...props
-    }: EditorProps,
+    { document, settings, ...props }: EditorProps,
     ref: React.ForwardedRef<ReactCodeMirrorRef>
   ) => {
     const [mounted, setMounted] = useState(false);
@@ -131,6 +127,15 @@ export const Editor = React.forwardRef(
     if (!mounted || !document) {
       return null;
     }
+
+    const { theme, fontFamily, lineNumbers, wrapText, vimMode } = {
+      theme: "dracula",
+      fontFamily: "IBM Plex Mono",
+      lineNumbers: false,
+      wrapText: false,
+      vimMode: false,
+      ...settings,
+    };
 
     const readOnly = !!query.get("readOnly");
     const language: string = langByTarget[document.target] || defaultLanguage;
@@ -188,7 +193,7 @@ export const Editor = React.forwardRef(
         <CodeMirror
           ref={ref}
           value={document.content}
-          theme={themes[customTheme]?.ext || themes["dracula"]?.ext}
+          theme={themes[theme]?.ext || themes["dracula"]?.ext}
           extensions={extensions}
           basicSetup={{
             foldGutter: false,

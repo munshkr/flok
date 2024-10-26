@@ -32,19 +32,12 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { EditorSettings } from "./editor";
 
 interface SessionCommandDialogProps extends CommandDialogProps {
-  fontFamily: string;
-  theme: string;
-  vimMode: boolean;
-  lineNumbers: boolean;
-  wrapText: boolean;
+  editorSettings: EditorSettings;
+  onEditorSettingsChange: (settings: EditorSettings) => void;
   onSessionChangeUsername: () => void;
-  onVimMode: () => void;
-  onWrapText: () => void;
-  onChangeFontFamily: (font: string) => void;
-  onChangeTheme: (theme: string) => void;
-  onLineNumbers: () => void;
   onSessionNew: () => void;
   onSessionShareUrl: () => void;
   onLayoutAdd: () => void;
@@ -53,13 +46,12 @@ interface SessionCommandDialogProps extends CommandDialogProps {
 }
 
 export default function SessionCommandDialog({
-  fontFamily,
-  theme,
-  vimMode,
-  lineNumbers,
-  wrapText,
+  editorSettings,
+  onEditorSettingsChange,
   ...props
 }: SessionCommandDialogProps) {
+  const { fontFamily, theme, vimMode, lineNumbers, wrapText } = editorSettings;
+
   const [pages, setPages] = useState<string[]>([]);
 
   const wrapHandler = (callback: () => void) => {
@@ -80,12 +72,22 @@ export default function SessionCommandDialog({
 
   const fontSelection = (font: string) => {
     setPages([]);
-    wrapHandler(() => props.onChangeFontFamily(font))();
+    wrapHandler(() =>
+      onEditorSettingsChange({
+        ...editorSettings,
+        fontFamily: font,
+      })
+    )();
   };
 
   const themeSelection = (theme: string) => {
     setPages([]);
-    wrapHandler(() => props.onChangeTheme(theme))();
+    wrapHandler(() =>
+      onEditorSettingsChange({
+        ...editorSettings,
+        theme,
+      })
+    )();
   };
 
   const page = pages[pages.length - 1];
@@ -156,15 +158,36 @@ export default function SessionCommandDialog({
                     Change Theme: <b>{themes[theme]?.name}</b>
                   </span>
                 </CommandItem>
-                <CommandItem onSelect={wrapHandler(props.onLineNumbers)}>
+                <CommandItem
+                  onSelect={wrapHandler(() =>
+                    onEditorSettingsChange({
+                      ...editorSettings,
+                      lineNumbers: !lineNumbers,
+                    })
+                  )}
+                >
                   <FileDigit className="mr-2 h-4 w-4" />
                   <span>{lineNumbers ? "Hide" : "Show"} Line Numbers</span>
                 </CommandItem>
-                <CommandItem onSelect={wrapHandler(props.onWrapText)}>
+                <CommandItem
+                  onSelect={wrapHandler(() =>
+                    onEditorSettingsChange({
+                      ...editorSettings,
+                      wrapText: !wrapText,
+                    })
+                  )}
+                >
                   <WrapText className="mr-2 h-4 w-4" />
                   <span>{wrapText ? "Disable" : "Enable"} Word Wrapping</span>
                 </CommandItem>
-                <CommandItem onSelect={wrapHandler(props.onVimMode)}>
+                <CommandItem
+                  onSelect={wrapHandler(() =>
+                    onEditorSettingsChange({
+                      ...editorSettings,
+                      vimMode: !vimMode,
+                    })
+                  )}
+                >
                   <TextCursorIcon className="mr-2 h-4 w-4" />
                   <span>{vimMode ? "Disable" : "Enable"} Vim Mode</span>
                 </CommandItem>
@@ -203,7 +226,12 @@ export default function SessionCommandDialog({
             </CommandItem>
             {Object.entries(fonts).map(([fontKey, fontValue]) => (
               <CommandItem
-                onMouseEnter={() => props.onChangeFontFamily(fontValue)}
+                onMouseEnter={() =>
+                  onEditorSettingsChange({
+                    ...editorSettings,
+                    fontFamily: fontValue,
+                  })
+                }
                 onSelect={wrapHandlerWithValue(fontSelection, fontValue)}
                 key={fontKey}
               >
@@ -224,7 +252,9 @@ export default function SessionCommandDialog({
             </CommandItem>
             {Object.entries(themes).map(([key, { name }]) => (
               <CommandItem
-                onMouseEnter={() => props.onChangeTheme(key)}
+                onMouseEnter={() =>
+                  onEditorSettingsChange({ ...editorSettings, theme: key })
+                }
                 onSelect={wrapHandlerWithValue(themeSelection, key)}
                 key={key}
               >
