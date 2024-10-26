@@ -1,6 +1,5 @@
 import type { EvalMessage } from "@flok-editor/session";
 import {
-  Framer,
   Pattern,
   controls,
   evalScope,
@@ -9,11 +8,12 @@ import {
   stack,
   valueToMidi,
 } from "@strudel/core";
+import { Framer } from "@strudel/draw";
 import { registerSoundfonts } from "@strudel/soundfonts";
 import { transpiler } from "@strudel/transpiler";
 import {
   getAudioContext,
-  initAudioOnFirstClick,
+  initAudio,
   registerSynthSounds,
   samples,
   webaudioOutput,
@@ -31,6 +31,7 @@ export class StrudelWrapper {
   protected _onWarning: ErrorHandler;
   protected _repl: any;
   protected _docPatterns: any;
+  protected _audioInitialized: boolean;
   protected framer?: any;
 
   constructor({
@@ -43,10 +44,10 @@ export class StrudelWrapper {
     this._docPatterns = {};
     this._onError = onError || (() => {});
     this._onWarning = onWarning || (() => {});
+    this._audioInitialized = false;
   }
 
   async importModules() {
-    initAudioOnFirstClick();
     // import desired modules and add them to the eval scope
     await evalScope(
       import("@strudel/core"),
@@ -68,6 +69,12 @@ export class StrudelWrapper {
     } catch (err) {
       this._onWarning(`Failed to load default samples EmuSP12: ${err}`);
     }
+  }
+
+  async initAudio() {
+    if (this._audioInitialized) return;
+    await initAudio();
+    this._audioInitialized = true;
   }
 
   async initialize() {

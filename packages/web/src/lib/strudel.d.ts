@@ -1,13 +1,14 @@
+declare module "@strudel/codemirror";
 declare module "@strudel/core";
 declare module "@strudel/core/controls.mjs";
-declare module "@strudel/soundfonts";
+declare module "@strudel/draw";
 declare module "@strudel/midi";
 declare module "@strudel/mini";
 declare module "@strudel/osc";
 declare module "@strudel/serial";
+declare module "@strudel/soundfonts";
 declare module "@strudel/tonal";
 declare module "@strudel/transpiler";
 declare module "@strudel/webaudio";
 declare module "@strudel/webaudio/scheduler.mjs";
 declare module "@strudel/webaudio/webaudio.mjs";
-declare module "@strudel/codemirror";
