@@ -93,7 +93,7 @@ export function Component() {
   const [vimMode, setVimMode] = useState<boolean>(false);
   const [fontFamily, setFontFamily] = useState<string>("Inconsolata");
   const [theme, setTheme] = useState<string>("oneDark");
-  const [wrapText, setWrapText] = useState<boolean>(false);
+  const [wrapText, setWrapText] = useState<boolean>(true);
 
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
