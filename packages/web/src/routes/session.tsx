@@ -58,7 +58,7 @@ const defaultEditorSettings: EditorSettings = {
   vimMode: false,
   fontFamily: "Inconsolata",
   theme: "oneDark",
-  wrapText: true,
+  wrapText: false,
 };
 
 interface SessionLoaderParams {
