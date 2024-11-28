@@ -1,5 +1,6 @@
 import { CommandsButton } from "@/components/commands-button";
 import { ConfigureDialog } from "@/components/configure-dialog";
+import DisplaySettingsDialog from "@/components/display-settings-dialog";
 import { Editor, EditorSettings } from "@/components/editor";
 import { MessagesPanel } from "@/components/messages-panel";
 import { Mosaic } from "@/components/mosaic";
@@ -18,6 +19,7 @@ import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudelCodemirrorExtensions } from "@/hooks/use-strudel-codemirror-extensions";
 import { useToast } from "@/hooks/use-toast";
+import { DisplaySettings, defaultDisplaySettings } from "@/lib/display-settings";
 import {
   cn,
   code2hash,
@@ -93,6 +95,7 @@ export function Component() {
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
   const [shareUrlDialogOpen, setShareUrlDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
+  const [displaySettingsDialogOpen, setDisplaySettingsDialogOpen] = useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
 
@@ -109,10 +112,28 @@ export function Component() {
     return defaultEditorSettings;
   });
 
+  // Display settings: Try to restore from local storage or use default settings
+  const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(() => {
+    const savedSettings = localStorage.getItem("display-settings");
+    if (savedSettings) {
+      try {
+        return JSON.parse(savedSettings);
+      } catch (error) {
+        console.error("Error parsing saved display settings:", error);
+      }
+    }
+    return defaultDisplaySettings;
+  });
+
   // Save editor settings to local storage
   useEffect(() => {
     localStorage.setItem("editor-settings", JSON.stringify(editorSettings));
   }, [editorSettings]);
+
+  // Save display settings to local storage
+  useEffect(() => {
+    localStorage.setItem("display-settings", JSON.stringify(displaySettings));
+  }, [displaySettings]);
 
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
@@ -540,16 +561,21 @@ export function Component() {
       <SessionCommandDialog
         open={commandsDialogOpen}
         editorSettings={editorSettings}
+        displaySettings={displaySettings}
         onOpenChange={(isOpen) => setCommandsDialogOpen(isOpen)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
         onEditorSettingsChange={(settings: EditorSettings) =>
           setEditorSettings(settings)
         }
+        onDisplaySettingsChange={setDisplaySettings}
         onSessionNew={() => navigate("/")}
         onSessionShareUrl={() => setShareUrlDialogOpen(true)}
         onLayoutAdd={handleViewLayoutAdd}
         onLayoutRemove={handleViewLayoutRemove}
         onLayoutConfigure={() => setConfigureDialogOpen(true)}
+        onEditorChangeDisplaySettings={() =>
+          setDisplaySettingsDialogOpen(true)
+        }
       />
       <UsernameDialog
         name={username}
@@ -578,6 +604,12 @@ export function Component() {
           onAccept={handleConfigureAccept}
         />
       )}
+      <DisplaySettingsDialog
+        settings={displaySettings}
+        onAccept={(settings) => setDisplaySettings(settings)}
+        open={displaySettingsDialogOpen}
+        onOpenChange={(isOpen) => setDisplaySettingsDialogOpen(isOpen)}
+      />
       {session && replTargets.length > 0 && (
         <ReplsDialog
           targets={replTargets}
@@ -612,7 +644,7 @@ export function Component() {
         ))}
       />
       {activeWebTargets.map((target) => (
-        <WebTargetIframe key={target} session={session} target={target} />
+        <WebTargetIframe key={target} session={session} target={target} displaySettings={displaySettings} />
       ))}
       <div
         className={cn(

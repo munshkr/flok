@@ -29,24 +29,30 @@ import {
   Palette,
   Settings,
   Share,
+  Monitor,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { EditorSettings } from "./editor";
+import { DisplaySettings } from "@/lib/display-settings";
 
 interface SessionCommandDialogProps extends CommandDialogProps {
   editorSettings: EditorSettings;
   onEditorSettingsChange: (settings: EditorSettings) => void;
+  displaySettings: DisplaySettings;
+  onDisplaySettingsChange: (settings: DisplaySettings) => void;
   onSessionChangeUsername: () => void;
   onSessionNew: () => void;
   onSessionShareUrl: () => void;
   onLayoutAdd: () => void;
   onLayoutRemove: () => void;
   onLayoutConfigure: () => void;
+  onEditorChangeDisplaySettings: () => void;
 }
 
 export default function SessionCommandDialog({
   editorSettings,
+  displaySettings,
   onEditorSettingsChange,
   ...props
 }: SessionCommandDialogProps) {
@@ -144,6 +150,7 @@ export default function SessionCommandDialog({
                 <span>Remove Pane</span>
               </CommandItem>
             </CommandGroup>
+            <CommandSeparator />
             <CommandGroup heading="Editor">
               <CommandList className="ml-2">
                 <CommandItem onSelect={() => setPages([...pages, "fonts"])}>
@@ -190,6 +197,15 @@ export default function SessionCommandDialog({
                 >
                   <TextCursorIcon className="mr-2 h-4 w-4" />
                   <span>{vimMode ? "Disable" : "Enable"} Vim Mode</span>
+                </CommandItem>
+              </CommandList>
+            </CommandGroup>
+            <CommandSeparator />
+            <CommandGroup heading="Display">
+              <CommandList>
+                <CommandItem onSelect={wrapHandler(props.onEditorChangeDisplaySettings)}>
+                  <Monitor className="mr-2 h-4 w-4" />
+                  <span>Change display settings</span>
                 </CommandItem>
               </CommandList>
             </CommandGroup>
