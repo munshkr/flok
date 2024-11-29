@@ -58,6 +58,7 @@ export class StrudelWrapper {
       import("@strudel/serial"),
       import("@strudel/soundfonts"),
       import("@strudel/webaudio"),
+      import("@strudel/hydra"),
       controls
     );
     try {
