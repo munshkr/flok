@@ -1,10 +1,12 @@
 import HydraCanvas from "@/components/hydra-canvas";
 import { useAnimationFrame } from "@/hooks/use-animation-frame";
 import { useEvalHandler } from "@/hooks/use-eval-handler";
+import { useSettings } from "@/hooks/use-settings";
 import { HydraWrapper } from "@/lib/hydra-wrapper";
 import { sendToast } from "@/lib/utils";
 import { isWebglSupported } from "@/lib/webgl-detector";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { defaultDisplaySettings } from "@/lib/display-settings";
 
 declare global {
   interface Window {
@@ -16,6 +18,7 @@ export function Component() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const hasWebGl = useMemo(() => isWebglSupported(), []);
   const [instance, setInstance] = useState<HydraWrapper | null>(null);
+  const [displaySettings, setDisplaySettings] = useState(defaultDisplaySettings);
 
   useEffect(() => {
     if (hasWebGl) return;
@@ -66,5 +69,17 @@ export function Component() {
     )
   );
 
-  return hasWebGl && canvasRef && <HydraCanvas ref={canvasRef} fullscreen />;
+  useSettings(
+    useCallback(
+      (msg) => {
+        if (!instance) return;
+        if (msg.displaySettings) {
+          setDisplaySettings(msg.displaySettings);
+        }
+      },
+      [instance]
+    )
+  );
+
+  return hasWebGl && canvasRef && <HydraCanvas ref={canvasRef} fullscreen displaySettings={displaySettings} />;
 }
