@@ -1,23 +1,22 @@
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
   DialogFooter,
+  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { DialogProps } from "@radix-ui/react-dialog";
-import { useState, FormEvent } from "react";
 import {
   DisplaySettings,
   sanitizeDisplaySettings,
 } from "@/lib/display-settings";
+import { DialogProps } from "@radix-ui/react-dialog";
+import { FormEvent, useState } from "react";
 
 interface DisplaySettingsDialogProps extends DialogProps {
-  settings: DisplaySettings,
+  settings: DisplaySettings;
   onAccept: (settings: DisplaySettings) => void;
 }
 
@@ -26,8 +25,7 @@ export default function DisplaySettingsDialog({
   onAccept,
   ...props
 }: DisplaySettingsDialogProps) {
-
-  const [unsavedSettings, setUnsavedSettings] = useState({...settings});
+  const [unsavedSettings, setUnsavedSettings] = useState({ ...settings });
   const sanitizeAndSetUnsavedSettings = (settings: DisplaySettings) =>
     setUnsavedSettings(sanitizeDisplaySettings(settings));
 
@@ -54,10 +52,12 @@ export default function DisplaySettingsDialog({
                 type="number"
                 value={unsavedSettings.canvasPixelSize}
                 className="col-span-3"
-                onChange={(e) => sanitizeAndSetUnsavedSettings({
-                  ...unsavedSettings,
-                  canvasPixelSize: parseInt(e.target.value, 10),
-                })}
+                onChange={(e) =>
+                  sanitizeAndSetUnsavedSettings({
+                    ...unsavedSettings,
+                    canvasPixelSize: parseInt(e.target.value, 10),
+                  })
+                }
               />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -69,10 +69,12 @@ export default function DisplaySettingsDialog({
                 type="checkbox"
                 checked={unsavedSettings.showCanvas}
                 className="w-5"
-                onChange={(e) => sanitizeAndSetUnsavedSettings({
-                  ...unsavedSettings,
-                  showCanvas: e.target.checked,
-                })}
+                onChange={(e) =>
+                  sanitizeAndSetUnsavedSettings({
+                    ...unsavedSettings,
+                    showCanvas: e.target.checked,
+                  })
+                }
               />
             </div>
           </div>
