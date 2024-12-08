@@ -8,6 +8,7 @@ export const fonts = {
   "JGS": "jgs_Font",
   "Monaco": "Monaco",
   "MonoCraft": "Monocraft Nerd Font",
+  "OpenDyslexic" : "OpenDyslexicMono",
   "Roboto Mono" : "Roboto Mono",
   "Steps Mono": "Steps Mono",
   "Syne Mono" : "Syne Mono",
