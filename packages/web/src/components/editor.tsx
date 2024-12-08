@@ -9,6 +9,7 @@ import "../assets/fonts/SyneMono/stylesheet.css";
 import "../assets/fonts/VT323/stylesheet.css";
 import "../assets/fonts/RobotoMono/stylesheet.css";
 import "../assets/fonts/UbuntuMono/stylesheet.css";
+import "../assets/fonts/OpenDyslexic/stylesheet.css";
 
 import { useQuery } from "@/hooks/use-query";
 import {

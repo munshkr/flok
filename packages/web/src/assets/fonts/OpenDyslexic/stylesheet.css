@@ -1,0 +1,88 @@
+@font-face {
+  font-family: "OpenDyslexic";
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local("OpenDyslexic"),
+    url("OpenDyslexic-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "OpenDyslexic";
+  font-style: italic;
+  font-weight: 400;
+  src:
+    local("OpenDyslexic"),
+    url("OpenDyslexic-Italic.woff") format("woff");
+}
+@font-face {
+  font-family: "OpenDyslexic";
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local("OpenDyslexic"),
+    url("OpenDyslexic-Bold.woff") format("woff");
+}
+@font-face {
+  font-family: "OpenDyslexic";
+  font-style: italic;
+  font-weight: 700;
+  src:
+    local("OpenDyslexic"),
+    url("OpenDyslexic-BoldItalic.woff") format("woff");
+}
+@font-face {
+  font-family: "OpenDyslexic3";
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local("OpenDyslexic3"),
+    url("OpenDyslexic3-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "OpenDyslexicAlta";
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local("OpenDyslexicAlta"),
+    url("OpenDyslexicAlta-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "OpenDyslexicMono";
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local("OpenDyslexicMono"),
+    url("OpenDyslexicMono-Regular.woff") format("woff");
+}
+@font-face {
+  font-family: "OpenDyslexicAlta";
+  font-style: italic;
+  font-weight: 400;
+  src:
+    local("OpenDyslexicAlta"),
+    url("OpenDyslexicAlta-Italic.woff") format("woff");
+}
+@font-face {
+  font-family: "OpenDyslexic3";
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local("OpenDyslexic3"),
+    url("OpenDyslexic3-Bold.woff") format("woff");
+}
+@font-face {
+  font-family: "OpenDyslexicAlta";
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local("OpenDyslexicAlta"),
+    url("OpenDyslexicAlta-Bold.woff") format("woff");
+}
+@font-face {
+  font-family: "OpenDyslexicAlta";
+  font-style: italic;
+  font-weight: 700;
+  src:
+    local("OpenDyslexicAlta"),
+    url("OpenDyslexicAlta-BoldItalic.woff") format("woff");
+}
