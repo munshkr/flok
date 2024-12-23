@@ -68,6 +68,9 @@ export class HydraWrapper {
     // Enable using strudel style mini-patterns for argument control on Hydra.
     // strudel needs to be loaded first, otherwise this will cause warnings, and rendering will not
     // include the mini-pattern.
+    // Inspired by
+    // - https://github.com/atfornes/Hydra-strudel-extension/blob/51a93496b1b05ea00c08d1dec10e046aa3769c93/hydra-strudel.js#L72
+    // - https://github.com/tidalcycles/strudel/blob/26cc7e2920e32ec01bf22e1dae8ced716462a158/packages/hydra/hydra.mjs#L50
     window.P = (pattern: any) => {
       return () => {
         // parse using the strudel mini parser
