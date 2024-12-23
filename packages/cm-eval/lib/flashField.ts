@@ -3,8 +3,6 @@ import { StateField, StateEffect } from "@codemirror/state";
 
 type FlashRange = [number, number];
 
-let timeoutId: any;
-
 export const setFlash = StateEffect.define<FlashRange | null>();
 
 const defaultStyle = {
@@ -23,9 +21,8 @@ export const flash = (
   timeout: number = 150
 ) => {
   if (from === null || to === null) return;
-  clearTimeout(timeoutId);
   view.dispatch({ effects: setFlash.of([from, to]) });
-  timeoutId = setTimeout(() => {
+  setTimeout(() => {
     view.dispatch({ effects: setFlash.of(null) });
   }, timeout);
 };
