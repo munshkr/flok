@@ -56,6 +56,7 @@ export function Component() {
   useAnimationFrame(
     useCallback(() => {
       window.m = window.parent?.mercury?.m;
+      window.strudel = window.parent?.strudel?.strudel;
     }, [])
   );
 

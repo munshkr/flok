@@ -7,6 +7,7 @@ declare global {
     src: Function;
     H: Function;
     P5: Function;
+    P: Function;
   }
 }
 
@@ -63,6 +64,22 @@ export class HydraWrapper {
     }
 
     window.H = this._hydra;
+
+    // Enable using strudel style mini-patterns for argument control on Hydra.
+    // strudel needs to be loaded first, otherwise this will cause warnings, and rendering will not
+    // include the mini-pattern.
+    window.P = (pattern: any) => {
+      return () => {
+        // parse using the strudel mini parser
+        const reified = window.strudel.mini.minify(pattern)
+
+        const now = window.strudel.core.getTime()
+
+        // query the current value
+        const arc = reified.queryArc(now, now)
+        return arc[0].value;
+      }
+    }
 
     this.initialized = true;
     console.log("Hydra initialized");
