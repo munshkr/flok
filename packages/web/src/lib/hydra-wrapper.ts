@@ -85,6 +85,8 @@ export class HydraWrapper {
       }
     }
 
+    // initialized a streaming canvas with the strudel draw context canvas
+    // this allows us to use the strudel output
     window.useStrudelCanvas = (s: any) => {
       const canvas = window.strudel.draw.getDrawContext().canvas
       canvas.style.display = "none"
