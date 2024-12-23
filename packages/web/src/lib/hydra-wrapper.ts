@@ -8,6 +8,7 @@ declare global {
     H: Function;
     P5: Function;
     P: Function;
+    useStrudelCanvas: Function;
   }
 }
 
@@ -82,6 +83,12 @@ export class HydraWrapper {
         const arc = reified.queryArc(now, now)
         return arc[0].value;
       }
+    }
+
+    window.useStrudelCanvas = (s: any) => {
+      const canvas = window.strudel.draw.getDrawContext().canvas
+      canvas.style.display = "none"
+      s.init({src: canvas})
     }
 
     this.initialized = true;
