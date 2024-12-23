@@ -108,101 +108,97 @@ export interface EditorProps extends ReactCodeMirrorProps {
   document?: Document;
   extensionSettings?: any;
   settings?: EditorSettings;
+  ref: React.RefObject<ReactCodeMirrorRef>;
 }
 
-export const Editor = React.forwardRef(
-  (
-    { document, settings, ...props }: EditorProps,
-    ref: React.ForwardedRef<ReactCodeMirrorRef>
-  ) => {
-    const [mounted, setMounted] = useState(false);
-    const query = useQuery();
+export const Editor = ({ document, settings, ref, ...props }: EditorProps) => {
+  const [mounted, setMounted] = useState(false);
+  const query = useQuery();
 
-    // useEffect only runs on the client, so now we can safely show the UI
-    useEffect(() => {
-      // Make sure query parameters are set before loading the editor
-      if (!query) return;
-      setMounted(true);
-    }, [query]);
+  // useEffect only runs on the client, so now we can safely show the UI
+  useEffect(() => {
+    // Make sure query parameters are set before loading the editor
+    if (!query) return;
+    setMounted(true);
+  }, [query]);
 
-    if (!mounted || !document) {
-      return null;
-    }
-
-    const { theme, fontFamily, lineNumbers, wrapText, vimMode } = {
-      theme: "dracula",
-      fontFamily: "IBM Plex Mono",
-      lineNumbers: false,
-      wrapText: false,
-      vimMode: false,
-      ...settings,
-    };
-
-    const readOnly = !!query.get("readOnly");
-    const language: string = langByTarget[document.target] || defaultLanguage;
-    const languageExtension = langExtensionsByLanguage[language] || javascript;
-    const extensions = [
-      EditorView.theme({
-        "&": {
-          fontFamily: fontFamily,
-        },
-        ".cm-content": {
-          fontFamily: fontFamily,
-        },
-        ".cm-gutters": {
-          fontFamily: fontFamily,
-          "margin-right": "10px",
-        },
-        ".cm-line": {
-          "font-size": "105%",
-          "font-weight": "600",
-          background: "rgba(0, 0, 0, 0.7)",
-          "max-width": "fit-content",
-          padding: "0px",
-        },
-        ".cm-activeLine": {
-          "background-color": "rgba(0, 0, 0, 1) !important",
-        },
-        "& .cm-scroller": {
-          minHeight: "100vh",
-        },
-        ".cm-ySelectionInfo": {
-          opacity: "1",
-          fontFamily: fontFamily,
-          color: "black",
-          padding: "3px 4px",
-          fontSize: "0.8rem",
-          "font-weight": "bold",
-          top: "1.25em",
-          "z-index": "1000",
-        },
-      }),
-      flokSetup(document, { readOnly }),
-      languageExtension(),
-      highlightExtension,
-      readOnly ? EditorState.readOnly.of(true) : [],
-      lineNumbers ? lineNumbersExtension() : [],
-      vimMode ? vim() : [],
-      wrapText ? EditorView.lineWrapping : [],
-    ];
-
-    // If it's read-only, put a div in front of the editor so that the user
-    // can't interact with it.
-    return (
-      <>
-        {readOnly && <div className="absolute inset-0 z-10" />}
-        <CodeMirror
-          ref={ref}
-          value={document.content}
-          theme={themes[theme]?.ext || themes["dracula"]?.ext}
-          extensions={extensions}
-          basicSetup={{
-            foldGutter: false,
-            lineNumbers: false,
-          }}
-          {...props}
-        />
-      </>
-    );
+  if (!mounted || !document) {
+    return null;
   }
-);
+
+  const { theme, fontFamily, lineNumbers, wrapText, vimMode } = {
+    theme: "dracula",
+    fontFamily: "IBM Plex Mono",
+    lineNumbers: false,
+    wrapText: false,
+    vimMode: false,
+    ...settings,
+  };
+
+  const readOnly = !!query.get("readOnly");
+  const language: string = langByTarget[document.target] || defaultLanguage;
+  const languageExtension = langExtensionsByLanguage[language] || javascript;
+  const extensions = [
+    EditorView.theme({
+      "&": {
+        fontFamily: fontFamily,
+      },
+      ".cm-content": {
+        fontFamily: fontFamily,
+      },
+      ".cm-gutters": {
+        fontFamily: fontFamily,
+        "margin-right": "10px",
+      },
+      ".cm-line": {
+        "font-size": "105%",
+        "font-weight": "600",
+        background: "rgba(0, 0, 0, 0.7)",
+        "max-width": "fit-content",
+        padding: "0px",
+      },
+      ".cm-activeLine": {
+        "background-color": "rgba(0, 0, 0, 1) !important",
+      },
+      "& .cm-scroller": {
+        minHeight: "100vh",
+      },
+      ".cm-ySelectionInfo": {
+        opacity: "1",
+        fontFamily: fontFamily,
+        color: "black",
+        padding: "3px 4px",
+        fontSize: "0.8rem",
+        "font-weight": "bold",
+        top: "1.25em",
+        "z-index": "1000",
+      },
+    }),
+    flokSetup(document, { readOnly }),
+    languageExtension(),
+    highlightExtension,
+    readOnly ? EditorState.readOnly.of(true) : [],
+    lineNumbers ? lineNumbersExtension() : [],
+    vimMode ? vim() : [],
+    wrapText ? EditorView.lineWrapping : [],
+  ];
+
+  // If it's read-only, put a div in front of the editor so that the user
+  // can't interact with it.
+  return (
+    <>
+      {readOnly && <div className="absolute inset-0 z-10" />}
+      <CodeMirror
+        ref={ref}
+        value={document.content}
+        theme={themes[theme]?.ext || themes["dracula"]?.ext}
+        extensions={extensions}
+        basicSetup={{
+          foldGutter: false,
+          lineNumbers: false,
+        }}
+        {...props}
+      />
+    </>
+  );
+};
