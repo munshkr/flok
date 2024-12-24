@@ -34,6 +34,8 @@ export function Component() {
       }
     };
 
+    window.strudel = instance;
+
     window.addEventListener("message", handleWindowMessage);
 
     return () => {
