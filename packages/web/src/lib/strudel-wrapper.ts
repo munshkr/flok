@@ -33,6 +33,7 @@ export class StrudelWrapper {
   protected _docPatterns: any;
   protected _audioInitialized: boolean;
   protected framer?: any;
+  protected webaudio?: any;
 
   constructor({
     onError,
@@ -49,6 +50,9 @@ export class StrudelWrapper {
 
   async importModules() {
     // import desired modules and add them to the eval scope
+
+    this.webaudio = await import("@strudel/webaudio");
+
     await evalScope(
       import("@strudel/core"),
       import("@strudel/midi"),
@@ -57,7 +61,7 @@ export class StrudelWrapper {
       import("@strudel/osc"),
       import("@strudel/serial"),
       import("@strudel/soundfonts"),
-      import("@strudel/webaudio"),
+      this.webaudio,
       controls
     );
     try {
