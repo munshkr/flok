@@ -154,7 +154,9 @@ export class StrudelWrapper {
     try {
       const { body: code, docId } = msg;
       // little hack that injects the docId at the end of the code to make it available in afterEval
-      const pattern = await this._repl.evaluate(`${code}//${docId}`);
+      // also add ann analyser node to all patterns, for fft data in hydra
+      const pattern = await this._repl.evaluate(`${code}\nall(x => x.analyze("flok-master"))//${docId}`);
+
       if (pattern) {
         this._docPatterns[docId] = pattern.docId(docId); // docId is needed for highlighting
         const allPatterns = stack(...Object.values(this._docPatterns));

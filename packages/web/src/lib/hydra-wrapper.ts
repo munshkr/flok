@@ -71,14 +71,16 @@ export class HydraWrapper {
     // Enables Hydra to use Strudel frequency data
     // with `.scrollX(() => fft(1,0)` it will influence the x-axis, according to the fft data
     // first number is the index of the bucket, second is the number of buckets to aggregate the number too
-    window.fft = (index: number, buckets: number = 8, options?: { min?: number; max?: number, scale?: number }) => {
-      const freq = window.strudel.webaudio.getAnalyzerData("frequency") as Array<number>
-      const bucketSize = (freq.length) / buckets
-
-      // inspired from https://github.com/tidalcycles/strudel/blob/a7728e3d81fb7a0a2dff9f2f4bd9e313ddf138cd/packages/webaudio/scope.mjs#L53
+    window.fft = (index: number, buckets: number = 8, options?: { min?: number; max?: number, scale?: number, analyserId?: string }) => {
+      const analyserId = options?.analyserId ?? "flok-master"
       const min = options?.min ?? -150;
       const scale = options?.scale ?? 1
       const max = options?.max ?? 0
+
+      const freq = window.strudel.webaudio.getAnalyzerData("frequency", analyserId) as Array<number>;
+      const bucketSize = (freq.length) / buckets
+
+      // inspired from https://github.com/tidalcycles/strudel/blob/a7728e3d81fb7a0a2dff9f2f4bd9e313ddf138cd/packages/webaudio/scope.mjs#L53
       const normalized = freq.map((it: number) => {
         const norm = clamp((it - min) / (max - min), 0, 1);
         return norm * scale;
