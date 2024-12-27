@@ -7,7 +7,7 @@ declare global {
     src: Function;
     H: Function;
     P5: Function;
-    strudelFft: (index: number, buckets: number) => number;
+    fft: (index: number, buckets: number) => number;
   }
 }
 
@@ -69,9 +69,9 @@ export class HydraWrapper {
 
 
     // Enables Hydra to use Strudel frequency data
-    // with `.scrollX(() => strudelFft(1,0)` it will influence the x-axis, according to the fft data
+    // with `.scrollX(() => fft(1,0)` it will influence the x-axis, according to the fft data
     // first number is the index of the bucket, second is the number of buckets to aggregate the number too
-    window.strudelFft = (index: number, buckets: number = 8) => {
+    window.fft = (index: number, buckets: number = 8) => {
       const freq = window.strudel.webaudio.getAnalyzerData("frequency") as Array<number>
       const bucketSize = (freq.length) / buckets
 
