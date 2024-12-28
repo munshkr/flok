@@ -35,6 +35,18 @@ export class StrudelWrapper {
   protected framer?: any;
   protected webaudio?: any;
 
+  enableAutoAnalyze = false;
+  hapAnalyzeSnippet = `
+    all(x => 
+      x.fmap(hap => {
+        if(hap.analyze == undefined) {
+          hap.analyze = 'flok-master';
+        }
+        return hap
+      })
+    )
+    `;
+
   constructor({
     onError,
     onWarning,
