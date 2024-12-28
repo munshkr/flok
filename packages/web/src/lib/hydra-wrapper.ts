@@ -90,7 +90,7 @@ export class HydraWrapper {
       if(window.strudel == undefined) return .5;
 
       // If display settings are not enabled, we just return a default value
-      if(!this._displaySettings.enableFft) return .5;
+      if(!(this._displaySettings.enableFft ?? true)) return .5;
 
       // Enable auto-analyze
       window.strudel.enableAutoAnalyze = true;
