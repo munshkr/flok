@@ -1,5 +1,6 @@
 import Hydra from "hydra-synth";
 import { isWebglSupported } from "@/lib/webgl-detector.js";
+import {DisplaySettings} from "@/lib/display-settings.ts";
 
 declare global {
   interface Window {
@@ -20,19 +21,27 @@ export class HydraWrapper {
   protected _hydra: any;
   protected _onError: ErrorHandler;
   protected _onWarning: ErrorHandler;
+  protected _displaySettings: DisplaySettings;
 
   constructor({
     canvas,
     onError,
     onWarning,
+    displaySettings,
   }: {
     canvas: HTMLCanvasElement;
     onError?: ErrorHandler;
     onWarning?: ErrorHandler;
+    displaySettings: DisplaySettings;
   }) {
     this._canvas = canvas;
     this._onError = onError || (() => {});
     this._onWarning = onWarning || (() => {});
+    this._displaySettings = displaySettings;
+  }
+
+  setDisplaySettings(displaySettings: DisplaySettings) {
+    this._displaySettings = displaySettings;
   }
 
   async initialize() {
@@ -77,9 +86,20 @@ export class HydraWrapper {
       const scale = options?.scale ?? 1
       const max = options?.max ?? 0
 
+      // Strudel is not initialized yet, so we just return a default value
+      if(window.strudel == undefined) return .5;
+
+      // If display settings are not enabled, we just return a default value
+      if(!this._displaySettings.enableFft) return .5;
+
+      // Enable auto-analyze
+      window.strudel.enableAutoAnalyze = true;
+
+      // If the analyzerId is not defined, we just return a default value
       if(window.strudel.webaudio.analysers[analyzerId] == undefined) {
         return .5
       }
+
       const freq = window.strudel.webaudio.getAnalyzerData("frequency", analyzerId) as Array<number>;
       const bucketSize = (freq.length) / buckets
 

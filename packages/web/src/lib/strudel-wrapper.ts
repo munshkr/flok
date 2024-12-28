@@ -149,25 +149,14 @@ export class StrudelWrapper {
     }
   }
 
-  hapAnalyzeSnippet = `
-    all(x => 
-      x.fmap(hap => {
-        if(hap.analyze == undefined) {
-          // all strings get converted to mini patterns, but we do just need the raw string.
-          hap.analyze = "flok-master".__pure;
-        }
-        return hap
-      })
-    )
-    `;
 
   async tryEval(msg: EvalMessage) {
     if (!this.initialized) await this.initialize();
     try {
-      const { body: code, docId } = msg;
+      const {body: code, docId} = msg;
       // little hack that injects the docId at the end of the code to make it available in afterEval
       // also add ann analyser node to all patterns, for fft data in hydra
-      const pattern = await this._repl.evaluate(`${code}\n${this.hapAnalyzeSnippet}\n//${docId}`);
+      const pattern = await this._repl.evaluate(`${code}\n${this.enableAutoAnalyze ? this.hapAnalyzeSnippet : ""}\n//${docId}`);
       if (pattern) {
         this._docPatterns[docId] = pattern.docId(docId); // docId is needed for highlighting
         const allPatterns = stack(...Object.values(this._docPatterns));
