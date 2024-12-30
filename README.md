@@ -228,7 +228,9 @@ the official Hydra editor.
 ##### `fft()` function
 
 The `fft()` function is a special function that allows you to get the FFT data
-from web targets. Note: Only Strudel is supported at the moment.
+from web targets.
+
+**Note: Only Strudel is supported at the moment.**
 
 ```ts
 fft(index: number,
@@ -253,9 +255,10 @@ Parameters:
 
 Example:
 ```js
- solid(() => fft(0,1), 0)
+solid(() => fft(0,1), 0)
   .mask(shape(5,.05))
-  .rotate(() => 50 *  fft(0, 40)) // we need to supply a function for the parameter, for it to update automaticaly
+  .rotate(() => 50 *  fft(0, 40)) // we need to supply a function
+                                  // for the parameter, for it to update automaticaly.
 ```
 
 **Caveat**: Because of how we setup the analyze node on Strudel, every Strudel pane
