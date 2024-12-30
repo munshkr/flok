@@ -7,7 +7,9 @@
     "url": "git+https://github.com/munshkr/flok.git"
   },
   "scripts": {
-    "build": "lerna run build"
+    "build": "lerna run build",
+    "lint:check": "prettier -c .",
+    "lint:fix": "prettier -w ."
   },
   "keywords": [
     "codemirror",
@@ -23,7 +25,8 @@
   },
   "homepage": "https://github.com/munshkr/flok#readme",
   "devDependencies": {
-    "lerna": "^6.5.1"
+    "lerna": "^6.5.1",
+    "prettier": "^3.4.2"
   },
   "workspaces": [
     "packages/*"
