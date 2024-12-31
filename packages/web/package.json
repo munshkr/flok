@@ -18,7 +18,8 @@
     "dev": "cross-env NODE_ENV=development node ./bin/flok-web.js",
     "prebuild": "node script/prebuild.js",
     "build": "npm run prebuild && tsc && vite build",
-    "start": "node ./bin/flok-web.js"
+    "start": "node ./bin/flok-web.js",
+    "check": "tsc --noEmit"
   },
   "dependencies": {
     "@flok-editor/server-middleware": "^1.0.1",
@@ -103,6 +104,6 @@
     "y-protocols": "^1.0.5",
     "y-webrtc": "^10.2.5",
     "y-websocket": "^1.5.0",
-    "yjs": "^13.5.51"
+    "yjs": "^13.6.21"
   }
 }

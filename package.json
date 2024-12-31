@@ -8,6 +8,7 @@
   },
   "scripts": {
     "build": "lerna run build",
+    "check": "lerna run check",
     "lint": "prettier -c .",
     "format": "prettier -w ."
   },
