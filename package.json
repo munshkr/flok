@@ -8,8 +8,8 @@
   },
   "scripts": {
     "build": "lerna run build",
-    "lint:check": "prettier -c .",
-    "lint:fix": "prettier -w ."
+    "lint": "prettier -c .",
+    "format": "prettier -w ."
   },
   "keywords": [
     "codemirror",
