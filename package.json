@@ -7,7 +7,8 @@
     "url": "git+https://github.com/munshkr/flok.git"
   },
   "scripts": {
-    "build": "lerna run build"
+    "build": "lerna run build",
+    "check": "lerna run check"
   },
   "keywords": [
     "codemirror",

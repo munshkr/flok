@@ -43,6 +43,7 @@ export function Component() {
         onWarning: (msg) => {
           sendToast("warning", "Hydra warning", msg);
         },
+        displaySettings: displaySettings,
       });
 
       await hydra.initialize();
@@ -59,6 +60,10 @@ export function Component() {
       window.strudel = window.parent?.strudel?.strudel;
     }, [])
   );
+
+  useEffect(() => {
+    instance?.setDisplaySettings(displaySettings);
+  }, [displaySettings]);
 
   useEvalHandler(
     useCallback(
