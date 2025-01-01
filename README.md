@@ -232,6 +232,8 @@ from web targets.
 
 **Note: Only Strudel is supported at the moment.**
 
+**You can disable the FFT visualizer in the display settings. This might help with performance.**
+
 ```ts
 fft(index: number,
     buckets: number = 8,
