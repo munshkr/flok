@@ -1,5 +1,6 @@
 import Hydra from "hydra-synth";
 import { isWebglSupported } from "@/lib/webgl-detector.js";
+import {DisplaySettings} from "@/lib/display-settings.ts";
 
 declare global {
   interface Window {
@@ -7,6 +8,7 @@ declare global {
     src: Function;
     H: Function;
     P5: Function;
+    fft: (index: number, buckets: number) => number;
   }
 }
 
@@ -19,19 +21,27 @@ export class HydraWrapper {
   protected _hydra: any;
   protected _onError: ErrorHandler;
   protected _onWarning: ErrorHandler;
+  protected _displaySettings: DisplaySettings;
 
   constructor({
     canvas,
     onError,
     onWarning,
+    displaySettings,
   }: {
     canvas: HTMLCanvasElement;
     onError?: ErrorHandler;
     onWarning?: ErrorHandler;
+    displaySettings: DisplaySettings;
   }) {
     this._canvas = canvas;
     this._onError = onError || (() => {});
     this._onWarning = onWarning || (() => {});
+    this._displaySettings = displaySettings;
+  }
+
+  setDisplaySettings(displaySettings: DisplaySettings) {
+    this._displaySettings = displaySettings;
   }
 
   async initialize() {
@@ -63,6 +73,45 @@ export class HydraWrapper {
     }
 
     window.H = this._hydra;
+
+    const clamp = (num: number, min: number, max: number) => Math.min(Math.max(num, min), max);
+
+
+    // Enables Hydra to use Strudel frequency data
+    // with `.scrollX(() => fft(1,0)` it will influence the x-axis, according to the fft data
+    // first number is the index of the bucket, second is the number of buckets to aggregate the number too
+    window.fft = (index: number, buckets: number = 8, options?: { min?: number; max?: number, scale?: number, analyzerId?: string }) => {
+      const analyzerId = options?.analyzerId ?? "flok-master"
+      const min = options?.min ?? -150;
+      const scale = options?.scale ?? 1
+      const max = options?.max ?? 0
+
+      // Strudel is not initialized yet, so we just return a default value
+      if(window.strudel == undefined) return .5;
+
+      // If display settings are not enabled, we just return a default value
+      if(!(this._displaySettings.enableFft ?? true)) return .5;
+
+      // Enable auto-analyze
+      window.strudel.enableAutoAnalyze = true;
+
+      // If the analyzerId is not defined, we just return a default value
+      if(window.strudel.webaudio.analysers[analyzerId] == undefined) {
+        return .5
+      }
+
+      const freq = window.strudel.webaudio.getAnalyzerData("frequency", analyzerId) as Array<number>;
+      const bucketSize = (freq.length) / buckets
+
+      // inspired from https://github.com/tidalcycles/strudel/blob/a7728e3d81fb7a0a2dff9f2f4bd9e313ddf138cd/packages/webaudio/scope.mjs#L53
+      const normalized = freq.map((it: number) => {
+        const norm = clamp((it - min) / (max - min), 0, 1);
+        return norm * scale;
+      })
+
+      return normalized.slice(bucketSize * index, bucketSize * (index + 1))
+        .reduce((a, b) => a + b, 0) / bucketSize
+    }
 
     this.initialized = true;
     console.log("Hydra initialized");
