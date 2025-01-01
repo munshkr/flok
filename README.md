@@ -233,6 +233,13 @@ It uses the same timing information as Strudel itself, so it will be synchronize
 **Note**: You can not use any strudel functions on the pattern.
 **Note**: Currently we do not have mini-highlighting for Hydra panes.
 
+##### `useStrudelCanvas(source)`
+
+Will initialise the given source (`s0`, `s1`, etc) to use the strudel canvas as a source.
+Will also hide the strudel canvas, so it will not overlap.
+
+**Note**: Strudel will have to be initialized, otherwise this will not work.
+
 ##### `fft()` function
 
 The `fft()` function is a special function that allows you to get the FFT data
