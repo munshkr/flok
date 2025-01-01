@@ -33,6 +33,9 @@ export class StrudelWrapper {
   protected _docPatterns: any;
   protected _audioInitialized: boolean;
   protected framer?: any;
+  protected mini?: any;
+  protected core?: any;
+  protected draw?: any;
   protected webaudio?: any;
 
   enableAutoAnalyze = false;
@@ -63,12 +66,17 @@ export class StrudelWrapper {
   async importModules() {
     // import desired modules and add them to the eval scope
 
+    this.mini = await import("@strudel/mini");
+    this.core = await import("@strudel/core");
+    this.draw = await import("@strudel/draw");
+
     this.webaudio = await import("@strudel/webaudio");
 
     await evalScope(
-      import("@strudel/core"),
+      this.core,
       import("@strudel/midi"),
-      import("@strudel/mini"),
+      this.mini,
+      this.draw,
       import("@strudel/tonal"),
       import("@strudel/osc"),
       import("@strudel/serial"),
