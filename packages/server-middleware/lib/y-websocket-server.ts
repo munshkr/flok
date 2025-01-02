@@ -30,7 +30,7 @@ const setPersistence = (
   persistence_: {
     bindState: (arg0: string, arg1: WSSharedDoc) => void;
     writeState: (arg0: string, arg1: WSSharedDoc) => Promise<any>;
-  } | null
+  } | null,
 ) => {
   persistence = persistence_;
 };
@@ -75,7 +75,7 @@ export class WSSharedDoc extends Doc {
         updated,
         removed,
       }: { added: number[]; updated: number[]; removed: number[] },
-      conn: any
+      conn: any,
     ) => {
       const changedClients = added.concat(updated, removed);
       if (conn !== null) {
@@ -95,7 +95,7 @@ export class WSSharedDoc extends Doc {
       encoding.writeVarUint(encoder, messageAwareness);
       encoding.writeVarUint8Array(
         encoder,
-        awarenessProtocol.encodeAwarenessUpdate(this.awareness, changedClients)
+        awarenessProtocol.encodeAwarenessUpdate(this.awareness, changedClients),
       );
       const buff = encoding.toUint8Array(encoder);
       this.conns.forEach((_, c) => {
@@ -123,7 +123,7 @@ const messageListener = (conn: any, doc: WSSharedDoc, message: Uint8Array) => {
       awarenessProtocol.applyAwarenessUpdate(
         doc.awareness,
         decoding.readVarUint8Array(decoder),
-        conn
+        conn,
       );
       break;
     }
@@ -137,7 +137,7 @@ const closeConn = (doc: WSSharedDoc, conn: any) => {
     awarenessProtocol.removeAwarenessStates(
       doc.awareness,
       Array.from(controlledIds),
-      null
+      null,
     );
     if (doc.conns.size === 0 && persistence !== null) {
       // if persisted, we store state and destroy ydocument
@@ -162,7 +162,7 @@ const send = (doc: WSSharedDoc, conn: any, m: Uint8Array) => {
       m,
       /** @param {any} err */ (err) => {
         err != null && closeConn(doc, conn);
-      }
+      },
     );
   } catch (e) {
     closeConn(doc, conn);
@@ -174,7 +174,7 @@ const pingTimeout = 30000;
 export const setupWSConnection = (
   conn: WebSocket,
   req: http.IncomingMessage,
-  { docName = req.url.slice(1).split("?")[0], gc = true }: any = {}
+  { docName = req.url.slice(1).split("?")[0], gc = true }: any = {},
 ) => {
   conn.binaryType = "arraybuffer";
   // get doc, create if it does not exist yet
@@ -190,7 +190,7 @@ export const setupWSConnection = (
   doc.conns.set(conn, new Set());
   // listen and reply to events
   conn.on("message", (message: ArrayBuffer) =>
-    messageListener(conn, doc, new Uint8Array(message))
+    messageListener(conn, doc, new Uint8Array(message)),
   );
   conn.on("close", () => {
     closeConn(doc, conn);
@@ -228,8 +228,8 @@ export const setupWSConnection = (
       encoder,
       awarenessProtocol.encodeAwarenessUpdate(
         doc.awareness,
-        Array.from(awarenessStates.keys())
-      )
+        Array.from(awarenessStates.keys()),
+      ),
     );
     send(doc, conn, encoding.toUint8Array(encoder));
   }

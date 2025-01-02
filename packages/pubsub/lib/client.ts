@@ -179,7 +179,7 @@ export class PubSubClient {
   protected _send(
     type: ClientMessageType,
     payload?: any,
-    cb?: (err?: Error) => void
+    cb?: (err?: Error) => void,
   ) {
     const data = JSON.stringify({ type, payload });
     this._ws.send(data, (err?: Error) => {

@@ -61,7 +61,7 @@ export function base64ToUnicode(base64String: string) {
   const utf8Bytes = new Uint8Array(
     atob(base64String)
       .split("")
-      .map((char) => char.charCodeAt(0))
+      .map((char) => char.charCodeAt(0)),
   );
   const decoder = new TextDecoder("utf-8", { fatal: true });
   const decodedText = decoder.decode(utf8Bytes);
@@ -80,7 +80,7 @@ export function sendToast(
   variant: "warning" | "destructive",
   title: string,
   message: string,
-  pre?: boolean
+  pre?: boolean,
 ) {
   window.parent.postMessage(
     {
@@ -92,7 +92,7 @@ export function sendToast(
         pre,
       },
     },
-    "*"
+    "*",
   );
 }
 
@@ -107,7 +107,7 @@ export function updateDocumentsContext(docId: string, context: object) {
 export function forEachDocumentContext(
   callback: (context: any, editor: ReactCodeMirrorRef | null) => void,
   session: Session,
-  editorRefs: React.RefObject<ReactCodeMirrorRef>[]
+  editorRefs: React.RefObject<ReactCodeMirrorRef>[],
 ) {
   const documentsContext = window.documentsContext || {};
   for (const docId in documentsContext) {

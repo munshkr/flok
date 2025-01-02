@@ -16,7 +16,7 @@ const Command = ({
     ref={ref}
     className={cn(
       "flex h-full w-full flex-col overflow-hidden rounded-lg bg-white dark:bg-slate-800",
-      className
+      className,
     )}
     {...props}
   />
@@ -44,13 +44,14 @@ const CommandInput = ({
 }: React.ComponentProps<typeof CommandPrimitive.Input>) => (
   <div
     className="flex items-center border-b border-b-slate-100 px-4 dark:border-b-slate-700"
-    cmdk-input-wrapper="">
+    cmdk-input-wrapper=""
+  >
     <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
         "flex h-11 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-slate-400 disabled:cursor-not-allowed disabled:opacity-50 dark:text-slate-50",
-        className
+        className,
       )}
       {...props}
     />
@@ -95,7 +96,7 @@ const CommandGroup = ({
     ref={ref}
     className={cn(
       "overflow-hidden py-3 px-2 text-slate-700 dark:text-slate-400 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:pb-1.5 [&_[cmdk-group-heading]]:text-sm [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:text-slate-900 [&_[cmdk-group-heading]]:dark:text-slate-300",
-      className
+      className,
     )}
     {...props}
   />
@@ -125,7 +126,7 @@ const CommandItem = ({
     ref={ref}
     className={cn(
       "relative flex cursor-default select-none items-center rounded-md py-1.5 px-2 text-sm font-medium outline-none aria-selected:bg-slate-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 dark:aria-selected:bg-slate-700",
-      className
+      className,
     )}
     {...props}
   />
@@ -141,7 +142,7 @@ const CommandShortcut = ({
     <span
       className={cn(
         "ml-auto text-xs tracking-widest text-slate-500",
-        className
+        className,
       )}
       {...props}
     />

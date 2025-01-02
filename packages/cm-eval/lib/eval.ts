@@ -53,7 +53,7 @@ export function getBlock(state: EditorState): EvalBlock {
 export const evaluateBlockOrSelection = (
   view: EditorView,
   doc: Document,
-  web: boolean = false
+  web: boolean = false,
 ) => {
   const { state } = view;
   const selection = getSelection(state);
@@ -71,7 +71,7 @@ export const evaluateBlockOrSelection = (
 export const evaluateLine = (
   view: EditorView,
   doc: Document,
-  web: boolean = false
+  web: boolean = false,
 ) => {
   const { state } = view;
   const { text, from, to } = getLine(state);
@@ -82,7 +82,7 @@ export const evaluateLine = (
 export const evaluateDocument = (
   view: EditorView,
   doc: Document,
-  web: boolean = false
+  web: boolean = false,
 ) => {
   const { state } = view;
   const { from } = state.doc.line(1);
@@ -106,7 +106,7 @@ export function evalKeymap(
     documentEvalKeys?: string[];
     defaultMode?: "block" | "document";
     web?: boolean;
-  } = {}
+  } = {},
 ) {
   return keymap.of([
     ...defaultEvalKeys.map((key) => ({

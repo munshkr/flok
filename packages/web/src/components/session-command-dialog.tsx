@@ -82,7 +82,7 @@ export default function SessionCommandDialog({
       onEditorSettingsChange({
         ...editorSettings,
         fontFamily: font,
-      })
+      }),
     )();
   };
 
@@ -92,7 +92,7 @@ export default function SessionCommandDialog({
       onEditorSettingsChange({
         ...editorSettings,
         theme,
-      })
+      }),
     )();
   };
 
@@ -170,7 +170,7 @@ export default function SessionCommandDialog({
                     onEditorSettingsChange({
                       ...editorSettings,
                       lineNumbers: !lineNumbers,
-                    })
+                    }),
                   )}
                 >
                   <FileDigit className="mr-2 h-4 w-4" />
@@ -181,7 +181,7 @@ export default function SessionCommandDialog({
                     onEditorSettingsChange({
                       ...editorSettings,
                       wrapText: !wrapText,
-                    })
+                    }),
                   )}
                 >
                   <WrapText className="mr-2 h-4 w-4" />
@@ -192,7 +192,7 @@ export default function SessionCommandDialog({
                     onEditorSettingsChange({
                       ...editorSettings,
                       vimMode: !vimMode,
-                    })
+                    }),
                   )}
                 >
                   <TextCursorIcon className="mr-2 h-4 w-4" />
@@ -203,7 +203,9 @@ export default function SessionCommandDialog({
             <CommandSeparator />
             <CommandGroup heading="Display">
               <CommandList>
-                <CommandItem onSelect={wrapHandler(props.onEditorChangeDisplaySettings)}>
+                <CommandItem
+                  onSelect={wrapHandler(props.onEditorChangeDisplaySettings)}
+                >
                   <Monitor className="mr-2 h-4 w-4" />
                   <span>Change display settings</span>
                 </CommandItem>

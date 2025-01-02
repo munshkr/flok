@@ -18,7 +18,7 @@ export const flash = (
   view: EditorView,
   from: number | null,
   to: number | null,
-  timeout: number = 150
+  timeout: number = 150,
 ) => {
   if (from === null || to === null) return;
   view.dispatch({ effects: setFlash.of([from, to]) });

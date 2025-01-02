@@ -82,7 +82,7 @@ export class StrudelWrapper {
       import("@strudel/serial"),
       import("@strudel/soundfonts"),
       this.webaudio,
-      controls
+      controls,
     );
     try {
       await Promise.all([
@@ -118,11 +118,11 @@ export class StrudelWrapper {
         // queries the stack of strudel patterns for the current time
         const allHaps = this._repl.scheduler.pattern.queryArc(
           Math.max(lastFrame!, phase - 1 / 10), // make sure query is not larger than 1/10 s
-          phase
+          phase,
         );
         // filter out haps that are not active right now
         const currentFrame = allHaps.filter(
-          (hap: any) => phase >= hap.whole.begin && phase <= hap.endClipped
+          (hap: any) => phase >= hap.whole.begin && phase <= hap.endClipped,
         );
         // iterate over each strudel doc
         Object.keys(this._docPatterns).forEach((docId: any) => {
@@ -134,7 +134,7 @@ export class StrudelWrapper {
       },
       (err: any) => {
         console.error("[strudel] draw error", err);
-      }
+      },
     );
 
     this._repl = repl({
@@ -169,14 +169,15 @@ export class StrudelWrapper {
     }
   }
 
-
   async tryEval(msg: EvalMessage) {
     if (!this.initialized) await this.initialize();
     try {
-      const {body: code, docId} = msg;
+      const { body: code, docId } = msg;
       // little hack that injects the docId at the end of the code to make it available in afterEval
       // also add ann analyser node to all patterns, for fft data in hydra
-      const pattern = await this._repl.evaluate(`${code}\n${this.enableAutoAnalyze ? this.hapAnalyzeSnippet : ""}\n//${docId}`);
+      const pattern = await this._repl.evaluate(
+        `${code}\n${this.enableAutoAnalyze ? this.hapAnalyzeSnippet : ""}\n//${docId}`,
+      );
       if (pattern) {
         this._docPatterns[docId] = pattern.docId(docId); // docId is needed for highlighting
         const allPatterns = stack(...Object.values(this._docPatterns));

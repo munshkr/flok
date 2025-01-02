@@ -9,7 +9,11 @@ export interface WebTargetIframeProps {
   displaySettings: DisplaySettings;
 }
 
-export const WebTargetIframe = ({ target, session, displaySettings }: WebTargetIframeProps) => {
+export const WebTargetIframe = ({
+  target,
+  session,
+  displaySettings,
+}: WebTargetIframeProps) => {
   const ref = useRef<HTMLIFrameElement | null>(null);
 
   const query = useQuery();

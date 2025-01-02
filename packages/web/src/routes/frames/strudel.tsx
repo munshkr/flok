@@ -49,8 +49,8 @@ export function Component() {
         if (!instance) return;
         instance.tryEval(msg);
       },
-      [instance]
-    )
+      [instance],
+    ),
   );
 
   return null;

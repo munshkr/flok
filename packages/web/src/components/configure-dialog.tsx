@@ -70,7 +70,7 @@ export function ConfigureDialog({
         .split(",")
         .map((t) => t.trim())
         .filter((t) => knownTargets.includes(t)),
-    [targetsValue]
+    [targetsValue],
   );
 
   const newOrCurrentTargets = newTargets.length > 0 ? newTargets : targets;
