@@ -33,6 +33,22 @@ export class StrudelWrapper {
   protected _docPatterns: any;
   protected _audioInitialized: boolean;
   protected framer?: any;
+  protected mini?: any;
+  protected core?: any;
+  protected draw?: any;
+  protected webaudio?: any;
+
+  enableAutoAnalyze = false;
+  hapAnalyzeSnippet = `
+    all(x => 
+      x.fmap(hap => {
+        if(hap.analyze == undefined) {
+          hap.analyze = 'flok-master';
+        }
+        return hap
+      })
+    )
+    `;
 
   constructor({
     onError,
@@ -49,15 +65,23 @@ export class StrudelWrapper {
 
   async importModules() {
     // import desired modules and add them to the eval scope
+
+    this.mini = await import("@strudel/mini");
+    this.core = await import("@strudel/core");
+    this.draw = await import("@strudel/draw");
+
+    this.webaudio = await import("@strudel/webaudio");
+
     await evalScope(
-      import("@strudel/core"),
+      this.core,
       import("@strudel/midi"),
-      import("@strudel/mini"),
+      this.mini,
+      this.draw,
       import("@strudel/tonal"),
       import("@strudel/osc"),
       import("@strudel/serial"),
       import("@strudel/soundfonts"),
-      import("@strudel/webaudio"),
+      this.webaudio,
       controls
     );
     try {
@@ -145,12 +169,14 @@ export class StrudelWrapper {
     }
   }
 
+
   async tryEval(msg: EvalMessage) {
     if (!this.initialized) await this.initialize();
     try {
-      const { body: code, docId } = msg;
+      const {body: code, docId} = msg;
       // little hack that injects the docId at the end of the code to make it available in afterEval
-      const pattern = await this._repl.evaluate(`${code}//${docId}`);
+      // also add ann analyser node to all patterns, for fft data in hydra
+      const pattern = await this._repl.evaluate(`${code}\n${this.enableAutoAnalyze ? this.hapAnalyzeSnippet : ""}\n//${docId}`);
       if (pattern) {
         this._docPatterns[docId] = pattern.docId(docId); // docId is needed for highlighting
         const allPatterns = stack(...Object.values(this._docPatterns));

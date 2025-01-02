@@ -77,6 +77,26 @@ export default function DisplaySettingsDialog({
                 }
               />
             </div>
+            <div className="">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="name" className="text-right">
+                  Use FFT for visualization
+                </Label>
+                <input
+                  id="showCanvas"
+                  type="checkbox"
+                  checked={unsavedSettings.enableFft ?? true}
+                  className="w-5"
+                  onChange={(e) =>
+                    sanitizeAndSetUnsavedSettings({
+                      ...unsavedSettings,
+                      enableFft: e.target.checked,
+                    })
+                  }
+                />
+              </div>
+              <p>You need to reload the page to apply changes to fft</p>
+            </div>
           </div>
           <DialogFooter>
             <Button type="submit">Save changes</Button>

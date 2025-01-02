@@ -123,7 +123,7 @@ run Flok in secure mode by passing the `--secure` parameter:
 
 ```sh
 npx flok-web@latest --secure
-``` 
+```
 
 #### Note about remote users (not LAN)
 
@@ -159,7 +159,7 @@ object, like this:
 
 #### Sardine
 
-Use `flok-repl` with the `-t sardine` parameter. In order to make it work, 
+Use `flok-repl` with the `-t sardine` parameter. In order to make it work,
 the `sardine` REPL must be included to your PATH. It should already be the
 case if you followed a regular install.
 
@@ -217,13 +217,70 @@ installing and using it.
 
 #### Hydra
 
-[Hydra](https://hydra.ojack.xyz/) is a video synth and coding environment, inspired in 
-analog video synthesis, that runs directly in the browser and is already included in 
+[Hydra](https://hydra.ojack.xyz/) is a video synth and coding environment, inspired in
+analog video synthesis, that runs directly in the browser and is already included in
 the web App.  You don't need to install anything as it runs on the browser.  Just use
 the `hydra` target to execute Hydra code.
 
-You can also use [p5.js](https://p5js.org/) within a `hydra` target, like you would in 
+You can also use [p5.js](https://p5js.org/) within a `hydra` target, like you would in
 the official Hydra editor.
+
+##### `P()` function
+The `P()` function allows you to use strudel mini-patterns in Hydra.
+It uses the same timing information as Strudel itself, so it will be synchronized with the audio.
+
+**Note**: It will only work, if strudel is already initialized, because that will load the modules we need.
+**Note**: You can not use any strudel functions on the pattern.
+**Note**: Currently we do not have mini-highlighting for Hydra panes.
+
+##### `useStrudelCanvas(source)`
+
+Will initialise the given source (`s0`, `s1`, etc) to use the strudel canvas as a source.
+Will also hide the strudel canvas, so it will not overlap.
+
+**Note**: Strudel will have to be initialized, otherwise this will not work.
+
+##### `fft()` function
+
+The `fft()` function is a special function that allows you to get the FFT data
+from web targets.
+
+**Note: Only Strudel is supported at the moment.**
+
+**You can disable the FFT visualizer in the display settings. This might help with performance.**
+
+```ts
+fft(index: number,
+    buckets: number = 8,
+    options?: { min?: number; max?: number, scale?: number, analyzerId?: string }): number
+```
+
+Parameters:
+- `index: number` : The index of the bucket to return the value from.
+- `buckets: number`: The number of buckets to combine the underlying FFT data
+  too. Defaults to 8.
+- `options?: { min?: number; max?: number, scale?: number }`:
+    - `min?: number`: Minimum clamp value of the underlying data. Defaults to
+      -150.
+    - `max?: number`: Maximum clamp value of the underlying data. Defaults to 0.
+    - `scale?: number`: Scale of the output. Defaults to 1 (so the output is
+       from 0 to 1)
+    - `analyzerId?: string`: Which Strudel analyser to listen to. Defaults to
+      `flok-master`, which is also automatically added to all strudel patterns.
+      Can be used to route different patterns to different parts of the hydra
+      visualiser
+
+Example:
+```js
+solid(() => fft(0,1), 0)
+  .mask(shape(5,.05))
+  .rotate(() => 50 *  fft(0, 40)) // we need to supply a function
+                                  // for the parameter, for it to update automaticaly.
+```
+
+**Caveat**: Because of how we setup the analyze node on Strudel, every Strudel pane
+needs a re-eval after the Hydra code decides that we need to get the fft data.
+This does not happen automatically, manual re-eval is necessary.
 
 #### Mercury
 
