@@ -19,10 +19,10 @@ const toObject = (hash: string) =>
 
 export function useHash(): [
   HashRecord,
-  (newHash: HashRecord | React.SetStateAction<HashRecord>) => void
+  (newHash: HashRecord | React.SetStateAction<HashRecord>) => void,
 ] {
   const [hash, setHash] = useState<HashRecord>(() =>
-    toObject(window.location.hash)
+    toObject(window.location.hash),
   );
 
   const hashChangeHandler = useCallback(() => {
@@ -41,7 +41,7 @@ export function useHash(): [
       if (typeof newHash === "function") newHash = newHash(hash);
       window.location.hash = fromObject(newHash);
     },
-    [hash]
+    [hash],
   );
 
   return [hash, updateHash];

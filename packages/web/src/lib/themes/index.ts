@@ -23,23 +23,26 @@ interface Theme {
   ext: Extension;
 }
 
-const noBackground = { "settings" : { "background" : "none" }};
+const noBackground = { settings: { background: "none" } };
 
 export const themes: { [key: string]: Theme } = {
   ayuDark: { name: "Ayu Dark", ext: ayuDark },
-  andromeda: { name: "Andromeda",  ext: andromedaInit(noBackground) },
-  bespin : { name: "Bespin", ext: bespinInit(noBackground) },
-  consoleDark : { name: "Console Dark", ext: consoleDarkInit(noBackground) },
+  andromeda: { name: "Andromeda", ext: andromedaInit(noBackground) },
+  bespin: { name: "Bespin", ext: bespinInit(noBackground) },
+  consoleDark: { name: "Console Dark", ext: consoleDarkInit(noBackground) },
   dracula: { name: "Dracula", ext: dracula },
-  githubDark : { name: "Github Dark", ext: githubDarkInit(noBackground) },
+  githubDark: { name: "Github Dark", ext: githubDarkInit(noBackground) },
   gruvboxDark: { name: "Gruvbox Dark", ext: gruvboxDark },
-  monokai : { name: "Monokai", ext: monokaiInit(noBackground) },
+  monokai: { name: "Monokai", ext: monokaiInit(noBackground) },
   monokaiDimmed: { name: "Monokai Dimmed", ext: monokai },
   nord: { name: "Nord", ext: nord },
   oneDark: { name: "One Dark", ext: oneDark },
-  solarizedDark : { name: "Solarized Dark", ext: solarizedDarkInit(noBackground) },
+  solarizedDark: {
+    name: "Solarized Dark",
+    ext: solarizedDarkInit(noBackground),
+  },
   tokyoNight: { name: "Tokyo Night", ext: tokyoNight },
-  xcodeDark : { name: "XCode Dark", ext: xcodeDarkInit(noBackground) },
+  xcodeDark: { name: "XCode Dark", ext: xcodeDarkInit(noBackground) },
 };
 
 export default themes;

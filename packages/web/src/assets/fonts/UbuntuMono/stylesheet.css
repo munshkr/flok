@@ -1,11 +1,10 @@
-
 @font-face {
-    font-family: 'Ubuntu Mono';
-    src: url('UbuntuMono-Bold.woff2') format('woff2'),
-        url('UbuntuMono-Bold.woff') format('woff');
-    font-weight: bold;
-    font-style: normal;
-    font-display: swap;
-    size-adjust: 105%;
+  font-family: "Ubuntu Mono";
+  src:
+    url("UbuntuMono-Bold.woff2") format("woff2"),
+    url("UbuntuMono-Bold.woff") format("woff");
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 105%;
 }
-

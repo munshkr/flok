@@ -21,15 +21,16 @@ const readConfig = (path) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const packageInfo = readConfig(path.resolve(__dirname, "../package.json"));
-const knownTypes = ["command", ...Object.keys(replClasses).filter(
-  (repl) => repl !== "default"
-)];
+const knownTypes = [
+  "command",
+  ...Object.keys(replClasses).filter((repl) => repl !== "default"),
+];
 const program = new Command();
 
 program.version(packageInfo.version);
 program
   .option("-t, --types <types...>", "Type/s of REPL", ["command"])
-  .option("-H, --hub <url>", "Server (or \"hub\") address", "ws://localhost:3000")
+  .option("-H, --hub <url>", 'Server (or "hub") address', "ws://localhost:3000")
   .option("-s, --session-name <name>", "Session name", "default")
   .option("-n, --target-name <name>", "Use the specified target name")
   .option("-T, --tags <tags...>", "Tags for REPL messages")
@@ -46,25 +47,12 @@ const configPath = opts.config || process.env.FLOK_CONFIG;
 const config = configPath ? readConfig(configPath) : {};
 
 // Override config with command line options
-const options = [
-  "types",
-  "hub",
-  "sessionName",
-  "targetName",
-  "tags",
-  "path",
-];
-options.forEach(opt => {
+const options = ["types", "hub", "sessionName", "targetName", "tags", "path"];
+options.forEach((opt) => {
   config[opt] = config[opt] || opts[opt];
 });
 
-const {
-  hub,
-  sessionName,
-  targetName,
-  tags,
-  path: pubSubPath,
-} = config;
+const { hub, sessionName, targetName, tags, path: pubSubPath } = config;
 
 // Remove duplicates
 const types = [...new Set(config.types)];
@@ -79,20 +67,27 @@ if (opts.listTypes) {
   process.exit(0);
 }
 
-const useDefaultREPL = types.some(type => type === "command");
+const useDefaultREPL = types.some((type) => type === "command");
 
 // If using default REPL and no command was specified, throw error
 if (useDefaultREPL && !cmd) {
-  console.error("You specified a 'command' type, but forgot to specify a REPL command (e.g.: flok-repl -- cat)");
+  console.error(
+    "You specified a 'command' type, but forgot to specify a REPL command (e.g.: flok-repl -- cat)",
+  );
   program.outputHelp();
   process.exit(1);
 }
 
 // Check if all types are known
 if (!useDefaultREPL) {
-  const unknownTypes = [...new Set(types.filter(type => !knownTypes.includes(type)))];
+  const unknownTypes = [
+    ...new Set(types.filter((type) => !knownTypes.includes(type))),
+  ];
   if (unknownTypes.length > 0) {
-    console.error(`Unknown types: ${unknownTypes.join(', ')}. Must be one of:`, knownTypes);
+    console.error(
+      `Unknown types: ${unknownTypes.join(", ")}. Must be one of:`,
+      knownTypes,
+    );
     process.exit(1);
   }
 }
@@ -114,9 +109,10 @@ console.log("Hub address:", hub);
 console.log("Session name:", sessionName);
 if (targetName) console.log("Target name:", targetName);
 console.log("Types:", types);
-if (Object.keys(extraOptions).length > 0) console.log("Extra options:", extraOptions);
+if (Object.keys(extraOptions).length > 0)
+  console.log("Extra options:", extraOptions);
 
-types.forEach(type => {
+types.forEach((type) => {
   const useDefaultREPL = type === "command";
 
   // Set target based on name or type
@@ -164,4 +160,4 @@ types.forEach(type => {
   replClient.emitter.on("close", ({ code }) => {
     process.exit(code);
   });
-})
+});

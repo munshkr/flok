@@ -37,7 +37,7 @@ function createREPLFor(repl: string, ctx: CommandREPLContext) {
 function readPackageMetadata() {
   const packageJsonPath = path.resolve(
     __dirname,
-    path.join("..", "package.json")
+    path.join("..", "package.json"),
   );
   const rawBody = fs.readFileSync(packageJsonPath);
   const body = JSON.parse(rawBody.toString());

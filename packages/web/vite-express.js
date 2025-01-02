@@ -6,11 +6,10 @@ import pc from "picocolors";
 let Vite;
 try {
   Vite = await import("vite");
-} catch (err) { }
-
+} catch (err) {}
 
 const _State = {
-  viteConfig: undefined
+  viteConfig: undefined,
 };
 
 function clearState() {
@@ -18,9 +17,10 @@ function clearState() {
 }
 
 const Config = {
-  mode: (process.env.NODE_ENV === "production" || !Vite
-    ? "production"
-    : "development"),
+  mode:
+    process.env.NODE_ENV === "production" || !Vite
+      ? "production"
+      : "development",
   inlineViteConfig: undefined,
   viteConfigFile: undefined,
   ignorePaths: undefined,
@@ -30,7 +30,7 @@ const Config = {
 function info(msg) {
   const timestamp = new Date().toLocaleString("en-US").split(",")[1].trim();
   console.log(
-    `${pc.dim(timestamp)} ${pc.bold(pc.cyan("[flok-web]"))} ${pc.green(msg)}`
+    `${pc.dim(timestamp)} ${pc.bold(pc.cyan("[flok-web]"))} ${pc.green(msg)}`,
   );
 }
 
@@ -62,8 +62,8 @@ async function resolveConfig() {
   if (Config.inlineViteConfig) {
     info(
       `${pc.yellow("Inline config")} detected, ignoring ${pc.yellow(
-        "Vite config file"
-      )}`
+        "Vite config file",
+      )}`,
     );
 
     return {
@@ -79,10 +79,10 @@ async function resolveConfig() {
         {
           configFile: Config.viteConfigFile,
         },
-        "build"
+        "build",
       );
       info(
-        `Using ${pc.yellow("Vite")} to resolve the ${pc.yellow("config file")}`
+        `Using ${pc.yellow("Vite")} to resolve the ${pc.yellow("config file")}`,
       );
       return config;
     } catch (e) {
@@ -90,9 +90,9 @@ async function resolveConfig() {
       info(
         pc.red(
           `Unable to use ${pc.yellow("Vite")}, running in ${pc.yellow(
-            "viteless"
-          )} mode`
-        )
+            "viteless",
+          )} mode`,
+        ),
       );
     }
   } catch (e) {
@@ -117,9 +117,9 @@ async function resolveConfig() {
     info(
       pc.red(
         `Unable to locate ${pc.yellow(
-          "vite.config.*s file"
-        )}, using default options`
-      )
+          "vite.config.*s file",
+        )}, using default options`,
+      ),
     );
 
     return getDefaultViteConfig();
@@ -146,8 +146,8 @@ async function serveStatic() {
     info(`${pc.red(`Static files at ${pc.gray(distPath)} not found!`)}`);
     info(
       `${pc.yellow(
-        `Did you forget to run ${pc.bold(pc.green("vite build"))} command?`
-      )}`
+        `Did you forget to run ${pc.bold(pc.green("vite build"))} command?`,
+      )}`,
     );
   } else {
     info(`${pc.green(`Serving static files from ${pc.gray(distPath)}`)}`);
@@ -163,7 +163,7 @@ async function injectStaticMiddleware(app, middleware) {
   app.use(config.base, middleware);
 
   const stubMiddlewareLayer = app._router.stack.find(
-    (layer) => layer.handle === stubMiddleware
+    (layer) => layer.handle === stubMiddleware,
   );
 
   if (stubMiddlewareLayer !== undefined) {
@@ -182,10 +182,7 @@ function isIgnoredPath(path, req) {
     : Config.ignorePaths(path, req);
 }
 
-function findClosestIndexToRoot(
-  reqPath,
-  root
-) {
+function findClosestIndexToRoot(reqPath, root) {
   const basePath = reqPath.slice(0, reqPath.lastIndexOf("/"));
   const dirs = basePath.split("/");
 
@@ -265,7 +262,7 @@ async function startServer(server) {
         middlewareMode: true,
         hmr: { server },
       },
-    })
+    }),
   );
 
   server.on("close", async () => {
@@ -284,11 +281,7 @@ function config(config) {
   Config.viteConfigFile = config.viteConfigFile;
 }
 
-async function bind(
-  app,
-  server,
-  callback
-) {
+async function bind(app, server, callback) {
   info(`Running in ${pc.yellow(Config.mode)} mode`);
 
   clearState();

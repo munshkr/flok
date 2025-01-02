@@ -51,14 +51,14 @@ export function Mosaic({ className, items }: MosaicProps) {
     <div
       className={cn(
         "flex flex-col items-stretch p-1 h-screen gap-1 overflow-hidden",
-        className
+        className,
       )}
     >
       {rows.map((rowItems, i) => (
         <div
           className={cn(
             "flex flex-row gap-1",
-            halfHeight ? "h-[50vh]" : "h-screen"
+            halfHeight ? "h-[50vh]" : "h-screen",
           )}
           key={i}
         >

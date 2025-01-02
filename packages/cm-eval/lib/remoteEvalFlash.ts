@@ -21,5 +21,5 @@ export const remoteEvalFlash = (document: Document) =>
       destroy() {
         document.session.off("eval", this._handleEval);
       }
-    }
+    },
   );

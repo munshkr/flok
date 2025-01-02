@@ -43,5 +43,5 @@ startServer({
   secure: opts.secure,
   sslCert: opts.sslCert,
   sslKey: opts.sslKey,
-  staticDir: opts.staticDir
-})
+  staticDir: opts.staticDir,
+});

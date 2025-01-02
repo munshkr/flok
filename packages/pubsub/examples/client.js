@@ -1,4 +1,4 @@
-import { PubSubClient } from "../dist/index.js"
+import { PubSubClient } from "../dist/index.js";
 
 const client = new PubSubClient({ url: "ws://localhost:4000" });
 
@@ -13,28 +13,28 @@ let internalId;
 client.on("open", () => {
   // Publish a message (any JSON serializable object) to a topic
   internalId = setInterval(() => {
-    client.publish("a", { salutation: "hello!" })
+    client.publish("a", { salutation: "hello!" });
   }, 2000);
-})
+});
 
 // Add an error event handler to ignore connection errors
-client.on("error", () => { });
+client.on("error", () => {});
 
-client.on("close", () => clearInterval(internalId))
+client.on("close", () => clearInterval(internalId));
 
 setTimeout(() => {
   // Unsubscribe from a topic
   client.unsubscribe("b");
   // ... or from all topics with a single call
   client.unsubscribeAll();
-}, 5000)
+}, 5000);
 
 // you can add a listener for all message events
 client.on("message", (topic, data) => {
-  console.log("message", topic, data)
-})
+  console.log("message", topic, data);
+});
 
 // ...or only from a specific topic
 client.on("message:a", (data) => {
-  console.log("message from topic 'a'", data)
-})
+  console.log("message from topic 'a'", data);
+});

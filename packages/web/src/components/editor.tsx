@@ -51,7 +51,7 @@ const panicCodes = panicCodesUntyped as { [target: string]: string };
 
 const panicKeymap = (
   doc: Document,
-  keys: string[] = ["Cmd-.", "Ctrl-.", "Alt-."]
+  keys: string[] = ["Cmd-.", "Ctrl-.", "Alt-."],
 ) => {
   const panicCode = panicCodes[doc.target];
 
@@ -74,7 +74,7 @@ interface FlokSetupOptions {
 
 const flokSetup = (
   doc: Document,
-  { readOnly = false }: FlokSetupOptions = {}
+  { readOnly = false }: FlokSetupOptions = {},
 ) => {
   const text = doc.getText();
   const undoManager = new UndoManager(text);

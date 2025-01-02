@@ -17,9 +17,7 @@ const __dirname = path.dirname(__filename);
 function info(msg) {
   const timestamp = new Date().toLocaleString("en-US").split(",")[1].trim();
   console.log(
-    `${pc.dim(timestamp)} ${pc.bold(pc.cyan("[flok-web]"))} ${pc.green(
-      msg,
-    )}`,
+    `${pc.dim(timestamp)} ${pc.bold(pc.cyan("[flok-web]"))} ${pc.green(msg)}`,
   );
 }
 
@@ -30,13 +28,15 @@ export async function startServer({ onReady, staticDir, ...opts }) {
     app.use(compression());
 
     if (staticDir) {
-      info(`Serving extra static files at ${pc.gray(staticDir)}`)
-      app.use(express.static(staticDir))
+      info(`Serving extra static files at ${pc.gray(staticDir)}`);
+      app.use(express.static(staticDir));
     }
 
     let viteServer;
     if (opts.secure) {
-      info(`Using SSL certificate at ${pc.gray(opts.sslCert)} (key at ${pc.gray(opts.sslKey)})`)
+      info(
+        `Using SSL certificate at ${pc.gray(opts.sslCert)} (key at ${pc.gray(opts.sslKey)})`,
+      );
       const key = fs.readFileSync(opts.sslKey);
       const cert = fs.readFileSync(opts.sslCert);
       viteServer = https.createServer({ key, cert }, app);
@@ -56,20 +56,25 @@ export async function startServer({ onReady, staticDir, ...opts }) {
 
     const server = withFlokServer(viteServer);
 
-    server.listen(opts.port, onReady || (() => {
-      const netResults = getPossibleIpAddresses();
-      const schema = opts.secure ? "https" : "http";
-      info(`Listening on ${schema}://localhost:${opts.port}`);
-      if (netResults.length > 1) {
-        info("If on LAN, try sharing with your friends one of these URLs:");
-        Object.entries(netResults).map(([k, v]) => {
-          info(`\t${k}: ${schema}://${v}:${opts.port}`);
-        });
-      } else {
-        info(
-          `If on LAN, try sharing with your friends ${schema}://${Object.values(netResults)[0]}:${opts.port}`);
-      }
-    }))
+    server.listen(
+      opts.port,
+      onReady ||
+        (() => {
+          const netResults = getPossibleIpAddresses();
+          const schema = opts.secure ? "https" : "http";
+          info(`Listening on ${schema}://localhost:${opts.port}`);
+          if (netResults.length > 1) {
+            info("If on LAN, try sharing with your friends one of these URLs:");
+            Object.entries(netResults).map(([k, v]) => {
+              info(`\t${k}: ${schema}://${v}:${opts.port}`);
+            });
+          } else {
+            info(
+              `If on LAN, try sharing with your friends ${schema}://${Object.values(netResults)[0]}:${opts.port}`,
+            );
+          }
+        }),
+    );
   } catch (err) {
     console.error(err);
     process.exit(1);

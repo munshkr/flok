@@ -47,7 +47,7 @@ class TidalREPL extends CommandREPL {
       debug(`Failed to get tidal data dir`);
       debug(
         `You will need to specify the location of your TidalCycles bootloading script.\n` +
-          `Read more: https://github.com/munshkr/flok/wiki/Failed-to-get-tidal-data-dir`
+          `Read more: https://github.com/munshkr/flok/wiki/Failed-to-get-tidal-data-dir`,
       );
       throw err;
     }

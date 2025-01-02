@@ -28,7 +28,7 @@ const DialogOverlay = ({
   <DialogPrimitive.Overlay
     className={cn(
       "data-[state=closed]:animate-out data-[state=open]:fade-in data-[state=closed]:fade-out fixed inset-0 z-50 bg-black/50 transition-all duration-100",
-      className
+      className,
     )}
     {...props}
     ref={ref}
@@ -49,9 +49,10 @@ const DialogContent = ({
       className={cn(
         "animate-in data-[state=open]:fade-in-90 data-[state=open]:slide-in-from-bottom-10 sm:zoom-in-90 data-[state=open]:sm:slide-in-from-bottom-0 fixed z-50 grid w-full gap-4 rounded-b-lg bg-white p-6 sm:max-w-lg sm:rounded-lg",
         "dark:bg-slate-900",
-        className
+        className,
       )}
-      {...props}>
+      {...props}
+    >
       {children}
       <DialogPrimitive.Close className="absolute top-4 right-4 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-slate-100 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900 dark:data-[state=open]:bg-slate-800">
         <X className="h-4 w-4" />
@@ -69,7 +70,7 @@ const DialogHeader = ({
   <div
     className={cn(
       "flex flex-col space-y-2 text-center sm:text-left overflow-auto",
-      className
+      className,
     )}
     {...props}
   />
@@ -83,7 +84,7 @@ const DialogFooter = ({
   <div
     className={cn(
       "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
-      className
+      className,
     )}
     {...props}
   />
@@ -100,7 +101,7 @@ const DialogTitle = ({
     className={cn(
       "text-lg font-semibold text-slate-900",
       "dark:text-slate-50",
-      className
+      className,
     )}
     {...props}
   />
