@@ -626,7 +626,7 @@ def set_pixel(*args):
 def update_pixels(*args):
     return _P5_INSTANCE.updatePixels(*args)
 
-def loadJSON(*args):
+def load_json(*args):
     return _P5_INSTANCE.loadJSON(*args)
 
 def load_strings(*args):
@@ -641,23 +641,15 @@ def loadXML(*args):
 def load_bytes(*args):
     return _P5_INSTANCE.loadBytes(*args)
 
-def httpGet(*args):
-    return _P5_INSTANCE.httpGet(*args)
-
-def httpPost(*args):
-    return _P5_INSTANCE.httpPost(*args)
-
-def httpDo(*args):
-    return _P5_INSTANCE.httpDo(*args)
+def parse_json(serialized_json, **kwargs):
+    import json
+    return json.loads(serialized_json, **kwargs)
 
 def create_writer(*args):
     return _P5_INSTANCE.createWriter(*args)
 
 def save(*args):
     return _P5_INSTANCE.save(*args)
-
-def saveJSON(*args):
-    return _P5_INSTANCE.saveJSON(*args)
 
 def save_json(*args):
     return _P5_INSTANCE.saveJSON(*args)
@@ -796,7 +788,7 @@ def text_align(*args):
     return _P5_INSTANCE.textAlign(*args)
 
 def text_leading(*args):
-    return _P5_INSTANmCE.textLeading(*args)
+    return _P5_INSTANCE.textLeading(*args)
 
 def text_size(*args):
     return _P5_INSTANCE.textSize(*args)
@@ -903,6 +895,11 @@ def remove_elements(*args):
 def changed(*args):
     return _P5_INSTANCE.changed(*args)
 
+def hex_color(color):
+    if hasattr(color, 'toString'):
+        return color.toString('#rrggbbaa')
+    return _P5_INSTANCE.hex(color)
+
 def input(*args):
     return _P5_INSTANCE.input(*args)
 
@@ -968,7 +965,6 @@ def size(*args):
     canvas = createCanvas(*args)
     background(200) # py5 compatibility
     return canvas
-
 
 def full_screen(*args):  # TODO: review
     """
@@ -1675,7 +1671,7 @@ def global_p5_injection(p5_sketch):
     Injects the p5js's skecth instance as a global variable to setup and draw functions
     """
 
-    def decorator(f, *args, **kwargs):
+    def decorator(f):
         def wrapper(*args, **kwargs):
             global _P5_INSTANCE
             _P5_INSTANCE = p5_sketch
@@ -1767,8 +1763,6 @@ declare global {
   }
 }
 
-// import { loadPyodide } from "https://cdn.skypack.dev/pyodide";
-
 type ErrorHandler = (err: string) => void;
 
 export class Py5Wrapper {
@@ -1798,7 +1792,7 @@ export class Py5Wrapper {
 
     this._pyodide = await loadPyodide({
       indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",
-      packages: ["micropip"],
+      packages: ["micropip", "numpy"],
     });
 
     await this._pyodide.runPythonAsync(`
