@@ -711,8 +711,16 @@ def log(*args):
 def mag(*args):
     return _P5_INSTANCE.mag(*args)
 
-def remap(*args):
-    return _P5_INSTANCE.map(*args)
+def remap(value, start1, stop1, start2, stop2):
+    denom = stop1 - start1
+    if denom == 0:
+        print(
+            f"remap({value}, {start1}, {stop1}, {start2}, {stop2}) called, which returns NaN (not a number)",
+            stacklevel=_non_py5_stacklevel(),
+        )
+        return float("nan")
+    else:
+        return start2 + (stop2 - start2) * ((value - start1) / denom)
 
 def norm(*args):
     return _P5_INSTANCE.norm(*args)
@@ -729,8 +737,32 @@ def sq(*args):
 def sqrt(*args):
     return _P5_INSTANCE.sqrt(*args)
 
+def __noise_array(*args):
+    out = []
+    if len(args) == 1:
+        print(1)
+        x = args[0]
+        for i in range(len(x)):
+            out.append(noise(x[i]))
+    elif len(args) == 2:
+        x, y = args[0], args[1]
+        for i in range(len(x)):
+            out.append(noise(x[i], y[i]))
+    elif len(args) == 3:
+        print(3)
+        x, y, z = args[0], args[1], args[2]
+        for i in range(len(x)):
+            out.append(noise(x[i], y[i], z[i]))
+    return out
+
 def noise(*args):
-    return _P5_INSTANCE.noise(*args)
+    if any(isinstance(arg, np.ndarray) for arg in args):
+        arrays = np.broadcast_arrays(*args)
+        return np.array(
+            __noise_array(*[a.flatten() for a in arrays])
+        ).reshape(arrays[0].shape)
+    else:
+        return _P5_INSTANCE.noise(*args)
 
 def noise_detail(*args):
     return _P5_INSTANCE.noiseDetail(*args)
@@ -738,21 +770,91 @@ def noise_detail(*args):
 def noise_seed(*args):
     return _P5_INSTANCE.noiseSeed(*args)
 
-println = print  # TODO: review
+println = print
 
+
+import builtins
+import types
 from random import randint
 
-def random_int(n):  # TODO: review
-    return randint(0,n)
+import numpy as np
 
-def random_seed(*args):
-    return _P5_INSTANCE.randomSeed(*args)
+np_random = np.random.default_rng()
+
+def random_seed(seed):
+    global np_random
+    np_random = np.random.default_rng(seed)
 
 def random(*args):
-    return _P5_INSTANCE.random(*args)
+    if len(args) == 0:
+        return np_random.uniform()
+    elif len(args) == 1:
+        high = args[0]
+        if isinstance(high, (builtins.int, np.integer, float)):
+            return np_random.uniform(0, high)
+    elif len(args) == 2:
+        low, high = args
+        if isinstance(low, (builtins.int, np.integer, float)) and isinstance(
+            high, (builtins.int, np.integer, float)
+        ):
+            return np_random.uniform(low, high)
+
+    types = ",".join([type(a).__name__ for a in args])
+    raise TypeError(f"No matching overloads found for Sketch.random({types})")
+
+def random_int(*args):
+    if len(args) == 0:
+        return np_random.integers(0, 1, endpoint=True)
+    elif len(args) == 1:
+        high = args[0]
+        if isinstance(high, (builtins.int, np.integer)):
+            return np_random.integers(0, high, endpoint=True)
+    elif len(args) == 2:
+        low, high = args
+        if isinstance(low, (builtins.int, np.integer)) and isinstance(
+            high, (builtins.int, np.integer)
+        ):
+            return np_random.integers(low, high, endpoint=True)
+
+    types = ",".join([type(a).__name__ for a in args])
+    raise TypeError(f"No matching overloads found for Sketch.random_int({types})")
+
+def random_choice(objects):
+    if len(objects):
+        return objects[np_random.integers(0, len(objects))]
+
+def random_sample(objects, size=1, replace=True):
+    if len(objects):
+        if isinstance(objects, types.GeneratorType):
+            objects = list(objects)
+        indices = np_random.choice(range(len(objects)), size=size, replace=replace)
+        if not isinstance(objects, builtins.list):
+            try:
+                return objects[indices]
+            except:
+                pass
+        return [objects[idx] for idx in indices]
+    else:
+        return []
 
 def random_gaussian(*args):
-    return _P5_INSTANCE.randomGaussian(*args)
+    if len(args) == 0:
+        return np_random.normal()
+    elif len(args) == 1:
+        loc = args[0]
+        if isinstance(loc, (builtins.int, np.integer)):
+            return np_random.normal(loc)
+    elif len(args) == 2:
+        loc, scale = args
+        if isinstance(loc, (builtins.int, np.integer, float)) and isinstance(
+            scale, (builtins.int, np.integer, float)
+        ):
+            return np_random.normal(loc, scale)
+
+    types = ",".join([type(a).__name__ for a in args])
+    raise TypeError(
+        f"No matching overloads found for Sketch.random_gaussian({types})"
+    )
 
 def acos(*args):
     return _P5_INSTANCE.acos(*args)
@@ -898,6 +1000,8 @@ def changed(*args):
 def hex_color(color):
     if hasattr(color, 'toString'):
         return color.toString('#rrggbbaa')
+    if isinstance(color, builtins.int):
+        return "#%06X%02X" % (color & 0xFFFFFF, (color >> 24) & 0xFF)
     return _P5_INSTANCE.hex(color)
 
 def input(*args):
@@ -974,8 +1078,6 @@ def full_screen(*args):  # TODO: review
     (renderer: str, display: int, /) -> None
     (display: int, renderer: str, /) -> None
     """
-    import builtins
-
     display = None  # TODO: see how to use
     renderer = None
     for arg in args[:2]:
