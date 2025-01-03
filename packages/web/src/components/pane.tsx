@@ -21,7 +21,7 @@ export const Pane = ({
   <div
     className={cn(
       "flex overflow-auto relative",
-      halfHeight ? "h-[50vh]" : "h-screen"
+      halfHeight ? "h-[50vh]" : "h-screen",
     )}
   >
     <TargetSelect

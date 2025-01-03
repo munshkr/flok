@@ -142,7 +142,7 @@ export function StatusBar({
       <div
         className={cn(
           "fixed bottom-0 left-0 z-10 h-8 w-screen p-1 pl-2 pr-2 text-xs flex flex-row shadow-lg shadow-black/50",
-          className
+          className,
         )}
       >
         {pubSubState && (

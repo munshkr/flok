@@ -57,13 +57,13 @@ export default (conn: any, topics: Map<string, Set<any>>) => {
                 const topic = map.setIfUndefined(
                   topics,
                   topicName,
-                  () => new Set()
+                  () => new Set(),
                 );
                 topic.add(conn);
                 // add topic to conn
                 subscribedTopics.add(topicName);
               }
-            }
+            },
           );
           break;
         case "unsubscribe":
@@ -73,7 +73,7 @@ export default (conn: any, topics: Map<string, Set<any>>) => {
               if (subs) {
                 subs.delete(conn);
               }
-            }
+            },
           );
           break;
         case "publish":

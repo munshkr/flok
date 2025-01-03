@@ -16,7 +16,7 @@ export function useWebTarget<Controller>(
     loadIf?: (deps: any[]) => boolean;
     onEval?: (instance: Controller, evalMsg: EvalMessage) => void;
     onError?: (err: unknown) => void;
-  }
+  },
 ) {
   const query = useQuery();
   const noWebEval = query.get("noWebEval")?.split(",") || [];

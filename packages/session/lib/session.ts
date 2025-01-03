@@ -143,7 +143,7 @@ export class Session {
 
     // Remove duplicates on items (duplicate ids) by creating an object/map
     const newTargets = Object.fromEntries(
-      items.map(({ id, target }) => [id, target])
+      items.map(({ id, target }) => [id, target]),
     );
 
     // Calculate ids to delete and ids to create
@@ -151,7 +151,7 @@ export class Session {
     const oldIds = Array.from(targets.keys());
     const toDelete = oldIds.filter((id) => !newIds.includes(id));
     const toAddOrUpdate = newIds.filter(
-      (id) => !oldIds.includes(id) || oldTargets[id] !== newTargets[id]
+      (id) => !oldIds.includes(id) || oldTargets[id] !== newTargets[id],
     );
     debug("toDelete", toDelete);
     debug("toAddOrUpdate", toAddOrUpdate);
@@ -164,7 +164,7 @@ export class Session {
 
   getDocuments(): Document[] {
     return Array.from(this._yTargets().keys()).map(
-      (id) => new Document(this, id)
+      (id) => new Document(this, id),
     );
   }
 
@@ -203,7 +203,7 @@ export class Session {
     target: string,
     body: string,
     context: EvalContext,
-    mode: EvalMode = "default"
+    mode: EvalMode = "default",
   ) {
     const msg: EvalMessage = {
       docId,
@@ -223,7 +223,7 @@ export class Session {
     if (mode !== "webLocal") {
       this._pubSubClient.publish(
         `session:${this.name}:target:${target}:eval`,
-        msg
+        msg,
       );
     }
   }
@@ -247,7 +247,7 @@ export class Session {
   destroy() {
     this.removeAllListeners();
     ["error", "open", "close"].forEach((e) =>
-      this._pubSubClient.removeAllListeners(e)
+      this._pubSubClient.removeAllListeners(e),
     );
     this._synced = false;
     this._initialized = false;
@@ -314,7 +314,7 @@ export class Session {
         `${this.wsUrl}/doc`,
         this.name,
         this.yDoc,
-        { awareness: this.awareness }
+        { awareness: this.awareness },
       );
       this._wsProvider.on("synced", () => {
         if (!this._synced) {
@@ -381,9 +381,9 @@ export class Session {
         // Notify to flok-repls
         this._pubSubClient.publish(
           `session:${this.name}:target:${target}:in`,
-          message
+          message,
         );
-      }
+      },
     );
 
     this._pubSubClient.subscribe(
@@ -392,7 +392,7 @@ export class Session {
         debug(`session:${this.name}:target:${target}:out`, args);
         this._emitter.emit(`message`, args);
         this._emitter.emit(`message:${target}`, args);
-      }
+      },
     );
 
     // Subscribes to messages directed to ourselves
@@ -401,11 +401,11 @@ export class Session {
       (args) => {
         debug(
           `session:${this.name}:target:${target}:user:${this.user}:out`,
-          args
+          args,
         );
         this._emitter.emit(`message`, args);
         this._emitter.emit(`message:${target}`, args);
-      }
+      },
     );
   }
 
@@ -438,7 +438,7 @@ export class Session {
         const newValue = ymap.get(key);
         debug(
           `Document "${key}" was added or updated. New target: "${newValue}". ` +
-            `Previous target: "${change.oldValue}".`
+            `Previous target: "${change.oldValue}".`,
         );
         debug(`Subscribe to ${newValue}`);
         this._subscribeToTarget(newValue);

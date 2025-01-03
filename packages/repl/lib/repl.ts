@@ -62,7 +62,7 @@ abstract class BaseREPL {
       ({ message }: { message: Message }) => {
         const { body } = message;
         this.write(body);
-      }
+      },
     );
   }
 

@@ -1,20 +1,21 @@
 @font-face {
-    font-family: 'Steps Mono';
-    src: url('Steps-Mono-Thin.woff2') format('woff2'),
-        url('Steps-Mono-Thin.woff') format('woff');
-    font-weight: 100;
-    font-style: normal;
-    font-display: swap;
-    size-adjust: 100%;
+  font-family: "Steps Mono";
+  src:
+    url("Steps-Mono-Thin.woff2") format("woff2"),
+    url("Steps-Mono-Thin.woff") format("woff");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 100%;
 }
 
 @font-face {
-    font-family: 'Steps-Mono';
-    src: url('Steps-Mono-Mono.woff2') format('woff2'),
-        url('Steps-Mono-Mono.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-    size-adjust: 95%;
+  font-family: "Steps-Mono";
+  src:
+    url("Steps-Mono-Mono.woff2") format("woff2"),
+    url("Steps-Mono-Mono.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  size-adjust: 95%;
 }
-

@@ -1,1 +1,1 @@
-declare module 'mercury-engine';
+declare module "mercury-engine";

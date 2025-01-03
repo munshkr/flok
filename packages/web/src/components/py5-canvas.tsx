@@ -8,16 +8,12 @@ interface Py5CanvasProps {
   ref: React.RefObject<HTMLCanvasElement>;
 }
 
-const Py5Canvas = ({
-  fullscreen,
-  displaySettings,
-  ref,
-}: Py5CanvasProps) => (
+const Py5Canvas = ({ fullscreen, displaySettings, ref }: Py5CanvasProps) => (
   <canvas
     ref={ref}
     className={cn(
       "absolute top-0 left-0",
-      fullscreen && "h-full w-full block overflow-hidden"
+      fullscreen && "h-full w-full block overflow-hidden",
     )}
     style={{
       imageRendering: "pixelated",

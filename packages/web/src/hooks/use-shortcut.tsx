@@ -12,7 +12,7 @@ export function useShortcut(
   keyShortcuts: string[],
   handler: (e: KeyboardEvent) => void,
   deps: any[] = [],
-  preventDefault: boolean = true
+  preventDefault: boolean = true,
 ) {
   keyShortcuts.forEach((keyShortcut) => {
     const parts = keyShortcut.toLowerCase().split("-");
