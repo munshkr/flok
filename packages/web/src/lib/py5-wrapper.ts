@@ -2,6 +2,13 @@ const wrapperContent = `
 # This pyp5js version is adapted to be more similar to py5 (py5coding.org)
 # by Alexandre B A Villares - https://abav.lugaralgum.com
 
+import builtins
+import types
+from numbers import Number
+from random import randint
+
+import numpy as np
+
 _P5_INSTANCE = None
 
 _CTX_MIDDLE = None
@@ -626,20 +633,37 @@ def set_pixel(*args):
 def update_pixels(*args):
     return _P5_INSTANCE.updatePixels(*args)
 
-def load_json(*args):
-    return _P5_INSTANCE.loadJSON(*args)
+def __load(path, **kwargs):
+    import re
+    from urllib.parse import urljoin
 
-def load_strings(*args):
-    return _P5_INSTANCE.loadStrings(*args)
+    import requests
+
+    if isinstance(path, builtins.str) and re.match(r"https?://", path.lower()):
+        url = path
+    else:
+        href = window.location.href
+        url = urljoin(href.replace(href.split('/')[-1], ''), path)
+
+    response = requests.get(url, **kwargs)
+    if response.status_code != 200:
+        raise RuntimeError("Unable to download URL: " + response.reason)
+    return response
+
+def load_json(json_path, **kwargs):
+    return __load(json_path, **kwargs).json()
+
+def load_strings(string_path, **kwargs):
+    return __load(string_path, **kwargs).text.splitlines()
+
+def load_bytes(bytes_path, **kwargs):
+    return bytearray(__load(bytes_path, **kwargs).content)
 
 def load_table(*args):
     return _P5_INSTANCE.loadTable(*args)
 
 def loadXML(*args):
     return _P5_INSTANCE.loadXML(*args)
-
-def load_bytes(*args):
-    return _P5_INSTANCE.loadBytes(*args)
 
 def parse_json(serialized_json, **kwargs):
     import json
@@ -771,14 +795,6 @@ def noise_seed(*args):
     return _P5_INSTANCE.noiseSeed(*args)
 
 println = print
-
-
-import builtins
-import types
-from random import randint
-
-import numpy as np
-
 np_random = np.random.default_rng()
 
 def random_seed(seed):
@@ -1249,8 +1265,6 @@ push_style = push
 # Py5Vector is a wrapper/helper class for p5.Vector objets
 # providing names similar to Processing Python or Java modes
 # but mostly keeping p5js functionality TODO: review for py5
-
-from numbers import Number
 
 class Py5Vector:
 
@@ -1894,12 +1908,14 @@ export class Py5Wrapper {
 
     this._pyodide = await loadPyodide({
       indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",
-      packages: ["micropip", "numpy"],
+      packages: ["micropip", "numpy", "requests", "pyodide-http"],
     });
 
     await this._pyodide.runPythonAsync(`
-      import io, code, sys
+      import io, code, sys, pyodide_http
       from js import p5, window, document
+
+      pyodide_http.patch_all()
       print(sys.version)
     `);
 
