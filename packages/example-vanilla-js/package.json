@@ -1,7 +1,7 @@
 {
   "name": "example-vanilla-js",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.3.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,8 +17,8 @@
     "@codemirror/state": "^6.2.0",
     "@codemirror/theme-one-dark": "^6.1.1",
     "@codemirror/view": "^6.9.3",
-    "@flok-editor/cm-eval": "^1.0.1",
-    "@flok-editor/session": "^1.1.0",
+    "@flok-editor/cm-eval": "^1.3.0",
+    "@flok-editor/session": "^1.3.0",
     "codemirror": "^6.0.1",
     "y-codemirror.next": "^0.3.2",
     "y-indexeddb": "^9.0.9",
