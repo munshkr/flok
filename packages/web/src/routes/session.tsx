@@ -53,6 +53,7 @@ declare global {
     hydra: any;
     mercury: any;
     strudel: any;
+    punctual: any;
   }
 }
 
