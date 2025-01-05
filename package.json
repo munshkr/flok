@@ -9,8 +9,8 @@
   "scripts": {
     "build": "lerna run build",
     "check": "lerna run check",
-    "lint": "prettier -c .",
-    "format": "prettier -w ."
+    "lint": "lerna run lint",
+    "format": "lerna run format"
   },
   "keywords": [
     "codemirror",
