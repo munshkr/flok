@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-01-05
+
+### New Features
+
+- Vim keybindings (#280)
+- Themes and font families (#283, #303)
+- Display settings dialog for changing canvas resolution (#301)
+- Define `fft`, `P` and `useStrudelCanvas` functions for Hydra (#310, #309)
+
+### Bugfixes and minor changes
+
+- Use line separator for Windows on REPL command copy dialog (#285)
+- Initialize audio on Strudel on first user interaction (keydown/mouse) (#294)
+- Fix flash/highlight stuck on multiple evaluations (#308)
+- Add angle brackets to Tidal language autoclose (#302)
+- Upgrade `@strudel/*` packages to v1.1.0; add `@strudel/draw` (#292)
+
 ## [1.2.0] - 2024-04-26
 
 ### New Features

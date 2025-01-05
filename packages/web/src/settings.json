@@ -1,11 +1,12 @@
 {
   "knownTargets": [
     "foxdot",
-    "renardo",
     "hydra",
-    "mercury",
     "mercury-web",
+    "mercury",
+    "punctual",
     "py5",
+    "renardo",
     "sardine",
     "sclang",
     "strudel",
@@ -14,17 +15,24 @@
   "defaultTarget": "hydra",
   "langByTarget": {
     "foxdot": "python",
-    "renardo": "python",
     "hydra": "javascript",
-    "mercury": "javascript",
     "mercury-web": "javascript",
+    "mercury": "javascript",
+    "punctual": "tidal",
     "py5": "python",
+    "renardo": "python",
     "sardine": "python",
     "sclang": "javascript",
     "strudel": "javascript",
     "tidal": "tidal"
   },
-  "targetsWithDocumentEvalMode": ["mercury", "mercury-web", "strudel", "py5"],
+  "targetsWithDocumentEvalMode": [
+    "mercury-web",
+    "mercury",
+    "punctual",
+    "py5",
+    "strudel"
+  ],
   "panicCodes": {
     "tidal": "hush",
     "sclang": "CmdPeriod.run",
@@ -38,7 +46,7 @@
     "strudel": "silence",
     "sardine": "panic()"
   },
-  "webTargets": ["hydra", "strudel", "mercury-web", "py5"],
+  "webTargets": ["hydra", "mercury-web", "punctual", "py5", "strudel"],
   "repoUrl": "https://github.com/munshkr/flok",
   "changeLogUrl": "https://github.com/munshkr/flok/blob/main/CHANGELOG.md#changelog"
 }
