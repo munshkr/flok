@@ -35,6 +35,7 @@
     "@types/node": "^18.14.6",
     "@types/uuid": "^9.0.1",
     "@types/ws": "^8.5.4",
+    "prettier": "^3.4.2",
     "typescript": "^4.9.4"
   }
 }

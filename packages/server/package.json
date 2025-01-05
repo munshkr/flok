@@ -19,5 +19,8 @@
     "lib0": "^0.2.63",
     "y-protocols": "^1.0.5",
     "yjs": "^13.6.21"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2"
   }
 }
