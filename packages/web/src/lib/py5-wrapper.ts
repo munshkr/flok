@@ -839,7 +839,20 @@ def noise_detail(*args):
 def noise_seed(*args):
     return _P5_INSTANCE.noiseSeed(*args)
 
-println = print
+class _DefaultPrinter:
+    def print(self, *args, **kwargs):
+        builtins.print(*args, **kwargs)
+
+_println_stream = _DefaultPrinter()
+
+def set_println_stream(println_stream):
+    global _println_stream
+    _println_stream = println_stream
+
+def println(*args, sep=" ", end="\\n", stderr=False):
+    msg = sep.join(str(x) for x in args)
+    _println_stream.print(msg, end=end, stderr=stderr)
+
 np_random = np.random.default_rng()
 
 def random_seed(seed):
