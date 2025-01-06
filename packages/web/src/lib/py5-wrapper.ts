@@ -806,12 +806,12 @@ def random(*args):
         return np_random.uniform()
     elif len(args) == 1:
         high = args[0]
-        if isinstance(high, (builtins.int, np.integer, float)):
+        if isinstance(high, (builtins.int, np.integer, builtins.float)):
             return np_random.uniform(0, high)
     elif len(args) == 2:
         low, high = args
-        if isinstance(low, (builtins.int, np.integer, float)) and isinstance(
-            high, (builtins.int, np.integer, float)
+        if isinstance(low, (builtins.int, np.integer, builtins.float)) and isinstance(
+            high, (builtins.int, np.integer, builtins.float)
         ):
             return np_random.uniform(low, high)
 
@@ -862,8 +862,8 @@ def random_gaussian(*args):
             return np_random.normal(loc)
     elif len(args) == 2:
         loc, scale = args
-        if isinstance(loc, (builtins.int, np.integer, float)) and isinstance(
-            scale, (builtins.int, np.integer, float)
+        if isinstance(loc, (builtins.int, np.integer, builtins.float)) and isinstance(
+            scale, (builtins.int, np.integer, builtins.float)
         ):
             return np_random.normal(loc, scale)
 
@@ -1920,12 +1920,16 @@ export class Py5Wrapper {
     `);
 
     this.initialized = true;
-    // console.log("Py5 initialized");
     this._onWarning("Py5 initialized");
+    await this.tryEval("");
   }
 
   async tryEval(userCode: string) {
-    if (!this.initialized) await this.initialize();
+    if (!this.initialized) {
+      this._onWarning("Engine still loading");
+      this.initialize();
+      return;
+    }
 
     if (window._p5_instance) {
       window._p5_instance.remove();
