@@ -1907,7 +1907,7 @@ export class Py5Wrapper {
     if (this.initialized) return;
 
     this._pyodide = await loadPyodide({
-      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.27.0/full/",
       packages: ["micropip", "numpy", "requests", "pyodide-http"],
     });
 
