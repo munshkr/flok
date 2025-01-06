@@ -332,6 +332,21 @@ def bezier_tangent(*args):
 def bezier_vertex(*args):
     return _P5_INSTANCE.bezierVertex(*args)
 
+def bezier_vertices(coordinates, /):
+    if isinstance(coordinates, types.GeneratorType):
+        coordinates = builtins.list(coordinates)
+    if not len(coordinates):
+        return
+
+    if len(coordinates[0]) == 6:
+        for c in coordinates:
+            bezier_vertex(c[0], c[1], c[2], c[3], c[4], c[5])
+    elif len(coordinates[0]) == 9:
+        for c in coordinates:
+            bezier_vertex(c[0], c[1], c[2], c[3], c[4], c[5], c[6], c[7], c[8])
+    else:
+        raise RuntimeError("the second axis of parameter coordinates must have a length equal to 6 or 9")
+
 def curve(*args):
     return _P5_INSTANCE.curve(*args)
 
@@ -380,6 +395,21 @@ class begin_closed_shape():
 def curve_vertex(*args):
     return _P5_INSTANCE.curveVertex(*args)
 
+def curve_vertices(coordinates, /):
+    if isinstance(coordinates, types.GeneratorType):
+        coordinates = builtins.list(coordinates)
+    if not len(coordinates):
+        return
+
+    if len(coordinates[0]) == 2:
+        for c in coordinates:
+            curve_vertex(c[0], c[1])
+    elif len(coordinates[0]) == 3:
+        for c in coordinates:
+            curve_vertex(c[0], c[1], c[2])
+    else:
+        raise RuntimeError("the second axis of parameter coordinates must have a length equal to 2 or 3")
+
 def end_contour(*args):
     return _P5_INSTANCE.endContour(*args)
 
@@ -388,6 +418,21 @@ def end_shape(*args):
 
 def quadratic_vertex(*args):
     return _P5_INSTANCE.quadraticVertex(*args)
+
+def quadratic_vertices(coordinates, /):
+    if isinstance(coordinates, types.GeneratorType):
+        coordinates = builtins.list(coordinates)
+    if not len(coordinates):
+        return
+
+    if len(coordinates[0]) == 4:
+        for c in coordinates:
+            quadratic_vertex(c[0], c[1], c[2], c[3])
+    elif len(coordinates[0]) == 6:
+        for c in coordinates:
+            quadratic_vertex(c[0], c[1], c[2], c[3], c[4], c[5])
+    else:
+        raise RuntimeError("the second axis of parameter coordinates must have a length equal to 4 or 6")
 
 def vertex(*args):
     return _P5_INSTANCE.vertex(*args)
