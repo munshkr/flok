@@ -24,6 +24,7 @@ const wrapperContent = `
 
 import builtins
 import types
+import weakref
 from numbers import Number
 from random import randint
 
@@ -1300,7 +1301,7 @@ def __keyPressed(e):
     try:
         key_pressed()
     except TypeError:
-        key_pressed(e)
+        key_pressed(Py5KeyEvent(e))
     except NameError:
         pass
 
@@ -1308,7 +1309,7 @@ def __keyReleased(e):
     try:
         key_released()
     except TypeError:
-        key_released(e)
+        key_released(Py5KeyEvent(e))
     except NameError:
         pass
 
@@ -1316,7 +1317,7 @@ def __keyTyped(e):
     try:
         key_typed()
     except TypeError:
-        key_typed(e)
+        key_typed(Py5KeyEvent(e))
     except NameError:
         pass
 
@@ -1324,7 +1325,7 @@ def __keyIsDown(e):
     try:
         key_is_down()
     except TypeError:
-        key_is_down(e)
+        key_is_down(Py5KeyEvent(e))
     except NameError:
         pass
 
@@ -1681,6 +1682,107 @@ class Py5Vector:
         return self
 
 Vector = PVector = Py5Vector
+
+
+def error_msg(obj_name, word, obj, module=False):
+    msg = (
+        "py5 has no field or function"
+        if module
+        else obj_name + " objects have no fields or methods"
+    )
+    msg += ' named "' + word + '"'
+
+    if (
+        word
+        and word[0] != "_"
+        and (suggestion_list := suggestions(word, set(dir(obj))))
+    ):
+        msg += ". Did you mean " + suggestion_list + "?"
+
+    return msg
+
+
+class Modifier(builtins.int):
+    def __init__(self, x):
+        self._x = x
+
+    def __and__(self, o):
+        return self._x == o
+
+
+class Py5KeyEvent:
+    _py5_object_cache = weakref.WeakSet()
+
+    def __new__(cls, pkeyevent):
+        for o in cls._py5_object_cache:
+            if pkeyevent == o._instance:
+                return o
+        else:
+            o = object.__new__(Py5KeyEvent)
+            o._instance = pkeyevent
+            cls._py5_object_cache.add(o)
+            return o
+
+    def __repr__(self):
+        key = self.get_key()
+        action = self.get_action()
+
+        action_str = "UNKNOWN"
+        for k, v in Py5KeyEvent.__dict__.items():
+            if k == k.upper() and action == v:
+                action_str = k
+                break
+
+        if key == "\uffff":  # py5.CODED
+            key = "CODED"
+
+        return f"Py5KeyEvent(key=" + key + ", action=" + action_str + ")"
+
+    def __getattr__(self, name):
+        raise AttributeError(error_msg("Py5KeyEvent", name, self))
+
+    ALT = 18
+    CTRL = 17
+    SHIFT = 16
+
+    META = 4
+    PRESS = 1
+    RELEASE = 2
+    TYPE = 3
+
+    def get_action(self):
+        return self._instance.key
+
+    def get_key(self):
+        return self._instance.key
+
+    def get_key_code(self):
+        return self._instance.keyCode
+
+    def get_millis(self):
+        return self._instance.timeStamp
+
+    def get_modifiers(self):
+        return Modifier(self._instance.keyCode)
+
+    def get_native(self):
+        return self._instance.getNative()
+
+    def is_alt_down(self):
+        return self._instance.altKey
+
+    def is_auto_repeat(self):
+        return self._instance.isAutoRepeat()
+
+    def is_control_down(self):
+        return self._instance.ctrlKey
+
+    def is_meta_down(self):
+        return self._instance.metaKey
+
+    def is_shift_down(self):
+        return self._instance.shiftKey
+
 
 def pre_draw(p5_instance, draw_func, *args, **kwargs):
     """
