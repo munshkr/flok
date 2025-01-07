@@ -43,7 +43,7 @@
     "hydra": "hush()",
     "strudel": "silence",
     "sardine": "panic()",
-    "dummy" : "silence"
+    "dummy": "silence"
   },
   "webTargets": ["hydra", "mercury-web", "punctual", "strudel"],
   "repoUrl": "https://github.com/munshkr/flok",
