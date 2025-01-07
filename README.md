@@ -27,25 +27,25 @@ Web-based P2P collaborative editor for live coding music and graphics
 
 ### Keybindings
 
-*Some keybindings may differ depending on the language/target you choose*
+*Some keybindings may differ depending on the language/target you choose, and the operating system*
 
-| Keybinding | Function |
-| - | - |
-| `alt/option` `enter` | Evaluate all |
-| `ctrl/cmd` `enter` | Evaluate block, Evaluate selection |
-| `shift` `enter` | Evaluate line |
+| Keybinding                | Function                             |
+| ------------------------- | ------------------------------------ |
+| `alt/option` `enter`      | Evaluate all                         |
+| `ctrl/cmd` `enter`        | Evaluate block, Evaluate selection   |
+| `shift` `enter`           | Evaluate line                        |
 | `ctrl/cmd/option/alt` `.` | Silence (output depends on language) |
-| `cmd/ctrl` `shift` `h` | Show/Hide editor panels |
-| `cmd/ctrl` `x` | Cut selected text |
-| `cmd/ctrl` `c` | Copy selected text |
-| `cmd/ctrl` `v` | Paste cut/copied text |
-| `cmd/ctrl` `z/u` | Undo edit |
-| `cmd/ctrl` `shift` `z/u` | Redo edit |
-| `cmd/ctrl` `}` | add indentation |
-| `cmd/ctrl` `{` | remove indentation |
-| `cmd/ctrl` `f` | search and replace |
+| `cmd/ctrl` `shift` `h`    | Show/Hide editor panels              |
+| `cmd/ctrl` `x`            | Cut selected text                    |
+| `cmd/ctrl` `c`            | Copy selected text                   |
+| `cmd/ctrl` `v`            | Paste cut/copied text                |
+| `cmd/ctrl` `z/u`          | Undo edit                            |
+| `cmd/ctrl` `shift` `z/u`  | Redo edit                            |
+| `cmd/ctrl` `}`            | add indentation                      |
+| `cmd/ctrl` `{`            | remove indentation                   |
+| `cmd/ctrl` `f`            | search and replace                   |
 
-<!-- On Mac (not tested on Windows/Linux)
+*On Mac:*
 
 | `ctrl` `e` | jump to end of the line |
 | `ctrl` `a` | jump to the beginning of the line |
@@ -57,7 +57,7 @@ Web-based P2P collaborative editor for live coding music and graphics
 | `ctrl` `l` | select whole line after cursor |
 | `ctrl` `v` | jump to bottom end |
 | `ctrl` `b` | move cursor to the left |
-| `ctrl` `n` | move cursor down | -->
+| `ctrl` `n` | move cursor down |
 
 ### Public server
 
@@ -174,11 +174,17 @@ connect to your local server, because of their own network configuration.
 
 #### Dummy
 
-The Dummy target as a REPL target that does not have any syntax-highlighting and can be used for any purpose you like (for example if you like to use a language that is not yet supported in flok). 
+The "dummy" target is a REPL target that forwards messages to an OSC server. It
+does not have any syntax highlighting and can be used for any purpose you like.
+This is useful if you want to use a language that is not yet supported in Flok,
+and can receive OSC messages.
 
 Use `flok-repl` with the `-t dummy` parameter. 
 
-You can now receive the code you evaluate on port `3001`. The code is send as a string (including all the linebreaks, whitespaces, etc) on the osc-address `/flok`. If you use the `panic` shortkey you will receive the osc-message `/flok silence`. You can use this to stop all your audio/visual processes.
+By default, it will send OSC messages to port 3001. Code evaluations are sent as
+a string (including all line breaks, whitespaces, etc.) to the OSC address
+`/flok`. If you use the `panic` shortcut key, you will receive the OSC message
+`/flok silence`, which you can use to stop all your audio/visual processes.
 
 #### TidalCycles
 
