@@ -9,7 +9,8 @@
     "sardine",
     "sclang",
     "strudel",
-    "tidal"
+    "tidal",
+    "dummy"
   ],
   "defaultTarget": "hydra",
   "langByTarget": {
@@ -22,7 +23,8 @@
     "sardine": "python",
     "sclang": "javascript",
     "strudel": "javascript",
-    "tidal": "tidal"
+    "tidal": "tidal",
+    "dummy": "none"
   },
   "targetsWithDocumentEvalMode": [
     "mercury-web",
@@ -40,7 +42,8 @@
     "mercury-web": "silence",
     "hydra": "hush()",
     "strudel": "silence",
-    "sardine": "panic()"
+    "sardine": "panic()",
+    "dummy": "silence"
   },
   "webTargets": ["hydra", "mercury-web", "punctual", "strudel"],
   "repoUrl": "https://github.com/munshkr/flok",

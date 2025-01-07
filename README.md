@@ -25,6 +25,40 @@ Web-based P2P collaborative editor for live coding music and graphics
 
 ## Usage
 
+### Keybindings
+
+*Some keybindings may differ depending on the language/target you choose, and the operating system*
+
+| Keybinding                | Function                             |
+| ------------------------- | ------------------------------------ |
+| `alt/option` `enter`      | Evaluate all                         |
+| `ctrl/cmd` `enter`        | Evaluate block, Evaluate selection   |
+| `shift` `enter`           | Evaluate line                        |
+| `ctrl/cmd/option/alt` `.` | Silence (output depends on language) |
+| `cmd/ctrl` `shift` `h`    | Show/Hide editor panels              |
+| `cmd/ctrl` `x`            | Cut selected text                    |
+| `cmd/ctrl` `c`            | Copy selected text                   |
+| `cmd/ctrl` `v`            | Paste cut/copied text                |
+| `cmd/ctrl` `z/u`          | Undo edit                            |
+| `cmd/ctrl` `shift` `z/u`  | Redo edit                            |
+| `cmd/ctrl` `}`            | add indentation                      |
+| `cmd/ctrl` `{`            | remove indentation                   |
+| `cmd/ctrl` `f`            | search and replace                   |
+
+*On Mac:*
+
+| `ctrl` `e` | jump to end of the line |
+| `ctrl` `a` | jump to the beginning of the line |
+| `ctrl` `t` | move character one step right |
+| `ctrl` `y` | delete selected text |
+| `ctrl` `o` | insert linebreak |
+| `ctrl` `d` | delete character on the right of cursor |
+| `ctrl` `h` | backspace character on the left of cursor |
+| `ctrl` `l` | select whole line after cursor |
+| `ctrl` `v` | jump to bottom end |
+| `ctrl` `b` | move cursor to the left |
+| `ctrl` `n` | move cursor down |
+
 ### Public server
 
 **WARNING - Please Read**: Using a public server can be dangerous as _anyone_
@@ -137,6 +171,20 @@ port 3000. It's possible that some of your remote friends won't be able to
 connect to your local server, because of their own network configuration.
 
 ### Supported REPL targets
+
+#### Dummy
+
+The "dummy" target is a REPL target that forwards messages to an OSC server. It
+does not have any syntax highlighting and can be used for any purpose you like.
+This is useful if you want to use a language that is not yet supported in Flok,
+and can receive OSC messages.
+
+Use `flok-repl` with the `-t dummy` parameter. 
+
+By default, it will send OSC messages to port 3001. Code evaluations are sent as
+a string (including all line breaks, whitespaces, etc.) to the OSC address
+`/flok`. If you use the `panic` shortcut key, you will receive the OSC message
+`/flok silence`, which you can use to stop all your audio/visual processes.
 
 #### TidalCycles
 
@@ -317,6 +365,16 @@ To run production build:
 
 ```sh
 npm start
+```
+
+To run the repl while developing go to:
+
+```sh
+cd packages/repl/
+```
+
+```sh
+npm exec -- flok-repl -H ws://localhost:3000 -s <session> -t <target> -T user:<name>
 ```
 
 ### Packages overview

@@ -137,7 +137,7 @@ export const Editor = ({ document, settings, ref, ...props }: EditorProps) => {
 
   const readOnly = !!query.get("readOnly");
   const language: string = langByTarget[document.target] || defaultLanguage;
-  const languageExtension = langExtensionsByLanguage[language] || javascript;
+  const languageExtension = langExtensionsByLanguage[language] || null;
   const extensions = [
     EditorView.theme({
       "&": {
@@ -175,7 +175,7 @@ export const Editor = ({ document, settings, ref, ...props }: EditorProps) => {
       },
     }),
     flokSetup(document, { readOnly }),
-    languageExtension(),
+    languageExtension ? languageExtension() : [],
     highlightExtension,
     readOnly ? EditorState.readOnly.of(true) : [],
     lineNumbers ? lineNumbersExtension() : [],
