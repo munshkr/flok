@@ -23,8 +23,12 @@ const wrapperContent = `
 # by Alexandre B A Villares - https://abav.lugaralgum.com
 
 import builtins
+import operator
+import re
 import types
+import warnings
 import weakref
+from collections.abc import Iterable, Sequence
 from numbers import Number
 from random import randint
 
@@ -1342,346 +1346,706 @@ pop_style = pop
 push_matrix = push
 push_style = push
 
-# Py5Vector is a wrapper/helper class for p5.Vector objets
-# providing names similar to Processing Python or Java modes
-# but mostly keeping p5js functionality TODO: review for py5
 
-class Py5Vector:
+class Py5Vector(Sequence):
+    _DEFAULT_DIM = 3
 
-    def __init__(self, x=0, y=0, z=0):
-        self.__vector = createVector(x, y, z)
-        self.add = self.__instance_add__
-        self.sub = self.__instance_sub__
-        self.mult = self.__instance_mult__
-        self.div = self.__instance_div__
-        self.cross = self.__instance_cross__
-        self.dist = self.__instance_dist__
-        self.dot = self.__instance_dot__
-        self.lerp = self.__instance_lerp__
+    def __new__(cls, *args, dim: int = None, dtype: type = None, copy: bool = True):
+        kwarg_dim = dim
+        kwarg_dtype = dtype
 
-    @property
-    def x(self):
-        return self.__vector.x
+        used_default_dim = len(args) == 0 and dim is None
+        dim = Py5Vector._DEFAULT_DIM if dim is None else dim
+        dtype = np.float64 if dtype is None else dtype
 
-    @x.setter
-    def x(self, x):
-        self.__vector.x = x
+        if not isinstance(dtype, (type, np.dtype)) or not np.issubdtype(
+            dtype, np.floating
+        ):
+            raise RuntimeError(
+                "dtype parameter is not a valid numpy float type (i.e., np.float32, np.float64, etc)"
+            )
 
-    @property
-    def y(self):
-        return self.__vector.y
+        if copy == False:
+            if not (
+                len(args) == 1
+                and isinstance(args[0], np.ndarray)
+                and np.issubdtype(args[0].dtype, np.floating)
+            ):
+                raise RuntimeError(
+                    "When the copy parameter is False, please provide a single properly sized numpy array with a floating dtype for py5 to store vector data"
+                )
+            if kwarg_dtype is not None and args[0].dtype != kwarg_dtype:
+                raise RuntimeError(
+                    "When the copy parameter is False, the dtype parameter cannot differ from the provided numpy array's dtype"
+                )
 
-    @y.setter
-    def y(self, y):
-        self.__vector.y = y
+        if len(args) == 0:
+            data = np.zeros(dim, dtype=dtype)
+        elif len(args) == 1 and isinstance(args[0], Iterable):
+            arg0 = args[0]
+            if not hasattr(arg0, "__len__"):
+                arg0 = list(arg0)
+            if 2 <= len(arg0) <= 4:
+                if isinstance(arg0, Py5Vector):
+                    arg0 = arg0._data
+                if isinstance(arg0, np.ndarray):
+                    if copy:
+                        data = arg0.astype(dtype).flatten()
+                    else:
+                        data = arg0.flatten()
+                else:
+                    data = np.array(arg0, dtype=dtype).flatten()
+            else:
+                raise RuntimeError(f"Cannot create a Py5Vector with {len(arg0)} values")
+        elif 2 <= len(args) <= 4:
+            dtype_ = None or kwarg_dtype
+            data_ = []
+            for i, item in enumerate(args):
+                if isinstance(item, (np.ndarray, Py5Vector)):
+                    if np.issubdtype(item.dtype, np.floating) or np.issubdtype(
+                        item.dtype, np.integer
+                    ):
+                        if kwarg_dtype is None:
+                            dtype_ = (
+                                item.dtype
+                                if dtype_ is None
+                                else max(dtype_, item.dtype)
+                            )
+                        data_.extend(
+                            item.flatten().tolist()
+                            if isinstance(item, np.ndarray)
+                            else item.tolist()
+                        )
+                    else:
+                        raise RuntimeError(
+                            f"Argument {i} is a numpy array with dtype {item.dtype} and cannot be used in a Py5Vector"
+                        )
+                elif isinstance(item, Iterable):
+                    data_.extend(item)
+                elif isinstance(item, (builtins.int, builtins.float, np.integer, np.floating)):
+                    data_.append(item)
+                else:
+                    raise RuntimeError(
+                        f"Argument {i} has type {type(item).__name__} and cannot be used used in a Py5Vector"
+                    )
+            if 2 <= len(data_) <= 4:
+                data = np.array(data_, dtype=dtype_ or dtype)
+            else:
+                raise RuntimeError(
+                    f"Cannot create a Py5Vector with {len(data_)} values"
+                )
+        else:
+            raise RuntimeError(f"Cannot create Py5Vector instance with {str(args)}")
 
-    @property
-    def z(self):
-        return self.__vector.z
+        dim = len(data)
+        dtype = data.dtype
 
-    @z.setter
-    def z(self, z):
-        self.__vector.z = z
+        if kwarg_dim is not None and dim != kwarg_dim:
+            raise RuntimeError(
+                f"dim parameter is {kwarg_dim} but Py5Vector values imply dimension of {dim}"
+            )
+        if kwarg_dtype is not None and dtype != kwarg_dtype:
+            raise RuntimeError(
+                f"dtype parameter is {kwarg_dtype} but Py5Vector values imply dtype of {dtype}"
+            )
 
-    @property
-    def mag(self):
-        return self.__vector.mag()
+        if dim == 2:
+            v = object.__new__(Py5Vector2D)
+        elif dim == 3:
+            v = object.__new__(Py5Vector3D)
+        elif dim == 4:
+            v = object.__new__(Py5Vector4D)
+        else:
+            raise RuntimeError(f"Why is dim == {dim}? Please report bug")
 
-    @mag.setter   # py5 compat
-    def mag(self, mag):
-        self.set_mag(mag)
+        v._data = data
+        v._used_default_dim = used_default_dim
 
-    @property
-    def mag_sq(self):
-        return self.__vector.magSq()
+        return v
 
-    def set_mag(self, mag):
-        self.__vector.setMag(mag)
+    def __getattr__(self, name):
+        if hasattr(self, "_data") and not (set(name) - set("xyzw"[: self._data.size])):
+            if 2 <= len(name) <= 4:
+                return Py5Vector(
+                    self._data[["xyzw".index(c) for c in name]],
+                    dtype=self._data.dtype,
+                    copy=True,
+                )
+            else:
+                raise RuntimeError(
+                    "Invalid swizzle: length must be between 2 and 4 characters"
+                )
+        else:
+            raise AttributeError(error_msg("Py5Vector", name, self))
+
+    def __setattr__(self, name, val):
+        if name.startswith("_") or not (
+            hasattr(self, "_data") and not (set(name) - set("xyzw"[: self._data.size]))
+        ):
+            super().__setattr__(name, val)
+        elif len(name) == len(set(name)):
+            if not isinstance(val, Iterable) or len(val) in [1, len(name)]:
+                self._data[["xyzw".index(c) for c in name]] = val
+            else:
+                raise RuntimeError(
+                    f"Mismatch: value length of {len(val)} cannot be assigned to swizzle of length {len(name)}"
+                )
+        else:
+            raise RuntimeError(
+                "Invalid swizzle: repeats are not allowed in assignments"
+            )
+
+    def __getitem__(self, key):
+        return self._data[key]
+
+    def __setitem__(self, key, val):
+        self._data[key] = val
+
+    def __len__(self):
+        return self._data.size
+
+    def __iter__(self):
+        return self._data.__iter__()
+
+    def __str__(self):
+        vals = ", ".join(re.split(r"\s+", str(self._data)[1:-1].strip()))
+        return f"Py5Vector{self._data.size}D({vals})"
+
+    def __repr__(self):
+        return f"Py5Vector{self._data.size}D{repr(self._data)[5:]}"
+
+    def _check_used_default_dim(self, other):
+        if self._used_default_dim or (
+            isinstance(other, Py5Vector) and other._used_default_dim
+        ):
+            other_dim = self._data.size + other._data.size - Py5Vector._DEFAULT_DIM
+            return f" Note that one of the Py5Vectors was created with Py5Vector(), and is therefore by default a {Py5Vector._DEFAULT_DIM}D vector. If you wanted a {other_dim}D vector instead, use the 'dim' parameter, like this: Py5Vector(dim={other_dim})."
+        else:
+            return ""
+
+    def _run_op(
+        self, op, other, opname, swap=False, inplace=False, allow2vectors=False
+    ):
+        if isinstance(other, Py5Vector):
+            if not allow2vectors:
+                raise RuntimeError(
+                    f"Cannot perform {opname} operation on two Py5Vectors. If you want to do {opname} on the Py5Vector's data elementwise, use the '.data' attribute to access the Py5Vector's data as a numpy array."
+                )
+            elif self._data.size != other._data.size:
+                raise RuntimeError(
+                    f"Cannot perform {opname} operation on a {self._data.size}D Py5Vector and a {other._data.size}D Py5Vector. The dimensions must be the same."
+                    + self._check_used_default_dim(other)
+                )
+            elif inplace:
+                op(self._data[: other._data.size], other._data[: other._data.size])
+                return self
+            else:
+                a, b = (other, self) if swap else (self, other)
+                return Py5Vector(op(a._data, b._data), dim=a._data.size, copy=False)
+        else:
+            try:
+                if inplace:
+                    op(self._data, other)
+                    return self
+                else:
+                    a, b = (other, self._data) if swap else (self._data, other)
+                    result = op(a, b)
+                    return (
+                        Py5Vector(result, copy=False)
+                        if result.ndim == 1 and 2 <= result.size <= 4
+                        else result
+                    )
+            except ValueError as e:
+                other_type = (
+                    "numpy array"
+                    if isinstance(other, np.ndarray)
+                    else f"{type(other).__name__} object"
+                )
+                raise RuntimeError(
+                    f"Unable to perform {opname} on a Py5Vector and a {other_type}, probably because of a size mismatch. The error message is: "
+                    + str(e)
+                ) from None
+
+    def __add__(self, other):
+        return self._run_op(operator.add, other, "addition", allow2vectors=True)
+
+    def __iadd__(self, other):
+        return self._run_op(
+            operator.iadd, other, "addition", inplace=True, allow2vectors=True
+        )
+
+    def __radd__(self, other):
+        return self._run_op(
+            operator.add, other, "addition", swap=True, allow2vectors=True
+        )
+
+    def __sub__(self, other):
+        return self._run_op(operator.sub, other, "subtraction", allow2vectors=True)
+
+    def __isub__(self, other):
+        return self._run_op(
+            operator.isub, other, "subtraction", inplace=True, allow2vectors=True
+        )
+
+    def __rsub__(self, other):
+        return self._run_op(
+            operator.sub, other, "subtraction", swap=True, allow2vectors=True
+        )
+
+    def __mul__(self, other):
+        return self._run_op(operator.mul, other, "multiplication")
+
+    def __imul__(self, other):
+        return self._run_op(operator.imul, other, "multiplication", inplace=True)
+
+    def __rmul__(self, other):
+        return self._run_op(operator.mul, other, "multiplication", swap=True)
+
+    def __truediv__(self, other):
+        return self._run_op(operator.truediv, other, "division")
+
+    def __itruediv__(self, other):
+        return self._run_op(operator.itruediv, other, "division", inplace=True)
+
+    def __rtruediv__(self, other):
+        return self._run_op(operator.truediv, other, "division", swap=True)
+
+    def __floordiv__(self, other):
+        return self._run_op(operator.floordiv, other, "integer division")
+
+    def __ifloordiv__(self, other):
+        return self._run_op(operator.ifloordiv, other, "integer division", inplace=True)
+
+    def __rfloordiv__(self, other):
+        return self._run_op(operator.floordiv, other, "integer division", swap=True)
+
+    def __mod__(self, other):
+        return self._run_op(operator.mod, other, "modular division")
+
+    def __imod__(self, other):
+        return self._run_op(operator.imod, other, "modular division", inplace=True)
+
+    def __rmod__(self, other):
+        return self._run_op(operator.mod, other, "modular division", swap=True)
+
+    def __divmod__(self, other):
+        return self._run_op(operator.floordiv, other, "integer division"), self._run_op(
+            operator.mod, other, "modular division"
+        )
+
+    def __rdivmod__(self, other):
+        return self._run_op(
+            operator.floordiv, other, "integer division", swap=True
+        ), self._run_op(operator.mod, other, "modular division", swap=True)
+
+    def __pow__(self, other):
+        return self._run_op(operator.pow, other, "power")
+
+    def __ipow__(self, other):
+        return self._run_op(operator.ipow, other, "power", inplace=True)
+
+    def __matmul__(self, other):
+        return self._run_op(operator.matmul, other, "matrix multiplication")
+
+    def __rmatmul__(self, other):
+        return self._run_op(operator.matmul, other, "matrix multiplication", swap=True)
+
+    def __imatmul__(self, other):
+        return self._run_op(operator.imatmul, other, "matrix multiplication")
+
+    def __pos__(self):
         return self
 
-    # py5 compat
-    @property
-    def norm(self):
-        n = self.copy()
-        n.normalize()
-        return n
+    def __neg__(self):
+        return Py5Vector(-self._data, copy=False)
+
+    def __abs__(self):
+        return Py5Vector(np.abs(self._data), copy=False)
+
+    def __round__(self):
+        return Py5Vector(np.round(self._data), copy=False)
+
+    def __bool__(self):
+        return any(self._data != 0.0)
+
+    def __eq__(self, other):
+        return isinstance(other, type(self)) and all(self._data == other._data)
+
+    def __ne__(self, other):
+        return not isinstance(other, type(self)) or any(self._data != other._data)
+
+    def astype(self, dtype):
+        return Py5Vector(self._data, dtype=dtype, copy=True)
+
+    def tolist(self):
+        return self._data.tolist()
+
+    def _get_x(self):
+        return self._data[0]
+
+    def _set_x(self, val):
+        self._data[0] = val
+
+    def _get_y(self):
+        return self._data[1]
+
+    def _set_y(self, val):
+        self._data[1] = val
+
+    def _get_data(self):
+        return self._data
+
+    def _get_copy(self):
+        return Py5Vector(self._data, dtype=self._data.dtype, copy=True)
+
+    def _get_dim(self):
+        return self._data.size
+
+    def _get_dtype(self):
+        return self._data.dtype
+
+    x = property(_get_x, _set_x)
+    y = property(_get_y, _set_y)
+    data = property(_get_data)
+    copy = property(_get_copy)
+    dim = property(_get_dim)
+    dtype = property(_get_dtype)
+
+    def _run_calc(self, other, calc, name, maybe_vector=False):
+        other_type = (
+            "numpy array"
+            if isinstance(other, np.ndarray)
+            else f"{type(other).__name__} object"
+        )
+        if isinstance(other, Py5Vector):
+            if self._data.size == other._data.size:
+                other = other._data
+            else:
+                raise RuntimeError(
+                    f"Py5Vector dimensions must be the same to calculate the {name} two Py5Vectors."
+                    + self._check_used_default_dim(other)
+                )
+
+        if isinstance(other, np.ndarray):
+            try:
+                result = calc(self._data, other)
+                if result.ndim == 0:
+                    return float(result)
+                if maybe_vector and result.ndim == 1 and 2 <= result.size <= 4:
+                    return Py5Vector(result, copy=False)
+                else:
+                    return result
+            except ValueError as e:
+                raise RuntimeError(
+                    f"Unable to calculate the {name} between a Py5Vector and {other_type}, probably because of a size mismatch. The error message is: "
+                    + str(e)
+                ) from None
+        else:
+            raise RuntimeError(
+                f"Do not know how to calculate the {name} {type(self).__name__} and {type(other).__name__}"
+            )
+
+    def lerp(self, other, amt):
+        return self._run_calc(
+            other, lambda s, o: s + (o - s) * amt, "lerp of", maybe_vector=True
+        )
+
+    def dist(self, other):
+        return self._run_calc(
+            other,
+            lambda s, o: np.sqrt(np.sum((s - o) ** 2, axis=-1)),
+            "distance between",
+        )
+
+    def dot(self, other):
+        return self._run_calc(
+            other, lambda s, o: (s * o).sum(axis=-1), "dot product for"
+        )
+
+    def angle_between(self, other):
+        return self._run_calc(
+            other,
+            lambda s, o: np.arccos(
+                (
+                    (s / np.sum(s ** 2) ** 0.5)
+                    * (o / np.sum(o ** 2, axis=-1, keepdims=o.ndim) ** 0.5)
+                ).sum(axis=-1)
+            ),
+            "angle between",
+        )
+
+    def cross(self, other):
+        if self._data.size == 4 or isinstance(other, Py5Vector4D):
+            raise RuntimeError("Cannot calculate the cross product with a 4D Py5Vector")
+        elif self._data.size == 2:
+            maybe_vector = isinstance(other, Py5Vector3D)
+            if isinstance(other, Py5Vector):
+                other = other._data
+            return self._run_calc(
+                other, np.cross, "cross product of", maybe_vector=maybe_vector
+            )
+        else:  # self._data.size == 3:
+            if isinstance(other, Py5Vector):
+                other = other._data
+            return self._run_calc(
+                other, np.cross, "cross product of", maybe_vector=True
+            )
+
+    def _get_mag(self):
+        return float(np.sum(self._data ** 2) ** 0.5)
+
+    def set_mag(self, mag: float):
+        if mag == 0:
+            self._data[:] = 0
+        else:
+            self.normalize()
+            self._data *= mag
+
+        return self
+
+    def _get_mag_sq(self):
+        return float(np.sum(self._data ** 2))
+
+    def set_mag_sq(self, mag_sq):
+        if mag_sq < 0:
+            raise RuntimeError("Cannot set squared magnitude to a negative number")
+        elif mag_sq == 0:
+            self._data[:] = 0
+        else:
+            self.normalize()
+            self._data *= mag_sq ** 0.5
+        return self
 
     def normalize(self):
-        self.__vector.normalize()
+        mag = np.sum(self._data ** 2) ** 0.5
+        if mag > 0:
+            self._data /= mag
+            return self
+        else:
+            warnings.warn(
+                "Using normalize on a zero vector has no effect", stacklevel=2
+            )
+
+    def _get_norm(self):
+        return self.copy.normalize()
+
+    mag = property(_get_mag, set_mag)
+    mag_sq = property(_get_mag_sq, set_mag_sq)
+    norm = property(_get_norm)
+
+    def set_limit(self, max_mag):
+        if max_mag < 0:
+            raise RuntimeError("Cannot set limit to a negative number")
+        elif max_mag == 0:
+            self._data[:] = 0
+        else:
+            mag_sq = np.sum(self._data ** 2)
+            if mag_sq > max_mag * max_mag:
+                self._data *= max_mag / (mag_sq ** 0.5)
         return self
 
-    def limit(self, max):
-        self.__vector.limit(max)
-        return self
+    def _get_heading(self):
+        if self._data.size == 2:
+            return float(np.arctan2(self._data[1], self._data[0]))
+        elif self._data.size == 3:
+            return (
+                float(np.arctan2((self._data[:2] ** 2).sum() ** 0.5, self._data[2])),
+                float(np.arctan2(self._data[1], self._data[0])),
+            )
+        else:
+            return (
+                float(np.arctan2((self._data[1:] ** 2).sum() ** 0.5, self._data[0])),
+                float(np.arctan2((self._data[2:] ** 2).sum() ** 0.5, self._data[1])),
+                float(
+                    2
+                    * np.arctan2(
+                        self._data[3],
+                        self._data[2] + (self._data[2:] ** 2).sum() ** 0.5,
+                    )
+                ),
+            )
 
-    def heading(self):
-        return self.__vector.heading()
+    def set_heading(self, *heading):
+        if len(heading) == 1 and isinstance(heading[0], Iterable):
+            heading = heading[0]
+
+        mag = self._get_mag()
+        if len(heading) == 1 and self._data.size == 2:
+            theta = heading[0]
+            x = mag * np.cos(theta)
+            y = mag * np.sin(theta)
+            self._data[:] = [x, y]
+            return self
+        elif len(heading) == 2 and self._data.size == 3:
+            theta, phi = heading
+            sin_theta = np.sin(theta)
+            x = mag * np.cos(phi) * sin_theta
+            y = mag * np.sin(phi) * sin_theta
+            z = mag * np.cos(theta)
+            self._data[:] = [x, y, z]
+            return self
+        elif len(heading) == 3 and self._data.size == 4:
+            phi1, phi2, phi3 = heading
+            sin_phi1 = np.sin(phi1)
+            sin_phi2 = np.sin(phi2)
+            x1 = mag * np.cos(phi1)
+            x2 = mag * sin_phi1 * np.cos(phi2)
+            x3 = mag * sin_phi1 * sin_phi2 * np.cos(phi3)
+            x4 = mag * sin_phi1 * sin_phi2 * np.sin(phi3)
+            self._data[:] = [x1, x2, x3, x4]
+            return self
+        else:
+            raise RuntimeError(
+                f"This Py5Vector has dimension {self._data.size} and requires {self._data.size - 1} values to set the heading, not {len(heading)}"
+            )
+
+    heading = property(_get_heading, set_heading)
+
+    @classmethod
+    def from_heading(cls, *heading, dtype=np.float64):
+        if len(heading) == 1 and isinstance(heading[0], Iterable):
+            heading = heading[0]
+
+        if len(heading) == 1:
+            return Py5Vector(1, 0, dtype=dtype).set_heading(*heading)
+        elif len(heading) == 2:
+            return Py5Vector(1, 0, 0, dtype=dtype).set_heading(*heading)
+        elif len(heading) == 3:
+            return Py5Vector(1, 0, 0, 0, dtype=dtype).set_heading(*heading)
+        else:
+            raise RuntimeError(
+                f"Cannot create a Py5Vector from {len(heading)} arguments"
+            )
+
+    @classmethod
+    def random(cls, dim, *, dtype=np.float64):
+        if dim == 2:
+            return Py5Vector(
+                np.cos(angle := np.random.rand() * 2 * np.pi),
+                np.sin(angle),
+                dtype=dtype,
+            )
+        elif dim == 3:
+            return Py5Vector(
+                (v := np.random.randn(3).astype(dtype)) / (v ** 2).sum() ** 0.5,
+                copy=False,
+            )
+        elif dim == 4:
+            return Py5Vector(
+                (v := np.random.randn(4).astype(dtype)) / (v ** 2).sum() ** 0.5,
+                copy=False,
+            )
+        else:
+            raise RuntimeError(f"Cannot create a random Py5Vector with dimension {dim}")
+
+class Py5Vector2D(Py5Vector):
+    def __new__(cls, *args, dtype=np.float64):
+        return super().__new__(cls, *args, dim=2, dtype=dtype)
 
     def rotate(self, angle):
-        self.__vector.rotate(angle)
+        sin_angle = np.sin(angle)
+        cos_angle = np.cos(angle)
+        rot = np.array([[cos_angle, -sin_angle], [sin_angle, cos_angle]])
+        self._data[:] = rot @ self._data
         return self
 
-    def __instance_add__(self, *args):
-        if len(args) == 1:
-            return Py5Vector.add(self, args[0], self)
+    @classmethod
+    def random(cls, dim=2, *, dtype=np.float64):
+        return super().random(dim, dtype=dtype)
+
+
+class Py5Vector3D(Py5Vector):
+    def __new__(cls, *args, dtype=np.float64):
+        return super().__new__(cls, *args, dim=3, dtype=dtype)
+
+    def _get_z(self):
+        return self._data[2]
+
+    def _set_z(self, val):
+        self._data[2] = val
+
+    z = property(_get_z, _set_z)
+
+    def rotate(self, angle, dim):
+        sin_angle = np.sin(angle)
+        cos_angle = np.cos(angle)
+        if dim in [1, "x"]:
+            rot = np.array(
+                [[1, 0, 0], [0, cos_angle, -sin_angle], [0, sin_angle, cos_angle]]
+            )
+        elif dim in [2, "y"]:
+            rot = np.array(
+                [[cos_angle, 0, sin_angle], [0, 1, 0], [-sin_angle, 0, cos_angle]]
+            )
+        elif dim in [3, "z"]:
+            rot = np.array(
+                [[cos_angle, -sin_angle, 0], [sin_angle, cos_angle, 0], [0, 0, 1]]
+            )
         else:
-            return Py5Vector.add(self, Py5Vector(*args), self)
-
-    def __instance_sub__(self, *args):
-        if len(args) == 1:
-            return Py5Vector.sub(self, args[0], self)
-        else:
-            return Py5Vector.sub(self, Py5Vector(*args), self)
-
-    def __instance_mult__(self, o):
-        return Py5Vector.mult(self, o, self)
-
-    def __instance_div__(self, f):
-        return Py5Vector.div(self, f, self)
-
-    def __instance_cross__(self, o):
-        return Py5Vector.cross(self, o, self)
-
-    def __instance_dist__(self, o):
-        return Py5Vector.dist(self, o)
-
-    def __instance_dot__(self, *args):
-        if len(args) == 1:
-            v = args[0]
-        else:
-            v = args
-        return self.x * v[0] + self.y * v[1] + self.z * v[2]
-
-    def __instance_lerp__(self, *args):
-        if len(args) == 2:
-            return Py5Vector.lerp(self, args[0], args[1], self)
-        else:
-            vx, vy, vz, f = args
-            return Py5Vector.lerp(self, Py5Vector(vx, vy, vz), f, self)
-
-    def get(self):
-        return Py5Vector(self.x, self.y, self.z)
-
-    def copy(self):
-        return Py5Vector(self.x, self.y, self.z)
-
-    def __getitem__(self, k):
-        return getattr(self, ('x', 'y', 'z')[k])
-
-    def __setitem__(self, k, v):
-        setattr(self, ('x', 'y', 'z')[k], v)
-
-    def __copy__(self):
-        return Py5Vector(self.x, self.y, self.z)
-
-    def __deepcopy__(self, memo):
-        return Py5Vector(self.x, self.y, self.z)
-
-    def __repr__(self):  # PROVISÓRIO
-        return f'Py5Vector({self.x}, {self.y}, {self.z})'
-
-    def set(self, *args):
-        """
-        Sets the x, y, and z component of the vector using two or three separate
-        variables, the data from a p5.Vector, or the values from a float array.
-        """
-        self.__vector.set(*args)
-
-    @classmethod
-    def add(cls, a, b, dest=None):
-        if dest is None:
-            return Py5Vector(a.x + b[0], a.y + b[1], a.z + b[2])
-        dest.__vector.set(a.x + b[0], a.y + b[1], a.z + b[2])
-        return dest
-
-    @classmethod
-    def sub(cls, a, b, dest=None):
-        if dest is None:
-            return Py5Vector(a.x - b[0], a.y - b[1], a.z - b[2])
-        dest.__vector.set(a.x - b[0], a.y - b[1], a.z - b[2])
-        return dest
-
-    @classmethod
-    def mult(cls, a, b, dest=None):
-        if dest is None:
-            return Py5Vector(a.x * b, a.y * b, a.z * b)
-        dest.__vector.set(a.x * b, a.y * b, a.z * b)
-        return dest
-
-    @classmethod
-    def div(cls, a, b, dest=None):
-        if dest is None:
-            return Py5Vector(a.x / b, a.y / b, a.z / b)
-        dest.__vector.set(a.x / b, a.y / b, a.z / b)
-        return dest
-
-    @classmethod
-    def dist(cls, a, b):
-        return a.__vector.dist(b.__vector)
-
-    @classmethod
-    def dot(cls, a, b):
-        return a.__vector.dot(b.__vector)
-
-    def __add__(a, b):
-        return Py5Vector.add(a, b, None)
-
-    def __sub__(a, b):
-        return Py5Vector.sub(a, b, None)
-
-    def __isub__(a, b):
-        a.sub(b)
-        return a
-
-    def __iadd__(a, b):
-        a.add(b)
-        return a
-
-    def __mul__(a, b):
-        if not isinstance(b, Number):
-            raise TypeError(
-                "The * operator can only be used to multiply a Py5Vector by a number")
-        return Py5Vector.mult(a, float(b), None)
-
-    def __rmul__(a, b):
-        if not isinstance(b, Number):
-            raise TypeError(
-                "The * operator can only be used to multiply a Py5Vector by a number")
-        return Py5Vector.mult(a, float(b), None)
-
-    def __imul__(a, b):
-        if not isinstance(b, Number):
-            raise TypeError(
-                "The *= operator can only be used to multiply a Py5Vector by a number")
-        a.__vector.mult(float(b))
-        return a
-
-    def __truediv__(a, b):
-        if not isinstance(b, Number):
-            raise TypeError(
-                "The * operator can only be used to multiply a Py5Vector by a number")
-        return Py5Vector(a.x / float(b), a.y / float(b), a.z / float(b))
-
-    def __itruediv__(a, b):
-        if not isinstance(b, Number):
-            raise TypeError(
-                "The /= operator can only be used to multiply a Py5Vector by a number")
-        a.__vector.set(a.x / float(b), a.y / float(b), a.z / float(b))
-        return a
-
-    def __eq__(a, b):
-        return a.x == b[0] and a.y == b[1] and a.z == b[2]
-
-    def __lt__(a, b):
-        return a.magSq() < b.magSq()
-
-    def __le__(a, b):
-        return a.magSq() <= b.magSq()
-
-    def __gt__(a, b):
-        return a.magSq() > b.magSq()
-
-    def __ge__(a, b):
-        return a.magSq() >= b.magSq()
-
-    # Problematic class methods, we would rather use p5.Vector when possible...
-
-    @classmethod
-    def lerp(cls, a, b, f, dest=None):
-        v = createVector(a.x, a.y, a.z)
-        v.lerp(b.__vector, f)
-        if dest is None:
-            return Py5Vector(v.x, v.y, v.z)
-        dest.set(v.x, v.y, v.z)
-        return dest
-
-    @classmethod
-    def cross(cls, a, b, dest=None):
-        x = a.y * b[2] - b[1] * a.z
-        y = a.z * b[0] - b[2] * a.x
-        z = a.x * b[1] - b[0] * a.y
-        if dest is None:
-            return Py5Vector(x, y, z)
-        dest.set(x, y, z)
-        return dest
-
-    @classmethod
-    def fromAngle(cls, angle, length=1):
-        # https://github.com/processing/p5.js/blob/3f0b2f0fe575dc81c724474154f5b23a517b7233/src/math/p5.Vector.js
-        return cls(length * cos(angle), length * sin(angle), 0)
-
-    @classmethod
-    def fromAngles(theta, phi, length=1):
-        # https://github.com/processing/p5.js/blob/3f0b2f0fe575dc81c724474154f5b23a517b7233/src/math/p5.Vector.js
-        cosPhi = cos(phi)
-        sinPhi = sin(phi)
-        cosTheta = cos(theta)
-        sinTheta = sin(theta)
-        return cls(length * sinTheta * sinPhi,
-                       -length * cosTheta,
-                       length * sinTheta * cosPhi)
-
-    @classmethod
-    def random(cls, dim=2): # py5 compat
-        if dim == 3:
-            return cls.random3D()
-        else:
-            return cls.fromAngle(random(TWO_PI))
-
-    @classmethod
-    def random2D(cls):
-        return cls.fromAngle(random(TWO_PI))
-
-    @classmethod
-    def random3D(cls, dest=None):
-        angle = random(TWO_PI)
-        vz = random(2) - 1
-        mult = sqrt(1 - vz * vz)
-        vx = mult * cos(angle)
-        vy = mult * sin(angle)
-        if dest is None:
-            return cls(vx, vy, vz)
-        dest.set(vx, vy, vz)
-        return dest
-
-    @classmethod
-    def angleBetween(cls, a, b):
-        return acos(a.dot(b) / sqrt(a.magSq() * b.magSq()))
-
-    # Other harmless p5js methods
-
-    def equals(self, v):
-        return self == v
-
-    def heading2D(self):
-        return self.__vector.heading()
-
-    def reflect(self, *args):
-        # Reflect the incoming vector about a normal to a line in 2D, or about
-        # a normal to a plane in 3D This method acts on the vector directly
-        r = self.__vector.reflect(*args)
-        return r
-
-    def array(self):
-        # Return a representation of this vector as a float array. This is only
-        # for temporary use. If used in any w fashion, the contents should be
-        # copied by using the p5.Vector.copy() method to copy into your own
-        # array.
-        return self.__vector.array()
-
-    def toString(self):
-        # Returns a string representation of a vector v by calling String(v) or v.toString().
-        # return self.__vector.toString() would be something like "p5.vector
-        # Object […, …, …]"
-        return str(self)
-
-    def rem(self, *args):
-        # Gives remainder of a vector when it is divided by anw vector. See
-        # examples for more context.
-        self.__vector.rem(*args)
+            raise RuntimeError(
+                "dim parameter must be 1, 2, or 3, or one of 'x', 'y', and 'z'"
+            )
+        self._data[:] = rot @ self._data
         return self
 
-Vector = PVector = Py5Vector
+    def rotate_around(self, angle, v):
+        if not isinstance(v, Py5Vector3D):
+            raise RuntimeError("Can only rotate around another 3D Py5Vector")
+        if not v:
+            raise RuntimeError("Cannot rotate around a vector of zeros")
+        u = v.norm
+        ux, uy, uz = u.x, u.y, u.z
+        sin, cos = np.sin(angle), np.cos(angle)
+        ncosp1 = 1 - cos
+        rot = np.array(
+            [
+                [
+                    cos + ux * ux * ncosp1,
+                    ux * uy * ncosp1 - uz * sin,
+                    ux * uz * ncosp1 + uy * sin,
+                ],
+                [
+                    uy * ux * ncosp1 + uz * sin,
+                    cos + uy * uy * ncosp1,
+                    uy * uz * ncosp1 - ux * sin,
+                ],
+                [
+                    uz * ux * ncosp1 - uy * sin,
+                    uz * uy * ncosp1 + ux * sin,
+                    cos + uz * uz * ncosp1,
+                ],
+            ]
+        )
+        self._data[:] = rot @ self._data
+        return self
+
+    @classmethod
+    def random(cls, dim=3, *, dtype=np.float64):
+        return super().random(dim, dtype=dtype)
+
+
+class Py5Vector4D(Py5Vector):
+    def __new__(cls, *args, dtype=np.float64):
+        return super().__new__(cls, *args, dim=4, dtype=dtype)
+
+    def _get_z(self):
+        return self._data[2]
+
+    def _set_z(self, val):
+        self._data[2] = val
+
+    def _get_w(self):
+        return self._data[3]
+
+    def _set_w(self, val):
+        self._data[3] = val
+
+    z = property(_get_z, _set_z)
+    w = property(_get_w, _set_w)
+
+    @classmethod
+    def random(cls, dim=4, *, dtype=np.float64):
+        return super().random(dim, dtype=dtype)
 
 
 def error_msg(obj_name, word, obj, module=False):
