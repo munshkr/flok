@@ -861,6 +861,7 @@ def noise_seed(*args):
 
 class _DefaultPrinter:
     def print(self, *args, **kwargs):
+        kwargs.pop('stderr')
         builtins.print(*args, **kwargs)
 
 _println_stream = _DefaultPrinter()
