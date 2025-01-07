@@ -36,8 +36,8 @@ export function Component() {
         if (!instance) return;
         instance.tryEval(msg.body);
       },
-      [instance]
-    )
+      [instance],
+    ),
   );
 
   useEffect(() => {

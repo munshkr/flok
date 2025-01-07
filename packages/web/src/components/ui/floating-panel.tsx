@@ -132,7 +132,7 @@ export function FloatingPanel({
   // Size and position are relative to window.innerWidth and window.innerHeight
   const [size, setSize] = useState<Size>(store.get(sizeSettingId, defaultSize));
   const [position, setPosition] = useState<Position>(
-    store.get(posSettingId, defaultPosition)
+    store.get(posSettingId, defaultPosition),
   );
 
   // Save position and size
@@ -151,7 +151,7 @@ export function FloatingPanel({
       width: clamp(size.width) * innerWidth,
       height: clamp(size.height) * innerHeight,
     }),
-    [size, resizeTriggered]
+    [size, resizeTriggered],
   );
 
   const absPosition = useMemo(
@@ -159,14 +159,14 @@ export function FloatingPanel({
       x: clamp(position.x) * innerWidth,
       y: clamp(position.y) * innerHeight,
     }),
-    [position, resizeTriggered]
+    [position, resizeTriggered],
   );
 
   return (
     <Rnd
       className={cn(
         "overflow-hidden rounded-md pl-1 pr-1 pb-2 border border-gray-800 shadow-lg shadow-black/50 text-slate-50 font-mono text-xs bg-black bg-opacity-70 z-10",
-        className
+        className,
       )}
       size={absSize}
       position={absPosition}
@@ -195,7 +195,7 @@ export function FloatingPanel({
         <div
           className={cn(
             headerClassName,
-            "font-bold sticky top-0 cursor-move pb-1"
+            "font-bold sticky top-0 cursor-move pb-1",
           )}
         >
           <div className="flex flex-row">

@@ -10,7 +10,7 @@ import { forEachDocumentContext } from "@/lib/utils";
 
 export function useStrudelCodemirrorExtensions(
   session: Session | null,
-  editorRefs: React.RefObject<ReactCodeMirrorRef>[]
+  editorRefs: React.RefObject<ReactCodeMirrorRef>[],
 ) {
   useAnimationFrame(
     useCallback(() => {
@@ -24,8 +24,8 @@ export function useStrudelCodemirrorExtensions(
           highlightMiniLocations(view, ctx.phase || 0, ctx.haps || []);
         },
         session,
-        editorRefs
+        editorRefs,
       );
-    }, [session, editorRefs])
+    }, [session, editorRefs]),
   );
 }

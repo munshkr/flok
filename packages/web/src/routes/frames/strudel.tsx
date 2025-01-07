@@ -25,14 +25,32 @@ export function Component() {
     })();
   }, []);
 
+  useEffect(() => {
+    if (!instance) return;
+
+    const handleWindowMessage = async (event: MessageEvent) => {
+      if (event.data.type === "user-interaction") {
+        await instance.initAudio();
+      }
+    };
+
+    window.strudel = instance;
+
+    window.addEventListener("message", handleWindowMessage);
+
+    return () => {
+      window.removeEventListener("message", handleWindowMessage);
+    };
+  }, [instance]);
+
   useEvalHandler(
     useCallback(
       (msg: EvalMessage) => {
         if (!instance) return;
         instance.tryEval(msg);
       },
-      [instance]
-    )
+      [instance],
+    ),
   );
 
   return null;

@@ -13,7 +13,7 @@ const flokBasicSetup = (doc) => {
   const text = doc.getText();
   const undoManager = new UndoManager(text);
   // if target is hydra, use "web" mode to evaluate on browser only, not REPLs
-  const web = doc.target === "hydra"
+  const web = doc.target === "hydra";
 
   return [
     flashField(),
@@ -23,7 +23,7 @@ const flokBasicSetup = (doc) => {
   ];
 };
 
-const createEditor = doc => {
+const createEditor = (doc) => {
   const state = EditorState.create({
     doc: doc.content,
     extensions: [
@@ -46,10 +46,10 @@ const createEditor = doc => {
 
   targetEl.addEventListener("change", (e) => {
     doc.target = e.target.value;
-  })
+  });
   doc.session.on(`change-target:${doc.id}`, () => {
     targetEl.value = doc.target;
-  })
+  });
 
   return [state, view];
 };
@@ -64,7 +64,7 @@ const handleEvalHydra = (msg) => {
 };
 
 const session = new Session("default", { port: 3000 });
-window.session = session
+window.session = session;
 
 session.on("change", (...args) => console.log("change", ...args));
 session.on("message", handleMessage);
@@ -76,11 +76,11 @@ session.on("sync", () => {
     session.setActiveDocuments([
       { id: "slot1", target: "tidal" },
       { id: "slot2", target: "hydra" },
-    ])
+    ]);
   }
 
   // Create editors for each document
-  session.getDocuments().map(doc => createEditor(doc))
-})
+  session.getDocuments().map((doc) => createEditor(doc));
+});
 
 session.initialize();

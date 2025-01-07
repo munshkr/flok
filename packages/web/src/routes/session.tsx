@@ -1,6 +1,7 @@
 import { CommandsButton } from "@/components/commands-button";
 import { ConfigureDialog } from "@/components/configure-dialog";
-import { Editor } from "@/components/editor";
+import DisplaySettingsDialog from "@/components/display-settings-dialog";
+import { Editor, EditorSettings } from "@/components/editor";
 import { MessagesPanel } from "@/components/messages-panel";
 import { Mosaic } from "@/components/mosaic";
 import { Pane } from "@/components/pane";
@@ -18,6 +19,10 @@ import { useQuery } from "@/hooks/use-query";
 import { useShortcut } from "@/hooks/use-shortcut";
 import { useStrudelCodemirrorExtensions } from "@/hooks/use-strudel-codemirror-extensions";
 import { useToast } from "@/hooks/use-toast";
+import {
+  DisplaySettings,
+  defaultDisplaySettings,
+} from "@/lib/display-settings";
 import {
   cn,
   code2hash,
@@ -48,10 +53,19 @@ declare global {
     hydra: any;
     mercury: any;
     strudel: any;
+    punctual: any;
   }
 }
 
 const panicCodes = panicCodesUntyped as { [target: string]: string };
+
+const defaultEditorSettings: EditorSettings = {
+  lineNumbers: false,
+  vimMode: false,
+  fontFamily: "Inconsolata",
+  theme: "oneDark",
+  wrapText: false,
+};
 
 interface SessionLoaderParams {
   name: string;
@@ -85,22 +99,63 @@ export function Component() {
   const [welcomeDialogOpen, setWelcomeDialogOpen] = useState(false);
   const [shareUrlDialogOpen, setShareUrlDialogOpen] = useState(false);
   const [configureDialogOpen, setConfigureDialogOpen] = useState(false);
+  const [displaySettingsDialogOpen, setDisplaySettingsDialogOpen] =
+    useState(false);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
+
+  // Editor settings: Try to restore from local storage or use default settings
+  const [editorSettings, setEditorSettings] = useState<EditorSettings>(() => {
+    const savedSettings = localStorage.getItem("editor-settings");
+    if (savedSettings) {
+      try {
+        return JSON.parse(savedSettings);
+      } catch (error) {
+        console.error("Error parsing saved editor settings:", error);
+      }
+    }
+    return defaultEditorSettings;
+  });
+
+  // Display settings: Try to restore from local storage or use default settings
+  const [displaySettings, setDisplaySettings] = useState<DisplaySettings>(
+    () => {
+      const savedSettings = localStorage.getItem("display-settings");
+      if (savedSettings) {
+        try {
+          return JSON.parse(savedSettings);
+        } catch (error) {
+          console.error("Error parsing saved display settings:", error);
+        }
+      }
+      return defaultDisplaySettings;
+    },
+  );
+
+  // Save editor settings to local storage
+  useEffect(() => {
+    localStorage.setItem("editor-settings", JSON.stringify(editorSettings));
+  }, [editorSettings]);
+
+  // Save display settings to local storage
+  useEffect(() => {
+    localStorage.setItem("display-settings", JSON.stringify(displaySettings));
+  }, [displaySettings]);
+
   const [messagesPanelExpanded, setMessagesPanelExpanded] =
     useState<boolean>(false);
   const [messagesCount, setMessagesCount] = useState<number>(0);
   const [messages, setMessages] = useState<Message[]>([]);
   const [autoShowMessages, setAutoShowMessages] = useState<boolean>(
-    store.get("messages:autoshow", true)
+    store.get("messages:autoshow", true),
   );
   const [hideMessagesOnEval, setHideMessagesOnEval] = useState<boolean>(
-    store.get("messages:hide-on-eval", true)
+    store.get("messages:hide-on-eval", true),
   );
   const [sessionUrl, setSessionUrl] = useState<string>("");
 
   const editorRefs = Array.from({ length: 8 }).map(() =>
-    useRef<ReactCodeMirrorRef>(null)
+    useRef<ReactCodeMirrorRef>(null),
   );
 
   useStrudelCodemirrorExtensions(session, editorRefs);
@@ -114,7 +169,7 @@ export function Component() {
       if (hideErrors) return;
       _toast(options);
     },
-    [_toast, hideErrors]
+    [_toast, hideErrors],
   );
 
   const postMessageParentWindow = (message: any) => {
@@ -150,7 +205,7 @@ export function Component() {
       // Otherwise, use default target.
       if (newSession.getDocuments().length === 0) {
         console.log(
-          "Session is empty, setting targets and code from hash params"
+          "Session is empty, setting targets and code from hash params",
         );
         // If `targets` hash param is present and has valid targets, set them as
         // active documents.
@@ -254,7 +309,7 @@ export function Component() {
         console.log(
           `%c${target}` + `%c ${content}`,
           "font-weight: bold",
-          type === "stderr" ? "color: #ff5f6b" : ""
+          type === "stderr" ? "color: #ff5f6b" : "",
         );
       }
     });
@@ -373,17 +428,17 @@ export function Component() {
 
   const getFocusedEditorIndex = (): number => {
     const i = editorRefs.findIndex(
-      (ref) => ref.current && ref.current.view?.hasFocus
+      (ref) => ref.current && ref.current.view?.hasFocus,
     );
     return i;
   };
 
   // Global shortcuts
   useShortcut(["Control-J", "Meta-J"], () =>
-    setCommandsDialogOpen((open) => !open)
+    setCommandsDialogOpen((open) => !open),
   );
   useShortcut(["Control-P", "Meta-P"], () =>
-    setConfigureDialogOpen((open) => !open)
+    setConfigureDialogOpen((open) => !open),
   );
   useShortcut(
     ["Control-Shift-.", "Meta-Shift-."],
@@ -394,7 +449,7 @@ export function Component() {
       });
       toast({ title: "Panic!", duration: 1000 });
     },
-    [documents]
+    [documents],
   );
   Array.from({ length: 8 }).map((_, i) => {
     useShortcut([`Control-${i}`], () => focusEditor(i - 1), [...editorRefs]);
@@ -407,7 +462,7 @@ export function Component() {
       const newIndex = mod(curIndex - 1, documents.length);
       focusEditor(newIndex);
     },
-    [documents, ...editorRefs]
+    [documents, ...editorRefs],
   );
   useShortcut(
     ["Control-]"],
@@ -417,7 +472,7 @@ export function Component() {
       const newIndex = mod(curIndex + 1, documents.length);
       focusEditor(newIndex);
     },
-    [documents, ...editorRefs]
+    [documents, ...editorRefs],
   );
   useShortcut(["Meta-Shift-H", "Control-Shift-H"], () => {
     setHidden((p) => !p);
@@ -429,15 +484,17 @@ export function Component() {
   const replTargets = useMemo(
     () =>
       [...new Set(documents.map((doc) => doc.target))].filter(
-        (t) => !webTargets.includes(t)
+        (t) => !webTargets.includes(t),
       ),
-    [documents]
+    [documents],
   );
 
   const targetsList = useMemo(
     () => documents.map((doc) => doc.target),
-    [documents]
+    [documents],
   );
+
+  const OS = navigator.userAgent.indexOf("Windows") != -1 ? "windows" : "unix";
 
   const handleViewLayoutAdd = useCallback(() => {
     if (!session) return;
@@ -474,7 +531,7 @@ export function Component() {
     session.setActiveDocuments(
       targets
         .filter((t) => t)
-        .map((target, i) => ({ id: String(i + 1), target }))
+        .map((target, i) => ({ id: String(i + 1), target })),
     );
   };
 
@@ -498,9 +555,9 @@ export function Component() {
   const activeWebTargets = useMemo(
     () =>
       webTargets.filter((target) =>
-        documents.some((doc) => doc.target === target)
+        documents.some((doc) => doc.target === target),
       ),
-    [documents]
+    [documents],
   );
 
   return (
@@ -510,13 +567,20 @@ export function Component() {
       </Helmet>
       <SessionCommandDialog
         open={commandsDialogOpen}
+        editorSettings={editorSettings}
+        displaySettings={displaySettings}
         onOpenChange={(isOpen) => setCommandsDialogOpen(isOpen)}
         onSessionChangeUsername={() => setUsernameDialogOpen(true)}
+        onEditorSettingsChange={(settings: EditorSettings) =>
+          setEditorSettings(settings)
+        }
+        onDisplaySettingsChange={setDisplaySettings}
         onSessionNew={() => navigate("/")}
         onSessionShareUrl={() => setShareUrlDialogOpen(true)}
         onLayoutAdd={handleViewLayoutAdd}
         onLayoutRemove={handleViewLayoutRemove}
         onLayoutConfigure={() => setConfigureDialogOpen(true)}
+        onEditorChangeDisplaySettings={() => setDisplaySettingsDialogOpen(true)}
       />
       <UsernameDialog
         name={username}
@@ -539,17 +603,25 @@ export function Component() {
           sessionUrl={session.wsUrl}
           sessionName={session.name}
           userName={username}
+          OS={OS}
           open={configureDialogOpen}
           onOpenChange={(isOpen) => setConfigureDialogOpen(isOpen)}
           onAccept={handleConfigureAccept}
         />
       )}
+      <DisplaySettingsDialog
+        settings={displaySettings}
+        onAccept={(settings) => setDisplaySettings(settings)}
+        open={displaySettingsDialogOpen}
+        onOpenChange={(isOpen) => setDisplaySettingsDialogOpen(isOpen)}
+      />
       {session && replTargets.length > 0 && (
         <ReplsDialog
           targets={replTargets}
           sessionUrl={session.wsUrl}
           sessionName={session.name}
           userName={username}
+          OS={OS}
           open={replsDialogOpen}
           onOpenChange={(isOpen) => setReplsDialogOpen(isOpen)}
         />
@@ -557,7 +629,7 @@ export function Component() {
       <Mosaic
         className={cn(
           "transition-opacity",
-          hidden ? "opacity-0" : "opacity-100"
+          hidden ? "opacity-0" : "opacity-100",
         )}
         items={documents.map((doc, i) => (
           <Pane
@@ -570,19 +642,25 @@ export function Component() {
               ref={editorRefs[i]}
               document={doc}
               autoFocus={i === 0}
+              settings={editorSettings}
               className="absolute top-6 overflow-auto flex-grow w-full h-[calc(100%-32px)] z-10"
             />
           </Pane>
         ))}
       />
       {activeWebTargets.map((target) => (
-        <WebTargetIframe key={target} session={session} target={target} />
+        <WebTargetIframe
+          key={target}
+          session={session}
+          target={target}
+          displaySettings={displaySettings}
+        />
       ))}
       <div
         className={cn(
           "fixed top-1 right-1 flex m-1",
           "transition-opacity",
-          hidden ? "opacity-0" : "opacity-100"
+          hidden ? "opacity-0" : "opacity-100",
         )}
       >
         {replTargets.length > 0 && (
@@ -594,7 +672,7 @@ export function Component() {
         <MessagesPanel
           className={cn(
             "transition-opacity",
-            hidden ? "opacity-0" : "opacity-100"
+            hidden ? "opacity-0" : "opacity-100",
           )}
           messages={messages}
           autoShowMessages={autoShowMessages}
@@ -607,7 +685,7 @@ export function Component() {
       <StatusBar
         className={cn(
           "transition-opacity",
-          hidden ? "opacity-0" : "opacity-100"
+          hidden ? "opacity-0" : "opacity-100",
         )}
         pubSubState={pubSubState}
         syncState={syncState}

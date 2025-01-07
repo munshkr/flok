@@ -8,7 +8,7 @@ export function useAnimationFrame(callback: (timestamp: number) => void) {
       callback(timestamp);
       requestId.current = requestAnimationFrame(animate);
     },
-    [callback]
+    [callback],
   );
 
   useEffect(() => {

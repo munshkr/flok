@@ -43,6 +43,7 @@ interface ConfigureDialogProps extends DialogProps {
   sessionName: string;
   sessionUrl: string;
   userName: string;
+  OS: string;
   onAccept?: (targets: string[]) => void;
 }
 
@@ -51,6 +52,7 @@ export function ConfigureDialog({
   sessionName,
   sessionUrl,
   userName,
+  OS,
   onAccept,
   ...props
 }: ConfigureDialogProps) {
@@ -68,7 +70,7 @@ export function ConfigureDialog({
         .split(",")
         .map((t) => t.trim())
         .filter((t) => knownTargets.includes(t)),
-    [targetsValue]
+    [targetsValue],
   );
 
   const newOrCurrentTargets = newTargets.length > 0 ? newTargets : targets;
@@ -110,6 +112,7 @@ export function ConfigureDialog({
               sessionName={sessionName}
               sessionUrl={sessionUrl}
               userName={userName}
+              OS={OS}
             />
           )}
           <DialogFooter>
