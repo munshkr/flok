@@ -1248,7 +1248,7 @@ def __mouseMoved(e):
     try:
         mouse_moved()
     except TypeError:
-        mouse_moved(e)
+        mouse_moved(Py5MouseEvent(e))
     except NameError:
         pass
 
@@ -1256,7 +1256,7 @@ def __mouseDragged(e):
     try:
         mouse_dragged()
     except TypeError:
-        mouse_dragged(e)
+        mouse_dragged(Py5MouseEvent(e))
     except NameError:
             pass
 
@@ -1264,7 +1264,7 @@ def __mousePressed(e):
     try:
         mouse_pressed()
     except TypeError:
-        mouse_pressed(e)
+        mouse_pressed(Py5MouseEvent(e))
     except NameError:
         pass
 
@@ -1272,7 +1272,7 @@ def __mouseReleased(e):
     try:
         mouse_released()
     except TypeError:
-        mouse_released(e)
+        mouse_released(Py5MouseEvent(e))
     except NameError:
         pass
 
@@ -1280,7 +1280,7 @@ def __mouseClicked(e):
     try:
         mouse_clicked()
     except TypeError:
-        mouse_clicked(e)
+        mouse_clicked(Py5MouseEvent(e))
     except NameError:
         pass
 
@@ -1288,7 +1288,7 @@ def __doubleClicked(e):
     try:
         double_clicked()
     except TypeError:
-        double_clicked(e)
+        double_clicked(Py5MouseEvent(e))
     except NameError:
         pass
 
@@ -1296,8 +1296,7 @@ def __mouseWheel(e):
     try:
         mouse_wheel()
     except TypeError:
-        e.get_count = lambda: e.delta // abs(e.delta)
-        mouse_wheel(e)
+        mouse_wheel(Py5MouseEvent(e))
     except NameError:
         pass
 
@@ -2137,6 +2136,104 @@ class Py5KeyEvent:
 
     def is_auto_repeat(self):
         return self._instance.isAutoRepeat()
+
+    def is_control_down(self):
+        return self._instance.ctrlKey
+
+    def is_meta_down(self):
+        return self._instance.metaKey
+
+    def is_shift_down(self):
+        return self._instance.shiftKey
+
+
+class Py5MouseEvent:
+    _py5_object_cache = weakref.WeakSet()
+
+    def __new__(cls, pmouseevent):
+        for o in cls._py5_object_cache:
+            if pmouseevent == o._instance:
+                return o
+        else:
+            o = object.__new__(Py5MouseEvent)
+            o._instance = pmouseevent
+            cls._py5_object_cache.add(o)
+            return o
+
+    def __repr__(self):
+        action = self.get_action()
+        action_str = "UNKNOWN"
+        for k, v in Py5MouseEvent.__dict__.items():
+            if k == k.upper() and action == v:
+                action_str = k
+                break
+        return f"Py5MouseEvent(x={self.get_x()}, y={self.get_y()}, action={action_str})"
+
+    def __getattr__(self, name):
+        raise AttributeError(error_msg("Py5MouseEvent", name, self))
+
+    ALT = 18
+    CTRL = 17
+    SHIFT = 16
+
+    WHEEL = 8
+    ENTER = 6
+    MOVE = 5
+    DRAG = 4
+    CLICK = 3
+    RELEASE = 2
+
+    EXIT = 7
+    META = 4
+    PRESS = 1
+
+    def get_action(self):
+        event_types = {
+            'wheel': 8,
+            'mouseenter': 6,
+            'click': 3,
+            'mouseup': 2,
+
+            'dblclick': 0,
+            'mousedown': 0,
+            'mouseleave': 0,
+            'mouseout': 0,
+            'mouseover': 0,
+        }
+
+        event_type = self._instance.type
+        if event_type == 'mousemove':
+            if self._instance.buttons:
+                return 4  # DRAG
+            return 5  # MOVE
+        return event_types[event_type]
+
+    def get_button(self):
+        return self._instance.button
+
+    def get_count(self):
+        if self.get_action() == self.WHEEL:
+            delta = self._instance.delta
+            return delta // abs(delta)
+        return self._instance.detail
+
+    def get_millis(self):
+        return self._instance.timeStamp
+
+    def get_modifiers(self):
+        return self._instance.getModifiers()
+
+    def get_native(self):
+        return self._instance.getNative()
+
+    def get_x(self):
+        return self._instance.x
+
+    def get_y(self):
+        return self._instance.y
+
+    def is_alt_down(self):
+        return self._instance.altKey
 
     def is_control_down(self):
         return self._instance.ctrlKey
