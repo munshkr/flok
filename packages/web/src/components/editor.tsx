@@ -71,15 +71,13 @@ const panicKeymap = (
 };
 
 // overwrites the default insertNewlineAndIndent command on Enter
-const autoIndentKeymap = (
-  doc: Document
-) => {
+const autoIndentKeymap = (doc: Document) => {
   // if any of the targets is part of the noAutoIndent setting in settings.json
   const noIndent = noAutoIndent.includes(doc.target);
   // overwrite the Enter with insertNewline
-  return noIndent ? Prec.high(
-    keymap.of([{ key: 'Enter', run: insertNewline }])
-  ) : [];
+  return noIndent
+    ? Prec.high(keymap.of([{ key: "Enter", run: insertNewline }]))
+    : [];
 };
 
 interface FlokSetupOptions {
