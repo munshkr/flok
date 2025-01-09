@@ -39,6 +39,7 @@ import React, { useEffect, useState } from "react";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
 import themes from "@/lib/themes";
+import { toggleLineComment } from "@codemirror/commands";
 
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
@@ -68,6 +69,16 @@ const panicKeymap = (
     : [];
 };
 
+const extraKeymap = ( doc: Document ) => {
+  return keymap.of([
+    // fixes the Cmd/Alt-/ issue for Spanish keyboards
+    { key: 'Shift-Cmd-7', run: toggleLineComment },
+    { key: 'Shift-Alt-7', run: toggleLineComment },
+    { key: 'Alt-/', run: toggleLineComment },
+    { key: 'Ctrl-/', run: toggleLineComment },
+  ])
+};
+
 interface FlokSetupOptions {
   readOnly?: boolean;
 }
@@ -88,6 +99,7 @@ const flokSetup = (
     remoteEvalFlash(doc),
     Prec.high(evalKeymap(doc, { defaultMode, web })),
     panicKeymap(doc),
+    extraKeymap(doc),
     yCollab(text, doc.session.awareness, {
       undoManager,
       hideCaret: readOnly,
