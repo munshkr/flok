@@ -16,6 +16,7 @@ import {
   langByTarget as langByTargetUntyped,
   panicCodes as panicCodesUntyped,
   targetsWithDocumentEvalMode,
+  noAutoIndent,
   webTargets,
 } from "@/settings.json";
 import { javascript } from "@codemirror/lang-javascript";
@@ -70,12 +71,17 @@ const panicKeymap = (
 };
 
 // overwrites the default insertNewlineAndIndent command on Enter
-const noAutoIndent = () => {
-  return Prec.high(
+const autoIndentKeymap = (
+  doc: Document
+) => {
+  const noIndent = noAutoIndent.indexOf(doc.target) > -1;
+  console.log(noIndent);
+
+  return noIndent ? Prec.high(
     keymap.of([
       { key: 'Enter', run: insertNewline }
     ])
-  )
+  ) : [];
 };
 
 interface FlokSetupOptions {
@@ -98,6 +104,7 @@ const flokSetup = (
     remoteEvalFlash(doc),
     Prec.high(evalKeymap(doc, { defaultMode, web })),
     panicKeymap(doc),
+    autoIndentKeymap(doc),
     yCollab(text, doc.session.awareness, {
       undoManager,
       hideCaret: readOnly,
@@ -111,7 +118,6 @@ export interface EditorSettings {
   fontFamily: string;
   lineNumbers: boolean;
   wrapText: boolean;
-  autoIndent: boolean;
   vimMode: boolean;
 }
 
@@ -137,13 +143,12 @@ export const Editor = ({ document, settings, ref, ...props }: EditorProps) => {
     return null;
   }
 
-  const { theme, fontFamily, lineNumbers, wrapText, vimMode, autoIndent } = {
+  const { theme, fontFamily, lineNumbers, wrapText, vimMode } = {
     theme: "dracula",
     fontFamily: "IBM Plex Mono",
     lineNumbers: false,
     wrapText: false,
     vimMode: false,
-    autoIndent: false,
     ...settings,
   };
 
@@ -193,7 +198,6 @@ export const Editor = ({ document, settings, ref, ...props }: EditorProps) => {
     lineNumbers ? lineNumbersExtension() : [],
     vimMode ? vim() : [],
     wrapText ? EditorView.lineWrapping : [],
-    autoIndent ? [] : noAutoIndent(),
   ];
 
   // If it's read-only, put a div in front of the editor so that the user

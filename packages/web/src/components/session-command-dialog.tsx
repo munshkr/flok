@@ -30,7 +30,6 @@ import {
   Settings,
   Share,
   Monitor,
-  IndentIcon
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useState } from "react";
@@ -57,7 +56,7 @@ export default function SessionCommandDialog({
   onEditorSettingsChange,
   ...props
 }: SessionCommandDialogProps) {
-  const { fontFamily, theme, vimMode, lineNumbers, wrapText, autoIndent } = editorSettings;
+  const { fontFamily, theme, vimMode, lineNumbers, wrapText } = editorSettings;
 
   const [pages, setPages] = useState<string[]>([]);
 
@@ -187,17 +186,6 @@ export default function SessionCommandDialog({
                 >
                   <WrapText className="mr-2 h-4 w-4" />
                   <span>{wrapText ? "Disable" : "Enable"} Word Wrapping</span>
-                </CommandItem>
-                <CommandItem
-                  onSelect={wrapHandler(() => 
-                    onEditorSettingsChange({
-                      ...editorSettings,
-                      autoIndent: !autoIndent,
-                    }),
-                  )}
-                >
-                  <IndentIcon className="mr-2 h-4 w-4" />
-                  <span>{autoIndent ? "Disable" : "Enable"} Auto Indent New Line</span>
                 </CommandItem>
                 <CommandItem
                   onSelect={wrapHandler(() =>
