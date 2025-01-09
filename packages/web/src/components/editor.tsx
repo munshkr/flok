@@ -72,11 +72,11 @@ const panicKeymap = (
 const extraKeymap = () => {
   return keymap.of([
     // fixes the Cmd/Alt-/ issue for Spanish keyboards
-    { key: 'Shift-Cmd-7', run: toggleLineComment },
-    { key: 'Shift-Alt-7', run: toggleLineComment },
-    { key: 'Alt-/', run: toggleLineComment },
-    { key: 'Ctrl-/', run: toggleLineComment },
-  ])
+    { key: "Shift-Cmd-7", run: toggleLineComment },
+    { key: "Shift-Alt-7", run: toggleLineComment },
+    { key: "Alt-/", run: toggleLineComment },
+    { key: "Ctrl-/", run: toggleLineComment },
+  ]);
 };
 
 interface FlokSetupOptions {
