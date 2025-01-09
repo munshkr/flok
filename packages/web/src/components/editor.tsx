@@ -69,7 +69,7 @@ const panicKeymap = (
     : [];
 };
 
-const extraKeymap = ( doc: Document ) => {
+const extraKeymap = () => {
   return keymap.of([
     // fixes the Cmd/Alt-/ issue for Spanish keyboards
     { key: 'Shift-Cmd-7', run: toggleLineComment },
@@ -99,7 +99,7 @@ const flokSetup = (
     remoteEvalFlash(doc),
     Prec.high(evalKeymap(doc, { defaultMode, web })),
     panicKeymap(doc),
-    extraKeymap(doc),
+    extraKeymap(),
     yCollab(text, doc.session.awareness, {
       undoManager,
       hideCaret: readOnly,
