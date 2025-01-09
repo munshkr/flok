@@ -74,13 +74,11 @@ const panicKeymap = (
 const autoIndentKeymap = (
   doc: Document
 ) => {
-  const noIndent = noAutoIndent.indexOf(doc.target) > -1;
-  console.log(noIndent);
-
+  // if any of the targets is part of the noAutoIndent setting in settings.json
+  const noIndent = noAutoIndent.includes(doc.target);
+  // overwrite the Enter with insertNewline
   return noIndent ? Prec.high(
-    keymap.of([
-      { key: 'Enter', run: insertNewline }
-    ])
+    keymap.of([{ key: 'Enter', run: insertNewline }])
   ) : [];
 };
 
