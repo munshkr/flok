@@ -39,6 +39,7 @@ import React, { useEffect, useState } from "react";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
 import themes from "@/lib/themes";
+import { insertNewline } from "@codemirror/commands";
 
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
@@ -66,6 +67,15 @@ const panicKeymap = (
         })),
       ])
     : [];
+};
+
+// overwrites the default insertNewlineAndIndent command on Enter
+const noAutoIndent = () => {
+  return Prec.high(
+    keymap.of([
+      { key: 'Enter', run: insertNewline }
+    ])
+  )
 };
 
 interface FlokSetupOptions {
@@ -101,6 +111,7 @@ export interface EditorSettings {
   fontFamily: string;
   lineNumbers: boolean;
   wrapText: boolean;
+  autoIndent: boolean;
   vimMode: boolean;
 }
 
@@ -126,12 +137,13 @@ export const Editor = ({ document, settings, ref, ...props }: EditorProps) => {
     return null;
   }
 
-  const { theme, fontFamily, lineNumbers, wrapText, vimMode } = {
+  const { theme, fontFamily, lineNumbers, wrapText, vimMode, autoIndent } = {
     theme: "dracula",
     fontFamily: "IBM Plex Mono",
     lineNumbers: false,
     wrapText: false,
     vimMode: false,
+    autoIndent: false,
     ...settings,
   };
 
@@ -181,6 +193,7 @@ export const Editor = ({ document, settings, ref, ...props }: EditorProps) => {
     lineNumbers ? lineNumbersExtension() : [],
     vimMode ? vim() : [],
     wrapText ? EditorView.lineWrapping : [],
+    autoIndent ? [] : noAutoIndent(),
   ];
 
   // If it's read-only, put a div in front of the editor so that the user
