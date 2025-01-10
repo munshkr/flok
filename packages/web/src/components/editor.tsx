@@ -16,6 +16,7 @@ import {
   langByTarget as langByTargetUntyped,
   panicCodes as panicCodesUntyped,
   targetsWithDocumentEvalMode,
+  noAutoIndent,
   webTargets,
 } from "@/settings.json";
 import { javascript } from "@codemirror/lang-javascript";
@@ -39,6 +40,7 @@ import React, { useEffect, useState } from "react";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
 import themes from "@/lib/themes";
+import { insertNewline } from "@codemirror/commands";
 
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
@@ -68,6 +70,16 @@ const panicKeymap = (
     : [];
 };
 
+// overwrites the default insertNewlineAndIndent command on Enter
+const autoIndentKeymap = (doc: Document) => {
+  // if any of the targets is part of the noAutoIndent setting in settings.json
+  const noIndent = noAutoIndent.includes(doc.target);
+  // overwrite the Enter with insertNewline
+  return noIndent
+    ? Prec.high(keymap.of([{ key: "Enter", run: insertNewline }]))
+    : [];
+};
+
 interface FlokSetupOptions {
   readOnly?: boolean;
 }
@@ -88,6 +100,7 @@ const flokSetup = (
     remoteEvalFlash(doc),
     Prec.high(evalKeymap(doc, { defaultMode, web })),
     panicKeymap(doc),
+    autoIndentKeymap(doc),
     yCollab(text, doc.session.awareness, {
       undoManager,
       hideCaret: readOnly,
