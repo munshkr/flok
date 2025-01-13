@@ -40,7 +40,7 @@ import React, { useEffect, useState } from "react";
 import { yCollab } from "y-codemirror.next";
 import { UndoManager } from "yjs";
 import themes from "@/lib/themes";
-import { insertNewline } from "@codemirror/commands";
+import { toggleLineComment, insertNewline } from "@codemirror/commands";
 
 const defaultLanguage = "javascript";
 const langByTarget = langByTargetUntyped as { [lang: string]: string };
@@ -68,6 +68,17 @@ const panicKeymap = (
         })),
       ])
     : [];
+};
+
+// extra keymaps
+const extraKeymap = () => {
+  return keymap.of([
+    // fixes the Cmd/Alt-/ issue for Spanish keyboards
+    { key: "Shift-Cmd-7", run: toggleLineComment },
+    { key: "Shift-Alt-7", run: toggleLineComment },
+    { key: "Alt-/", run: toggleLineComment },
+    { key: "Ctrl-/", run: toggleLineComment },
+  ]);
 };
 
 // overwrites the default insertNewlineAndIndent command on Enter
@@ -100,6 +111,7 @@ const flokSetup = (
     remoteEvalFlash(doc),
     Prec.high(evalKeymap(doc, { defaultMode, web })),
     panicKeymap(doc),
+    extraKeymap(),
     autoIndentKeymap(doc),
     yCollab(text, doc.session.awareness, {
       undoManager,
