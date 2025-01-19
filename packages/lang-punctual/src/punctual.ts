@@ -1,8 +1,8 @@
 import { haskell } from "@codemirror/legacy-modes/mode/haskell";
 
-export const tidalLanguage = {
+export const punctualLanguage = {
   ...haskell,
-  name: "tidal",
+  name: "punctual",
   languageData: {
     ...haskell.languageData,
     closeBrackets: { brackets: ["(", "[", "{", "<", '"'], before: ')]}>"' },

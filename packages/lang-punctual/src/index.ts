@@ -1,7 +1,7 @@
 import { StreamLanguage } from "@codemirror/language";
-import { tidalLanguage } from "./tidal";
+import { punctualLanguage } from "./punctual";
 import { indentation } from "./indentation";
 
-export function tidal() {
-  return [indentation(), StreamLanguage.define(tidalLanguage)];
+export function punctual() {
+  return [indentation(), StreamLanguage.define(punctualLanguage)];
 }
