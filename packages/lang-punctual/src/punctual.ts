@@ -5,6 +5,6 @@ export const punctualLanguage = {
   name: "punctual",
   languageData: {
     ...haskell.languageData,
-    closeBrackets: { brackets: ["(", "[", "{", "<", '"'], before: ')]}>"' },
+    closeBrackets: { brackets: ["(", "[", "{", '"'], before: ')]}"' },
   },
 };
