@@ -2287,16 +2287,22 @@ export class Py5Wrapper {
       packages: ["micropip", "numpy", "requests", "pyodide-http"],
     });
 
+    this._pyodide.setStdout({
+      batched: (output) => { this._onWarning(output) },
+    });
+    this._pyodide.setStderr({
+      batched: (output) => { this._onError(output) },
+    });
+
     await this._pyodide.runPythonAsync(`
       import io, code, sys, pyodide_http
       from js import p5, window, document
 
       pyodide_http.patch_all()
-      print(sys.version)
+      print("Py5 initialized -> Python", sys.version.split()[0])
     `);
 
     this.initialized = true;
-    this._onWarning("Py5 initialized");
     await this.tryEval("");
   }
 
@@ -2316,7 +2322,6 @@ export class Py5Wrapper {
       console.log("Python execution output:");
       await this._pyodide.runPythonAsync(code);
     } catch (error) {
-      console.error(error);
       this._onError(`${error}`);
     }
   }
