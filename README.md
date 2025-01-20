@@ -271,6 +271,8 @@ the `hydra` target to execute Hydra code.
 You can also use [p5.js](https://p5js.org/) within a `hydra` target, like you would in
 the official Hydra editor.
 
+**NOTE**: For `key` and `mouse` events to be sent correctly to `hydra/p5js`, **hide the editor** with `meta/ctrl` `shift` `h`.
+
 ##### `P()` function
 
 The `P()` function allows you to use strudel mini-patterns in Hydra.
