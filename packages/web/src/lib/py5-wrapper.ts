@@ -212,9 +212,6 @@ def hue(*args):
 def lerp_color(*args):
     return _P5_INSTANCE.lerpColor(*args)
 
-def lightness(*args):
-    return _P5_INSTANCE.lightness(*args)
-
 def red(*args):
     return _P5_INSTANCE.red(*args)
 
@@ -226,12 +223,6 @@ def background(*args):
 
 def clear(*args):
     return _P5_INSTANCE.clear(*args)
-
-def erase(*args):
-    return _P5_INSTANCE.erase(*args)
-
-def no_erase(*args):
-    return _P5_INSTANCE.noErase(*args)
 
 def color_mode(*args):
     if args == [HSB]:  # py5 compatibility
@@ -294,32 +285,11 @@ def square(*args):
 def triangle(*args):
     return _P5_INSTANCE.triangle(*args)
 
-def plane(*args):
-    return _P5_INSTANCE.plane(*args)
-
 def box(*args):
     return _P5_INSTANCE.box(*args)
 
 def sphere(*args):
     return _P5_INSTANCE.sphere(*args)
-
-def cylinder(*args):
-    return _P5_INSTANCE.cylinder(*args)
-
-def cone(*args):
-    return _P5_INSTANCE.cone(*args)
-
-def ellipsoid(*args):
-    return _P5_INSTANCE.ellipsoid(*args)
-
-def torus(*args):
-    return _P5_INSTANCE.torus(*args)
-
-def load_model(*args):
-    return _P5_INSTANCE.loadModel(*args)
-
-def model(*args):
-    return _P5_INSTANCE.model(*args)
 
 def ellipse_mode(*args):
     return _P5_INSTANCE.ellipseMode(*args)
@@ -474,26 +444,11 @@ def get_frame_rate(*args):
 def no_cursor(*args):
     return _P5_INSTANCE.noCursor(*args)
 
-def fullscreen(*args):
-    return _P5_INSTANCE.fullscreen(*args)
-
 def pixel_density(*args):
     return _P5_INSTANCE.pixelDensity(*args)
 
 def display_density(*args):
     return _P5_INSTANCE.displayDensity(*args)
-
-def getURL(*args):
-    return _P5_INSTANCE.getURL(*args)
-
-def getURLPath(*args):
-    return _P5_INSTANCE.getURLPath(*args)
-
-def getURLParams(*args):
-    return _P5_INSTANCE.getURLParams(*args)
-
-def remove(*args):
-    return _P5_INSTANCE.remove(*args)
 
 def no_loop(*args):
     return _P5_INSTANCE.noLoop(*args)
@@ -514,20 +469,11 @@ class push():
 def redraw(*args):
     return _P5_INSTANCE.redraw(*args)
 
-def resize_canvas(*args):
-    return _P5_INSTANCE.resizeCanvas(*args)
-
-def no_canvas(*args):
-    return _P5_INSTANCE.noCanvas(*args)
-
 def create_graphics(*args):
     return _P5_INSTANCE.createGraphics(*args)
 
 def blend_mode(*args):
     return _P5_INSTANCE.blendMode(*args)
-
-def set_attributes(*args):
-    return _P5_INSTANCE.setAttributes(*args)
 
 def apply_matrix(*args):
     return _P5_INSTANCE.applyMatrix(*args)
@@ -559,113 +505,11 @@ def shear_y(*args):
 def translate(*args):
     return _P5_INSTANCE.translate(*args)
 
-def create_string_dict(*args):
-    return _P5_INSTANCE.createStringDict(*args)
-
-def create_number_dict(*args):
-    return _P5_INSTANCE.createNumberDict(*args)
-
-def append(*args):
-    return _P5_INSTANCE.append(*args)
-
-def array_copy(*args):
-    return _P5_INSTANCE.arrayCopy(*args)
-
-def concat(*args):
-    return _P5_INSTANCE.concat(*args)
-
-def reverse(*args):
-    return _P5_INSTANCE.reverse(*args)
-
-def shorten(*args):
-    return _P5_INSTANCE.shorten(*args)
-
-def shuffle(*args):
-    return _P5_INSTANCE.shuffle(*args)
-
-def sort(*args):
-    return _P5_INSTANCE.sort(*args)
-
-def splice(*args):
-    return _P5_INSTANCE.splice(*args)
-
-def subset(*args):
-    return _P5_INSTANCE.subset(*args)
-
-def float(*args):
-    return _P5_INSTANCE.float(*args)
-
-def int(*args):
-    return _P5_INSTANCE.int(*args)
-
-def str(*args):
-    return _P5_INSTANCE.str(*args)
-
-def boolean(*args):
-    return _P5_INSTANCE.boolean(*args)
-
-def byte(*args):
-    return _P5_INSTANCE.byte(*args)
-
-def char(*args):
-    return _P5_INSTANCE.char(*args)
-
-def unchar(*args):
-    return _P5_INSTANCE.unchar(*args)
-
-def hex(*args):
-    return _P5_INSTANCE.hex(*args)
-
-def unhex(*args):
-    return _P5_INSTANCE.unhex(*args)
-
-def join(*args):
-    return _P5_INSTANCE.join(*args)
-
-def match(*args):
-    return _P5_INSTANCE.match(*args)
-
-def match_all(*args):
-    return _P5_INSTANCE.matchAll(*args)
-
-def nf(*args):
-    return _P5_INSTANCE.nf(*args)
-
-def nfc(*args):
-    return _P5_INSTANCE.nfc(*args)
-
-def nfp(*args):
-    return _P5_INSTANCE.nfp(*args)
-
-def nfs(*args):
-    return _P5_INSTANCE.nfs(*args)
-
-def split(*args):
-    return _P5_INSTANCE.split(*args)
-
-def split_tokens(*args):
-    return _P5_INSTANCE.splitTokens(*args)
-
-def trim(*args):
-    return _P5_INSTANCE.trim(*args)
-
-def setMoveThreshold(*args):
-    return _P5_INSTANCE.setMoveThreshold(*args)
-
-def setShakeThreshold(*args):
-    return _P5_INSTANCE.setShakeThreshold(*args)
-
 def key_is_down(*args):
     return _P5_INSTANCE.keyIsDown(*args)
 
 def create_image(*args):
     return _P5_INSTANCE.createImage(*args)
-
-def save_canvas(*args):
-    return _P5_INSTANCE.saveCanvas(*args)
-
-def save_frames(*args):
-    return _P5_INSTANCE.saveFrames(*args)
 
 def load_image(*args):
     return _P5_INSTANCE.loadImage(*args)
@@ -690,9 +534,6 @@ def copy(*args):
 
 def apply_filter(*args):
     return _P5_INSTANCE.filter(*args)
-
-def get(*args):
-    return _P5_INSTANCE.get(*args)
 
 def load_pixels(*args):
     return _P5_INSTANCE.loadPixels(*args)
@@ -729,18 +570,9 @@ def load_strings(string_path, **kwargs):
 def load_bytes(bytes_path, **kwargs):
     return bytearray(__load(bytes_path, **kwargs).content)
 
-def load_table(*args):
-    return _P5_INSTANCE.loadTable(*args)
-
-def loadXML(*args):
-    return _P5_INSTANCE.loadXML(*args)
-
 def parse_json(serialized_json, **kwargs):
     import json
     return json.loads(serialized_json, **kwargs)
-
-def create_writer(*args):
-    return _P5_INSTANCE.createWriter(*args)
 
 def save(*args):
     return _P5_INSTANCE.save(*args)
@@ -774,9 +606,6 @@ def second(*args):
 
 def year(*args):
     return _P5_INSTANCE.year(*args)
-
-def create_vector(*args):
-    return _P5_INSTANCE.createVector(*args)
 
 def abs(*args):
     return _P5_INSTANCE.abs(*args)
@@ -983,9 +812,6 @@ def degrees(*args):
 def radians(*args):
     return _P5_INSTANCE.radians(*args)
 
-def angle_mode(*args):
-    return _P5_INSTANCE.angleMode(*args)
-
 def text_align(*args):
     return _P5_INSTANCE.textAlign(*args)
 
@@ -1016,15 +842,6 @@ def text(*args):
 def text_font(*args):
     return _P5_INSTANCE.textFont(*args)
 
-def orbit_control(*args):
-    return _P5_INSTANCE.orbitControl(*args)
-
-def debug_mode(*args):
-    return _P5_INSTANCE.debugMode(*args)
-
-def no_debug_mode(*args):
-    return _P5_INSTANCE.noDebugMode(*args)
-
 def ambient_light(*args):
     return _P5_INSTANCE.ambientLight(*args)
 
@@ -1040,17 +857,11 @@ def lights(*args):
 def load_shader(*args):
     return _P5_INSTANCE.loadShader(*args)
 
-def create_shader(*args):
-    return _P5_INSTANCE.createShader(*args)
-
 def shader(*args):
     return _P5_INSTANCE.shader(*args)
 
 def reset_shader(*args):
     return _P5_INSTANCE.resetShader(*args)
-
-def normal_material(*args):
-    return _P5_INSTANCE.normalMaterial(*args)
 
 def texture(*args):
     return _P5_INSTANCE.texture(*args)
@@ -1064,9 +875,6 @@ def texture_wrap(*args):
 def ambient_material(*args):
     return _P5_INSTANCE.ambientMaterial(*args)
 
-def specular_material(*args):
-    return _P5_INSTANCE.specularMaterial(*args)
-
 def shininess(*args):
     return _P5_INSTANCE.shininess(*args)
 
@@ -1079,24 +887,6 @@ def perspective(*args):
 def ortho(*args):
     return _P5_INSTANCE.ortho(*args)
 
-def create_camera(*args):
-    return _P5_INSTANCE.createCamera(*args)
-
-def set_camera(*args):
-    return _P5_INSTANCE.setCamera(*args)
-
-def select(*args):
-    return _P5_INSTANCE.select(*args)
-
-def select_all(*args):
-    return _P5_INSTANCE.selectAll(*args)
-
-def remove_elements(*args):
-    return _P5_INSTANCE.removeElements(*args)
-
-def changed(*args):
-    return _P5_INSTANCE.changed(*args)
-
 def hex_color(color):
     if hasattr(color, 'toString'):
         return color.toString('#rrggbbaa')
@@ -1104,61 +894,8 @@ def hex_color(color):
         return "#%06X%02X" % (color & 0xFFFFFF, (color >> 24) & 0xFF)
     return _P5_INSTANCE.hex(color)
 
-def input(*args):
-    return _P5_INSTANCE.input(*args)
 
-def createDiv(*args):
-    return _P5_INSTANCE.createDiv(*args)
-
-def createP(*args):
-    return _P5_INSTANCE.createP(*args)
-
-def createSpan(*args):
-    return _P5_INSTANCE.createSpan(*args)
-
-def createImg(*args):
-    return _P5_INSTANCE.createImg(*args)
-
-def createA(*args):
-    return _P5_INSTANCE.createA(*args)
-
-def createSlider(*args):
-    return _P5_INSTANCE.createSlider(*args)
-
-def createButton(*args):
-    return _P5_INSTANCE.createButton(*args)
-
-def createCheckbox(*args):
-    return _P5_INSTANCE.createCheckbox(*args)
-
-def createSelect(*args):
-    return _P5_INSTANCE.createSelect(*args)
-
-def createRadio(*args):
-    return _P5_INSTANCE.createRadio(*args)
-
-def createColorPicker(*args):
-    return _P5_INSTANCE.createColorPicker(*args)
-
-def createInput(*args):
-    return _P5_INSTANCE.createInput(*args)
-
-def createFileInput(*args):
-    return _P5_INSTANCE.createFileInput(*args)
-
-def createVideo(*args):
-    return _P5_INSTANCE.createVideo(*args)
-
-def createAudio(*args):
-    return _P5_INSTANCE.createAudio(*args)
-
-def createCapture(*args):
-    return _P5_INSTANCE.createCapture(*args)
-
-def createElement(*args):
-    return _P5_INSTANCE.createElement(*args)
-
-def createCanvas(*args):
+def __create_canvas(*args):
     canvas = _P5_INSTANCE.createCanvas(*args)
     global width, height
     width = _P5_INSTANCE.width
@@ -1166,8 +903,8 @@ def createCanvas(*args):
     return canvas
 
 def size(*args):
-    canvas = createCanvas(*args)
-    background(200) # py5 compatibility
+    canvas = __create_canvas(*args)
+    # background(200) # py5 compatibility
     return canvas
 
 def full_screen(*args):  # TODO: review
@@ -1335,9 +1072,6 @@ def __keyIsDown(e):
 def pop(*args):
     p5_pop = _P5_INSTANCE.pop(*args)
     return p5_pop
-
-def createVector(*args):
-    return _P5_INSTANCE.createVector(*args)
 
 # more py5 mode compatibility aliases
 pop_matrix = pop
@@ -2245,7 +1979,7 @@ class Py5MouseEvent:
         return self._instance.shiftKey
 
 
-def pre_draw(p5_instance, draw_func, *args, **kwargs):
+def __pre_draw(p5_instance, draw_func, *args, **kwargs):
     """
     We need to run this before the actual draw to insert and update p5 env variables
     """
@@ -2424,7 +2158,7 @@ def pre_draw(p5_instance, draw_func, *args, **kwargs):
     return draw_func(*args, **kwargs)
 
 
-def global_p5_injection(p5_sketch):
+def __global_p5_injection(p5_sketch):
     """
     Injects the p5js's skecth instance as a global variable to setup and draw functions
     """
@@ -2433,14 +2167,14 @@ def global_p5_injection(p5_sketch):
         def wrapper(*args, **kwargs):
             global _P5_INSTANCE
             _P5_INSTANCE = p5_sketch
-            return pre_draw(_P5_INSTANCE, f, *args, **kwargs)
+            return __pre_draw(_P5_INSTANCE, f, *args, **kwargs)
 
         return wrapper
 
     return decorator
 
 
-def start_p5(preload_func, setup_func, draw_func, event_functions):
+def __start_p5(preload_func, setup_func, draw_func, event_functions):
     """
     This is the entrypoint function. It accepts 2 parameters:
 
@@ -2457,9 +2191,9 @@ def start_p5(preload_func, setup_func, draw_func, event_functions):
         """
         Callback function called to configure new p5 instance
         """
-        p5_sketch.preload = global_p5_injection(p5_sketch)(preload_func)
-        p5_sketch.setup = global_p5_injection(p5_sketch)(setup_func)
-        p5_sketch.draw = global_p5_injection(p5_sketch)(draw_func)
+        p5_sketch.preload = __global_p5_injection(p5_sketch)(preload_func)
+        p5_sketch.setup = __global_p5_injection(p5_sketch)(setup_func)
+        p5_sketch.draw = __global_p5_injection(p5_sketch)(draw_func)
 
     window._p5_instance = p5.new(sketch_setup)
 
@@ -2473,7 +2207,7 @@ def start_p5(preload_func, setup_func, draw_func, event_functions):
     )
     for f_name in [f for f in event_function_names if event_functions.get(f, None)]:
         func = event_functions[f_name]
-        event_func = global_p5_injection(window._p5_instance)(func)
+        event_func = __global_p5_injection(window._p5_instance)(func)
         setattr(window._p5_instance, f_name, event_func)
 `; // end of const wrapperContent
 
@@ -2489,7 +2223,7 @@ def draw():
 `;
 
 const startCode = `
-event_functions = {
+__event_functions = {
     "deviceMoved": __deviceMoved,
     "deviceTurned": __deviceTurned,
     "deviceShaken": __deviceShaken,
@@ -2509,7 +2243,7 @@ event_functions = {
     "windowResized": __windowResized,
 }
 
-start_p5(preload, setup, draw, event_functions)
+__start_p5(preload, setup, draw, __event_functions)
 `;
 
 // TODO: separate text above into another file
