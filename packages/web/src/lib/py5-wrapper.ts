@@ -2288,10 +2288,14 @@ export class Py5Wrapper {
     });
 
     this._pyodide.setStdout({
-      batched: (output) => { this._onWarning(output) },
+      batched: (output: string) => {
+        this._onWarning(output);
+      },
     });
     this._pyodide.setStderr({
-      batched: (output) => { this._onError(output) },
+      batched: (output: string) => {
+        this._onError(output);
+      },
     });
 
     await this._pyodide.runPythonAsync(`
