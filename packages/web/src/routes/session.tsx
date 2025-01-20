@@ -474,7 +474,7 @@ export function Component() {
     },
     [documents, ...editorRefs],
   );
-  useShortcut(["Meta-Shift-H", "Control-Shift-H"], () => {
+  useShortcut(["Meta-Shift-H", "Control-Shift-H", "Meta-Alt-H","Control-Alt-H"], () => {
     setHidden((p) => !p);
   });
   useShortcut(["Control-,", "Meta-,"], () => {
