@@ -44,7 +44,7 @@
     "mercury": "silence",
     "mercury-web": "silence",
     "hydra": "hush()",
-    "py5": "clear",
+    "py5": "clear()",
     "strudel": "silence",
     "sardine": "panic()",
     "dummy": "silence"
