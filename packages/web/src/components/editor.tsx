@@ -29,6 +29,7 @@ import {
 } from "@codemirror/view";
 import { evalKeymap, flashField, remoteEvalFlash } from "@flok-editor/cm-eval";
 import { tidal } from "@flok-editor/lang-tidal";
+import { punctual } from "@flok-editor/lang-punctual";
 import type { Document } from "@flok-editor/session";
 import { highlightExtension } from "@strudel/codemirror";
 import CodeMirror, {
@@ -48,6 +49,7 @@ const langExtensionsByLanguage: { [lang: string]: any } = {
   javascript: javascript,
   python: python,
   tidal: tidal,
+  punctual: punctual,
 };
 const panicCodes = panicCodesUntyped as { [target: string]: string };
 

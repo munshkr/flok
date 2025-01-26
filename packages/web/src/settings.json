@@ -19,7 +19,7 @@
     "hydra": "javascript",
     "mercury-web": "javascript",
     "mercury": "javascript",
-    "punctual": "tidal",
+    "punctual": "punctual",
     "py5": "python",
     "renardo": "python",
     "sardine": "python",
