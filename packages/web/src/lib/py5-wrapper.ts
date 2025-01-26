@@ -23,12 +23,14 @@ const wrapperContent = `
 # by Alexandre B A Villares - https://abav.lugaralgum.com
 
 import builtins
+import inspect
 import operator
 import re
 import types
 import warnings
 import weakref
 from collections.abc import Iterable, Sequence
+from functools import partial, wraps
 from numbers import Number
 from random import randint
 
@@ -357,32 +359,28 @@ def curve_point(*args):
 def curve_tangent(*args):
     return _P5_INSTANCE.curveTangent(*args)
 
-class begin_contour():
-    def __init__(self):
-        _P5_INSTANCE.beginContour()
 
+class __OpenContext():
     def __enter__(self):
         pass
+
+class begin_contour(__OpenContext):
+    def __init__(self):
+        _P5_INSTANCE.beginContour()
 
     def __exit__(self,  exc_type, exc_value, exc_tb):
         _P5_INSTANCE.endContour()
 
-class begin_shape():
+class begin_shape(__OpenContext):
     def __init__(self, *args):
         _P5_INSTANCE.beginShape(*args)
-
-    def __enter__(self):
-        pass
 
     def __exit__(self,  exc_type, exc_value, exc_tb):
         _P5_INSTANCE.endShape()
 
-class begin_closed_shape():
+class begin_closed_shape(__OpenContext):
     def __init__(self):
         _P5_INSTANCE.beginShape()
-
-    def __enter__(self):
-        pass
 
     def __exit__(self,  exc_type, exc_value, exc_tb):
         _P5_INSTANCE.endShape(CLOSE)
@@ -456,12 +454,9 @@ def no_loop(*args):
 def loop(*args):
     return _P5_INSTANCE.loop(*args)
 
-class push():
+class push(__OpenContext):
     def __init__(self):
         _P5_INSTANCE.push()
-
-    def __enter__(self):
-        pass
 
     def __exit__(self,  exc_type, exc_value, exc_tb):
         _P5_INSTANCE.pop()
@@ -638,8 +633,7 @@ def remap(value, start1, stop1, start2, stop2):
     denom = stop1 - start1
     if denom == 0:
         print(
-            f"remap({value}, {start1}, {stop1}, {start2}, {stop2}) called, which returns NaN (not a number)",
-            stacklevel=_non_py5_stacklevel(),
+            f"remap({value}, {start1}, {stop1}, {start2}, {stop2}) called, which returns NaN (not a number)"
         )
         return float("nan")
     else:
@@ -1070,8 +1064,7 @@ def __keyIsDown(e):
         pass
 
 def pop(*args):
-    p5_pop = _P5_INSTANCE.pop(*args)
-    return p5_pop
+    return _P5_INSTANCE.pop(*args)
 
 # more py5 mode compatibility aliases
 pop_matrix = pop
@@ -2162,8 +2155,8 @@ def __global_p5_injection(p5_sketch):
     """
     Injects the p5js's skecth instance as a global variable to setup and draw functions
     """
-
     def decorator(f):
+        @wraps(f)
         def wrapper(*args, **kwargs):
             global _P5_INSTANCE
             _P5_INSTANCE = p5_sketch
