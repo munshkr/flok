@@ -919,150 +919,6 @@ def full_screen(*args):  # TODO: review
 
     size(window.screen.width, window.screen.height, renderer)
 
-def __deviceMoved(e):
-    try:
-        device_moved()
-    except TypeError:
-        device_moved(e)
-    except NameError:
-        pass
-
-def __deviceTurned(e):
-    try:
-        device_turned()
-    except TypeError:
-        device_turned(e)
-    except NameError:
-        pass
-
-def __deviceShaken(e):
-    try:
-        device_shaken()
-    except TypeError:
-        device_shaken(e)
-    except NameError:
-        pass
-
-def __touchEnded(e):
-    try:
-        touch_ended()
-    except TypeError:
-        touch_ended(e)
-    except NameError:
-        pass
-
-def __touchStarted(e):
-    try:
-        touch_started()
-    except TypeError:
-        touch_started(e)
-    except NameError:
-        pass
-
-def __windowResized(e):
-    try:
-        window_resized()
-    except TypeError:
-        window_resized(e)
-    except NameError:
-        pass
-
-def __touchMoved(e):
-    try:
-        touch_moved()
-    except TypeError:
-        touch_moved(e)
-    except NameError:
-        pass
-
-def __mouseMoved(e):
-    try:
-        mouse_moved()
-    except TypeError:
-        mouse_moved(Py5MouseEvent(e))
-    except NameError:
-        pass
-
-def __mouseDragged(e):
-    try:
-        mouse_dragged()
-    except TypeError:
-        mouse_dragged(Py5MouseEvent(e))
-    except NameError:
-            pass
-
-def __mousePressed(e):
-    try:
-        mouse_pressed()
-    except TypeError:
-        mouse_pressed(Py5MouseEvent(e))
-    except NameError:
-        pass
-
-def __mouseReleased(e):
-    try:
-        mouse_released()
-    except TypeError:
-        mouse_released(Py5MouseEvent(e))
-    except NameError:
-        pass
-
-def __mouseClicked(e):
-    try:
-        mouse_clicked()
-    except TypeError:
-        mouse_clicked(Py5MouseEvent(e))
-    except NameError:
-        pass
-
-def __doubleClicked(e):
-    try:
-        double_clicked()
-    except TypeError:
-        double_clicked(Py5MouseEvent(e))
-    except NameError:
-        pass
-
-def __mouseWheel(e):
-    try:
-        mouse_wheel()
-    except TypeError:
-        mouse_wheel(Py5MouseEvent(e))
-    except NameError:
-        pass
-
-def __keyPressed(e):
-    try:
-        key_pressed()
-    except TypeError:
-        key_pressed(Py5KeyEvent(e))
-    except NameError:
-        pass
-
-def __keyReleased(e):
-    try:
-        key_released()
-    except TypeError:
-        key_released(Py5KeyEvent(e))
-    except NameError:
-        pass
-
-def __keyTyped(e):
-    try:
-        key_typed()
-    except TypeError:
-        key_typed(Py5KeyEvent(e))
-    except NameError:
-        pass
-
-def __keyIsDown(e):
-    try:
-        key_is_down()
-    except TypeError:
-        key_is_down(Py5KeyEvent(e))
-    except NameError:
-        pass
-
 def pop(*args):
     return _P5_INSTANCE.pop(*args)
 
@@ -2167,15 +2023,44 @@ def __global_p5_injection(p5_sketch):
     return decorator
 
 
-def __start_p5(preload_func, setup_func, draw_func, event_functions):
+class DefaultWrapper:
+    def __init__(self, event):
+        self.__event = event
+
+    def __getattr__(self, attr):
+        return getattr(self.__event, attr)
+
+    def __getitem__(self, item):
+        return operator.getitem(self.__event, item)
+
+
+def __exec_if_exists(func_name, event_wrapper, event):
+    if not (func := globals().get(func_name)):
+        return
+
+    spec = inspect.getfullargspec(func)
+
+    if len(spec.args) == 1:
+        return func(event_wrapper(event))
+
+    if len(spec.kwonlyargs) == 1:
+        return func(**{spec.kwonlyargs[0]: event_wrapper(event)})
+
+    return func()
+
+
+def __exec_before(hook_name, func):
+    if hook := globals().get(hook_name):
+        hook()
+    func()
+
+
+def __start_p5(setup_func, draw_func):
     """
     This is the entrypoint function. It accepts 2 parameters:
 
-    - preload_func: A Python preload callable
     - setup_func: a Python setup callable
     - draw_func: a Python draw callable
-    - event_functions: a config dict for the event functions in the format:
-                       {"eventFunctionName": python_event_function}
 
     This method gets the p5js's sketch instance and injects them
     """
@@ -2184,22 +2069,25 @@ def __start_p5(preload_func, setup_func, draw_func, event_functions):
         """
         Callback function called to configure new p5 instance
         """
-        p5_sketch.preload = __global_p5_injection(p5_sketch)(preload_func)
-        p5_sketch.setup = __global_p5_injection(p5_sketch)(setup_func)
-        p5_sketch.draw = __global_p5_injection(p5_sketch)(draw_func)
+        p5_sketch.setup = __global_p5_injection(p5_sketch)(partial(__exec_before, 'settings', setup_func))
+        p5_sketch.draw = __global_p5_injection(p5_sketch)(partial(__exec_before, 'predraw_update', draw_func))
 
     window._p5_instance = p5.new(sketch_setup)
 
-    # Register event functions
-    event_function_names = (
-        "deviceMoved", "deviceTurned", "deviceShaken", "windowResized",
-        "keyPressed", "keyReleased", "keyTyped",
-        "mousePressed", "mouseReleased", "mouseClicked", "doubleClicked",
-        "mouseMoved", "mouseDragged", "mouseWheel",
-        "touchStarted", "touchMoved", "touchEnded", "keyIsDown",
-    )
-    for f_name in [f for f in event_function_names if event_functions.get(f, None)]:
-        func = event_functions[f_name]
+    event_functions = {
+        'keyPressed': partial(__exec_if_exists, 'key_pressed', Py5KeyEvent),
+        'keyReleased': partial(__exec_if_exists, 'key_released', Py5KeyEvent),
+        'keyTyped': partial(__exec_if_exists, 'key_typed', Py5KeyEvent),
+        'mouseMoved': partial(__exec_if_exists, 'mouse_moved', Py5MouseEvent),
+        'mouseDragged': partial(__exec_if_exists, 'mouse_dragged', Py5MouseEvent),
+        'mousePressed': partial(__exec_if_exists, 'mouse_pressed', Py5MouseEvent),
+        'mouseReleased': partial(__exec_if_exists, 'mouse_released', Py5MouseEvent),
+        'mouseClicked': partial(__exec_if_exists, 'mouse_clicked', Py5MouseEvent),
+        'doubleClicked': partial(__exec_if_exists, 'double_clicked', Py5MouseEvent),
+        'mouseWheel': partial(__exec_if_exists, 'mouse_wheel', Py5MouseEvent),
+        'windowResized': partial(__exec_if_exists, 'window_resized', DefaultWrapper),
+    }
+    for f_name, func in event_functions.items():
         event_func = __global_p5_injection(window._p5_instance)(func)
         setattr(window._p5_instance, f_name, event_func)
 `; // end of const wrapperContent
@@ -2216,27 +2104,7 @@ def draw():
 `;
 
 const startCode = `
-__event_functions = {
-    "deviceMoved": __deviceMoved,
-    "deviceTurned": __deviceTurned,
-    "deviceShaken": __deviceShaken,
-    "keyPressed": __keyPressed,
-    "keyReleased": __keyReleased,
-    "keyTyped": __keyTyped,
-    "mouseMoved": __mouseMoved,
-    "mouseDragged": __mouseDragged,
-    "mousePressed": __mousePressed,
-    "mouseReleased": __mouseReleased,
-    "mouseClicked": __mouseClicked,
-    "doubleClicked": __doubleClicked,
-    "mouseWheel": __mouseWheel,
-    "touchStarted": __touchStarted,
-    "touchMoved": __touchMoved,
-    "touchEnded": __touchEnded,
-    "windowResized": __windowResized,
-}
-
-__start_p5(preload, setup, draw, __event_functions)
+__start_p5(setup, draw)
 `;
 
 // TODO: separate text above into another file
