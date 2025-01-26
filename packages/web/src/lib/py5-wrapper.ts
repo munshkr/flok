@@ -225,7 +225,7 @@ def clear(*args):
     return _P5_INSTANCE.clear(*args)
 
 def color_mode(*args):
-    if args == [HSB]:  # py5 compatibility
+    if args == (HSB,):  # py5 compatibility
       return _P5_INSTANCE.colorMode(HSB, 255, 255, 255, 255)
     return _P5_INSTANCE.colorMode(*args)
 
