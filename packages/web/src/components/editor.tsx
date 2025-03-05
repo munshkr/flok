@@ -79,7 +79,7 @@ const extraKeymap = () => {
     { key: "Shift-Cmd-7", run: toggleLineComment },
     { key: "Shift-Alt-7", run: toggleLineComment },
     { key: "Alt-/", run: toggleLineComment },
-    { key: "Ctrl-/", run: toggleLineComment }
+    { key: "Ctrl-/", run: toggleLineComment },
   ]);
 };
 
@@ -107,12 +107,18 @@ const flokSetup = (
     ? "document"
     : "block";
   const web = webTargets.includes(doc.target);
-  const noLineEval = doc.target === 'mercury' || doc.target === 'mercury-web';
+  const noLineEval = doc.target === "mercury" || doc.target === "mercury-web";
 
   return [
     flashField(),
     remoteEvalFlash(doc),
-    Prec.high(evalKeymap(doc, { defaultMode, web, lineEvalKeys: noLineEval ? [] : ['Shift-Enter'] })),
+    Prec.high(
+      evalKeymap(doc, {
+        defaultMode,
+        web,
+        lineEvalKeys: noLineEval ? [] : ["Shift-Enter"],
+      }),
+    ),
     panicKeymap(doc),
     extraKeymap(),
     autoIndentKeymap(doc),
