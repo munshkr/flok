@@ -29,21 +29,21 @@ Web-based P2P collaborative editor for live coding music and graphics
 
 *Some keybindings may differ depending on the language/target you choose, and the operating system*
 
-| Keybinding                | Function                             |
-| ------------------------- | ------------------------------------ |
-| `alt/option` `enter`      | Evaluate all                         |
-| `ctrl/cmd` `enter`        | Evaluate block, Evaluate selection   |
-| `shift` `enter`           | Evaluate line                        |
-| `ctrl/cmd/option/alt` `.` | Silence (output depends on language) |
-| `cmd/ctrl` `shift` `h`    | Show/Hide editor panels              |
-| `cmd/ctrl` `x`            | Cut selected text                    |
-| `cmd/ctrl` `c`            | Copy selected text                   |
-| `cmd/ctrl` `v`            | Paste cut/copied text                |
-| `cmd/ctrl` `z/u`          | Undo edit                            |
-| `cmd/ctrl` `shift` `z/u`  | Redo edit                            |
-| `cmd/ctrl` `}`            | add indentation                      |
-| `cmd/ctrl` `{`            | remove indentation                   |
-| `cmd/ctrl` `f`            | search and replace                   |
+| Keybinding                 | Function                             |
+| -------------------------- | ------------------------------------ |
+| `alt/option` `enter`       | Evaluate all                         |
+| `ctrl/cmd` `enter`         | Evaluate block, Evaluate selection   |
+| `shift` `enter`            | Evaluate line                        |
+| `ctrl/cmd/option/alt` `.`  | Silence (output depends on language) |
+| `cmd/ctrl` `shift/alt` `h` | Show/Hide editor panels              |
+| `cmd/ctrl` `x`             | Cut selected text                    |
+| `cmd/ctrl` `c`             | Copy selected text                   |
+| `cmd/ctrl` `v`             | Paste cut/copied text                |
+| `cmd/ctrl` `z/u`           | Undo edit                            |
+| `cmd/ctrl` `shift` `z/u`   | Redo edit                            |
+| `cmd/ctrl` `}`             | add indentation                      |
+| `cmd/ctrl` `{`             | remove indentation                   |
+| `cmd/ctrl` `f`             | search and replace                   |
 
 *On Mac:*
 
