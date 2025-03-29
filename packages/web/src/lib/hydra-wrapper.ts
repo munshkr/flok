@@ -109,16 +109,46 @@ export class HydraWrapper {
     // Enables Hydra to use Strudel frequency data
     // with `.scrollX(() => fft(1,0)` it will influence the x-axis, according to the fft data
     // first number is the index of the bucket, second is the number of buckets to aggregate the number too
-    window.fft = (
-      index: number,
-      buckets: number = 8,
+    window.fft = fftImpl;
+
+    const self = this;
+
+    function fftImpl(
+      index?: number,
+      buckets?: number,
+      options?: string,
+    ): number;
+    function fftImpl(
+      index?: number,
+      buckets?: number,
       options?: {
         min?: number;
         max?: number;
         scale?: number;
         analyzerId?: string;
       },
-    ) => {
+    ): number;
+    function fftImpl(
+      index?: number,
+      buckets?: number,
+      options?:
+        | {
+            min?: number;
+            max?: number;
+            scale?: number;
+            analyzerId?: string;
+          }
+        | string,
+    ): number {
+      index = index ?? 0;
+      buckets = buckets ?? 1;
+      options =
+        options != null
+          ? typeof options === "string"
+            ? { analyzerId: options }
+            : options
+          : options;
+
       const analyzerId = options?.analyzerId ?? "flok-master";
       const min = options?.min ?? -150;
       const scale = options?.scale ?? 1;
@@ -128,7 +158,7 @@ export class HydraWrapper {
       if (window.strudel == undefined) return 0.5;
 
       // If display settings are not enabled, we just return a default value
-      if (!(this._displaySettings.enableFft ?? true)) return 0.5;
+      if (!(self._displaySettings.enableFft ?? true)) return 0.5;
 
       // Enable auto-analyze
       window.strudel.enableAutoAnalyze = true;
@@ -155,7 +185,7 @@ export class HydraWrapper {
           .slice(bucketSize * index, bucketSize * (index + 1))
           .reduce((a, b) => a + b, 0) / bucketSize
       );
-    };
+    }
 
     this.initialized = true;
     console.log("Hydra initialized");
