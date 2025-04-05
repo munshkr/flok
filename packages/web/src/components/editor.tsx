@@ -107,11 +107,18 @@ const flokSetup = (
     ? "document"
     : "block";
   const web = webTargets.includes(doc.target);
+  const noLineEval = doc.target === "mercury" || doc.target === "mercury-web";
 
   return [
     flashField(),
     remoteEvalFlash(doc),
-    Prec.high(evalKeymap(doc, { defaultMode, web })),
+    Prec.high(
+      evalKeymap(doc, {
+        defaultMode,
+        web,
+        lineEvalKeys: noLineEval ? [] : ["Shift-Enter"],
+      }),
+    ),
     panicKeymap(doc),
     extraKeymap(),
     autoIndentKeymap(doc),
