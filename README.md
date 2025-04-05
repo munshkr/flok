@@ -304,10 +304,11 @@ fft(index: number,
 
 Parameters:
 
-- `index: number` : The index of the bucket to return the value from.
-- `buckets: number`: The number of buckets to combine the underlying FFT data
+- `index: number` (default: 0): The index of the bucket to return the value from.
+- `buckets: number` (default:1): The number of buckets to combine the underlying FFT data
   too. Defaults to 8.
-- `options?: { min?: number; max?: number, scale?: number }`:
+- `options?: { min?: number; max?: number, scale?: number } | string`:
+  - if string, it sets the `analyzerId` option directly
   - `min?: number`: Minimum clamp value of the underlying data. Defaults to
     -150.
   - `max?: number`: Maximum clamp value of the underlying data. Defaults to 0.
