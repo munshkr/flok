@@ -187,6 +187,26 @@ export class HydraWrapper {
       );
     }
 
+    /**
+     * Patching HydraSources
+     */
+    const HydraSource = this._hydra.s?.[0].constructor;
+
+    // Patching initScreen
+    // to only init screen once
+    let screenOptions = "non-init";
+    const originScreen = HydraSource.prototype.initScreen;
+    let screenIsInit = false;
+    HydraSource.prototype.initScreen = function (options: any) {
+      if (screenOptions !== options) {
+        originScreen.bind(this)(options);
+      } else if (!screenIsInit) {
+        originScreen.bind(this)(options);
+      }
+      screenIsInit = true;
+      screenOptions = options;
+    };
+
     this.initialized = true;
     console.log("Hydra initialized");
   }
