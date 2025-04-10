@@ -194,17 +194,13 @@ export class HydraWrapper {
 
     // Patching initScreen
     // to only init screen once
-    let screenOptions = "non-init";
     const originScreen = HydraSource.prototype.initScreen;
     let screenIsInit = false;
-    HydraSource.prototype.initScreen = function (options: any) {
-      if (screenOptions !== options) {
-        originScreen.bind(this)(options);
-      } else if (!screenIsInit) {
-        originScreen.bind(this)(options);
+    HydraSource.prototype.initScreen = function () {
+      if (!screenIsInit) {
+        originScreen.bind(this)();
       }
       screenIsInit = true;
-      screenOptions = options;
     };
 
     this.initialized = true;
