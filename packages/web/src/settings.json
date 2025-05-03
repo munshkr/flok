@@ -5,6 +5,7 @@
     "mercury-web",
     "mercury",
     "punctual",
+    "py5",
     "renardo",
     "sardine",
     "sclang",
@@ -19,6 +20,7 @@
     "mercury-web": "javascript",
     "mercury": "javascript",
     "punctual": "punctual",
+    "py5": "python",
     "renardo": "python",
     "sardine": "python",
     "sclang": "javascript",
@@ -30,6 +32,7 @@
     "mercury-web",
     "mercury",
     "punctual",
+    "py5",
     "strudel"
   ],
   "panicCodes": {
@@ -41,12 +44,13 @@
     "mercury": "silence",
     "mercury-web": "silence",
     "hydra": "hush()",
+    "py5": "clear()",
     "strudel": "silence",
     "sardine": "panic()",
     "dummy": "silence"
   },
   "noAutoIndent": ["mercury", "mercury-web"],
-  "webTargets": ["hydra", "mercury-web", "punctual", "strudel"],
+  "webTargets": ["hydra", "mercury-web", "punctual", "py5", "strudel"],
   "repoUrl": "https://github.com/munshkr/flok",
   "changeLogUrl": "https://github.com/munshkr/flok/blob/main/CHANGELOG.md#changelog"
 }
